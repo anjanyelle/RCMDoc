@@ -26,6 +26,15 @@
 
 **Annual Cost:** $1,260,000 (includes salaries, benefits, overhead)
 
+#### **Business Owners by Module Area**
+To ensure system usability and alignment with business needs, the following business owners must be assigned to sign off on requirements and UAT for each module area:
+- **Patient Management (Modules 1-5):** Front Desk Manager / Patient Access Director
+- **Clinical & Documentation (Modules 6-9):** Chief Medical Officer / Lead Physician
+- **Coding & Billing (Modules 10-14):** Health Information Management (HIM) Director / Coding Manager
+- **Claims & Submission (Modules 15-17):** Billing Manager
+- **Denial & Payment (Modules 18-22):** Accounts Receivable (AR) Manager
+- **Reporting & Analytics (Modules 26-30):** Finance Director / CFO
+
 ---
 
 #### **MVP Team (6-Month Project)**
@@ -216,6 +225,15 @@ Reduce to:
 - 1 DevOps Engineer
 - 1 QA Engineer
 - **Total: 6 people for ongoing maintenance**
+
+#### **Production Support & Maintenance**
+- **Production Support Owner:** Production Support Lead (reporting to PM/Tech Lead).
+- **Bug Priority Definitions:**
+  - **P0 (Critical):** System down, PHI breach, or claim submission blocked. (Target: Fix in <4 hours).
+  - **P1 (High):** Major feature broken (e.g., payment posting failing). (Target: Fix in <24 hours).
+  - **P2 (Medium):** Non-blocking functional issues or report errors. (Target: Fix in next sprint).
+  - **P3 (Low):** UI glitches or cosmetic issues. (Target: Fix as scheduled).
+- **Escalation Path:** Support Agent → Support Lead → Tech Lead → Project Manager.
 
 ---
 
@@ -548,6 +566,13 @@ Reduce to:
 20. Patient portal
 
 **Why:** Differentiation and efficiency gains.
+
+#### **Stage-Gate Approvals**
+To control scope and ensure quality, the project will use stage-gate approvals. Moving to the next phase requires formal sign-off on the current phase's deliverables:
+- **Gate 1 (Foundation → Core):** Tech Lead signs off on architecture; Business Owners sign off on data model.
+- **Gate 2 (Core → Billing):** UAT sign-off on Patient Registration and Eligibility modules.
+- **Gate 3 (Billing → Submission):** Compliance sign-off on claim scrubbing rules and HIPAA controls.
+- **Gate 4 (Submission → Go-Live):** Successful end-to-end parallel run with legacy system.
 
 ---
 

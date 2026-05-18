@@ -28,7 +28,7 @@ Each module documentation includes:
 ## 📚 Module Categories
 
 ### Category 1: Authentication & Patient Management (Modules 1-5)
-**Document:** `Module_Flows_Part1_Auth_Patient.md`
+**Documents:** `Flows_Module_01_User_Login.md` through `Flows_Module_05_Patient_Checkin.md`
 
 1. **User Login & Authentication**
 2. **Patient Registration**
@@ -39,7 +39,7 @@ Each module documentation includes:
 ---
 
 ### Category 2: Clinical & Documentation (Modules 6-9)
-**Document:** `Module_Flows_Part2_Clinical_Docs.md`
+**Document:** `Flows_Module_07_10_Remaining.md` (Grouped)
 
 6. **Doctor Consultation**
 7. **Clinical Documentation**
@@ -49,7 +49,7 @@ Each module documentation includes:
 ---
 
 ### Category 3: Coding & Billing (Modules 10-14)
-**Document:** `Module_Flows_Part3_Coding_Billing.md`
+**Documents:** `Flows_Module_06_Medical_Coding.md` and `Flows_Module_07_10_Remaining.md`
 
 10. **Medical Coding**
 11. **Coding Review**
@@ -60,7 +60,7 @@ Each module documentation includes:
 ---
 
 ### Category 4: Claims & Submission (Modules 15-17)
-**Document:** `Module_Flows_Part4_Claims_Submission.md`
+**Document:** `Flows_Module_07_10_Remaining.md`
 
 15. **Claim Submission**
 16. **Claim Tracking**
@@ -69,7 +69,7 @@ Each module documentation includes:
 ---
 
 ### Category 5: Denial & Payment (Modules 18-22)
-**Document:** `Module_Flows_Part5_Denial_Payment.md`
+**Document:** `Flows_Module_07_10_Remaining.md`
 
 18. **Denial Management**
 19. **Appeals Workflow**
@@ -80,7 +80,7 @@ Each module documentation includes:
 ---
 
 ### Category 6: Patient Billing & AR (Modules 23-25)
-**Document:** `Module_Flows_Part6_Patient_AR.md`
+**Document:** `Flows_Module_07_10_Remaining.md`
 
 23. **Patient Billing**
 24. **Refund Management**
@@ -89,7 +89,7 @@ Each module documentation includes:
 ---
 
 ### Category 7: Reporting & Advanced (Modules 26-30)
-**Document:** `Module_Flows_Part7_Reporting_Advanced.md`
+**Document:** `Flows_Module_07_10_Remaining.md`
 
 26. **Reporting & Analytics**
 27. **Audit & Compliance**
@@ -137,36 +137,36 @@ Each module documentation includes:
 
 | Module # | Module Name | Category | Document |
 |----------|-------------|----------|----------|
-| 1 | User Login & Authentication | Auth & Patient | Part 1 |
-| 2 | Patient Registration | Auth & Patient | Part 1 |
-| 3 | Insurance Verification | Auth & Patient | Part 1 |
-| 4 | Appointment Scheduling | Auth & Patient | Part 1 |
-| 5 | Patient Check-in | Auth & Patient | Part 1 |
-| 6 | Doctor Consultation | Clinical | Part 2 |
-| 7 | Clinical Documentation | Clinical | Part 2 |
-| 8 | Order Management | Clinical | Part 2 |
-| 9 | Referral Management | Clinical | Part 2 |
-| 10 | Medical Coding | Coding & Billing | Part 3 |
-| 11 | Coding Review | Coding & Billing | Part 3 |
-| 12 | Charge Capture | Coding & Billing | Part 3 |
-| 13 | Claim Creation | Coding & Billing | Part 3 |
-| 14 | Claim Scrubbing | Coding & Billing | Part 3 |
-| 15 | Claim Submission | Claims | Part 4 |
-| 16 | Claim Tracking | Claims | Part 4 |
-| 17 | Insurance Adjudication | Claims | Part 4 |
-| 18 | Denial Management | Denial & Payment | Part 5 |
-| 19 | Appeals Workflow | Denial & Payment | Part 5 |
-| 20 | Payment Posting | Denial & Payment | Part 5 |
-| 21 | ERA/835 Reconciliation | Denial & Payment | Part 5 |
-| 22 | Secondary Billing | Denial & Payment | Part 5 |
-| 23 | Patient Billing | Patient & AR | Part 6 |
-| 24 | Refund Management | Patient & AR | Part 6 |
-| 25 | AR Management | Patient & AR | Part 6 |
-| 26 | Reporting & Analytics | Advanced | Part 7 |
-| 27 | Audit & Compliance | Advanced | Part 7 |
-| 28 | Patient Portal | Advanced | Part 7 |
-| 29 | Notifications & Messaging | Advanced | Part 7 |
-| 30 | AI-Based Automation | Advanced | Part 7 |
+| 1 | User Login & Authentication | Auth & Patient | `Flows_Module_01_User_Login.md` |
+| 2 | Patient Registration | Auth & Patient | `Flows_Module_02_Patient_Registration.md` |
+| 3 | Insurance Verification | Auth & Patient | `Flows_Module_03_Insurance_Verification.md` |
+| 4 | Appointment Scheduling | Auth & Patient | `Flows_Module_04_Appointment_Scheduling.md` |
+| 5 | Patient Check-in | Auth & Patient | `Flows_Module_05_Patient_Checkin.md` |
+| 6 | Doctor Consultation | Clinical | `Flows_Module_07_10_Remaining.md` |
+| 7 | Clinical Documentation | Clinical | `Flows_Module_07_10_Remaining.md` |
+| 8 | Order Management | Clinical | `Flows_Module_07_10_Remaining.md` |
+| 9 | Referral Management | Clinical | `Flows_Module_07_10_Remaining.md` |
+| 10 | Medical Coding | Coding & Billing | `Flows_Module_06_Medical_Coding.md` |
+| 11 | Coding Review | Coding & Billing | `Flows_Module_07_10_Remaining.md` |
+| 12 | Charge Capture | Coding & Billing | `Flows_Module_07_10_Remaining.md` |
+| 13 | Claim Creation | Coding & Billing | `Flows_Module_07_10_Remaining.md` |
+| 14 | Claim Scrubbing | Coding & Billing | `Flows_Module_07_10_Remaining.md` |
+| 15 | Claim Submission | Claims | `Flows_Module_07_10_Remaining.md` |
+| 16 | Claim Tracking | Claims | `Flows_Module_07_10_Remaining.md` |
+| 17 | Insurance Adjudication | Claims | `Flows_Module_07_10_Remaining.md` |
+| 18 | Denial Management | Denial & Payment | `Flows_Module_07_10_Remaining.md` |
+| 19 | Appeals Workflow | Denial & Payment | `Flows_Module_07_10_Remaining.md` |
+| 20 | Payment Posting | Denial & Payment | `Flows_Module_07_10_Remaining.md` |
+| 21 | ERA/835 Reconciliation | Denial & Payment | `Flows_Module_07_10_Remaining.md` |
+| 22 | Secondary Billing | Denial & Payment | `Flows_Module_07_10_Remaining.md` |
+| 23 | Patient Billing | Patient & AR | `Flows_Module_07_10_Remaining.md` |
+| 24 | Refund Management | Patient & AR | `Flows_Module_07_10_Remaining.md` |
+| 25 | AR Management | Patient & AR | `Flows_Module_07_10_Remaining.md` |
+| 26 | Reporting & Analytics | Advanced | `Flows_Module_07_10_Remaining.md` |
+| 27 | Audit & Compliance | Advanced | `Flows_Module_07_10_Remaining.md` |
+| 28 | Patient Portal | Advanced | `Flows_Module_07_10_Remaining.md` |
+| 29 | Notifications & Messaging | Advanced | `Flows_Module_07_10_Remaining.md` |
+| 30 | AI-Based Automation | Advanced | `Flows_Module_07_10_Remaining.md` |
 
 ---
 
@@ -185,10 +185,15 @@ Retry Logic (if applicable) → Escalate (if critical) → Notify Admin
 ```
 
 ### Standard Status Flow:
-```
-Draft → Pending → In Progress → Review → Approved/Rejected → 
+```Draft → Pending → In Progress → Review → Approved/Rejected → 
 Completed/Failed → Archived
 ```
+
+**RCM Specific Status Distinctions:**
+- **Rejection vs Denial:** 
+  - **Rejection:** Technical error *before* payer acceptance (handle in Billing).
+  - **Denial:** Coverage/Medical necessity issue *after* adjudication (handle in AR/Denials).
+- **Prior Authorization Status:** Pending → Approved → Denied.
 
 ---
 
@@ -309,10 +314,10 @@ For questions or clarifications:
 
 **Document Navigation:**
 - **Master Index:** `Module_Flows_Master_Index.md` (This document)
-- **Part 1:** `Module_Flows_Part1_Auth_Patient.md`
-- **Part 2:** `Module_Flows_Part2_Clinical_Docs.md`
-- **Part 3:** `Module_Flows_Part3_Coding_Billing.md`
-- **Part 4:** `Module_Flows_Part4_Claims_Submission.md`
-- **Part 5:** `Module_Flows_Part5_Denial_Payment.md`
-- **Part 6:** `Module_Flows_Part6_Patient_AR.md`
-- **Part 7:** `Module_Flows_Part7_Reporting_Advanced.md`
+- **Module 1:** `Flows_Module_01_User_Login.md`
+- **Module 2:** `Flows_Module_02_Patient_Registration.md`
+- **Module 3:** `Flows_Module_03_Insurance_Verification.md`
+- **Module 4:** `Flows_Module_04_Appointment_Scheduling.md`
+- **Module 5:** `Flows_Module_05_Patient_Checkin.md`
+- **Module 6:** `Flows_Module_06_Medical_Coding.md`
+- **Remaining Modules:** `Flows_Module_07_10_Remaining.md`

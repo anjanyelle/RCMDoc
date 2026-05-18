@@ -55,6 +55,11 @@ Our application automates all these steps, reducing manual work, preventing bill
 | **Slow payment collection** | 50-60 days to collect payment | Automated workflows reduce to <40 days |
 | **Revenue leakage** | 5-10% of revenue lost to errors | Charge capture automation prevents loss |
 | **Compliance risks** | HIPAA violations, audit failures | Built-in audit logging and compliance |
+| **Missed authorization** | 100% claim denial | Automated auth check & tracking |
+| **Missed charge capture** | Lost revenue | Orders-to-charges reconciliation |
+| **Wrong patient balance** | Patient complaints, lost trust | Accurate ERA posting & calculation |
+| **Duplicate patient** | Split records, billing errors | Duplicate detection on registration |
+| **Payer downtime** | Submission delays | Queue system & offline retry |
 
 **Financial Impact:**
 - Hospital with $50M annual revenue loses $2.5M-$5M to inefficiencies
@@ -100,6 +105,13 @@ Capture Charges → Assign Medical Codes → Create Claim → Scrub Claim →
 Submit to Insurance → Track Status → Post Payment → Bill Patient → 
 Collect Payment → Generate Reports
 ```
+
+**Key Process Highlights:**
+- **Prior Authorization:** Must be obtained *before* service when required to prevent automatic denials.
+- **Claim Scrubbing:** Validates claims against rules *before* submission.
+- **Acknowledgment/Rejection:** Handled immediately *after* submission (999/277CA).
+- **ERA/Payment Posting:** Automated matching and posting *after* insurance adjudication.
+- **Patient Billing:** Statements generated *after* insurance processing completes.
 
 ### 2.2 Detailed Module Flow
 
@@ -763,6 +775,7 @@ Management monitors RCM performance through dashboards and reports.
 | Net Collection Rate | >95% | 85-90% |
 | AR >90 Days | <15% | 25-30% |
 | Cost to Collect | <$0.05 per $1 | $0.08-$0.12 |
+| Revenue Leakage | <2% | 5-10% |
 
 **Standard Reports:**
 - Daily revenue report
