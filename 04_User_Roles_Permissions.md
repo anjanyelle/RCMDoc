@@ -1,7 +1,7 @@
 # Healthcare RCM Application - User Roles & Permissions Matrix
 
 **Version:** 1.0  
-**Date:** May 18, 2026  
+
 **For:** Development Team
 
 ---

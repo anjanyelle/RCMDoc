@@ -1,7 +1,7 @@
 # Healthcare RCM Application - System Requirements Summary
 
 **Version:** 1.0  
-**Date:** May 18, 2026  
+
 **For:** Development Team (Non-Healthcare Background)
 
 ---

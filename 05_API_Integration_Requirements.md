@@ -1,7 +1,7 @@
 # Healthcare RCM Application - API Integration Requirements
 
 **Version:** 1.0  
-**Date:** May 18, 2026  
+
 **For:** Development Team
 
 ---
