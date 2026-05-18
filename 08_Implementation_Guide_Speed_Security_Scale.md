@@ -97,6 +97,129 @@ AWS or Azure (HIPAA-compliant)
 
 ---
 
+### 2.1 Multi-Tenant SaaS Architecture
+
+#### Purpose
+Support multiple hospitals, clinics, and provider groups using a single application platform while keeping data isolated securely.
+
+#### Tenant Isolation Strategy
+```
+Tenant Isolation Model:
+├── Shared Application Layer
+├── Shared Database Server
+├── Separate tenant_id in every table
+└── Row-level security enforcement
+```
+
+#### Database Multi-Tenant Design
+```sql
+ALTER TABLE patients ADD COLUMN tenant_id UUID NOT NULL;
+ALTER TABLE claims ADD COLUMN tenant_id UUID NOT NULL;
+ALTER TABLE payments ADD COLUMN tenant_id UUID NOT NULL;
+```
+
+#### Row Level Security
+```sql
+ALTER TABLE patients ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY tenant_isolation_policy
+ON patients
+USING (tenant_id = current_setting('app.current_tenant')::UUID);
+```
+
+#### Tenant Middleware
+```typescript
+export const tenantMiddleware = async (req, res, next) => {
+  const tenantId = req.headers['x-tenant-id'];
+
+  if (!tenantId) {
+    return res.status(400).json({
+      error: 'Tenant ID missing'
+    });
+  }
+
+  req.tenantId = tenantId;
+  next();
+};
+```
+
+#### Tenant Features
+- Separate hospital branding
+- Separate payer configurations
+- Separate provider groups
+- Separate audit logs
+- Tenant-level backups
+- Tenant-level analytics
+
+---
+
+### 2.2 API Versioning
+
+#### Purpose
+Allow backward compatibility while upgrading APIs safely.
+
+#### URL Versioning Strategy
+```
+/api/v1/patients
+/api/v2/patients
+/api/v1/claims
+/api/v2/claims
+```
+
+#### Express API Versioning
+```typescript
+app.use('/api/v1', v1Routes);
+app.use('/api/v2', v2Routes);
+```
+
+#### API Deprecation Policy
+| Version | Support Duration |
+|---------|------------------|
+| v1 | 18 months |
+| v2 | Active |
+| Deprecated APIs | 6-month sunset |
+
+#### API Documentation
+- Swagger/OpenAPI
+- Postman Collections
+- Version-specific documentation
+- API changelog
+
+---
+
+### 2.3 Advanced Search Architecture
+
+#### Purpose
+Provide high-speed global search across patients, claims, encounters, payments, and denials.
+
+#### Search Features
+- Fuzzy patient matching
+- MRN search
+- Claim number search
+- Full-text diagnosis search
+- CPT/ICD lookup
+- Insurance lookup
+
+#### PostgreSQL Full Text Search
+```sql
+CREATE INDEX idx_patient_search
+ON patients
+USING GIN(to_tsvector('english',
+first_name || ' ' || last_name || ' ' || mrn));
+```
+
+#### Elasticsearch Integration (Enterprise)
+```
+Elasticsearch
+├── Patient indexing
+├── Claim indexing
+├── Denial indexing
+├── Payment indexing
+└── Global search dashboard
+```
+
+---
+
 ## 3. Architecture Diagram
 
 ```
@@ -135,6 +258,99 @@ AWS or Azure (HIPAA-compliant)
 │  Stripe (Payments)        │ Twilio (SMS)                         │
 │  Mirth Connect (HL7)      │ SendGrid (Email)                     │
 └─────────────────────────────────────────────────────────────────┘
+```
+
+### 3.1 Workflow Orchestration
+
+#### Workflow Services
+```
+Workflow Engine
+├── Eligibility Workflow
+├── Authorization Workflow
+├── Claim Submission Workflow
+├── Denial Workflow
+└── Payment Posting Workflow
+```
+
+#### Workflow Example
+```
+Patient Registration
+ ↓
+Eligibility Check
+ ↓
+Authorization Validation
+ ↓
+Encounter Documentation
+ ↓
+Charge Capture
+ ↓
+Claim Generation
+ ↓
+Claim Submission
+```
+
+#### Recommended Technologies
+- Temporal.io
+- Camunda
+- Apache Airflow
+- AWS Step Functions
+
+---
+
+### 3.2 Notification Architecture
+
+#### Notification Types
+- SMS
+- Email
+- In-app alerts
+- Claim notifications
+- Denial alerts
+- Payment notifications
+
+#### Notification Services
+```
+Notification Services
+├── Twilio
+├── SendGrid
+├── Firebase
+└── Internal Notifications
+```
+
+#### Retry Strategy
+```
+Retry Policy
+├── Retry 1 → 1 minute
+├── Retry 2 → 5 minutes
+├── Retry 3 → 15 minutes
+└── Dead Letter Queue
+```
+
+---
+
+### 3.3 WebSocket Architecture
+
+#### Real-Time Features
+- Live dashboards
+- Claim updates
+- Queue updates
+- Real-time AR monitoring
+- Payment updates
+
+#### Socket.IO Example
+```typescript
+io.on('connection', (socket) => {
+  socket.on('joinTenant', (tenantId) => {
+    socket.join(tenantId);
+  });
+});
+```
+
+#### Scaling Strategy
+```
+Redis Pub/Sub
+├── Multi-server synchronization
+├── Event streaming
+└── Horizontal scaling
 ```
 
 ---
@@ -1247,14 +1463,38 @@ kubectl run migration --image=YOUR_ECR_URL/rcm-backend:latest --command -- npx p
 
 ### **Target Metrics:**
 
-| Metric | Target | How to Achieve |
-|--------|--------|----------------|
-| API Response Time | <200ms | Redis caching, database indexes, connection pooling |
-| Page Load Time | <2 seconds | Code splitting, lazy loading, CDN for static assets |
-| Concurrent Users | 1000+ | Horizontal scaling with load balancer, stateless API |
-| Database Queries | <50ms | Proper indexes, query optimization, read replicas |
-| Claim Submission | <5 seconds | Background jobs with Bull queue |
-| Eligibility Check | <3 seconds | Cache results for 15 minutes |
+| Metric                 | Target      | How to Achieve                                       |
+| ---------------------- | ----------- | ---------------------------------------------------- |
+| API Response Time      | <200ms      | Redis caching, database indexes, connection pooling  |
+| Page Load Time         | <2 seconds  | Code splitting, lazy loading, CDN for static assets  |
+| Concurrent Users       | 1000+       | Horizontal scaling with load balancer, stateless API |
+| Database Queries       | <50ms       | Proper indexes, query optimization, read replicas    |
+| Claim Submission       | <5 seconds  | Background jobs with Bull queue                      |
+| Eligibility Check      | <3 seconds  | Cache results for 15 minutes                         |
+| ERA Processing         | <10 seconds | Parallel queue workers and batch processing          |
+| WebSocket Latency      | <100ms      | Redis Pub/Sub and horizontal scaling                 |
+| Queue Processing Delay | <2 seconds  | Worker auto-scaling and retry queues                 |
+| Report Generation      | <30 seconds | Pre-aggregated analytics tables                      |
+| File Upload Processing | <5 seconds  | Direct S3 upload and async OCR                       |
+| Search Response Time   | <300ms      | Elasticsearch and PostgreSQL full-text indexes       |
+
+#### Performance Optimization Areas:
+
+```
+Performance Optimization
+├── Redis Caching
+├── Database Indexing
+├── Read Replicas
+├── Connection Pooling
+├── Queue Processing
+├── Horizontal Scaling
+├── CDN Optimization
+├── Lazy Loading
+├── WebSocket Scaling
+├── Query Optimization
+├── Partitioned Tables
+└── Background Jobs
+```
 
 ### **Load Testing:**
 
@@ -1289,6 +1529,110 @@ export default function () {
 # Run load test
 k6 run load-test.js
 ```
+
+#### Performance Testing Types:
+
+| Test Type        | Purpose                         |
+| ---------------- | ------------------------------- |
+| Load Testing     | Validate expected user traffic  |
+| Stress Testing   | Identify breaking point         |
+| Spike Testing    | Handle sudden traffic bursts    |
+| Soak Testing     | Validate long-running stability |
+| Volume Testing   | Test very large datasets        |
+| Failover Testing | Validate DR and redundancy      |
+
+#### Recommended Performance Tools:
+
+```
+Performance Testing Stack
+├── k6
+├── JMeter
+├── Locust
+├── Grafana
+├── Prometheus
+├── Jaeger
+├── pgBadger
+└── Redis Insight
+```
+
+---
+
+### 5.1 KPI Reporting
+
+#### Purpose
+Provide operational and financial visibility into the Revenue Cycle Management system.
+
+#### KPI Dashboards
+
+**Financial KPIs:**
+- Net collection rate
+- Gross collection rate
+- Days in AR
+- Average reimbursement per encounter
+- Revenue leakage analysis
+
+**Claim KPIs:**
+- First-pass clean claim rate
+- Claim rejection rate
+- Claim denial rate
+- Claim turnaround time
+- Claims pending by payer
+
+**Denial KPIs:**
+- Top denial reasons
+- Denial trends
+- Appeal success rate
+- Recoverable revenue
+
+**Operational KPIs:**
+- Eligibility verification turnaround time
+- Average registration time
+- Charge lag
+- Coding turnaround time
+- Authorization turnaround time
+
+#### Reporting Frequency
+
+| KPI                   | Frequency |
+| --------------------- | --------- |
+| AR Aging              | Daily     |
+| Denials               | Real-time |
+| Revenue               | Daily     |
+| Collections           | Daily     |
+| KPI Executive Reports | Weekly    |
+
+---
+
+### 5.2 Analytics Warehouse
+
+#### Purpose
+Separate reporting workloads from transactional database workloads.
+
+#### Warehouse Architecture
+
+```
+OLTP Database (PostgreSQL)
+        ↓
+ETL Pipelines
+        ↓
+Analytics Warehouse
+        ↓
+Dashboards & BI Tools
+```
+
+#### Supported Warehouse Platforms
+
+- Snowflake
+- Amazon Redshift
+- Google BigQuery
+- Azure Synapse
+
+#### Warehouse Features
+- Historical reporting
+- Payer trend analysis
+- Denial analytics
+- Revenue forecasting
+- Provider productivity reports
 
 ---
 
