@@ -70,7 +70,7 @@ Each module documentation includes:
 ---
 
 ### Category 5: Denial & Payment (Modules 18-22)
-**Document:** `Flows_Module_07_10_Remaining.md`
+**Documents:** `Flows_Module_14_Secondary_Billing.md` (Secondary Billing) and `Flows_Module_07_10_Remaining.md` (Grouped)
 
 18. **Denial Management**
 19. **Appeals Workflow**
@@ -160,7 +160,7 @@ Each module documentation includes:
 | 19 | Appeals Workflow | Denial & Payment | `Flows_Module_07_10_Remaining.md` |
 | 20 | Payment Posting | Denial & Payment | `Flows_Module_07_10_Remaining.md` |
 | 21 | ERA/835 Reconciliation | Denial & Payment | `Flows_Module_07_10_Remaining.md` |
-| 22 | Secondary Billing | Denial & Payment | `Flows_Module_07_10_Remaining.md` |
+| 22 | Secondary Billing | Denial & Payment | `Flows_Module_14_Secondary_Billing.md` |
 | 23 | Patient Billing | Patient & AR | `Flows_Module_07_10_Remaining.md` |
 | 24 | Refund Management | Patient & AR | `Flows_Module_07_10_Remaining.md` |
 | 25 | AR Management | Patient & AR | `Flows_Module_07_10_Remaining.md` |
