@@ -27,21 +27,22 @@ Each module documentation includes:
 
 ## 📚 Module Categories
 
-### Category 1: Authentication & Patient Management (Modules 1-5)
-**Documents:** `Flows_Module_01_User_Login.md` through `Flows_Module_05_Patient_Checkin.md`
+### Category 1: Authentication & Patient Management (Modules 1-6)
+**Documents:** `Flows_Module_01_User_Login.md` through `Flows_Module_05_Patient_Checkin.md`, and `Flows_Module_12_Prior_Authorization.md`
 
 1. **User Login & Authentication**
 2. **Patient Registration**
 3. **Insurance Verification**
 4. **Appointment Scheduling**
 5. **Patient Check-in**
+6. **Prior Authorization**
 
 ---
 
-### Category 2: Clinical & Documentation (Modules 6-9)
-**Document:** `Flows_Module_07_10_Remaining.md` (Grouped)
+### Category 2: Clinical & Documentation (Modules 6a-9)
+**Documents:** `Flows_Module_13_Order_Management.md` (Order Management) and `Flows_Module_07_10_Remaining.md` (Grouped)
 
-6. **Doctor Consultation**
+6a. **Doctor Consultation**
 7. **Clinical Documentation**
 8. **Order Management**
 9. **Referral Management**
@@ -142,9 +143,10 @@ Each module documentation includes:
 | 3 | Insurance Verification | Auth & Patient | `Flows_Module_03_Insurance_Verification.md` |
 | 4 | Appointment Scheduling | Auth & Patient | `Flows_Module_04_Appointment_Scheduling.md` |
 | 5 | Patient Check-in | Auth & Patient | `Flows_Module_05_Patient_Checkin.md` |
-| 6 | Doctor Consultation | Clinical | `Flows_Module_07_10_Remaining.md` |
+| 6 | Prior Authorization | Auth & Patient | `Flows_Module_12_Prior_Authorization.md` |
+| 6a | Doctor Consultation | Clinical | `Flows_Module_07_10_Remaining.md` |
 | 7 | Clinical Documentation | Clinical | `Flows_Module_07_10_Remaining.md` |
-| 8 | Order Management | Clinical | `Flows_Module_07_10_Remaining.md` |
+| 8 | Order Management | Clinical | `Flows_Module_13_Order_Management.md` |
 | 9 | Referral Management | Clinical | `Flows_Module_07_10_Remaining.md` |
 | 10 | Medical Coding | Coding & Billing | `Flows_Module_06_Medical_Coding.md` |
 | 11 | Coding Review | Coding & Billing | `Flows_Module_07_10_Remaining.md` |
