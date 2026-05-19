@@ -1,0 +1,3090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare RCM Application - Database Design Document</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Healthcare RCM Application - Database Design Document</h1>
+
+<p><strong>Version:</strong> 1.0  </p>
+
+<p><strong>For:</strong> Development Team</p>
+
+<hr>
+
+<h2>1. Database Overview</h2>
+
+<p><strong>Database Type:</strong> Relational Database (PostgreSQL recommended)  </p>
+<p><strong>Why Relational:</strong> Healthcare data is highly structured with complex relationships</p>
+
+<p><strong>Total Tables:</strong> 35 core tables  </p>
+<p><strong>Estimated Records (Medium Hospital):</strong></p>
+<li>Patients: 100,000+</li>
+<li>Encounters: 500,000+ per year</li>
+<li>Claims: 500,000+ per year</li>
+<li>Payments: 1,000,000+ per year</li>
+
+<hr>
+
+<h2>2. Core Database Tables</h2>
+
+<h3>Table 1: users</h3>
+<p><strong>Purpose:</strong> Store all system users (staff, providers, admins)</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>user_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+<td>Unique user identifier</td>
+</tr>
+<tr>
+<td>username</td>
+<td>VARCHAR(50)</td>
+<td>UNIQUE, NOT NULL</td>
+<td>Login username</td>
+</tr>
+<tr>
+<td>password_hash</td>
+<td>VARCHAR(255)</td>
+<td>NOT NULL</td>
+<td>Bcrypt hashed password</td>
+</tr>
+<tr>
+<td>email</td>
+<td>VARCHAR(100)</td>
+<td>UNIQUE, NOT NULL</td>
+<td>Email address</td>
+</tr>
+<tr>
+<td>first_name</td>
+<td>VARCHAR(50)</td>
+<td>NOT NULL</td>
+<td>First name</td>
+</tr>
+<tr>
+<td>last_name</td>
+<td>VARCHAR(50)</td>
+<td>NOT NULL</td>
+<td>Last name</td>
+</tr>
+<tr>
+<td>role_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → roles</td>
+<td>User role</td>
+</tr>
+<tr>
+<td>is_active</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+<td>Account status</td>
+</tr>
+<tr>
+<td>last_login</td>
+<td>TIMESTAMP</td>
+<td>Last login time</td>
+</tr>
+<tr>
+<td>mfa_enabled</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Multi-factor auth enabled</td>
+</tr>
+<tr>
+<td>mfa_secret</td>
+<td>VARCHAR(100)</td>
+<td>MFA secret key</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Account creation date</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td>Last update date</td>
+</tr>
+
+<p><strong>Indexes:</strong> username, email, role_id</p>
+
+<hr>
+
+<h3>Table 2: roles</h3>
+<p><strong>Purpose:</strong> Define user roles and permissions</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>role_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+<td>Unique role identifier</td>
+</tr>
+<tr>
+<td>role_name</td>
+<td>VARCHAR(50)</td>
+<td>UNIQUE, NOT NULL</td>
+<td>Role name (e.g., "Front Desk")</td>
+</tr>
+<tr>
+<td>description</td>
+<td>TEXT</td>
+<td>Role description</td>
+</tr>
+<tr>
+<td>permissions</td>
+<td>JSONB</td>
+<td>Permissions object</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+
+<p><strong>Sample Roles:</strong></p>
+<li>System Administrator</li>
+<li>Front Desk Staff</li>
+<li>Clinical Staff</li>
+<li>Medical Coder</li>
+<li>Billing Specialist</li>
+<li>AR Manager</li>
+<li>Collections Staff</li>
+<li>Finance Manager</li>
+<li>Compliance Officer</li>
+<li>Provider (Doctor)</li>
+
+<p><strong>Permissions Structure (JSONB):</strong></p>
+<pre><code class="language-json">
+{
+  "patients": {"create": true, "read": true, "update": true, "delete": false},
+  "encounters": {"create": true, "read": true, "update": true, "delete": false},
+  "claims": {"create": true, "read": true, "update": true, "delete": false},
+  "payments": {"create": true, "read": true, "update": false, "delete": false},
+  "reports": {"create": false, "read": true, "update": false, "delete": false}
+}
+</pre>
+
+<hr>
+
+<h3>Table 3: providers</h3>
+<p><strong>Purpose:</strong> Store doctor/provider information</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>provider_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+<td>Unique provider identifier</td>
+</tr>
+<tr>
+<td>npi_type1</td>
+<td>VARCHAR(10)</td>
+<td>UNIQUE, NOT NULL</td>
+<td>Individual NPI number</td>
+</tr>
+<tr>
+<td>first_name</td>
+<td>VARCHAR(50)</td>
+<td>NOT NULL</td>
+<td>First name</td>
+</tr>
+<tr>
+<td>last_name</td>
+<td>VARCHAR(50)</td>
+<td>NOT NULL</td>
+<td>Last name</td>
+</tr>
+<tr>
+<td>middle_name</td>
+<td>VARCHAR(50)</td>
+<td>Middle name</td>
+</tr>
+<tr>
+<td>suffix</td>
+<td>VARCHAR(10)</td>
+<td>Suffix (MD, DO, etc.)</td>
+</tr>
+<tr>
+<td>dob</td>
+<td>DATE</td>
+<td>Date of birth</td>
+</tr>
+<tr>
+<td>ssn_encrypted</td>
+<td>VARCHAR(255)</td>
+<td>Encrypted SSN</td>
+</tr>
+<tr>
+<td>license_number</td>
+<td>VARCHAR(50)</td>
+<td>Medical license number</td>
+</tr>
+<tr>
+<td>license_state</td>
+<td>VARCHAR(2)</td>
+<td>License state</td>
+</tr>
+<tr>
+<td>dea_number</td>
+<td>VARCHAR(20)</td>
+<td>DEA number</td>
+</tr>
+<tr>
+<td>taxonomy_code</td>
+<td>VARCHAR(20)</td>
+<td>Provider taxonomy code</td>
+</tr>
+<tr>
+<td>specialty_primary</td>
+<td>VARCHAR(100)</td>
+<td>Primary specialty</td>
+</tr>
+<tr>
+<td>specialty_secondary</td>
+<td>VARCHAR(100)</td>
+<td>Secondary specialty</td>
+</tr>
+<tr>
+<td>email</td>
+<td>VARCHAR(100)</td>
+<td>Email</td>
+</tr>
+<tr>
+<td>phone</td>
+<td>VARCHAR(20)</td>
+<td>Phone</td>
+</tr>
+<tr>
+<td>signature_image</td>
+<td>TEXT</td>
+<td>Digital signature (base64)</td>
+</tr>
+<tr>
+<td>is_active</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+<td>Active status</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+</tr>
+
+<p><strong>Indexes:</strong> npi<em>type1, last</em>name</p>
+
+<hr>
+
+<h3>Table 4: provider_credentials</h3>
+<p><strong>Purpose:</strong> Track provider credentialing with each payer</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>credential_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>provider_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → providers</td>
+<td>Provider</td>
+</tr>
+<tr>
+<td>payer_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → payers</td>
+<td>Insurance payer</td>
+</tr>
+<tr>
+<td>status</td>
+<td>VARCHAR(20)</td>
+<td>NOT NULL</td>
+<td>Pending, Approved, Denied, Expired</td>
+</tr>
+<tr>
+<td>application_date</td>
+<td>DATE</td>
+<td>Application submitted date</td>
+</tr>
+<tr>
+<td>effective_date</td>
+<td>DATE</td>
+<td>Credential effective date</td>
+</tr>
+<tr>
+<td>expiration_date</td>
+<td>DATE</td>
+<td>Credential expiration date</td>
+</tr>
+<tr>
+<td>credential_number</td>
+<td>VARCHAR(50)</td>
+<td>Payer-assigned credential number</td>
+</tr>
+<tr>
+<td>notes</td>
+<td>TEXT</td>
+<td>Notes</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+</tr>
+
+<p><strong>Indexes:</strong> provider<em>id, payer</em>id, expiration_date</p>
+
+<hr>
+
+<h3>Table 5: payers</h3>
+<p><strong>Purpose:</strong> Store insurance companies/payers</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>payer_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>payer_name</td>
+<td>VARCHAR(100)</td>
+<td>NOT NULL</td>
+<td>Payer name (e.g., "Blue Cross Blue Shield")</td>
+</tr>
+<tr>
+<td>payer_code</td>
+<td>VARCHAR(20)</td>
+<td>UNIQUE</td>
+<td>Internal payer code</td>
+</tr>
+<tr>
+<td>payer_id_external</td>
+<td>VARCHAR(50)</td>
+<td>External payer ID (for clearinghouse)</td>
+</tr>
+<tr>
+<td>payer_type</td>
+<td>VARCHAR(20)</td>
+<td>Commercial, Medicare, Medicaid, Other</td>
+</tr>
+<tr>
+<td>address_line1</td>
+<td>VARCHAR(100)</td>
+<td>Address</td>
+</tr>
+<tr>
+<td>address_line2</td>
+<td>VARCHAR(100)</td>
+</tr>
+<tr>
+<td>city</td>
+<td>VARCHAR(50)</td>
+</tr>
+<tr>
+<td>state</td>
+<td>VARCHAR(2)</td>
+</tr>
+<tr>
+<td>zip_code</td>
+<td>VARCHAR(10)</td>
+</tr>
+<tr>
+<td>phone</td>
+<td>VARCHAR(20)</td>
+</tr>
+<tr>
+<td>claims_address</td>
+<td>VARCHAR(200)</td>
+<td>Claims mailing address</td>
+</tr>
+<tr>
+<td>electronic_payer_id</td>
+<td>VARCHAR(20)</td>
+<td>Electronic payer ID for EDI</td>
+</tr>
+<tr>
+<td>timely_filing_days</td>
+<td>INTEGER</td>
+<td>Timely filing limit (days)</td>
+</tr>
+<tr>
+<td>is_active</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+
+<p><strong>Indexes:</strong> payer<em>name, payer</em>code</p>
+
+<hr>
+
+<h3>Table 6: payer_contracts</h3>
+<p><strong>Purpose:</strong> Store contracted rates with each payer</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>contract_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>payer_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → payers</td>
+</tr>
+<tr>
+<td>contract_name</td>
+<td>VARCHAR(100)</td>
+<td>Contract name</td>
+</tr>
+<tr>
+<td>effective_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Contract start date</td>
+</tr>
+<tr>
+<td>end_date</td>
+<td>DATE</td>
+<td>Contract end date</td>
+</tr>
+<tr>
+<td>payment_methodology</td>
+<td>VARCHAR(50)</td>
+<td>Fee Schedule, % of Charges, DRG, Capitation</td>
+</tr>
+<tr>
+<td>percentage_of_charges</td>
+<td>DECIMAL(5,2)</td>
+<td>If % of charges (e.g., 80.00)</td>
+</tr>
+<tr>
+<td>contract_terms</td>
+<td>TEXT</td>
+<td>Contract terms</td>
+</tr>
+<tr>
+<td>is_active</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+
+<hr>
+
+<h3>Table 7: payer_contract_rates</h3>
+<p><strong>Purpose:</strong> Store allowed amounts by CPT code for each contract</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>rate_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>contract_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → payer_contracts</td>
+</tr>
+<tr>
+<td>cpt_code</td>
+<td>VARCHAR(10)</td>
+<td>NOT NULL</td>
+<td>CPT/HCPCS code</td>
+</tr>
+<tr>
+<td>modifier</td>
+<td>VARCHAR(10)</td>
+<td>Modifier (if applicable)</td>
+</tr>
+<tr>
+<td>allowed_amount</td>
+<td>DECIMAL(10,2)</td>
+<td>NOT NULL</td>
+<td>Contracted allowed amount</td>
+</tr>
+<tr>
+<td>effective_date</td>
+<td>DATE</td>
+<td>Rate effective date</td>
+</tr>
+<tr>
+<td>end_date</td>
+<td>DATE</td>
+<td>Rate end date</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+
+<p><strong>Indexes:</strong> contract<em>id, cpt</em>code</p>
+
+<hr>
+
+<h3>Table 8: chargemaster (CDM)</h3>
+<p><strong>Purpose:</strong> Hospital fee schedule - all services with standard prices</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>cdm_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>charge_code</td>
+<td>VARCHAR(20)</td>
+<td>UNIQUE, NOT NULL</td>
+<td>Internal charge code</td>
+</tr>
+<tr>
+<td>cpt_code</td>
+<td>VARCHAR(10)</td>
+<td>CPT/HCPCS code</td>
+</tr>
+<tr>
+<td>description</td>
+<td>VARCHAR(255)</td>
+<td>NOT NULL</td>
+<td>Service description</td>
+</tr>
+<tr>
+<td>department</td>
+<td>VARCHAR(50)</td>
+<td>Department</td>
+</tr>
+<tr>
+<td>revenue_code</td>
+<td>VARCHAR(4)</td>
+<td>Revenue code (for UB-04)</td>
+</tr>
+<tr>
+<td>standard_charge</td>
+<td>DECIMAL(10,2)</td>
+<td>NOT NULL</td>
+<td>Standard charge amount</td>
+</tr>
+<tr>
+<td>effective_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Effective date</td>
+</tr>
+<tr>
+<td>end_date</td>
+<td>DATE</td>
+<td>End date</td>
+</tr>
+<tr>
+<td>is_active</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+
+<p><strong>Indexes:</strong> charge<em>code, cpt</em>code, department</p>
+
+<hr>
+
+<h3>Table 9: patients</h3>
+<p><strong>Purpose:</strong> Store patient demographics</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>patient_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>mrn</td>
+<td>VARCHAR(20)</td>
+<td>UNIQUE, NOT NULL</td>
+<td>Medical Record Number</td>
+</tr>
+<tr>
+<td>first_name</td>
+<td>VARCHAR(50)</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>last_name</td>
+<td>VARCHAR(50)</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>middle_name</td>
+<td>VARCHAR(50)</td>
+</tr>
+<tr>
+<td>suffix</td>
+<td>VARCHAR(10)</td>
+</tr>
+<tr>
+<td>dob</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Date of birth</td>
+</tr>
+<tr>
+<td>gender</td>
+<td>VARCHAR(10)</td>
+<td>NOT NULL</td>
+<td>Male, Female, Other</td>
+</tr>
+<tr>
+<td>ssn_encrypted</td>
+<td>VARCHAR(255)</td>
+<td>Encrypted SSN</td>
+</tr>
+<tr>
+<td>address_line1</td>
+<td>VARCHAR(100)</td>
+</tr>
+<tr>
+<td>address_line2</td>
+<td>VARCHAR(100)</td>
+</tr>
+<tr>
+<td>city</td>
+<td>VARCHAR(50)</td>
+</tr>
+<tr>
+<td>state</td>
+<td>VARCHAR(2)</td>
+</tr>
+<tr>
+<td>zip_code</td>
+<td>VARCHAR(10)</td>
+</tr>
+<tr>
+<td>phone_home</td>
+<td>VARCHAR(20)</td>
+</tr>
+<tr>
+<td>phone_mobile</td>
+<td>VARCHAR(20)</td>
+</tr>
+<tr>
+<td>phone_work</td>
+<td>VARCHAR(20)</td>
+</tr>
+<tr>
+<td>email</td>
+<td>VARCHAR(100)</td>
+</tr>
+<tr>
+<td>preferred_language</td>
+<td>VARCHAR(20)</td>
+</tr>
+<tr>
+<td>race</td>
+<td>VARCHAR(50)</td>
+</tr>
+<tr>
+<td>ethnicity</td>
+<td>VARCHAR(50)</td>
+</tr>
+<tr>
+<td>emergency_contact_name</td>
+<td>VARCHAR(100)</td>
+</tr>
+<tr>
+<td>emergency_contact_phone</td>
+<td>VARCHAR(20)</td>
+</tr>
+<tr>
+<td>emergency_contact_relationship</td>
+<td>VARCHAR(50)</td>
+</tr>
+<tr>
+<td>is_active</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+</tr>
+
+<p><strong>Indexes:</strong> mrn, last<em>name, dob, ssn</em>encrypted</p>
+
+<hr>
+
+<h3>Table 10: patient_insurance</h3>
+<p><strong>Purpose:</strong> Store patient insurance information</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>insurance_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+</tr>
+<tr>
+<td>payer_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → payers</td>
+</tr>
+<tr>
+<td>priority</td>
+<td>INTEGER</td>
+<td>NOT NULL</td>
+<td>1=Primary, 2=Secondary, 3=Tertiary</td>
+</tr>
+<tr>
+<td>policy_number</td>
+<td>VARCHAR(50)</td>
+<td>NOT NULL</td>
+<td>Policy/Member ID</td>
+</tr>
+<tr>
+<td>group_number</td>
+<td>VARCHAR(50)</td>
+<td>Group number</td>
+</tr>
+<tr>
+<td>subscriber_name</td>
+<td>VARCHAR(100)</td>
+<td>Subscriber name</td>
+</tr>
+<tr>
+<td>subscriber_dob</td>
+<td>DATE</td>
+<td>Subscriber DOB</td>
+</tr>
+<tr>
+<td>subscriber_relationship</td>
+<td>VARCHAR(20)</td>
+<td>Self, Spouse, Child, Other</td>
+</tr>
+<tr>
+<td>effective_date</td>
+<td>DATE</td>
+<td>Coverage effective date</td>
+</tr>
+<tr>
+<td>termination_date</td>
+<td>DATE</td>
+<td>Coverage termination date</td>
+</tr>
+<tr>
+<td>copay</td>
+<td>DECIMAL(10,2)</td>
+<td>Copay amount</td>
+</tr>
+<tr>
+<td>deductible_annual</td>
+<td>DECIMAL(10,2)</td>
+<td>Annual deductible</td>
+</tr>
+<tr>
+<td>deductible_met</td>
+<td>DECIMAL(10,2)</td>
+<td>Deductible met YTD</td>
+</tr>
+<tr>
+<td>oop_max_annual</td>
+<td>DECIMAL(10,2)</td>
+<td>Out-of-pocket maximum</td>
+</tr>
+<tr>
+<td>oop_met</td>
+<td>DECIMAL(10,2)</td>
+<td>OOP met YTD</td>
+</tr>
+<tr>
+<td>card_front_image</td>
+<td>TEXT</td>
+<td>Insurance card front (base64)</td>
+</tr>
+<tr>
+<td>card_back_image</td>
+<td>TEXT</td>
+<td>Insurance card back (base64)</td>
+</tr>
+<tr>
+<td>is_active</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+</tr>
+
+<p><strong>Indexes:</strong> patient<em>id, payer</em>id, priority</p>
+
+<hr>
+
+<h3>Table 11: eligibility_checks</h3>
+<p><strong>Purpose:</strong> Store insurance eligibility verification history</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>check_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+</tr>
+<tr>
+<td>insurance_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patient_insurance</td>
+</tr>
+<tr>
+<td>check_date</td>
+<td>TIMESTAMP</td>
+<td>NOT NULL</td>
+<td>Verification date/time</td>
+</tr>
+<tr>
+<td>service_date</td>
+<td>DATE</td>
+<td>Date of service being verified</td>
+</tr>
+<tr>
+<td>coverage_status</td>
+<td>VARCHAR(20)</td>
+<td>Active, Inactive, Terminated</td>
+</tr>
+<tr>
+<td>copay</td>
+<td>DECIMAL(10,2)</td>
+<td>Copay amount</td>
+</tr>
+<tr>
+<td>deductible_remaining</td>
+<td>DECIMAL(10,2)</td>
+<td>Deductible remaining</td>
+</tr>
+<tr>
+<td>oop_remaining</td>
+<td>DECIMAL(10,2)</td>
+<td>OOP remaining</td>
+</tr>
+<tr>
+<td>coinsurance_pct</td>
+<td>DECIMAL(5,2)</td>
+<td>Coinsurance %</td>
+</tr>
+<tr>
+<td>requires_authorization</td>
+<td>BOOLEAN</td>
+<td>Prior auth required</td>
+</tr>
+<tr>
+<td>requires_referral</td>
+<td>BOOLEAN</td>
+<td>Referral required</td>
+</tr>
+<tr>
+<td>network_status</td>
+<td>VARCHAR(20)</td>
+<td>In-Network, Out-of-Network</td>
+</tr>
+<tr>
+<td>response_raw</td>
+<td>JSONB</td>
+<td>Full EDI 271 response</td>
+</tr>
+<tr>
+<td>checked_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>User who ran check</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+
+<p><strong>Indexes:</strong> patient<em>id, check</em>date</p>
+
+<hr>
+
+<h3>Table 12: authorizations</h3>
+<p><strong>Purpose:</strong> Track prior authorizations</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>authorization_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+</tr>
+<tr>
+<td>insurance_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patient_insurance</td>
+</tr>
+<tr>
+<td>provider_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → providers</td>
+<td>Requesting provider</td>
+</tr>
+<tr>
+<td>authorization_number</td>
+<td>VARCHAR(50)</td>
+<td>Payer-assigned auth number</td>
+</tr>
+<tr>
+<td>status</td>
+<td>VARCHAR(20)</td>
+<td>NOT NULL</td>
+<td>Submitted, Pending, Approved, Denied, Expired</td>
+</tr>
+<tr>
+<td>request_date</td>
+<td>DATE</td>
+<td>Request submitted date</td>
+</tr>
+<tr>
+<td>approved_date</td>
+<td>DATE</td>
+<td>Approval date</td>
+</tr>
+<tr>
+<td>valid_from</td>
+<td>DATE</td>
+<td>Authorization valid from</td>
+</tr>
+<tr>
+<td>valid_to</td>
+<td>DATE</td>
+<td>Authorization valid to</td>
+</tr>
+<tr>
+<td>diagnosis_codes</td>
+<td>TEXT[]</td>
+<td>Array of ICD-10 codes</td>
+</tr>
+<tr>
+<td>procedure_codes</td>
+<td>TEXT[]</td>
+<td>Array of CPT codes</td>
+</tr>
+<tr>
+<td>units_approved</td>
+<td>INTEGER</td>
+<td>Number of units/visits approved</td>
+</tr>
+<tr>
+<td>units_used</td>
+<td>INTEGER</td>
+<td>DEFAULT 0</td>
+<td>Number of units used</td>
+</tr>
+<tr>
+<td>clinical_notes</td>
+<td>TEXT</td>
+<td>Clinical justification</td>
+</tr>
+<tr>
+<td>denial_reason</td>
+<td>TEXT</td>
+<td>Denial reason if denied</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+</tr>
+
+<p><strong>Indexes:</strong> patient<em>id, authorization</em>number, valid_to</p>
+
+<hr>
+
+<h3>Table 13: appointments</h3>
+<p><strong>Purpose:</strong> Store patient appointments</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>appointment_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+</tr>
+<tr>
+<td>provider_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → providers</td>
+</tr>
+<tr>
+<td>appointment_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Appointment date</td>
+</tr>
+<tr>
+<td>appointment_time</td>
+<td>TIME</td>
+<td>NOT NULL</td>
+<td>Appointment time</td>
+</tr>
+<tr>
+<td>duration_minutes</td>
+<td>INTEGER</td>
+<td>NOT NULL</td>
+<td>Duration (e.g., 30, 60)</td>
+</tr>
+<tr>
+<td>appointment_type</td>
+<td>VARCHAR(50)</td>
+<td>New Patient, Follow-up, Procedure</td>
+</tr>
+<tr>
+<td>reason</td>
+<td>TEXT</td>
+<td>Reason for visit</td>
+</tr>
+<tr>
+<td>location</td>
+<td>VARCHAR(100)</td>
+<td>Clinic/room location</td>
+</tr>
+<tr>
+<td>status</td>
+<td>VARCHAR(20)</td>
+<td>NOT NULL</td>
+<td>Scheduled, Confirmed, Checked In, Completed, Cancelled, No Show</td>
+</tr>
+<tr>
+<td>reminder_sent</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Reminder sent flag</td>
+</tr>
+<tr>
+<td>notes</td>
+<td>TEXT</td>
+<td>Appointment notes</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+</tr>
+
+<p><strong>Indexes:</strong> patient<em>id, provider</em>id, appointment_date, status</p>
+
+<hr>
+
+<h3>Table 14: encounters</h3>
+<p><strong>Purpose:</strong> Store patient visit/encounter records</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>encounter_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+</tr>
+<tr>
+<td>provider_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → providers</td>
+<td>Rendering provider</td>
+</tr>
+<tr>
+<td>appointment_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → appointments</td>
+<td>Linked appointment</td>
+</tr>
+<tr>
+<td>encounter_type</td>
+<td>VARCHAR(50)</td>
+<td>NOT NULL</td>
+<td>Office, Emergency, Inpatient, Outpatient, Telehealth</td>
+</tr>
+<tr>
+<td>encounter_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Date of service</td>
+</tr>
+<tr>
+<td>check_in_time</td>
+<td>TIMESTAMP</td>
+<td>Check-in time</td>
+</tr>
+<tr>
+<td>check_out_time</td>
+<td>TIMESTAMP</td>
+<td>Check-out time</td>
+</tr>
+<tr>
+<td>department</td>
+<td>VARCHAR(50)</td>
+<td>Department</td>
+</tr>
+<tr>
+<td>facility_location</td>
+<td>VARCHAR(100)</td>
+<td>Facility location</td>
+</tr>
+<tr>
+<td>place_of_service</td>
+<td>VARCHAR(2)</td>
+<td>POS code (11=Office, 21=Inpatient, 22=Outpatient, etc.)</td>
+</tr>
+<tr>
+<td>chief_complaint</td>
+<td>TEXT</td>
+<td>Chief complaint</td>
+</tr>
+<tr>
+<td>referring_provider_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → providers</td>
+<td>Referring provider</td>
+</tr>
+<tr>
+<td>status</td>
+<td>VARCHAR(20)</td>
+<td>NOT NULL</td>
+<td>Scheduled, Checked In, In Progress, Completed, Cancelled</td>
+</tr>
+<tr>
+<td>admission_date</td>
+<td>DATE</td>
+<td>Admission date (inpatient)</td>
+</tr>
+<tr>
+<td>discharge_date</td>
+<td>DATE</td>
+<td>Discharge date (inpatient)</td>
+</tr>
+<tr>
+<td>discharge_disposition</td>
+<td>VARCHAR(50)</td>
+<td>Discharge disposition</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+</tr>
+
+<p><strong>Indexes:</strong> patient<em>id, provider</em>id, encounter_date, status</p>
+
+<hr>
+
+<h3>Table 15: encounter_diagnoses</h3>
+<p><strong>Purpose:</strong> Store diagnoses for each encounter</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>diagnosis_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>encounter_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → encounters</td>
+</tr>
+<tr>
+<td>icd10_code</td>
+<td>VARCHAR(10)</td>
+<td>NOT NULL</td>
+<td>ICD-10 diagnosis code</td>
+</tr>
+<tr>
+<td>description</td>
+<td>VARCHAR(255)</td>
+<td>Diagnosis description</td>
+</tr>
+<tr>
+<td>is_principal</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Principal diagnosis flag</td>
+</tr>
+<tr>
+<td>sequence</td>
+<td>INTEGER</td>
+<td>Diagnosis sequence (1, 2, 3...)</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+
+<p><strong>Indexes:</strong> encounter<em>id, icd10</em>code</p>
+
+<hr>
+
+<h3>Table 16: encounter_procedures</h3>
+<p><strong>Purpose:</strong> Store procedures for each encounter</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>procedure_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>encounter_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → encounters</td>
+</tr>
+<tr>
+<td>cpt_code</td>
+<td>VARCHAR(10)</td>
+<td>NOT NULL</td>
+<td>CPT/HCPCS code</td>
+</tr>
+<tr>
+<td>description</td>
+<td>VARCHAR(255)</td>
+<td>Procedure description</td>
+</tr>
+<tr>
+<td>modifier1</td>
+<td>VARCHAR(2)</td>
+<td>Modifier 1</td>
+</tr>
+<tr>
+<td>modifier2</td>
+<td>VARCHAR(2)</td>
+<td>Modifier 2</td>
+</tr>
+<tr>
+<td>modifier3</td>
+<td>VARCHAR(2)</td>
+<td>Modifier 3</td>
+</tr>
+<tr>
+<td>modifier4</td>
+<td>VARCHAR(2)</td>
+<td>Modifier 4</td>
+</tr>
+<tr>
+<td>units</td>
+<td>INTEGER</td>
+<td>DEFAULT 1</td>
+<td>Number of units</td>
+</tr>
+<tr>
+<td>diagnosis_pointers</td>
+<td>TEXT[]</td>
+<td>Array of linked diagnosis sequence numbers</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+
+<p><strong>Indexes:</strong> encounter<em>id, cpt</em>code</p>
+
+<hr>
+
+<h3>Table 17: charges</h3>
+<p><strong>Purpose:</strong> Store all billable charges</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>charge_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>encounter_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → encounters</td>
+</tr>
+<tr>
+<td>patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+</tr>
+<tr>
+<td>provider_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → providers</td>
+</tr>
+<tr>
+<td>service_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Date of service</td>
+</tr>
+<tr>
+<td>cdm_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → chargemaster</td>
+<td>CDM reference</td>
+</tr>
+<tr>
+<td>cpt_code</td>
+<td>VARCHAR(10)</td>
+<td>NOT NULL</td>
+<td>CPT/HCPCS code</td>
+</tr>
+<tr>
+<td>description</td>
+<td>VARCHAR(255)</td>
+<td>Charge description</td>
+</tr>
+<tr>
+<td>modifier1</td>
+<td>VARCHAR(2)</td>
+</tr>
+<tr>
+<td>modifier2</td>
+<td>VARCHAR(2)</td>
+</tr>
+<tr>
+<td>modifier3</td>
+<td>VARCHAR(2)</td>
+</tr>
+<tr>
+<td>modifier4</td>
+<td>VARCHAR(2)</td>
+</tr>
+<tr>
+<td>units</td>
+<td>INTEGER</td>
+<td>DEFAULT 1</td>
+<td>Quantity</td>
+</tr>
+<tr>
+<td>charge_amount</td>
+<td>DECIMAL(10,2)</td>
+<td>NOT NULL</td>
+<td>Standard charge</td>
+</tr>
+<tr>
+<td>revenue_code</td>
+<td>VARCHAR(4)</td>
+<td>Revenue code (UB-04)</td>
+</tr>
+<tr>
+<td>department</td>
+<td>VARCHAR(50)</td>
+<td>Department</td>
+</tr>
+<tr>
+<td>status</td>
+<td>VARCHAR(20)</td>
+<td>NOT NULL</td>
+<td>Pending, Hold, Released, Billed</td>
+</tr>
+<tr>
+<td>hold_reason</td>
+<td>TEXT</td>
+<td>Reason for hold</td>
+</tr>
+<tr>
+<td>entered_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>User who entered charge</td>
+</tr>
+<tr>
+<td>entered_date</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Charge entry date</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+
+<p><strong>Indexes:</strong> encounter<em>id, patient</em>id, service_date, status</p>
+
+<hr>
+
+<h3>Table 18: claims</h3>
+<p><strong>Purpose:</strong> Store insurance claims</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>claim_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>encounter_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → encounters</td>
+</tr>
+<tr>
+<td>patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+</tr>
+<tr>
+<td>insurance_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patient_insurance</td>
+</tr>
+<tr>
+<td>payer_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → payers</td>
+</tr>
+<tr>
+<td>provider_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → providers</td>
+<td>Rendering provider</td>
+</tr>
+<tr>
+<td>claim_number</td>
+<td>VARCHAR(50)</td>
+<td>UNIQUE</td>
+<td>Internal claim number</td>
+</tr>
+<tr>
+<td>claim_type</td>
+<td>VARCHAR(10)</td>
+<td>NOT NULL</td>
+<td>CMS-1500, UB-04</td>
+</tr>
+<tr>
+<td>claim_frequency</td>
+<td>VARCHAR(1)</td>
+<td>DEFAULT '1'</td>
+<td>1=Original, 7=Corrected, 8=Void</td>
+</tr>
+<tr>
+<td>original_claim_number</td>
+<td>VARCHAR(50)</td>
+<td>Original claim # (for corrected claims)</td>
+</tr>
+<tr>
+<td>billing_provider_npi</td>
+<td>VARCHAR(10)</td>
+<td>NOT NULL</td>
+<td>Billing provider NPI</td>
+</tr>
+<tr>
+<td>rendering_provider_npi</td>
+<td>VARCHAR(10)</td>
+<td>NOT NULL</td>
+<td>Rendering provider NPI</td>
+</tr>
+<tr>
+<td>referring_provider_npi</td>
+<td>VARCHAR(10)</td>
+<td>Referring provider NPI</td>
+</tr>
+<tr>
+<td>service_date_from</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Service date from</td>
+</tr>
+<tr>
+<td>service_date_to</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Service date to</td>
+</tr>
+<tr>
+<td>total_charge_amount</td>
+<td>DECIMAL(10,2)</td>
+<td>NOT NULL</td>
+<td>Total billed amount</td>
+</tr>
+<tr>
+<td>authorization_number</td>
+<td>VARCHAR(50)</td>
+<td>Prior auth number</td>
+</tr>
+<tr>
+<td>status</td>
+<td>VARCHAR(20)</td>
+<td>NOT NULL</td>
+<td>Draft, Scrubbing, Ready, Submitted, Accepted, Pending, Paid, Denied, Rejected</td>
+</tr>
+<tr>
+<td>is_clean_claim</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Passed scrubbing</td>
+</tr>
+<tr>
+<td>submission_date</td>
+<td>DATE</td>
+<td>Date submitted</td>
+</tr>
+<tr>
+<td>submission_method</td>
+<td>VARCHAR(20)</td>
+<td>Electronic, Paper</td>
+</tr>
+<tr>
+<td>clearinghouse_id</td>
+<td>VARCHAR(50)</td>
+<td>Clearinghouse tracking ID</td>
+</tr>
+<tr>
+<td>payer_claim_number</td>
+<td>VARCHAR(50)</td>
+<td>Payer-assigned claim number (ICN)</td>
+</tr>
+<tr>
+<td>timely_filing_deadline</td>
+<td>DATE</td>
+<td>Timely filing deadline</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+</tr>
+
+<p><strong>Indexes:</strong> claim<em>number, patient</em>id, payer<em>id, status, submission</em>date</p>
+
+<hr>
+
+<h3>Table 19: claim_lines</h3>
+<p><strong>Purpose:</strong> Store individual line items on claims</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>line_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>claim_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → claims</td>
+</tr>
+<tr>
+<td>charge_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → charges</td>
+</tr>
+<tr>
+<td>line_number</td>
+<td>INTEGER</td>
+<td>NOT NULL</td>
+<td>Line number (1, 2, 3...)</td>
+</tr>
+<tr>
+<td>service_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Date of service</td>
+</tr>
+<tr>
+<td>place_of_service</td>
+<td>VARCHAR(2)</td>
+<td>POS code</td>
+</tr>
+<tr>
+<td>cpt_code</td>
+<td>VARCHAR(10)</td>
+<td>NOT NULL</td>
+<td>CPT/HCPCS code</td>
+</tr>
+<tr>
+<td>modifier1</td>
+<td>VARCHAR(2)</td>
+</tr>
+<tr>
+<td>modifier2</td>
+<td>VARCHAR(2)</td>
+</tr>
+<tr>
+<td>modifier3</td>
+<td>VARCHAR(2)</td>
+</tr>
+<tr>
+<td>modifier4</td>
+<td>VARCHAR(2)</td>
+</tr>
+<tr>
+<td>diagnosis_pointers</td>
+<td>TEXT[]</td>
+<td>Linked diagnosis codes</td>
+</tr>
+<tr>
+<td>units</td>
+<td>INTEGER</td>
+<td>DEFAULT 1</td>
+<td>Units</td>
+</tr>
+<tr>
+<td>charge_amount</td>
+<td>DECIMAL(10,2)</td>
+<td>NOT NULL</td>
+<td>Billed amount</td>
+</tr>
+<tr>
+<td>revenue_code</td>
+<td>VARCHAR(4)</td>
+<td>Revenue code (UB-04)</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+
+<p><strong>Indexes:</strong> claim<em>id, charge</em>id</p>
+
+<hr>
+
+<h3>Table 20: claim_scrubbing_errors</h3>
+<p><strong>Purpose:</strong> Store claim scrubbing validation errors</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>error_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>claim_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → claims</td>
+</tr>
+<tr>
+<td>error_level</td>
+<td>VARCHAR(10)</td>
+<td>NOT NULL</td>
+<td>Fatal, Warning, Info</td>
+</tr>
+<tr>
+<td>error_code</td>
+<td>VARCHAR(20)</td>
+<td>Error code</td>
+</tr>
+<tr>
+<td>error_message</td>
+<td>TEXT</td>
+<td>NOT NULL</td>
+<td>Error description</td>
+</tr>
+<tr>
+<td>field_name</td>
+<td>VARCHAR(50)</td>
+<td>Field with error</td>
+</tr>
+<tr>
+<td>resolved</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Error resolved flag</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+
+<p><strong>Indexes:</strong> claim<em>id, error</em>level, resolved</p>
+
+<hr>
+
+<h3>Table 21: payments</h3>
+<p><strong>Purpose:</strong> Store all payments (insurance and patient)</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>payment_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>claim_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → claims</td>
+<td>Claim paid</td>
+</tr>
+<tr>
+<td>patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+</tr>
+<tr>
+<td>payer_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → payers</td>
+<td>Payer (NULL if patient payment)</td>
+</tr>
+<tr>
+<td>payment_type</td>
+<td>VARCHAR(20)</td>
+<td>NOT NULL</td>
+<td>Insurance, Patient</td>
+</tr>
+<tr>
+<td>payment_method</td>
+<td>VARCHAR(20)</td>
+<td>EFT, Check, Credit Card, Cash, ACH</td>
+</tr>
+<tr>
+<td>payment_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Payment date</td>
+</tr>
+<tr>
+<td>check_number</td>
+<td>VARCHAR(50)</td>
+<td>Check/EFT number</td>
+</tr>
+<tr>
+<td>payment_amount</td>
+<td>DECIMAL(10,2)</td>
+<td>NOT NULL</td>
+<td>Total payment amount</td>
+</tr>
+<tr>
+<td>era_file_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → era_files</td>
+<td>ERA file reference</td>
+</tr>
+<tr>
+<td>posted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>User who posted payment</td>
+</tr>
+<tr>
+<td>posted_date</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Payment posting date</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+
+<p><strong>Indexes:</strong> claim<em>id, patient</em>id, payer<em>id, payment</em>date</p>
+
+<hr>
+
+<h3>Table 22: payment_line_items</h3>
+<p><strong>Purpose:</strong> Store line-level payment details</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>line_item_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>payment_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → payments</td>
+</tr>
+<tr>
+<td>claim_line_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → claim_lines</td>
+</tr>
+<tr>
+<td>billed_amount</td>
+<td>DECIMAL(10,2)</td>
+<td>NOT NULL</td>
+<td>Amount billed</td>
+</tr>
+<tr>
+<td>allowed_amount</td>
+<td>DECIMAL(10,2)</td>
+<td>NOT NULL</td>
+<td>Allowed amount</td>
+</tr>
+<tr>
+<td>paid_amount</td>
+<td>DECIMAL(10,2)</td>
+<td>NOT NULL</td>
+<td>Amount paid</td>
+</tr>
+<tr>
+<td>deductible</td>
+<td>DECIMAL(10,2)</td>
+<td>DEFAULT 0</td>
+<td>Deductible applied</td>
+</tr>
+<tr>
+<td>copay</td>
+<td>DECIMAL(10,2)</td>
+<td>DEFAULT 0</td>
+<td>Copay applied</td>
+</tr>
+<tr>
+<td>coinsurance</td>
+<td>DECIMAL(10,2)</td>
+<td>DEFAULT 0</td>
+<td>Coinsurance applied</td>
+</tr>
+<tr>
+<td>contractual_adjustment</td>
+<td>DECIMAL(10,2)</td>
+<td>DEFAULT 0</td>
+<td>Contractual write-off</td>
+</tr>
+<tr>
+<td>adjustment_code</td>
+<td>VARCHAR(10)</td>
+<td>CARC code</td>
+</tr>
+<tr>
+<td>adjustment_reason</td>
+<td>TEXT</td>
+<td>Adjustment reason</td>
+</tr>
+<tr>
+<td>remark_code</td>
+<td>VARCHAR(10)</td>
+<td>RARC code</td>
+</tr>
+<tr>
+<td>patient_responsibility</td>
+<td>DECIMAL(10,2)</td>
+<td>DEFAULT 0</td>
+<td>Patient balance</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+
+<p><strong>Indexes:</strong> payment<em>id, claim</em>line_id</p>
+
+<hr>
+
+<h3>Table 23: era_files</h3>
+<p><strong>Purpose:</strong> Store ERA (EDI 835) files</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>era_file_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>payer_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → payers</td>
+</tr>
+<tr>
+<td>file_name</td>
+<td>VARCHAR(255)</td>
+<td>ERA file name</td>
+</tr>
+<tr>
+<td>file_content</td>
+<td>TEXT</td>
+<td>Raw EDI 835 content</td>
+</tr>
+<tr>
+<td>check_number</td>
+<td>VARCHAR(50)</td>
+<td>Check/EFT number</td>
+</tr>
+<tr>
+<td>check_date</td>
+<td>DATE</td>
+<td>Check date</td>
+</tr>
+<tr>
+<td>total_amount</td>
+<td>DECIMAL(10,2)</td>
+<td>Total payment amount</td>
+</tr>
+<tr>
+<td>claim_count</td>
+<td>INTEGER</td>
+<td>Number of claims in ERA</td>
+</tr>
+<tr>
+<td>auto_posted_count</td>
+<td>INTEGER</td>
+<td>DEFAULT 0</td>
+<td>Claims auto-posted</td>
+</tr>
+<tr>
+<td>manual_posted_count</td>
+<td>INTEGER</td>
+<td>DEFAULT 0</td>
+<td>Claims manually posted</td>
+</tr>
+<tr>
+<td>status</td>
+<td>VARCHAR(20)</td>
+<td>NOT NULL</td>
+<td>Received, Processing, Completed</td>
+</tr>
+<tr>
+<td>imported_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+</tr>
+<tr>
+<td>imported_date</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+
+<p><strong>Indexes:</strong> payer<em>id, check</em>number, check_date</p>
+
+<hr>
+
+<h3>Table 24: denials</h3>
+<p><strong>Purpose:</strong> Track denied claims</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>denial_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>claim_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → claims</td>
+</tr>
+<tr>
+<td>denial_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Denial date</td>
+</tr>
+<tr>
+<td>denial_code</td>
+<td>VARCHAR(10)</td>
+<td>CARC code</td>
+</tr>
+<tr>
+<td>denial_reason</td>
+<td>TEXT</td>
+<td>NOT NULL</td>
+<td>Denial reason</td>
+</tr>
+<tr>
+<td>denial_category</td>
+<td>VARCHAR(50)</td>
+<td>Clinical, Technical, Authorization, Eligibility, Timely Filing</td>
+</tr>
+<tr>
+<td>denial_amount</td>
+<td>DECIMAL(10,2)</td>
+<td>NOT NULL</td>
+<td>Denied amount</td>
+</tr>
+<tr>
+<td>is_appealable</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+<td>Can be appealed</td>
+</tr>
+<tr>
+<td>appeal_deadline</td>
+<td>DATE</td>
+<td>Appeal deadline</td>
+</tr>
+<tr>
+<td>status</td>
+<td>VARCHAR(20)</td>
+<td>NOT NULL</td>
+<td>New, Under Review, Appealed, Overturned, Upheld</td>
+</tr>
+<tr>
+<td>assigned_to</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>User assigned to work denial</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+</tr>
+
+<p><strong>Indexes:</strong> claim<em>id, denial</em>date, status, appeal_deadline</p>
+
+<hr>
+
+<h3>Table 25: appeals</h3>
+<p><strong>Purpose:</strong> Track claim appeals</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>appeal_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>denial_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → denials</td>
+</tr>
+<tr>
+<td>claim_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → claims</td>
+</tr>
+<tr>
+<td>appeal_level</td>
+<td>INTEGER</td>
+<td>NOT NULL</td>
+<td>1, 2, 3</td>
+</tr>
+<tr>
+<td>appeal_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Appeal submission date</td>
+</tr>
+<tr>
+<td>appeal_method</td>
+<td>VARCHAR(20)</td>
+<td>Fax, Mail, Portal</td>
+</tr>
+<tr>
+<td>appeal_letter</td>
+<td>TEXT</td>
+<td>Appeal letter content</td>
+</tr>
+<tr>
+<td>supporting_documents</td>
+<td>TEXT[]</td>
+<td>Array of document URLs</td>
+</tr>
+<tr>
+<td>status</td>
+<td>VARCHAR(20)</td>
+<td>NOT NULL</td>
+<td>Submitted, Under Review, Approved, Denied, Partially Approved</td>
+</tr>
+<tr>
+<td>outcome_date</td>
+<td>DATE</td>
+<td>Outcome date</td>
+</tr>
+<tr>
+<td>additional_payment</td>
+<td>DECIMAL(10,2)</td>
+<td>DEFAULT 0</td>
+<td>Additional payment received</td>
+</tr>
+<tr>
+<td>outcome_notes</td>
+<td>TEXT</td>
+<td>Outcome notes</td>
+</tr>
+<tr>
+<td>submitted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+</tr>
+
+<p><strong>Indexes:</strong> denial<em>id, claim</em>id, appeal_date, status</p>
+
+<hr>
+
+<h3>Table 26: patient_statements</h3>
+<p><strong>Purpose:</strong> Track patient billing statements</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>statement_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+</tr>
+<tr>
+<td>statement_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Statement date</td>
+</tr>
+<tr>
+<td>statement_number</td>
+<td>VARCHAR(50)</td>
+<td>UNIQUE</td>
+<td>Statement number</td>
+</tr>
+<tr>
+<td>previous_balance</td>
+<td>DECIMAL(10,2)</td>
+<td>DEFAULT 0</td>
+<td>Previous balance</td>
+</tr>
+<tr>
+<td>new_charges</td>
+<td>DECIMAL(10,2)</td>
+<td>DEFAULT 0</td>
+<td>New charges</td>
+</tr>
+<tr>
+<td>payments_received</td>
+<td>DECIMAL(10,2)</td>
+<td>DEFAULT 0</td>
+<td>Payments received</td>
+</tr>
+<tr>
+<td>adjustments</td>
+<td>DECIMAL(10,2)</td>
+<td>DEFAULT 0</td>
+<td>Adjustments</td>
+</tr>
+<tr>
+<td>current_balance</td>
+<td>DECIMAL(10,2)</td>
+<td>NOT NULL</td>
+<td>Current balance due</td>
+</tr>
+<tr>
+<td>due_date</td>
+<td>DATE</td>
+<td>Payment due date</td>
+</tr>
+<tr>
+<td>delivery_method</td>
+<td>VARCHAR(20)</td>
+<td>Mail, Email, Portal</td>
+</tr>
+<tr>
+<td>sent_date</td>
+<td>DATE</td>
+<td>Date sent</td>
+</tr>
+<tr>
+<td>pdf_url</td>
+<td>TEXT</td>
+<td>Statement PDF URL</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+
+<p><strong>Indexes:</strong> patient<em>id, statement</em>date</p>
+
+<hr>
+
+<h3>Table 27: patient_payments</h3>
+<p><strong>Purpose:</strong> Track patient payments</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>patient_payment_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+</tr>
+<tr>
+<td>payment_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Payment date</td>
+</tr>
+<tr>
+<td>payment_amount</td>
+<td>DECIMAL(10,2)</td>
+<td>NOT NULL</td>
+<td>Payment amount</td>
+</tr>
+<tr>
+<td>payment_method</td>
+<td>VARCHAR(20)</td>
+<td>NOT NULL</td>
+<td>Credit Card, Debit Card, ACH, Check, Cash</td>
+</tr>
+<tr>
+<td>transaction_id</td>
+<td>VARCHAR(100)</td>
+<td>Payment processor transaction ID</td>
+</tr>
+<tr>
+<td>check_number</td>
+<td>VARCHAR(50)</td>
+<td>Check number</td>
+</tr>
+<tr>
+<td>payment_plan_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → payment_plans</td>
+<td>If part of payment plan</td>
+</tr>
+<tr>
+<td>notes</td>
+<td>TEXT</td>
+<td>Payment notes</td>
+</tr>
+<tr>
+<td>received_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+
+<p><strong>Indexes:</strong> patient<em>id, payment</em>date</p>
+
+<hr>
+
+<h3>Table 28: payment_plans</h3>
+<p><strong>Purpose:</strong> Track patient payment plans</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>plan_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+</tr>
+<tr>
+<td>total_amount</td>
+<td>DECIMAL(10,2)</td>
+<td>NOT NULL</td>
+<td>Total amount owed</td>
+</tr>
+<tr>
+<td>monthly_payment</td>
+<td>DECIMAL(10,2)</td>
+<td>NOT NULL</td>
+<td>Monthly payment amount</td>
+</tr>
+<tr>
+<td>start_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Plan start date</td>
+</tr>
+<tr>
+<td>end_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Plan end date</td>
+</tr>
+<tr>
+<td>interest_rate</td>
+<td>DECIMAL(5,2)</td>
+<td>DEFAULT 0</td>
+<td>Interest rate %</td>
+</tr>
+<tr>
+<td>status</td>
+<td>VARCHAR(20)</td>
+<td>NOT NULL</td>
+<td>Active, Completed, Defaulted, Cancelled</td>
+</tr>
+<tr>
+<td>auto_pay_enabled</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Auto-pay enabled</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+</tr>
+
+<p><strong>Indexes:</strong> patient_id, status</p>
+
+<hr>
+
+<h3>Table 29: collections</h3>
+<p><strong>Purpose:</strong> Track accounts in collections</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>collection_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+</tr>
+<tr>
+<td>original_balance</td>
+<td>DECIMAL(10,2)</td>
+<td>NOT NULL</td>
+<td>Original balance</td>
+</tr>
+<tr>
+<td>current_balance</td>
+<td>DECIMAL(10,2)</td>
+<td>NOT NULL</td>
+<td>Current balance</td>
+</tr>
+<tr>
+<td>collection_status</td>
+<td>VARCHAR(20)</td>
+<td>NOT NULL</td>
+<td>Internal, External, Bad Debt</td>
+</tr>
+<tr>
+<td>sent_to_collections_date</td>
+<td>DATE</td>
+<td>Date sent to external collections</td>
+</tr>
+<tr>
+<td>collection_agency</td>
+<td>VARCHAR(100)</td>
+<td>Collection agency name</td>
+</tr>
+<tr>
+<td>agency_fee_pct</td>
+<td>DECIMAL(5,2)</td>
+<td>Agency commission %</td>
+</tr>
+<tr>
+<td>notes</td>
+<td>TEXT</td>
+<td>Collection notes</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+</tr>
+
+<p><strong>Indexes:</strong> patient<em>id, collection</em>status</p>
+
+<hr>
+
+<h3>Table 30: refunds</h3>
+<p><strong>Purpose:</strong> Track refunds issued</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>refund_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+</tr>
+<tr>
+<td>payer_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → payers</td>
+<td>If refund to payer</td>
+</tr>
+<tr>
+<td>refund_amount</td>
+<td>DECIMAL(10,2)</td>
+<td>NOT NULL</td>
+<td>Refund amount</td>
+</tr>
+<tr>
+<td>refund_reason</td>
+<td>TEXT</td>
+<td>NOT NULL</td>
+<td>Reason for refund</td>
+</tr>
+<tr>
+<td>refund_method</td>
+<td>VARCHAR(20)</td>
+<td>Check, ACH, Credit Card Reversal</td>
+</tr>
+<tr>
+<td>check_number</td>
+<td>VARCHAR(50)</td>
+<td>Check number</td>
+</tr>
+<tr>
+<td>refund_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Refund date</td>
+</tr>
+<tr>
+<td>original_payment_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → payments</td>
+<td>Original payment</td>
+</tr>
+<tr>
+<td>issued_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+
+<p><strong>Indexes:</strong> patient<em>id, payer</em>id, refund_date</p>
+
+<hr>
+
+<h3>Table 31: audit_logs</h3>
+<p><strong>Purpose:</strong> Comprehensive audit trail (HIPAA compliance)</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>log_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>user_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>User who performed action</td>
+</tr>
+<tr>
+<td>action_type</td>
+<td>VARCHAR(50)</td>
+<td>NOT NULL</td>
+<td>Login, Logout, Create, Read, Update, Delete</td>
+</tr>
+<tr>
+<td>table_name</td>
+<td>VARCHAR(50)</td>
+<td>Table affected</td>
+</tr>
+<tr>
+<td>record_id</td>
+<td>UUID</td>
+<td>Record ID affected</td>
+</tr>
+<tr>
+<td>patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+<td>Patient record accessed (if applicable)</td>
+</tr>
+<tr>
+<td>before_value</td>
+<td>JSONB</td>
+<td>Data before change</td>
+</tr>
+<tr>
+<td>after_value</td>
+<td>JSONB</td>
+<td>Data after change</td>
+</tr>
+<tr>
+<td>ip_address</td>
+<td>VARCHAR(50)</td>
+<td>User IP address</td>
+</tr>
+<tr>
+<td>timestamp</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Action timestamp</td>
+</tr>
+
+<p><strong>Indexes:</strong> user<em>id, patient</em>id, action_type, timestamp  </p>
+<p><strong>Retention:</strong> 7 years minimum</p>
+
+<hr>
+
+<h3>Table 32: reports</h3>
+<p><strong>Purpose:</strong> Store saved reports and schedules</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>report_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>report_name</td>
+<td>VARCHAR(100)</td>
+<td>NOT NULL</td>
+<td>Report name</td>
+</tr>
+<tr>
+<td>report_type</td>
+<td>VARCHAR(50)</td>
+<td>NOT NULL</td>
+<td>Standard, Custom</td>
+</tr>
+<tr>
+<td>report_category</td>
+<td>VARCHAR(50)</td>
+<td>Financial, Operational, Compliance</td>
+</tr>
+<tr>
+<td>parameters</td>
+<td>JSONB</td>
+<td>Report parameters</td>
+</tr>
+<tr>
+<td>schedule</td>
+<td>VARCHAR(50)</td>
+<td>Daily, Weekly, Monthly, None</td>
+</tr>
+<tr>
+<td>recipients</td>
+<td>TEXT[]</td>
+<td>Email recipients</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+</tr>
+
+<hr>
+
+<h3>Table 33: code_sets</h3>
+<p><strong>Purpose:</strong> Store medical code sets (ICD-10, CPT, HCPCS)</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>code_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>code_type</td>
+<td>VARCHAR(10)</td>
+<td>NOT NULL</td>
+<td>ICD10, CPT, HCPCS, DRG, MODIFIER</td>
+</tr>
+<tr>
+<td>code</td>
+<td>VARCHAR(10)</td>
+<td>NOT NULL</td>
+<td>Code value</td>
+</tr>
+<tr>
+<td>description</td>
+<td>TEXT</td>
+<td>NOT NULL</td>
+<td>Code description</td>
+</tr>
+<tr>
+<td>effective_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Effective date</td>
+</tr>
+<tr>
+<td>termination_date</td>
+<td>DATE</td>
+<td>Termination date</td>
+</tr>
+<tr>
+<td>is_active</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+</tr>
+
+<p><strong>Indexes:</strong> code<em>type, code, effective</em>date  </p>
+<p><strong>Update Frequency:</strong> Annual (ICD-10, CPT updates every January 1)</p>
+
+<hr>
+
+<h3>Table 34: ncci_edits</h3>
+<p><strong>Purpose:</strong> Store NCCI (National Correct Coding Initiative) edits</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>edit_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>column1_code</td>
+<td>VARCHAR(10)</td>
+<td>NOT NULL</td>
+<td>Column 1 CPT code</td>
+</tr>
+<tr>
+<td>column2_code</td>
+<td>VARCHAR(10)</td>
+<td>NOT NULL</td>
+<td>Column 2 CPT code</td>
+</tr>
+<tr>
+<td>modifier_indicator</td>
+<td>VARCHAR(1)</td>
+<td>0=Not allowed, 1=Allowed with modifier</td>
+</tr>
+<tr>
+<td>effective_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>deletion_date</td>
+<td>DATE</td>
+</tr>
+
+<p><strong>Indexes:</strong> column1<em>code, column2</em>code  </p>
+<p><strong>Update Frequency:</strong> Quarterly from CMS</p>
+
+<hr>
+
+<h3>Table 35: lcd_ncd_rules</h3>
+<p><strong>Purpose:</strong> Store LCD/NCD (Local/National Coverage Determination) rules</p>
+
+<tr>
+<td>Column</td>
+<td>Type</td>
+<td>Constraints</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>rule_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+</tr>
+<tr>
+<td>rule_type</td>
+<td>VARCHAR(10)</td>
+<td>NOT NULL</td>
+<td>LCD, NCD</td>
+</tr>
+<tr>
+<td>cpt_code</td>
+<td>VARCHAR(10)</td>
+<td>NOT NULL</td>
+<td>CPT code</td>
+</tr>
+<tr>
+<td>covered_icd10_codes</td>
+<td>TEXT[]</td>
+<td>Array of covered ICD-10 codes</td>
+</tr>
+<tr>
+<td>mac_region</td>
+<td>VARCHAR(10)</td>
+<td>MAC region (for LCD)</td>
+</tr>
+<tr>
+<td>effective_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+</tr>
+<tr>
+<td>termination_date</td>
+<td>DATE</td>
+</tr>
+
+<p><strong>Indexes:</strong> cpt<em>code, rule</em>type</p>
+
+<hr>
+
+<h2>3. Database Relationships</h2>
+
+<h3>Key Relationships:</h3>
+<li><strong>patients</strong> → <strong>patient_insurance</strong> (1:Many) - One patient, multiple insurances</li>
+<li><strong>patients</strong> → <strong>encounters</strong> (1:Many) - One patient, many visits</li>
+<li><strong>encounters</strong> → <strong>charges</strong> (1:Many) - One encounter, many charges</li>
+<li><strong>encounters</strong> → <strong>claims</strong> (1:1 or 1:Many) - One encounter can generate multiple claims (primary, secondary)</li>
+<li><strong>claims</strong> → <strong>claim_lines</strong> (1:Many) - One claim, multiple line items</li>
+<li><strong>claims</strong> → <strong>payments</strong> (1:Many) - One claim can have multiple payments</li>
+<li><strong>claims</strong> → <strong>denials</strong> (1:1) - One claim, one denial record</li>
+<li><strong>denials</strong> → <strong>appeals</strong> (1:Many) - One denial, multiple appeal levels</li>
+<li><strong>providers</strong> → <strong>provider_credentials</strong> (1:Many) - One provider, credentialed with many payers</li>
+<li><strong>payers</strong> → <strong>payer_contracts</strong> (1:Many) - One payer, multiple contracts</li>
+<li><strong>payer<em>contracts</strong> → <strong>payer</em>contract_rates</strong> (1:Many) - One contract, many CPT rates</li>
+
+<hr>
+
+<h2>4. Indexes & Performance</h2>
+
+<h3>Critical Indexes:</h3>
+<li>All foreign keys</li>
+<li>Date fields used in queries (service<em>date, payment</em>date, etc.)</li>
+<li>Status fields (claim.status, encounter.status)</li>
+<li>Search fields (patient.last_name, patient.mrn)</li>
+
+<h3>Partitioning Strategy:</h3>
+<li><strong>claims</strong> table: Partition by submission_date (monthly partitions)</li>
+<li><strong>payments</strong> table: Partition by payment_date (monthly partitions)</li>
+<li><strong>audit_logs</strong> table: Partition by timestamp (monthly partitions)</li>
+
+<hr>
+
+<h2>5. Data Retention Policy</h2>
+
+<tr>
+<td>Table</td>
+<td>Retention Period</td>
+</tr>
+<tr>
+<td>audit_logs</td>
+<td>7 years (HIPAA)</td>
+</tr>
+<tr>
+<td>patients</td>
+<td>Indefinite</td>
+</tr>
+<tr>
+<td>encounters</td>
+<td>Indefinite</td>
+</tr>
+<tr>
+<td>claims</td>
+<td>10 years</td>
+</tr>
+<tr>
+<td>payments</td>
+<td>10 years</td>
+</tr>
+<tr>
+<td>denials</td>
+<td>10 years</td>
+</tr>
+<tr>
+<td>appeals</td>
+<td>10 years</td>
+</tr>
+<tr>
+<td>reports</td>
+<td>3 years</td>
+</tr>
+
+<hr>
+
+<h2>6. Security & Encryption</h2>
+
+<h3>Encrypted Fields:</h3>
+<li>patients.ssn_encrypted</li>
+<li>providers.ssn_encrypted</li>
+<li>Any PHI (Protected Health Information)</li>
+
+<h3>Encryption Method:</h3>
+<li>AES-256 encryption at rest</li>
+<li>TLS 1.2+ for data in transit</li>
+<li>Application-level encryption for SSN fields</li>
+
+<hr>
+
+<h2>7. Backup Strategy</h2>
+
+<li><strong>Full Backup:</strong> Daily at 2 AM</li>
+<li><strong>Incremental Backup:</strong> Every 4 hours</li>
+<li><strong>Transaction Log Backup:</strong> Every 15 minutes</li>
+<li><strong>Backup Retention:</strong> 30 days</li>
+<li><strong>Disaster Recovery:</strong> Geo-redundant backups in separate region</li>
+
+<hr>
+
+<p><strong>Next Step:</strong> Create API Integration Requirements Document</p>
+
+</body>
+</html>

@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare RCM Application - MVP Guide (Part 3: Workflow & Tech Stack)</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Healthcare RCM Application - MVP Guide (Part 3: Workflow & Tech Stack)</h1>
+
+<p><strong>Version:</strong> 1.0  </p>
+<p><strong>For:</strong> Development Team & Technical Lead</p>
+
+<hr>
+
+<h2>4. MVP Workflow - Complete Step-by-Step Flow</h2>
+
+<h3>Real-Time Example: Patient "Sarah Johnson" Visit</h3>
+
+<p>Let me explain the complete workflow using a real example:</p>
+
+<hr>
+
+<h4>**Step 1: Patient Registration** 📝</h4>
+
+<p><strong>Scenario:</strong> Sarah Johnson calls to book her first appointment.</p>
+
+<p><strong>What Happens:</strong></p>
+<li>Front desk staff opens the application</li>
+<li>Clicks "New Patient"</li>
+<li>Enters Sarah's information:</li>
+<li>Name: Sarah Johnson</li>
+<li>DOB: March 15, 1985 (41 years old)</li>
+<li>Phone: (555) 123-4567</li>
+<li>Email: sarah.j@email.com</li>
+<li>Address: 123 Main St, Austin, TX 78701</li>
+<li>Insurance: Blue Cross Blue Shield</li>
+<li>Policy Number: ABC123456789</li>
+<li>Group Number: GRP5000</li>
+
+<li>System generates Patient ID: PAT-2026-5678</li>
+<li>Patient record saved ✅</li>
+
+<p><strong>Time Taken:</strong> 2-3 minutes</p>
+
+<hr>
+
+<h4>**Step 2: Insurance Verification** 🔍</h4>
+
+<p><strong>What Happens:</strong></p>
+<li>Staff clicks "Verify Insurance" button</li>
+<li>System sends request to <strong>Waystar API</strong>:</li>
+<p>   <code></code>`</p>
+<p>   Patient: Sarah Johnson</p>
+<p>   DOB: 03/15/1985</p>
+<p>   Insurance: Blue Cross Blue Shield</p>
+<p>   Policy: ABC123456789</p>
+<p>   Service Date: May 20, 2026</p>
+<p>   <code></code>`</p>
+
+<li>Waystar sends EDI 270 to Blue Cross</li>
+<li>Blue Cross responds with EDI 271 in 10 seconds</li>
+<li>System displays results:</li>
+<p>   <code></code>`</p>
+<p>   ✅ Coverage Status: ACTIVE</p>
+<p>   ✅ Copay: $25.00</p>
+<p>   ✅ Deductible: $1,500 annual</p>
+<li>Met: $800</li>
+<li>Remaining: $700</li>
+<p>   ✅ Out-of-Pocket Max: $5,000</p>
+<li>Met: $1,200</li>
+<li>Remaining: $3,800</li>
+<p>   ✅ Network Status: IN-NETWORK</p>
+<p>   ⚠️  Prior Auth: NOT REQUIRED for office visit</p>
+<p>   <code></code>`</p>
+
+<li>Staff notes: "Collect $25 copay at check-in"</li>
+
+<p><strong>Time Taken:</strong> 30 seconds</p>
+
+<hr>
+
+<h4>**Step 3: Appointment Scheduling** 📅</h4>
+
+<p><strong>What Happens:</strong></p>
+<li>Staff opens calendar</li>
+<li>Selects date: May 20, 2026, 10:00 AM</li>
+<li>Selects provider: Dr. Smith</li>
+<li>Selects appointment type: "New Patient Office Visit"</li>
+<li>Adds note: "Patient has cough and fever"</li>
+<li>System creates appointment ✅</li>
+<li>System sends SMS reminder via <strong>Twilio API</strong> (optional):</li>
+<p>   <code></code>`</p>
+<p>   "Hi Sarah, your appointment with Dr. Smith is on </p>
+<p>   May 20 at 10:00 AM. Please bring your insurance card. </p>
+<p>   Reply CONFIRM to confirm."</p>
+<p>   <code></code>`</p>
+
+<p><strong>Time Taken:</strong> 1 minute</p>
+
+<hr>
+
+<h4>**Step 4: Patient Check-In (Day of Visit)** ✅</h4>
+
+<p><strong>What Happens:</strong></p>
+<li>Sarah arrives at 9:50 AM</li>
+<li>Front desk checks her in</li>
+<li>Collects $25 copay (credit card via <strong>Stripe API</strong>)</li>
+<li>System creates encounter record:</li>
+<p>   <code></code>`</p>
+<p>   Encounter ID: ENC-2026-9876</p>
+<p>   Patient: Sarah Johnson (PAT-2026-5678)</p>
+<p>   Provider: Dr. Smith</p>
+<p>   Date: May 20, 2026</p>
+<p>   Time: 10:00 AM</p>
+<p>   Type: Office Visit</p>
+<p>   Status: Checked In</p>
+<p>   <code></code>`</p>
+
+<p><strong>Time Taken:</strong> 2 minutes</p>
+
+<hr>
+
+<h4>**Step 5: Doctor Documentation** 👨‍⚕️</h4>
+
+<p><strong>What Happens:</strong></p>
+<li>Dr. Smith sees Sarah at 10:00 AM</li>
+<li>Examines patient</li>
+<li>Diagnosis: Acute bronchitis</li>
+<li>Treatment: Prescribed antibiotics</li>
+<li>Dr. Smith documents in EHR:</li>
+<p>   <code></code>`</p>
+<p>   Chief Complaint: Cough and fever for 5 days</p>
+
+<p>   History: 41-year-old female presents with productive </p>
+<p>   cough, yellow sputum, fever (101°F), chest discomfort. </p>
+<p>   No shortness of breath.</p>
+
+<p>   Examination:</p>
+<li>Lungs: Rhonchi in both lower lobes</li>
+<li>No wheezing</li>
+<li>O2 saturation: 98%</li>
+
+<p>   Assessment: Acute bronchitis (J20.9)</p>
+
+<p>   Plan:</p>
+<li>Azithromycin 500mg daily x 5 days</li>
+<li>Increase fluids</li>
+<li>Follow up if symptoms worsen</li>
+<p>   <code></code>`</p>
+
+<li>Visit ends at 10:20 AM</li>
+
+<p><strong>Time Taken:</strong> 20 minutes</p>
+
+<hr>
+
+<h4>**Step 6: Medical Coding** 🏥</h4>
+
+<p><strong>What Happens:</strong></p>
+<li>Medical coder opens encounter ENC-2026-9876</li>
+<li>Reviews Dr. Smith's notes</li>
+<li><strong>AI-Assisted Coding</strong> (using <strong>OpenAI API</strong>):</li>
+<li>System analyzes notes</li>
+<li>Suggests codes:</li>
+<p>     <code></code>`</p>
+<p>     Suggested ICD-10:</p>
+<p>     ✅ J20.9 - Acute bronchitis, unspecified (95% confidence)</p>
+<p>     ✅ R05 - Cough (88% confidence)</p>
+<p>     ✅ R50.9 - Fever, unspecified (85% confidence)</p>
+
+<p>     Suggested CPT:</p>
+<p>     ✅ 99203 - New patient office visit, moderate complexity</p>
+<p>     <code></code>`</p>
+
+<li>Coder reviews and confirms:</li>
+<li><strong>ICD-10 Codes:</strong></li>
+<li>J20.9 (Primary diagnosis)</li>
+<li>R05 (Secondary)</li>
+<li>R50.9 (Secondary)</li>
+<li><strong>CPT Code:</strong></li>
+<li>99203 (Office visit, 30-44 minutes)</li>
+<li><strong>Charge:</strong> $150.00</li>
+
+<li>Codes saved to encounter ✅</li>
+
+<p><strong>Time Taken:</strong> 3 minutes (with AI assistance)  </p>
+<p><strong>Without AI:</strong> 10-15 minutes</p>
+
+<hr>
+
+<h4>**Step 7: Claim Creation** 📄</h4>
+
+<p><strong>What Happens:</strong></p>
+<li>Biller opens "Claims" module</li>
+<li>Selects encounter ENC-2026-9876</li>
+<li>Clicks "Create Claim"</li>
+<li>System auto-generates claim:</li>
+<p>   <code></code>`</p>
+<p>   Claim ID: CLM-2026-001234</p>
+<p>   Format: CMS-1500 (Professional claim)</p>
+
+<p>   Patient: Sarah Johnson</p>
+<p>   DOB: 03/15/1985</p>
+<p>   Insurance: Blue Cross Blue Shield</p>
+<p>   Policy: ABC123456789</p>
+
+<p>   Provider: Dr. Smith</p>
+<p>   NPI: 1234567890</p>
+<p>   Tax ID: 12-3456789</p>
+
+<p>   Service Date: 05/20/2026</p>
+<p>   Place of Service: 11 (Office)</p>
+
+<p>   Diagnosis Codes:</p>
+<li>J20.9 (Acute bronchitis)</li>
+<li>R05 (Cough)</li>
+<li>R50.9 (Fever)</li>
+
+<p>   Procedure:</p>
+<p>   CPT: 99203</p>
+<p>   Charge: $150.00</p>
+<p>   Units: 1</p>
+<p>   <code></code>`</p>
+
+<li><strong>Claim Scrubbing</strong> (via <strong>Waystar API</strong>):</li>
+<li>Validates all fields ✅</li>
+<li>Checks code combinations ✅</li>
+<li>Verifies medical necessity ✅</li>
+<li>No errors found ✅</li>
+
+<li>Claim status: "Ready to Submit"</li>
+
+<p><strong>Time Taken:</strong> 1 minute</p>
+
+<hr>
+
+<h4>**Step 8: Claim Submission** 📤</h4>
+
+<p><strong>What Happens:</strong></p>
+<li>Biller selects claim CLM-2026-001234</li>
+<li>Clicks "Submit Claim"</li>
+<li>System converts to EDI 837 format</li>
+<li>Sends to <strong>Waystar API</strong></li>
+<li>Waystar forwards to Blue Cross Blue Shield</li>
+<li>Receives acknowledgment (EDI 999):</li>
+<p>   <code></code>`</p>
+<p>   Status: ACCEPTED</p>
+<p>   Tracking Number: TRK-987654321</p>
+<p>   Submission Date: 05/20/2026 11:30 AM</p>
+<p>   <code></code>`</p>
+
+<li>Claim status updated: "Submitted" ✅</li>
+
+<p><strong>Time Taken:</strong> 30 seconds</p>
+
+<hr>
+
+<h4>**Step 9: Claim Adjudication** ⏳</h4>
+
+<p><strong>What Happens (at Insurance Company):</strong></p>
+<li>Blue Cross receives claim on May 20</li>
+<li>Processes claim (automated system)</li>
+<li>Checks:</li>
+<li>Patient eligibility ✅</li>
+<li>Coverage for service ✅</li>
+<li>Medical necessity ✅</li>
+<li>Coding accuracy ✅</li>
+<li>Approves claim on May 22</li>
+<li>Sends payment on May 25</li>
+
+<p><strong>Time Taken:</strong> 5 days (industry average: 14-30 days)</p>
+
+<hr>
+
+<h4>**Step 10: Payment Posting** 💰</h4>
+
+<p><strong>What Happens:</strong></p>
+<li>On May 25, system receives ERA (EDI 835) from <strong>Waystar API</strong></li>
+<li>System parses ERA:</li>
+<p>   <code></code>`</p>
+<p>   Claim: CLM-2026-001234</p>
+<p>   Patient: Sarah Johnson</p>
+<p>   Service Date: 05/20/2026</p>
+
+<p>   Billed Amount: $150.00</p>
+<p>   Allowed Amount: $120.00 (contracted rate)</p>
+<p>   Insurance Paid: $95.00 (80% after copay)</p>
+<p>   Patient Copay: $25.00 (already collected)</p>
+<p>   Contractual Adjustment: -$30.00</p>
+
+<p>   Adjustment Codes:</p>
+<li>CO-45: Charge exceeds fee schedule (-$30.00)</li>
+<li>PR-3: Copay amount ($25.00)</li>
+
+<p>   Total Paid: $95.00</p>
+<p>   Patient Balance: $0.00 (copay already collected)</p>
+<p>   <code></code>`</p>
+
+<li>System auto-matches payment to claim</li>
+<li>Biller reviews and posts payment</li>
+<li>Claim status: "PAID" ✅</li>
+<li>Updates accounts receivable</li>
+
+<p><strong>Time Taken:</strong> 1 minute</p>
+
+<hr>
+
+<h3>**Complete Timeline Summary**</h3>
+
+<tr>
+<td>Date</td>
+<td>Event</td>
+<td>Status</td>
+</tr>
+<tr>
+<td>May 18</td>
+<td>Patient registration</td>
+<td>✅ Complete</td>
+</tr>
+<tr>
+<td>May 18</td>
+<td>Insurance verification</td>
+<td>✅ Active coverage</td>
+</tr>
+<tr>
+<td>May 18</td>
+<td>Appointment scheduled</td>
+<td>✅ May 20, 10:00 AM</td>
+</tr>
+<tr>
+<td>May 20</td>
+<td>Patient check-in</td>
+<td>✅ Copay collected</td>
+</tr>
+<tr>
+<td>May 20</td>
+<td>Doctor visit</td>
+<td>✅ Visit complete</td>
+</tr>
+<tr>
+<td>May 20</td>
+<td>Medical coding</td>
+<td>✅ Codes assigned</td>
+</tr>
+<tr>
+<td>May 20</td>
+<td>Claim created</td>
+<td>✅ Ready to submit</td>
+</tr>
+<tr>
+<td>May 20</td>
+<td>Claim submitted</td>
+<td>✅ Accepted by payer</td>
+</tr>
+<tr>
+<td>May 22</td>
+<td>Claim adjudicated</td>
+<td>✅ Approved</td>
+</tr>
+<tr>
+<td>May 25</td>
+<td>Payment received</td>
+<td>✅ $95.00 posted</td>
+</tr>
+
+<p><strong>Total Days from Service to Payment:</strong> 5 days ⚡  </p>
+<p><strong>Industry Average:</strong> 30-45 days</p>
+
+<p><strong>Total Revenue Collected:</strong> $120.00 ($25 copay + $95 insurance)  </p>
+<p><strong>Write-off (Contractual):</strong> $30.00  </p>
+<p><strong>Net Collection Rate:</strong> 100% ✅</p>
+
+<hr>
+
+<h2>5. Recommended Tech Stack for MVP</h2>
+
+<h3>Frontend Technologies</h3>
+
+<h4>**React.js** ⚛️</h4>
+
+<p><strong>Why React.js?</strong></p>
+
+<li><strong>Fast Development</strong></li>
+<li>Component-based architecture</li>
+<li>Reusable UI components</li>
+<li>Large ecosystem of libraries</li>
+
+<li><strong>Great for Healthcare Apps</strong></li>
+<li>Handles complex forms easily</li>
+<li>Real-time updates (claim status, payments)</li>
+<li>Excellent performance</li>
+
+<li><strong>Strong Community</strong></li>
+<li>200,000+ npm packages</li>
+<li>Easy to find developers</li>
+<li>Lots of tutorials and support</li>
+
+<li><strong>Modern Features</strong></li>
+<li>React Hooks for state management</li>
+<li>React Query for API calls</li>
+<li>React Router for navigation</li>
+
+<p><strong>Example React Component:</strong></p>
+<pre><code class="language-jsx">
+// Patient Registration Form Component
+import React, { useState } from 'react';
+function PatientRegistration() {
+  const [patient, setPatient] = useState({
+    firstName: '',
+    lastName: '',
+    dob: '',
+    insurance: ''
+  });
+  const handleSubmit = async () =&gt; {
+    const response = await fetch('/api/v1/patients', {
+      method: 'POST',
+      body: JSON.stringify(patient)
+    });
+    // Handle response
+  };
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;input 
+        placeholder="First Name"
+        value={patient.firstName}
+        onChange={(e) =&gt; setPatient({...patient, firstName: e.target.value})}
+      /&gt;
+      {/* More fields */}
+      &lt;button type="submit"&gt;Save Patient&lt;/button&gt;
+    &lt;/form&gt;
+  );
+}
+</pre>
+
+<hr>
+
+<h4>**Tailwind CSS** 🎨</h4>
+
+<p><strong>Why Tailwind CSS?</strong></p>
+
+<li><strong>Rapid UI Development</strong></li>
+<li>Utility-first CSS framework</li>
+<li>No need to write custom CSS</li>
+<li>Build UI in minutes, not hours</li>
+
+<li><strong>Consistent Design</strong></li>
+<li>Pre-defined spacing, colors, fonts</li>
+<li>Responsive by default</li>
+<li>Professional look out of the box</li>
+
+<li><strong>Small Bundle Size</strong></li>
+<li>Only includes CSS you actually use</li>
+<li>Faster page loads</li>
+<li>Better performance</li>
+
+<li><strong>Easy to Customize</strong></li>
+<li>Configure colors, fonts, spacing</li>
+<li>Add custom utilities</li>
+<li>Matches any brand</li>
+
+<p><strong>Example Tailwind Usage:</strong></p>
+<pre><code class="language-jsx">
+// Beautiful form with Tailwind
+&lt;div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg"&gt;
+  &lt;h2 className="text-2xl font-bold text-gray-800 mb-4"&gt;
+    Patient Registration
+  &lt;/h2&gt;
+  &lt;input 
+    className="w-full px-4 py-2 border border-gray-300 rounded-lg 
+               focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+    placeholder="First Name"
+  /&gt;
+  &lt;button className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg 
+                     hover:bg-blue-700 transition-colors"&gt;
+    Save Patient
+  &lt;/button&gt;
+&lt;/div&gt;
+</pre>
+
+<p><strong>Result:</strong> Professional, modern UI without writing CSS files!</p>
+
+<hr>
+
+<h3>Backend Technologies</h3>
+
+<h4>**Python FastAPI** 🚀</h4>
+
+<p><strong>Why FastAPI?</strong></p>
+
+<li><strong>Extremely Fast</strong></li>
+<li>Built on Starlette and Pydantic</li>
+<li>Performance comparable to Node.js and Go</li>
+<li>Async support for concurrent requests</li>
+
+<li><strong>Easy to Learn</strong></li>
+<li>Simple, clean syntax</li>
+<li>Automatic API documentation (Swagger UI)</li>
+<li>Type hints for better code quality</li>
+
+<li><strong>Perfect for Healthcare</strong></li>
+<li>Great for data processing (claims, ERA parsing)</li>
+<li>Easy integration with ML/AI libraries</li>
+<li>Strong data validation</li>
+
+<li><strong>Built-in Features</strong></li>
+<li>Automatic request validation</li>
+<li>OAuth2 authentication</li>
+<li>WebSocket support</li>
+<li>Background tasks</li>
+
+<p><strong>Example FastAPI Endpoint:</strong></p>
+<pre><code class="language-python">
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from datetime import date
+app = FastAPI()
+class Patient(BaseModel):
+    first_name: str
+    last_name: str
+    dob: date
+    insurance_policy: str
+@app.post("/api/v1/patients")
+async def create_patient(patient: Patient):
+    # Validate patient data (automatic)
+    # Save to database
+    patient_id = save_to_db(patient)
+    return {
+        "patient_id": patient_id,
+        "message": "Patient created successfully"
+    }
+@app.get("/api/v1/patients/{patient_id}")
+async def get_patient(patient_id: str):
+    patient = get_from_db(patient_id)
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    return patient
+</pre>
+
+<p><strong>Automatic API Documentation:</strong></p>
+<li>Visit <code>http://localhost:8000/docs</code> → Interactive Swagger UI</li>
+<li>Test APIs directly in browser</li>
+<li>No extra work needed!</li>
+
+<hr>
+
+<h3>Database</h3>
+
+<h4>**PostgreSQL** 🐘</h4>
+
+<p><strong>Why PostgreSQL?</strong></p>
+
+<li><strong>Reliable & Proven</strong></li>
+<li>30+ years of development</li>
+<li>Used by Apple, Instagram, Spotify</li>
+<li>ACID compliant (data integrity guaranteed)</li>
+
+<li><strong>Perfect for Healthcare Data</strong></li>
+<li>Handles complex relationships (patients, claims, payments)</li>
+<li>JSON support for flexible data</li>
+<li>Full-text search for patient records</li>
+
+<li><strong>Scalable</strong></li>
+<li>Handles millions of records</li>
+<li>Supports partitioning for large tables</li>
+<li>Replication for high availability</li>
+
+<li><strong>Advanced Features</strong></li>
+<li>Foreign keys and constraints</li>
+<li>Triggers for business rules</li>
+<li>Views for complex queries</li>
+<li>Excellent performance</li>
+
+<p><strong>Example Database Schema:</strong></p>
+<pre><code class="language-sql">
+-- Patients table
+CREATE TABLE patients (
+    patient_id VARCHAR(50) PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    dob DATE NOT NULL,
+    ssn VARCHAR(11) ENCRYPTED,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+-- Claims table
+CREATE TABLE claims (
+    claim_id VARCHAR(50) PRIMARY KEY,
+    patient_id VARCHAR(50) REFERENCES patients(patient_id),
+    service_date DATE NOT NULL,
+    billed_amount DECIMAL(10,2),
+    paid_amount DECIMAL(10,2),
+    status VARCHAR(20),
+    created_at TIMESTAMP DEFAULT NOW()
+);
+-- Index for fast lookups
+CREATE INDEX idx_claims_patient ON claims(patient_id);
+CREATE INDEX idx_claims_status ON claims(status);
+</pre>
+
+<hr>
+
+<h3>Cloud Platform</h3>
+
+<h4>**AWS (Amazon Web Services)** ☁️</h4>
+
+<p><strong>Why AWS?</strong></p>
+
+<li><strong>Industry Leader</strong></li>
+<li>Most mature cloud platform</li>
+<li>Used by Netflix, Airbnb, NASA</li>
+<li>200+ services available</li>
+
+<li><strong>HIPAA Compliant</strong></li>
+<li>BAA (Business Associate Agreement) available</li>
+<li>Encryption at rest and in transit</li>
+<li>Audit logging with CloudTrail</li>
+<li>Perfect for healthcare data</li>
+
+<li><strong>Cost-Effective for MVP</strong></li>
+<li>Free tier for 12 months</li>
+<li>Pay only for what you use</li>
+<li>Start small, scale later</li>
+
+<li><strong>Services We'll Use:</strong></li>
+<li><strong>EC2:</strong> Virtual servers for backend</li>
+<li><strong>RDS:</strong> Managed PostgreSQL database</li>
+<li><strong>S3:</strong> Store documents, images</li>
+<li><strong>CloudFront:</strong> Fast content delivery</li>
+<li><strong>Lambda:</strong> Serverless functions for background tasks</li>
+<li><strong>API Gateway:</strong> API management</li>
+<li><strong>Cognito:</strong> User authentication (optional)</li>
+
+<p><strong>MVP AWS Architecture:</strong></p>
+<pre><code>
+Internet
+   ↓
+CloudFront (CDN)
+   ↓
+Load Balancer
+   ↓
+EC2 Instances (FastAPI backend)
+   ↓
+RDS PostgreSQL (Database)
+   ↓
+S3 (Document storage)
+</pre>
+
+<p><strong>Estimated Monthly Cost for MVP:</strong></p>
+<li>EC2 (t3.medium): $30</li>
+<li>RDS PostgreSQL (db.t3.small): $25</li>
+<li>S3 Storage (100 GB): $2</li>
+<li>CloudFront: $5</li>
+<li><strong>Total: ~$62/month</strong> 💰</li>
+
+<hr>
+
+<h3>Why This Stack is Perfect for MVP</h3>
+
+<tr>
+<td>Requirement</td>
+<td>Solution</td>
+<td>Benefit</td>
+</tr>
+<tr>
+<td><strong>Fast Development</strong></td>
+<td>React + Tailwind</td>
+<td>Build UI in days, not weeks</td>
+</tr>
+<tr>
+<td><strong>High Performance</strong></td>
+<td>FastAPI + PostgreSQL</td>
+<td>Handle 1000+ requests/sec</td>
+</tr>
+<tr>
+<td><strong>Scalability</strong></td>
+<td>AWS</td>
+<td>Scale from 10 to 10,000 users</td>
+</tr>
+<tr>
+<td><strong>Security</strong></td>
+<td>AWS + PostgreSQL</td>
+<td>HIPAA compliant</td>
+</tr>
+<tr>
+<td><strong>Cost</strong></td>
+<td>All open-source + AWS free tier</td>
+<td>< $100/month for MVP</td>
+</tr>
+<tr>
+<td><strong>Developer Availability</strong></td>
+<td>Popular technologies</td>
+<td>Easy to hire developers</td>
+</tr>
+<tr>
+<td><strong>AI Integration</strong></td>
+<td>Python ecosystem</td>
+<td>Easy to add OpenAI, ML models</td>
+</tr>
+
+<hr>
+
+<p><strong>Next:</strong> Part 4 will cover Third-Party APIs and AI Integration details.</p>
+
+<hr>
+
+<p><strong>Document Navigation:</strong></p>
+<li><strong>Part 1:</strong> Introduction & Goals</li>
+<li><strong>Part 2:</strong> Modules & Features</li>
+<li><strong>Part 3:</strong> Workflow & Tech Stack (This document)</li>
+<li><strong>Part 4:</strong> APIs & AI Integration</li>
+<li><strong>Part 5:</strong> Development Plan & Timeline</li>
+
+</body>
+</html>

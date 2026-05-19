@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare RCM Application - API Integration Requirements</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Healthcare RCM Application - API Integration Requirements</h1>
+
+<p><strong>Version:</strong> 1.0  </p>
+
+<p><strong>For:</strong> Development Team</p>
+
+<hr>
+
+<h2>1. Overview</h2>
+
+<p>This document defines all external system integrations required for the RCM application.</p>
+
+<p><strong>Total Integrations:</strong> 8 major integration points  </p>
+<p><strong>Integration Standards:</strong> HL7 v2.x, HL7 FHIR, EDI X12, REST APIs</p>
+
+<hr>
+
+<h2>2. Integration Architecture</h2>
+
+<pre><code>
+┌─────────────────────────────────────────────────────────────┐
+│                     RCM Application                          │
+└─────────────────────────────────────────────────────────────┘
+         │           │           │           │           │
+         ▼           ▼           ▼           ▼           ▼
+    ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐
+    │  EMR   │  │  Lab   │  │Imaging │  │ Payer  │  │Clearing│
+    │ System │  │ System │  │ (PACS) │  │ Portal │  │ house  │
+    └────────┘  └────────┘  └────────┘  └────────┘  └────────┘
+</pre>
+
+<hr>
+
+<h2>3. Integration 1: EMR/EHR System</h2>
+
+<h3>Purpose:</h3>
+<p>Bi-directional integration with Electronic Medical Record system to exchange patient demographics, clinical documentation, and encounter data.</p>
+
+<h3>Integration Standard:</h3>
+<li><strong>Primary:</strong> HL7 v2.x messages</li>
+<li><strong>Alternative:</strong> HL7 FHIR REST API</li>
+
+<h3>Data Flow Direction:</h3>
+<p><strong>EMR → RCM (Inbound):</strong></p>
+<li>Patient demographics (ADT messages)</li>
+<li>Encounter details</li>
+<li>Clinical documentation (SOAP notes)</li>
+<li>Diagnoses (ICD-10 codes)</li>
+<li>Procedures (CPT codes)</li>
+<li>Orders (lab, imaging, medications)</li>
+<li>Results (lab, imaging)</li>
+
+<p><strong>RCM → EMR (Outbound):</strong></p>
+<li>Insurance eligibility status</li>
+<li>Authorization status</li>
+<li>Claim status</li>
+<li>Payment status</li>
+<li>Patient balance</li>
+
+<hr>
+
+<h3>HL7 v2.x Message Types:</h3>
+
+<h4>ADT Messages (Patient Administration):</h4>
+
+<p><strong>ADT^A01 - Patient Admission</strong></p>
+<pre><code>
+MSH|^~\&amp;|EMR_SYSTEM|HOSPITAL|RCM_SYSTEM|HOSPITAL|20260518143000||ADT^A01|MSG00001|P|2.5
+EVN|A01|20260518143000
+PID|1||MRN123456||Doe^John^A||19800115|M|||123 Main St^^Boston^MA^02101||555-1234|||S
+PV1|1|I|ICU^101^01||||123456^Smith^Jane^MD
+IN1|1|BCBS001|BCBS|Blue Cross Blue Shield||||GRP123456|POL987654
+</pre>
+
+<p><strong>ADT^A04 - Patient Registration</strong></p>
+<p><strong>ADT^A08 - Patient Information Update</strong></p>
+<p><strong>ADT^A11 - Cancel Admission</strong></p>
+
+<h4>DFT Messages (Financial Transactions):</h4>
+
+<p><strong>DFT^P03 - Post Detail Financial Transaction</strong></p>
+<pre><code>
+MSH|^~\&amp;|EMR_SYSTEM|HOSPITAL|RCM_SYSTEM|HOSPITAL|20260518143000||DFT^P03|MSG00002|P|2.5
+PID|1||MRN123456||Doe^John^A
+FT1|1||99213|20260518|20260518|CG|1|150.00||CPT|99213^Office Visit Level 3
+</pre>
+
+<h4>ORM Messages (Orders):</h4>
+
+<p><strong>ORM^O01 - General Order Message</strong></p>
+<pre><code>
+MSH|^~\&amp;|EMR_SYSTEM|HOSPITAL|LAB_SYSTEM|HOSPITAL|20260518143000||ORM^O01|MSG00003|P|2.5
+PID|1||MRN123456||Doe^John^A
+ORC|NW|ORD123456|||||^^^20260518143000
+OBR|1|ORD123456||CBC^Complete Blood Count^CPT|||20260518143000
+</pre>
+
+<h4>ORU Messages (Results):</h4>
+
+<p><strong>ORU^R01 - Observation Result</strong></p>
+<pre><code>
+MSH|^~\&amp;|LAB_SYSTEM|HOSPITAL|RCM_SYSTEM|HOSPITAL|20260518150000||ORU^R01|MSG00004|P|2.5
+PID|1||MRN123456||Doe^John^A
+OBR|1|ORD123456||CBC^Complete Blood Count^CPT|||20260518143000
+OBX|1|NM|WBC^White Blood Count||7.5|10^3/uL|4.0-11.0|N|||F
+OBX|2|NM|RBC^Red Blood Count||4.8|10^6/uL|4.2-5.4|N|||F
+</pre>
+
+<hr>
+
+<h3>HL7 FHIR API (Alternative):</h3>
+
+<p><strong>Base URL:</strong> <code>https://emr-system.hospital.com/fhir/R4</code></p>
+
+<p><strong>Authentication:</strong> OAuth 2.0 with client credentials</p>
+
+<h4>FHIR Resources:</h4>
+
+<p><strong>1. Patient Resource</strong></p>
+<pre><code class="language-http">
+GET /Patient/123456
+Authorization: Bearer {access_token}
+</pre>
+
+<p>Response:</p>
+<pre><code class="language-json">
+{
+  "resourceType": "Patient",
+  "id": "123456",
+  "identifier": [
+    {
+      "system": "http://hospital.com/mrn",
+      "value": "MRN123456"
+    }
+  ],
+  "name": [
+    {
+      "family": "Doe",
+      "given": ["John", "A"]
+    }
+  ],
+  "birthDate": "1980-01-15",
+  "gender": "male",
+  "address": [
+    {
+      "line": ["123 Main St"],
+      "city": "Boston",
+      "state": "MA",
+      "postalCode": "02101"
+    }
+  ]
+}
+</pre>
+
+<p><strong>2. Encounter Resource</strong></p>
+<pre><code class="language-http">
+GET /Encounter/789012
+</pre>
+
+<p><strong>3. Condition Resource (Diagnoses)</strong></p>
+<pre><code class="language-http">
+GET /Condition?patient=123456&amp;encounter=789012
+</pre>
+
+<p><strong>4. Procedure Resource</strong></p>
+<pre><code class="language-http">
+GET /Procedure?patient=123456&amp;encounter=789012
+</pre>
+
+<p><strong>5. DiagnosticReport Resource (Lab/Imaging Results)</strong></p>
+<pre><code class="language-http">
+GET /DiagnosticReport?patient=123456
+</pre>
+
+<hr>
+
+<h3>Implementation Requirements:</h3>
+
+<p><strong>HL7 v2.x:</strong></p>
+<li><strong>Protocol:</strong> MLLP (Minimum Lower Layer Protocol) over TCP/IP</li>
+<li><strong>Port:</strong> 6661 (configurable)</li>
+<li><strong>Message Encoding:</strong> ER7 (pipe-delimited)</li>
+<li><strong>Acknowledgment:</strong> ACK messages required for all inbound messages</li>
+
+<p><strong>FHIR API:</strong></p>
+<li><strong>Protocol:</strong> HTTPS REST</li>
+<li><strong>Authentication:</strong> OAuth 2.0</li>
+<li><strong>Data Format:</strong> JSON</li>
+<li><strong>Pagination:</strong> Support for large result sets</li>
+
+<p><strong>Error Handling:</strong></p>
+<li>Retry failed messages 3 times with exponential backoff</li>
+<li>Log all failed messages for manual review</li>
+<li>Alert integration team if >10 messages fail in 1 hour</li>
+
+<p><strong>Data Mapping:</strong></p>
+<li>Map HL7 PID segment → patients table</li>
+<li>Map HL7 DFT segment → charges table</li>
+<li>Map HL7 OBR/OBX segments → orders and results</li>
+
+<hr>
+
+<h2>4. Integration 2: Clearinghouse</h2>
+
+<h3>Purpose:</h3>
+<p>Submit insurance claims electronically and receive acknowledgments and payments.</p>
+
+<h3>Supported Clearinghouses:</h3>
+<li>Waystar</li>
+<li>Availity</li>
+<li>Change Healthcare</li>
+<li>Office Ally</li>
+<li>Trizetto</li>
+
+<h3>Integration Standard:</h3>
+<p><strong>EDI X12 (HIPAA 5010)</strong></p>
+
+<hr>
+
+<h3>EDI Transaction Sets:</h3>
+
+<h4>1. EDI 837 - Claims Submission</h4>
+
+<p><strong>837P (Professional Claims - CMS-1500)</strong></p>
+<p><strong>837I (Institutional Claims - UB-04)</strong></p>
+
+<p><strong>Transmission Method:</strong> SFTP or API</p>
+
+<p><strong>File Format:</strong></p>
+<pre><code>
+ISA*00*          *00*          *ZZ*SENDER_ID      *ZZ*RECEIVER_ID    *260518*1430*^*00501*000000001*0*P*:~
+GS*HC*SENDER_ID*RECEIVER_ID*20260518*1430*1*X*005010X222A1~
+ST*837*0001*005010X222A1~
+BHT*0019*00*CLM123456*20260518*1430*CH~
+NM1*41*2*HOSPITAL_NAME*****46*1234567890~
+NM1*40*2*BLUE_CROSS*****46*BCBS001~
+HL*1**20*1~
+NM1*85*2*BILLING_PROVIDER*****XX*1234567890~
+N3*123 Hospital Ave~
+N4*Boston*MA*02101~
+HL*2*1*22*0~
+SBR*P*18*GRP123456******CI~
+NM1*IL*1*DOE*JOHN*A***MI*POL987654~
+NM1*PR*2*BLUE_CROSS*****PI*BCBS001~
+CLM*CLM123456*150.00***11:B:1*Y*A*Y*Y~
+DTP*472*D8*20260518~
+REF*D9*AUTH123456~
+HI*ABK:E119~
+LX*1~
+SV1*HC:99213*150.00*UN*1***1~
+DTP*472*D8*20260518~
+SE*25*0001~
+GE*1*1~
+IEA*1*000000001~
+</pre>
+
+<p><strong>Submission Frequency:</strong> Every 2 hours (configurable)</p>
+
+<hr>
+
+<h4>2. EDI 270/271 - Eligibility Inquiry/Response</h4>
+
+<p><strong>270 - Eligibility Inquiry (Outbound)</strong></p>
+<pre><code>
+ISA*00*          *00*          *ZZ*SENDER_ID      *ZZ*PAYER_ID       *260518*1430*^*00501*000000001*0*P*:~
+GS*HS*SENDER_ID*PAYER_ID*20260518*1430*1*X*005010X279A1~
+ST*270*0001*005010X279A1~
+BHT*0022*13*ELG123456*20260518*1430~
+HL*1**20*1~
+NM1*PR*2*BLUE_CROSS*****PI*BCBS001~
+HL*2*1*21*1~
+NM1*1P*2*HOSPITAL_NAME*****XX*1234567890~
+HL*3*2*22*0~
+TRN*1*ELG123456*SENDER_ID~
+NM1*IL*1*DOE*JOHN*A***MI*POL987654~
+DMG*D8*19800115*M~
+DTP*291*D8*20260518~
+EQ*30~
+SE*12*0001~
+GE*1*1~
+IEA*1*000000001~
+</pre>
+
+<p><strong>271 - Eligibility Response (Inbound)</strong></p>
+<pre><code>
+ISA*00*          *00*          *ZZ*PAYER_ID       *ZZ*SENDER_ID      *260518*1431*^*00501*000000002*0*P*:~
+GS*HB*PAYER_ID*SENDER_ID*20260518*1431*2*X*005010X279A1~
+ST*271*0002*005010X279A1~
+BHT*0022*11*ELG123456*20260518*1431~
+HL*1**20*1~
+NM1*PR*2*BLUE_CROSS*****PI*BCBS001~
+HL*2*1*21*1~
+NM1*1P*2*HOSPITAL_NAME*****XX*1234567890~
+HL*3*2*22*0~
+TRN*2*ELG123456*SENDER_ID~
+NM1*IL*1*DOE*JOHN*A***MI*POL987654~
+N3*123 Main St~
+N4*Boston*MA*02101~
+DMG*D8*19800115*M~
+EB*1**30**BLUE_CROSS PPO~
+EB*C**30**DEDUCTIBLE~
+AMT*D8*1500.00~
+AMT*D9*500.00~
+EB*C**30**COPAY~
+AMT*D8*30.00~
+SE*18*0002~
+GE*1*2~
+IEA*1*000000002~
+</pre>
+
+<p><strong>Real-Time:</strong> Response within 5 seconds</p>
+
+<hr>
+
+<h4>3. EDI 276/277 - Claim Status Inquiry/Response</h4>
+
+<p><strong>276 - Claim Status Inquiry (Outbound)</strong></p>
+<p><strong>277 - Claim Status Response (Inbound)</strong></p>
+
+<hr>
+
+<h4>4. EDI 835 - Payment/Remittance Advice (ERA)</h4>
+
+<p><strong>Inbound from Clearinghouse</strong></p>
+
+<pre><code>
+ISA*00*          *00*          *ZZ*PAYER_ID       *ZZ*RECEIVER_ID    *260520*1000*^*00501*000000003*0*P*:~
+GS*HP*PAYER_ID*RECEIVER_ID*20260520*1000*3*X*005010X221A1~
+ST*835*0003*005010X221A1~
+BPR*I*1500.00*C*ACH*CCP*01*123456789*DA*987654321**01*987654321*DA*123456789*20260520~
+TRN*1*CHK123456*1234567890~
+REF*EV*BCBS001~
+DTM*405*20260520~
+N1*PR*BLUE_CROSS~
+N3*PO Box 12345~
+N4*Boston*MA*02101~
+N1*PE*HOSPITAL_NAME*XX*1234567890~
+LX*1~
+CLP*CLM123456*1*150.00*120.00**12*ICN987654321*11~
+NM1*QC*1*DOE*JOHN*A~
+NM1*82*1*SMITH*JANE*MD***XX*9876543210~
+DTM*232*20260518~
+DTM*233*20260518~
+AMT*AU*150.00~
+AMT*D*30.00~
+SVC*HC:99213*150.00*120.00**1~
+DTM*472*20260518~
+CAS*CO*45*30.00~
+CAS*PR*1*30.00~
+AMT*B6*120.00~
+SE*23*0003~
+GE*1*3~
+IEA*1*000000003~
+</pre>
+
+<p><strong>Adjustment Reason Codes (CARC):</strong></p>
+<li>CO-45: Contractual adjustment</li>
+<li>PR-1: Deductible</li>
+<li>PR-2: Coinsurance</li>
+<li>PR-3: Copay</li>
+<li>CO-16: Claim lacks information</li>
+<li>CO-97: Service not covered</li>
+
+<hr>
+
+<h3>Clearinghouse API Integration (Alternative to EDI):</h3>
+
+<p><strong>Example: Waystar API</strong></p>
+
+<p><strong>Base URL:</strong> <code>https://api.waystar.com/v1</code></p>
+
+<p><strong>Authentication:</strong> API Key + OAuth 2.0</p>
+
+<p><strong>Submit Claim:</strong></p>
+<pre><code class="language-http">
+POST /claims
+Authorization: Bearer {access_token}
+Content-Type: application/json
+{
+  "claim": {
+    "claimNumber": "CLM123456",
+    "patient": {
+      "firstName": "John",
+      "lastName": "Doe",
+      "dob": "1980-01-15",
+      "memberId": "POL987654"
+    },
+    "payer": {
+      "payerId": "BCBS001",
+      "payerName": "Blue Cross Blue Shield"
+    },
+    "provider": {
+      "npi": "1234567890",
+      "name": "Hospital Name"
+    },
+    "serviceLines": [
+      {
+        "cptCode": "99213",
+        "chargeAmount": 150.00,
+        "units": 1,
+        "serviceDate": "2026-05-18",
+        "diagnosisCodes": ["E11.9"]
+      }
+    ]
+  }
+}
+</pre>
+
+<p><strong>Check Eligibility:</strong></p>
+<pre><code class="language-http">
+POST /eligibility
+Authorization: Bearer {access_token}
+Content-Type: application/json
+{
+  "patient": {
+    "firstName": "John",
+    "lastName": "Doe",
+    "dob": "1980-01-15",
+    "memberId": "POL987654"
+  },
+  "payer": {
+    "payerId": "BCBS001"
+  },
+  "serviceDate": "2026-05-18"
+}
+</pre>
+
+<hr>
+
+<h2>5. Integration 3: Payer Portals</h2>
+
+<h3>Purpose:</h3>
+<p>Direct integration with major insurance payers for eligibility, authorization, claim submission, and status checks.</p>
+
+<h3>Supported Payers:</h3>
+<li>Medicare (CMS)</li>
+<li>Medicaid (state-specific)</li>
+<li>Blue Cross Blue Shield</li>
+<li>UnitedHealthcare</li>
+<li>Aetna</li>
+<li>Cigna</li>
+<li>Humana</li>
+
+<hr>
+
+<h3>Medicare Integration:</h3>
+
+<p><strong>Medicare Provider Portal API</strong></p>
+
+<p><strong>Base URL:</strong> <code>https://api.cms.gov/v1</code></p>
+
+<p><strong>Authentication:</strong> OAuth 2.0 + Provider NPI</p>
+
+<p><strong>Check Eligibility:</strong></p>
+<pre><code class="language-http">
+GET /eligibility?beneficiaryId={MBI}&amp;serviceDate={date}
+Authorization: Bearer {access_token}
+</pre>
+
+<p><strong>Submit Claim:</strong></p>
+<pre><code class="language-http">
+POST /claims
+Authorization: Bearer {access_token}
+Content-Type: application/json
+{
+  "claimType": "professional",
+  "beneficiaryMBI": "1EG4TE5MK73",
+  "providerNPI": "1234567890",
+  "serviceDate": "2026-05-18",
+  "diagnosisCodes": ["E11.9"],
+  "serviceLinesLines": [
+    {
+      "cptCode": "99213",
+      "chargeAmount": 150.00
+    }
+  ]
+}
+</pre>
+
+<hr>
+
+<h3>Commercial Payer Integration:</h3>
+
+<p><strong>Example: Availity API (Multi-Payer Gateway)</strong></p>
+
+<p><strong>Base URL:</strong> <code>https://api.availity.com/v1</code></p>
+
+<p><strong>Real-Time Eligibility:</strong></p>
+<pre><code class="language-http">
+POST /eligibility
+Authorization: Bearer {access_token}
+Content-Type: application/json
+{
+  "payerId": "BCBS001",
+  "provider": {
+    "npi": "1234567890"
+  },
+  "subscriber": {
+    "memberId": "POL987654",
+    "firstName": "John",
+    "lastName": "Doe",
+    "dob": "1980-01-15"
+  },
+  "serviceDate": "2026-05-18"
+}
+</pre>
+
+<p><strong>Prior Authorization Status:</strong></p>
+<pre><code class="language-http">
+GET /authorizations/{authNumber}
+Authorization: Bearer {access_token}
+</pre>
+
+<hr>
+
+<h2>6. Integration 4: Laboratory System</h2>
+
+<h3>Purpose:</h3>
+<p>Receive lab orders and results.</p>
+
+<h3>Integration Standard:</h3>
+<p><strong>HL7 v2.x ORM/ORU messages</strong></p>
+
+<p><strong>Outbound (RCM → Lab):</strong></p>
+<li>ORM^O01: Lab order</li>
+
+<p><strong>Inbound (Lab → RCM):</strong></p>
+<li>ORU^R01: Lab result</li>
+
+<p><strong>Charge Capture Trigger:</strong></p>
+<p>When ORU^R01 received → Auto-generate lab charge based on CPT code in OBR segment</p>
+
+<hr>
+
+<h2>7. Integration 5: Radiology/PACS System</h2>
+
+<h3>Purpose:</h3>
+<p>Receive imaging orders and results.</p>
+
+<h3>Integration Standard:</h3>
+<p><strong>HL7 v2.x ORM/ORU messages</strong></p>
+
+<p><strong>Outbound (RCM → PACS):</strong></p>
+<li>ORM^O01: Imaging order</li>
+
+<p><strong>Inbound (PACS → RCM):</strong></p>
+<li>ORU^R01: Imaging result</li>
+
+<p><strong>Charge Capture Trigger:</strong></p>
+<p>When ORU^R01 received → Auto-generate imaging charge</p>
+
+<hr>
+
+<h2>8. Integration 6: Pharmacy System</h2>
+
+<h3>Purpose:</h3>
+<p>Receive medication dispensing records for charge capture.</p>
+
+<h3>Integration Standard:</h3>
+<p><strong>HL7 v2.x RDE/RDS messages</strong></p>
+
+<p><strong>Inbound (Pharmacy → RCM):</strong></p>
+<li>RDS^O13: Pharmacy dispense</li>
+
+<p><strong>Charge Capture Trigger:</strong></p>
+<p>When medication dispensed → Auto-generate medication charge (HCPCS J-code)</p>
+
+<hr>
+
+<h2>9. Integration 7: Payment Gateway</h2>
+
+<h3>Purpose:</h3>
+<p>Process patient credit card and ACH payments.</p>
+
+<h3>Supported Gateways:</h3>
+<li>Stripe</li>
+<li>Square</li>
+<li>Authorize.Net</li>
+<li>PayPal</li>
+
+<hr>
+
+<h3>Stripe Integration:</h3>
+
+<p><strong>Base URL:</strong> <code>https://api.stripe.com/v1</code></p>
+
+<p><strong>Authentication:</strong> API Secret Key</p>
+
+<p><strong>Create Payment Intent:</strong></p>
+<pre><code class="language-http">
+POST /payment_intents
+Authorization: Bearer {secret_key}
+Content-Type: application/x-www-form-urlencoded
+amount=5000&amp;currency=usd&amp;payment_method_types[]=card
+</pre>
+
+<p><strong>Confirm Payment:</strong></p>
+<pre><code class="language-http">
+POST /payment_intents/{intent_id}/confirm
+Authorization: Bearer {secret_key}
+Content-Type: application/x-www-form-urlencoded
+payment_method=pm_card_visa
+</pre>
+
+<p><strong>Webhooks:</strong></p>
+<li><code>payment_intent.succeeded</code></li>
+<li><code>payment<em>intent.payment</em>failed</code></li>
+<li><code>charge.refunded</code></li>
+
+<p><strong>Webhook Endpoint:</strong> <code>https://rcm-app.hospital.com/api/webhooks/stripe</code></p>
+
+<hr>
+
+<h2>10. Integration 8: Health Information Exchange (HIE)</h2>
+
+<h3>Purpose:</h3>
+<p>Share patient data with regional/national health information networks.</p>
+
+<h3>Integration Standard:</h3>
+<p><strong>HL7 FHIR</strong></p>
+
+<p><strong>Query Patient Data:</strong></p>
+<pre><code class="language-http">
+GET /Patient?identifier=MRN123456
+Authorization: Bearer {access_token}
+</pre>
+
+<p><strong>Submit Encounter Data:</strong></p>
+<pre><code class="language-http">
+POST /Encounter
+Authorization: Bearer {access_token}
+Content-Type: application/json
+{
+  "resourceType": "Encounter",
+  "status": "finished",
+  "class": {
+    "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+    "code": "AMB"
+  },
+  "subject": {
+    "reference": "Patient/123456"
+  },
+  "period": {
+    "start": "2026-05-18T14:30:00Z",
+    "end": "2026-05-18T15:00:00Z"
+  }
+}
+</pre>
+
+<hr>
+
+<h2>11. Integration Summary Table</h2>
+
+<tr>
+<td>Integration</td>
+<td>Standard</td>
+<td>Direction</td>
+<td>Frequency</td>
+<td>Critical?</td>
+</tr>
+<tr>
+<td>EMR/EHR</td>
+<td>HL7 v2.x / FHIR</td>
+<td>Bi-directional</td>
+<td>Real-time</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td>Clearinghouse</td>
+<td>EDI X12</td>
+<td>Bi-directional</td>
+<td>Batch (2 hours)</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td>Payer Portals</td>
+<td>REST API / EDI</td>
+<td>Bi-directional</td>
+<td>Real-time</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td>Lab System</td>
+<td>HL7 v2.x</td>
+<td>Bi-directional</td>
+<td>Real-time</td>
+<td>⚠️ Medium</td>
+</tr>
+<tr>
+<td>PACS</td>
+<td>HL7 v2.x</td>
+<td>Bi-directional</td>
+<td>Real-time</td>
+<td>⚠️ Medium</td>
+</tr>
+<tr>
+<td>Pharmacy</td>
+<td>HL7 v2.x</td>
+<td>Inbound</td>
+<td>Real-time</td>
+<td>⚠️ Medium</td>
+</tr>
+<tr>
+<td>Payment Gateway</td>
+<td>REST API</td>
+<td>Outbound</td>
+<td>Real-time</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td>HIE</td>
+<td>FHIR</td>
+<td>Bi-directional</td>
+<td>On-demand</td>
+<td>❌ No</td>
+</tr>
+
+<hr>
+
+<h2>12. Error Handling & Monitoring</h2>
+
+<h3>Retry Logic:</h3>
+<li>Failed API calls: Retry 3 times with exponential backoff (1s, 5s, 15s)</li>
+<li>Failed HL7 messages: Retry 3 times, then move to error queue</li>
+<li>Failed EDI transmissions: Retry next batch cycle</li>
+
+<h3>Monitoring:</h3>
+<li>Integration health dashboard</li>
+<li>Alert if >10% of messages fail</li>
+<li>Alert if no messages received in 1 hour (for real-time integrations)</li>
+<li>Daily integration summary report</li>
+
+<h3>Logging:</h3>
+<li>Log all inbound/outbound messages</li>
+<li>Log all API requests/responses</li>
+<li>Retention: 90 days</li>
+
+<hr>
+
+<h2>13. Security Requirements</h2>
+
+<h3>Authentication:</h3>
+<li>OAuth 2.0 for REST APIs</li>
+<li>API keys for clearinghouse/payer portals</li>
+<li>Mutual TLS for HL7 connections</li>
+
+<h3>Encryption:</h3>
+<li>TLS 1.2+ for all connections</li>
+<li>Encrypt sensitive data in logs</li>
+
+<h3>Compliance:</h3>
+<li>HIPAA-compliant data transmission</li>
+<li>Business Associate Agreements (BAA) with all vendors</li>
+
+<hr>
+
+<h2>14. Testing Requirements</h2>
+
+<h3>Integration Testing:</h3>
+<li>Test environment for each integration</li>
+<li>Sample HL7/EDI messages for unit testing</li>
+<li>Mock API responses for development</li>
+
+<h3>Certification:</h3>
+<li>Clearinghouse certification testing</li>
+<li>Payer connectivity testing</li>
+<li>HL7 conformance testing</li>
+
+<hr>
+
+<p><strong>Next Document:</strong> UI/UX Workflow Wireframes</p>
+
+</body>
+</html>
