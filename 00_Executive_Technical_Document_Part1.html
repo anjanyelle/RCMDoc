@@ -9,10 +9,10 @@
 <body>
 <h1>Healthcare RCM Application - Executive Technical Document</h1>
 
-<p><strong>Project Name:</strong> Healthcare Revenue Cycle Management (RCM) Platform  </p>
-<p><strong>Version:</strong> 1.0  </p>
+<p><strong>Project Name:</strong> Healthcare Revenue Cycle Management (RCM) Platform</p>
+<p><strong>Version:</strong> 1.0</p>
 
-<p><strong>Prepared For:</strong> Technical Lead & Development Team  </p>
+<p><strong>Prepared For:</strong> Technical Lead &amp; Development Team</p>
 <p><strong>Document Type:</strong> Complete Project Blueprint</p>
 
 <hr>
@@ -23,11 +23,11 @@
 <li><a href="#2-complete-application-flow">Complete Application Flow</a></li>
 <li><a href="#3-system-architecture">System Architecture</a></li>
 <li><a href="#4-recommended-technology-stack">Recommended Technology Stack</a></li>
-<li><a href="#5-third-party-apis--integrations">Third-Party APIs & Integrations</a></li>
-<li><a href="#6-ai-features--implementation">AI Features & Implementation</a></li>
+<li><a href="#5-third-party-apis--integrations">Third-Party APIs &amp; Integrations</a></li>
+<li><a href="#6-ai-features--implementation">AI Features &amp; Implementation</a></li>
 <li><a href="#7-development-plan">Development Plan</a></li>
 <li><a href="#8-recommended-team-structure">Recommended Team Structure</a></li>
-<li><a href="#9-challenges--risks">Challenges & Risks</a></li>
+<li><a href="#9-challenges--risks">Challenges &amp; Risks</a></li>
 <li><a href="#10-final-project-execution-strategy">Final Project Execution Strategy</a></li>
 
 <hr>
@@ -38,7 +38,7 @@
 
 <p>We are building a <strong>comprehensive Healthcare Revenue Cycle Management (RCM) platform</strong> that automates the complete financial workflow of hospitals and clinics—from patient registration to final payment collection.</p>
 
-<p><strong>In Simple Terms:</strong>  </p>
+<p><strong>In Simple Terms:</strong></p>
 <p>When a patient visits a hospital, the hospital must:</p>
 <li>Register the patient</li>
 <li>Verify their insurance coverage</li>
@@ -79,7 +79,7 @@
 <tr>
 <td><strong>Slow payment collection</strong></td>
 <td>50-60 days to collect payment</td>
-<td>Automated workflows reduce to <40 days</td>
+<td>Automated workflows reduce to &lt;40 days</td>
 </tr>
 <tr>
 <td><strong>Revenue leakage</strong></td>
@@ -91,6 +91,31 @@
 <td>HIPAA violations, audit failures</td>
 <td>Built-in audit logging and compliance</td>
 </tr>
+<tr>
+<td><strong>Missed authorization</strong></td>
+<td>100% claim denial</td>
+<td>Automated auth check &amp; tracking</td>
+</tr>
+<tr>
+<td><strong>Missed charge capture</strong></td>
+<td>Lost revenue</td>
+<td>Orders-to-charges reconciliation</td>
+</tr>
+<tr>
+<td><strong>Wrong patient balance</strong></td>
+<td>Patient complaints, lost trust</td>
+<td>Accurate ERA posting &amp; calculation</td>
+</tr>
+<tr>
+<td><strong>Duplicate patient</strong></td>
+<td>Split records, billing errors</td>
+<td>Duplicate detection on registration</td>
+</tr>
+<tr>
+<td><strong>Payer downtime</strong></td>
+<td>Submission delays</td>
+<td>Queue system &amp; offline retry</td>
+</tr>
 
 <p><strong>Financial Impact:</strong></p>
 <li>Hospital with $50M annual revenue loses $2.5M-$5M to inefficiencies</li>
@@ -99,10 +124,10 @@
 
 <h3>1.3 Main Business Goals</h3>
 
-<li><strong>Reduce Claim Denial Rate:</strong> From 10-15% to <5%</li>
-<li><strong>Accelerate Payment Collection:</strong> From 50-60 days to <40 days in AR</li>
-<li><strong>Increase Clean Claim Rate:</strong> From 75-80% to >95%</li>
-<li><strong>Eliminate Revenue Leakage:</strong> From 5-10% to <2%</li>
+<li><strong>Reduce Claim Denial Rate:</strong> From 10-15% to &lt;5%</li>
+<li><strong>Accelerate Payment Collection:</strong> From 50-60 days to &lt;40 days in AR</li>
+<li><strong>Increase Clean Claim Rate:</strong> From 75-80% to &gt;95%</li>
+<li><strong>Eliminate Revenue Leakage:</strong> From 5-10% to &lt;2%</li>
 <li><strong>Ensure HIPAA Compliance:</strong> 100% audit-ready with complete logging</li>
 <li><strong>Improve Patient Experience:</strong> Transparent billing, easy payment options</li>
 
@@ -178,13 +203,20 @@ Schedule Appointment → Check-In → Doctor Visit → Document Treatment →
 Capture Charges → Assign Medical Codes → Create Claim → Scrub Claim → 
 Submit to Insurance → Track Status → Post Payment → Bill Patient → 
 Collect Payment → Generate Reports
-</pre>
+</code></pre>
+
+<p><strong>Key Process Highlights:</strong></p>
+<li><strong>Prior Authorization:</strong> Must be obtained *before* service when required to prevent automatic denials.</li>
+<li><strong>Claim Scrubbing:</strong> Validates claims against rules *before* submission.</li>
+<li><strong>Acknowledgment/Rejection:</strong> Handled immediately *after* submission (999/277CA).</li>
+<li><strong>ERA/Payment Posting:</strong> Automated matching and posting *after* insurance adjudication.</li>
+<li><strong>Patient Billing:</strong> Statements generated *after* insurance processing completes.</li>
 
 <h3>2.2 Detailed Module Flow</h3>
 
-<h4>**Module 1: Provider Credentialing (Pre-requisite)**</h4>
+<h4><strong>Module 1: Provider Credentialing (Pre-requisite)</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>Before any billing can occur, every doctor must be registered and approved by insurance companies.</p>
 
 <p><strong>Process:</strong></p>
@@ -198,14 +230,14 @@ Collect Payment → Generate Reports
 <li><strong>Output:</strong> Credentialing status, expiration dates</li>
 <li><strong>Integration:</strong> CAQH ProView API, NPI Registry API</li>
 
-<p><strong>Why Critical:</strong>  </p>
+<p><strong>Why Critical:</strong></p>
 <p>If doctor is not credentialed, ALL claims from that doctor are automatically rejected.</p>
 
 <hr>
 
-<h4>**Module 2: Patient Registration**</h4>
+<h4><strong>Module 2: Patient Registration</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>Front desk staff registers new patients or updates existing patient information.</p>
 
 <p><strong>Process:</strong></p>
@@ -233,9 +265,9 @@ Collect Payment → Generate Reports
 
 <hr>
 
-<h4>**Module 3: Insurance Verification**</h4>
+<h4><strong>Module 3: Insurance Verification</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>System checks in real-time whether patient's insurance is active and what they owe.</p>
 
 <p><strong>Process:</strong></p>
@@ -260,14 +292,14 @@ Collect Payment → Generate Reports
 <li>If inactive, patient becomes self-pay</li>
 <li>Collect copay at check-in</li>
 
-<p><strong>Revenue Impact:</strong>  </p>
+<p><strong>Revenue Impact:</strong></p>
 <p>Prevents treating patients with inactive insurance (saves $50K-$200K/year in bad debt)</p>
 
 <hr>
 
-<h4>**Module 4: Prior Authorization**</h4>
+<h4><strong>Module 4: Prior Authorization</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>For expensive procedures, hospital must get insurance approval before treatment.</p>
 
 <p><strong>Process:</strong></p>
@@ -295,9 +327,9 @@ Collect Payment → Generate Reports
 
 <hr>
 
-<h4>**Module 5: Appointment Scheduling**</h4>
+<h4><strong>Module 5: Appointment Scheduling</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>Patients schedule appointments with providers.</p>
 
 <p><strong>Process:</strong></p>
@@ -320,9 +352,9 @@ Collect Payment → Generate Reports
 
 <hr>
 
-<h4>**Module 6: Encounter Creation (Check-In)**</h4>
+<h4><strong>Module 6: Encounter Creation (Check-In)</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>When patient arrives, front desk checks them in and creates encounter record.</p>
 
 <p><strong>Process:</strong></p>
@@ -347,9 +379,9 @@ Collect Payment → Generate Reports
 
 <hr>
 
-<h4>**Module 7: Clinical Documentation**</h4>
+<h4><strong>Module 7: Clinical Documentation</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>Doctor examines patient and documents visit in EMR.</p>
 
 <p><strong>Process:</strong></p>
@@ -365,7 +397,7 @@ Collect Payment → Generate Reports
 <li><strong>Input:</strong> Clinical observations, test results</li>
 <li><strong>Output:</strong> SOAP notes, diagnoses, procedures, orders</li>
 <li><strong>Integration:</strong> Epic, Cerner, or other EMR via HL7/FHIR</li>
-<li><strong>Database Tables:</strong> <code>encounter<em>diagnoses</code>, <code>encounter</em>procedures</code>, <code>orders</code></li>
+<li><strong>Database Tables:</strong> <code>encounter_diagnoses</code>, <code>encounter_procedures</code>, <code>orders</code></li>
 
 <p><strong>SOAP Note Structure:</strong></p>
 <li><strong>S</strong>ubjective: Patient's complaints</li>
@@ -373,14 +405,14 @@ Collect Payment → Generate Reports
 <li><strong>A</strong>ssessment: Diagnoses</li>
 <li><strong>P</strong>lan: Treatment plan</li>
 
-<p><strong>Why Critical:</strong>  </p>
+<p><strong>Why Critical:</strong></p>
 <p>Insurance only pays for documented services. Poor documentation = claim denial.</p>
 
 <hr>
 
-<h4>**Module 8: Order Management**</h4>
+<h4><strong>Module 8: Order Management</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>Doctor's orders (labs, imaging, meds) are tracked and executed.</p>
 
 <p><strong>Process:</strong></p>
@@ -401,14 +433,14 @@ Collect Payment → Generate Reports
 <li>X-ray completed → Radiology CPT code charged</li>
 <li>Medication dispensed → HCPCS J-code charged</li>
 
-<p><strong>Revenue Impact:</strong>  </p>
+<p><strong>Revenue Impact:</strong></p>
 <p>Prevents missed charges (5-10% of revenue typically lost to missed charges)</p>
 
 <hr>
 
-<h4>**Module 9: Charge Capture**</h4>
+<h4><strong>Module 9: Charge Capture</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>Every service provided is converted into a billable charge.</p>
 
 <p><strong>Process:</strong></p>
@@ -435,9 +467,9 @@ Collect Payment → Generate Reports
 
 <hr>
 
-<h4>**Module 10: Medical Coding**</h4>
+<h4><strong>Module 10: Medical Coding</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>Medical coders review clinical documentation and assign standardized codes.</p>
 
 <p><strong>Process:</strong></p>
@@ -450,7 +482,7 @@ Collect Payment → Generate Reports
 <li>99214 = Office visit, level 4</li>
 <li>80053 = Comprehensive metabolic panel (lab)</li>
 <li>Links diagnoses to procedures (medical necessity)</li>
-<li>Assigns modifiers if needed (e.g., modifier 25 for separate E&M)</li>
+<li>Assigns modifiers if needed (e.g., modifier 25 for separate E&amp;M)</li>
 <li>For inpatient: Assigns DRG code</li>
 <li>Marks encounter as "Coded - Ready to Bill"</li>
 
@@ -458,7 +490,7 @@ Collect Payment → Generate Reports
 <li><strong>Input:</strong> Clinical documentation</li>
 <li><strong>Output:</strong> ICD-10 codes, CPT codes, DRG codes</li>
 <li><strong>Integration:</strong> 3M CodeFinder, Optum CAC (optional AI assistance)</li>
-<li><strong>Database Tables:</strong> <code>encounter<em>diagnoses</code>, <code>encounter</em>procedures</code></li>
+<li><strong>Database Tables:</strong> <code>encounter_diagnoses</code>, <code>encounter_procedures</code></li>
 
 <p><strong>Code Types:</strong></p>
 <li><strong>ICD-10:</strong> Diagnosis codes (70,000+ codes)</li>
@@ -476,14 +508,14 @@ Collect Payment → Generate Reports
 <p><strong>Common Mistakes:</strong></p>
 <li>Vague diagnosis (e.g., "diabetes" instead of "E11.9")</li>
 <li>Missing laterality (left vs right)</li>
-<li>Incorrect E&M level selection</li>
+<li>Incorrect E&amp;M level selection</li>
 <li>Unbundling (billing components instead of comprehensive code)</li>
 
 <hr>
 
-<h4>**Module 11: Coding Compliance**</h4>
+<h4><strong>Module 11: Coding Compliance</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>System validates codes against compliance rules before billing.</p>
 
 <p><strong>Process:</strong></p>
@@ -504,14 +536,14 @@ Collect Payment → Generate Reports
 <li><strong>Output:</strong> Validation results, error alerts</li>
 <li><strong>Data Sources:</strong> CMS NCCI edits (updated quarterly), LCD/NCD databases</li>
 
-<p><strong>Why Critical:</strong>  </p>
+<p><strong>Why Critical:</strong></p>
 <p>Prevents fraud, reduces denials, avoids audits and penalties.</p>
 
 <hr>
 
-<h4>**Module 12: Claim Creation**</h4>
+<h4><strong>Module 12: Claim Creation</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>System generates insurance claim from coded encounter.</p>
 
 <p><strong>Process:</strong></p>
@@ -541,9 +573,9 @@ Collect Payment → Generate Reports
 
 <hr>
 
-<h4>**Module 13: Claim Scrubbing**</h4>
+<h4><strong>Module 13: Claim Scrubbing</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>System validates claim against 200+ rules before submission.</p>
 
 <p><strong>Process:</strong></p>
@@ -553,7 +585,7 @@ Collect Payment → Generate Reports
 <li><strong>Provider Checks:</strong> Valid NPI? Provider credentialed with payer?</li>
 <li><strong>Coding Checks:</strong> Valid ICD-10/CPT codes? NCCI edits passed?</li>
 <li><strong>Authorization Checks:</strong> Authorization number present if required?</li>
-<li><strong>Financial Checks:</strong> Charge amount >$0? Units >0?</li>
+<li><strong>Financial Checks:</strong> Charge amount &gt;$0? Units &gt;0?</li>
 <li><strong>Date Checks:</strong> Service date not in future? Within timely filing limit?</li>
 <li><strong>Duplicate Checks:</strong> Not duplicate of previously submitted claim?</li>
 <li>Errors categorized:</li>
@@ -566,15 +598,15 @@ Collect Payment → Generate Reports
 <p><strong>Data Flow:</strong></p>
 <li><strong>Input:</strong> Draft claim</li>
 <li><strong>Output:</strong> Scrubbing results, clean claim indicator</li>
-<li><strong>Database Tables:</strong> <code>claim<em>scrubbing</em>errors</code></li>
+<li><strong>Database Tables:</strong> <code>claim_scrubbing_errors</code></li>
 
 <p><strong>Goal:</strong> 95%+ clean claim rate</p>
 
 <hr>
 
-<h4>**Module 14: Claim Submission**</h4>
+<h4><strong>Module 14: Claim Submission</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>Clean claims submitted electronically to insurance companies.</p>
 
 <p><strong>Process:</strong></p>
@@ -597,14 +629,14 @@ Collect Payment → Generate Reports
 
 <p><strong>Submission Frequency:</strong> Every 2 hours (configurable)</p>
 
-<p><strong>Timely Filing:</strong>  </p>
+<p><strong>Timely Filing:</strong></p>
 <p>Most payers require claims within 90-365 days of service. System alerts before deadline.</p>
 
 <hr>
 
-<h4>**Module 15: Claim Tracking**</h4>
+<h4><strong>Module 15: Claim Tracking</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>System monitors claim status after submission.</p>
 
 <p><strong>Process:</strong></p>
@@ -624,7 +656,7 @@ Collect Payment → Generate Reports
 <li>31-60 days</li>
 <li>61-90 days</li>
 <li>90+ days (high priority follow-up)</li>
-<li>Automated follow-up for claims pending >30 days</li>
+<li>Automated follow-up for claims pending &gt;30 days</li>
 
 <p><strong>Data Flow:</strong></p>
 <li><strong>Input:</strong> Submitted claims</li>
@@ -632,15 +664,15 @@ Collect Payment → Generate Reports
 <li><strong>Integration:</strong> Waystar, Availity APIs</li>
 
 <p><strong>Worklists:</strong></p>
-<li>Claims pending >60 days</li>
+<li>Claims pending &gt;60 days</li>
 <li>Claims approaching timely filing deadline</li>
 <li>Claims with payer requests for additional information</li>
 
 <hr>
 
-<h4>**Module 16: Payment Posting (ERA)**</h4>
+<h4><strong>Module 16: Payment Posting (ERA)</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>When insurance pays, payment details are posted to patient accounts.</p>
 
 <p><strong>Process:</strong></p>
@@ -670,7 +702,7 @@ Collect Payment → Generate Reports
 <p><strong>Data Flow:</strong></p>
 <li><strong>Input:</strong> EDI 835 (ERA) file</li>
 <li><strong>Output:</strong> Posted payments, updated account balances</li>
-<li><strong>Database Tables:</strong> <code>payments</code>, <code>payment<em>line</em>items</code>, <code>era_files</code></li>
+<li><strong>Database Tables:</strong> <code>payments</code>, <code>payment_line_items</code>, <code>era_files</code></li>
 
 <p><strong>Adjustment Reason Codes (CARC):</strong></p>
 <li><strong>CO-45:</strong> Contractual adjustment (write-off)</li>
@@ -684,9 +716,9 @@ Collect Payment → Generate Reports
 
 <hr>
 
-<h4>**Module 17: Denial Management**</h4>
+<h4><strong>Module 17: Denial Management</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>Denied claims are reviewed, corrected, and appealed.</p>
 
 <p><strong>Process:</strong></p>
@@ -724,14 +756,14 @@ Collect Payment → Generate Reports
 
 <p><strong>Appeal Success Rate:</strong> Target 60-70% overturn rate</p>
 
-<p><strong>Revenue Impact:</strong>  </p>
+<p><strong>Revenue Impact:</strong></p>
 <p>Recovering $500K-$2M annually in denied claims</p>
 
 <hr>
 
-<h4>**Module 18: Secondary/Tertiary Billing**</h4>
+<h4><strong>Module 18: Secondary/Tertiary Billing</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>After primary insurance pays, remaining balance billed to secondary insurance.</p>
 
 <p><strong>Process:</strong></p>
@@ -757,9 +789,9 @@ Collect Payment → Generate Reports
 
 <hr>
 
-<h4>**Module 19: Patient Billing**</h4>
+<h4><strong>Module 19: Patient Billing</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>Patient receives bill for their portion after insurance pays.</p>
 
 <p><strong>Process:</strong></p>
@@ -788,16 +820,16 @@ Collect Payment → Generate Reports
 <li><strong>Input:</strong> Final account balance after insurance</li>
 <li><strong>Output:</strong> Patient statement, payment confirmation</li>
 <li><strong>Integration:</strong> Stripe (payment processing), Cedar (patient billing platform)</li>
-<li><strong>Database Tables:</strong> <code>patient<em>statements</code>, <code>patient</em>payments</code></li>
+<li><strong>Database Tables:</strong> <code>patient_statements</code>, <code>patient_payments</code></li>
 
-<p><strong>Point-of-Service Collections:</strong>  </p>
+<p><strong>Point-of-Service Collections:</strong></p>
 <p>Collect copay/deductible at check-in (before visit) = 3x higher collection rate</p>
 
 <hr>
 
-<h4>**Module 20: Collections**</h4>
+<h4><strong>Module 20: Collections</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>Unpaid patient balances moved through collection process.</p>
 
 <p><strong>Process:</strong></p>
@@ -827,9 +859,9 @@ Collect Payment → Generate Reports
 
 <hr>
 
-<h4>**Module 21: Reporting & Analytics**</h4>
+<h4><strong>Module 21: Reporting &amp; Analytics</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>Management monitors RCM performance through dashboards and reports.</p>
 
 <p><strong>Key Performance Indicators (KPIs):</strong></p>
@@ -841,33 +873,38 @@ Collect Payment → Generate Reports
 </tr>
 <tr>
 <td>Clean Claim Rate</td>
-<td>>95%</td>
+<td>&gt;95%</td>
 <td>75-80%</td>
 </tr>
 <tr>
 <td>Denial Rate</td>
-<td><5%</td>
+<td>&lt;5%</td>
 <td>10-15%</td>
 </tr>
 <tr>
 <td>Days in AR</td>
-<td><40 days</td>
+<td>&lt;40 days</td>
 <td>50-60 days</td>
 </tr>
 <tr>
 <td>Net Collection Rate</td>
-<td>>95%</td>
+<td>&gt;95%</td>
 <td>85-90%</td>
 </tr>
 <tr>
-<td>AR >90 Days</td>
-<td><15%</td>
+<td>AR &gt;90 Days</td>
+<td>&lt;15%</td>
 <td>25-30%</td>
 </tr>
 <tr>
 <td>Cost to Collect</td>
-<td><$0.05 per $1</td>
+<td>&lt;$0.05 per $1</td>
 <td>$0.08-$0.12</td>
+</tr>
+<tr>
+<td>Revenue Leakage</td>
+<td>&lt;2%</td>
+<td>5-10%</td>
 </tr>
 
 <p><strong>Standard Reports:</strong></p>
@@ -887,9 +924,9 @@ Collect Payment → Generate Reports
 
 <hr>
 
-<h4>**Module 22: Audit & Compliance**</h4>
+<h4><strong>Module 22: Audit &amp; Compliance</strong></h4>
 
-<p><strong>What Happens:</strong>  </p>
+<p><strong>What Happens:</strong></p>
 <p>System maintains complete audit trail for HIPAA compliance and fraud prevention.</p>
 
 <p><strong>Audit Logging:</strong></p>
@@ -931,7 +968,7 @@ Claim Creation → Claim Scrubbing → Claim Submission →
 Claim Tracking → Payment Posting → Denial Management → 
 Secondary Billing → Patient Billing → Collections → 
 Reporting → Audit
-</pre>
+</code></pre>
 
 <p><strong>Key Integration Points:</strong></p>
 <li><strong>EMR ↔ RCM:</strong> HL7/FHIR for clinical data</li>
@@ -942,7 +979,7 @@ Reporting → Audit
 
 <hr>
 
-<p><em>[Continue to Part 2 for System Architecture, Technology Stack, and Implementation Plan]</em></p>
+<p>*[Continue to Part 2 for System Architecture, Technology Stack, and Implementation Plan]*</p>
 
 </body>
 </html>

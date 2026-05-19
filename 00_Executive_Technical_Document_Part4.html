@@ -17,7 +17,7 @@
 
 <h3>8.1 Development Team Composition</h3>
 
-<h4>**Full Team (12-Month Project)**</h4>
+<h4><strong>Full Team (12-Month Project)</strong></h4>
 
 <tr>
 <td>Role</td>
@@ -99,14 +99,25 @@
 <tr>
 <td><strong>Total</strong></td>
 <td><strong>14</strong></td>
+<td></td>
+<td></td>
 <td><strong>$105,000/month</strong></td>
 </tr>
 
 <p><strong>Annual Cost:</strong> $1,260,000 (includes salaries, benefits, overhead)</p>
 
+<h4><strong>Business Owners by Module Area</strong></h4>
+<p>To ensure system usability and alignment with business needs, the following business owners must be assigned to sign off on requirements and UAT for each module area:</p>
+<li><strong>Patient Management (Modules 1-5):</strong> Front Desk Manager / Patient Access Director</li>
+<li><strong>Clinical &amp; Documentation (Modules 6-9):</strong> Chief Medical Officer / Lead Physician</li>
+<li><strong>Coding &amp; Billing (Modules 10-14):</strong> Health Information Management (HIM) Director / Coding Manager</li>
+<li><strong>Claims &amp; Submission (Modules 15-17):</strong> Billing Manager</li>
+<li><strong>Denial &amp; Payment (Modules 18-22):</strong> Accounts Receivable (AR) Manager</li>
+<li><strong>Reporting &amp; Analytics (Modules 26-30):</strong> Finance Director / CFO</li>
+
 <hr>
 
-<h4>**MVP Team (6-Month Project)**</h4>
+<h4><strong>MVP Team (6-Month Project)</strong></h4>
 
 <tr>
 <td>Role</td>
@@ -170,13 +181,13 @@
    Integration
    Specialist
    (1 person)
-</pre>
+</code></pre>
 
 <hr>
 
 <h3>8.3 Skill Requirements by Role</h3>
 
-<h4>**Backend Developer (Python/FastAPI)**</h4>
+<h4><strong>Backend Developer (Python/FastAPI)</strong></h4>
 
 <p><strong>Must Have:</strong></p>
 <li>Python 3.11+ (5+ years)</li>
@@ -201,7 +212,7 @@
 
 <hr>
 
-<h4>**Frontend Developer (React/TypeScript)**</h4>
+<h4><strong>Frontend Developer (React/TypeScript)</strong></h4>
 
 <p><strong>Must Have:</strong></p>
 <li>React 18+ (3+ years)</li>
@@ -226,7 +237,7 @@
 
 <hr>
 
-<h4>**AI/ML Engineer**</h4>
+<h4><strong>AI/ML Engineer</strong></h4>
 
 <p><strong>Must Have:</strong></p>
 <li>Python (3+ years)</li>
@@ -249,7 +260,7 @@
 
 <hr>
 
-<h4>**DevOps Engineer**</h4>
+<h4><strong>DevOps Engineer</strong></h4>
 
 <p><strong>Must Have:</strong></p>
 <li>AWS or Azure (3+ years)</li>
@@ -273,7 +284,7 @@
 
 <hr>
 
-<h4>**Integration Specialist (HL7/FHIR)**</h4>
+<h4><strong>Integration Specialist (HL7/FHIR)</strong></h4>
 
 <p><strong>Must Have:</strong></p>
 <li>HL7 v2.x (3+ years)</li>
@@ -297,27 +308,27 @@
 
 <h3>8.4 Hiring Strategy</h3>
 
-<h4>**Phase 1: Core Team (Month 1)**</h4>
+<h4><strong>Phase 1: Core Team (Month 1)</strong></h4>
 <p>Hire first:</p>
 <li>Technical Lead (critical for architecture decisions)</li>
 <li>2 Backend Developers (start database and API work)</li>
 <li>1 DevOps Engineer (set up infrastructure)</li>
 <li>Business Analyst (finalize requirements)</li>
 
-<h4>**Phase 2: Expansion (Month 2-3)**</h4>
+<h4><strong>Phase 2: Expansion (Month 2-3)</strong></h4>
 <p>Add:</p>
 <li>1 more Backend Developer</li>
 <li>2 Frontend Developers</li>
 <li>1 QA Engineer</li>
 <li>Integration Specialist</li>
 
-<h4>**Phase 3: Specialization (Month 4-6)**</h4>
+<h4><strong>Phase 3: Specialization (Month 4-6)</strong></h4>
 <p>Add:</p>
 <li>AI/ML Engineer (for AI features)</li>
 <li>1 more QA Engineer</li>
 <li>UI/UX Designer (refine designs)</li>
 
-<h4>**Phase 4: Maintenance (Month 12+)**</h4>
+<h4><strong>Phase 4: Maintenance (Month 12+)</strong></h4>
 <p>Reduce to:</p>
 <li>1 Technical Lead</li>
 <li>2 Backend Developers</li>
@@ -325,6 +336,15 @@
 <li>1 DevOps Engineer</li>
 <li>1 QA Engineer</li>
 <li><strong>Total: 6 people for ongoing maintenance</strong></li>
+
+<h4><strong>Production Support &amp; Maintenance</strong></h4>
+<li><strong>Production Support Owner:</strong> Production Support Lead (reporting to PM/Tech Lead).</li>
+<li><strong>Bug Priority Definitions:</strong></li>
+<li><strong>P0 (Critical):</strong> System down, PHI breach, or claim submission blocked. (Target: Fix in &lt;4 hours).</li>
+<li><strong>P1 (High):</strong> Major feature broken (e.g., payment posting failing). (Target: Fix in &lt;24 hours).</li>
+<li><strong>P2 (Medium):</strong> Non-blocking functional issues or report errors. (Target: Fix in next sprint).</li>
+<li><strong>P3 (Low):</strong> UI glitches or cosmetic issues. (Target: Fix as scheduled).</li>
+<li><strong>Escalation Path:</strong> Support Agent → Support Lead → Tech Lead → Project Manager.</li>
 
 <hr>
 
@@ -373,13 +393,13 @@
 
 <hr>
 
-<h2>9. Challenges & Risks</h2>
+<h2>9. Challenges &amp; Risks</h2>
 
 <h3>9.1 Technical Challenges</h3>
 
-<h4>**Challenge 1: HIPAA Compliance**</h4>
+<h4><strong>Challenge 1: HIPAA Compliance</strong></h4>
 
-<p><strong>Risk Level:</strong> Critical  </p>
+<p><strong>Risk Level:</strong> Critical</p>
 <p><strong>Impact:</strong> Legal liability, fines up to $50,000 per violation</p>
 
 <p><strong>Requirements:</strong></p>
@@ -404,9 +424,9 @@
 
 <hr>
 
-<h4>**Challenge 2: API Integration Costs**</h4>
+<h4><strong>Challenge 2: API Integration Costs</strong></h4>
 
-<p><strong>Risk Level:</strong> High  </p>
+<p><strong>Risk Level:</strong> High</p>
 <p><strong>Impact:</strong> Unexpected costs can blow budget</p>
 
 <p><strong>Cost Breakdown:</strong></p>
@@ -449,6 +469,8 @@
 </tr>
 <tr>
 <td><strong>Total</strong></td>
+<td></td>
+<td></td>
 <td><strong>$9,579/month</strong></td>
 </tr>
 
@@ -465,9 +487,9 @@
 
 <hr>
 
-<h4>**Challenge 3: Insurance Payer Connectivity**</h4>
+<h4><strong>Challenge 3: Insurance Payer Connectivity</strong></h4>
 
-<p><strong>Risk Level:</strong> High  </p>
+<p><strong>Risk Level:</strong> High</p>
 <p><strong>Impact:</strong> Cannot submit claims to certain payers</p>
 
 <p><strong>Problem:</strong></p>
@@ -488,9 +510,9 @@
 
 <hr>
 
-<h4>**Challenge 4: Data Security & Breaches**</h4>
+<h4><strong>Challenge 4: Data Security &amp; Breaches</strong></h4>
 
-<p><strong>Risk Level:</strong> Critical  </p>
+<p><strong>Risk Level:</strong> Critical</p>
 <p><strong>Impact:</strong> Average healthcare breach costs $10.93M (IBM 2023 study)</p>
 
 <p><strong>Common Attack Vectors:</strong></p>
@@ -515,9 +537,9 @@
 
 <hr>
 
-<h4>**Challenge 5: Claim Rejection Handling**</h4>
+<h4><strong>Challenge 5: Claim Rejection Handling</strong></h4>
 
-<p><strong>Risk Level:</strong> Medium  </p>
+<p><strong>Risk Level:</strong> Medium</p>
 <p><strong>Impact:</strong> 5-15% of claims rejected, requiring rework</p>
 
 <p><strong>Common Rejection Reasons:</strong></p>
@@ -543,9 +565,9 @@
 
 <hr>
 
-<h4>**Challenge 6: Workflow Complexity**</h4>
+<h4><strong>Challenge 6: Workflow Complexity</strong></h4>
 
-<p><strong>Risk Level:</strong> Medium  </p>
+<p><strong>Risk Level:</strong> Medium</p>
 <p><strong>Impact:</strong> User confusion, errors, low adoption</p>
 
 <p><strong>Problem:</strong></p>
@@ -569,9 +591,9 @@
 
 <h3>9.2 Business Challenges</h3>
 
-<h4>**Challenge 7: User Adoption**</h4>
+<h4><strong>Challenge 7: User Adoption</strong></h4>
 
-<p><strong>Risk Level:</strong> High  </p>
+<p><strong>Risk Level:</strong> High</p>
 <p><strong>Impact:</strong> System built but not used = project failure</p>
 
 <p><strong>Resistance Factors:</strong></p>
@@ -594,9 +616,9 @@
 
 <hr>
 
-<h4>**Challenge 8: Scope Creep**</h4>
+<h4><strong>Challenge 8: Scope Creep</strong></h4>
 
-<p><strong>Risk Level:</strong> High  </p>
+<p><strong>Risk Level:</strong> High</p>
 <p><strong>Impact:</strong> Project delays, budget overruns</p>
 
 <p><strong>Common Requests:</strong></p>
@@ -610,13 +632,13 @@
 <li><strong>Change Request Process:</strong> All changes require approval and re-estimation</li>
 <li><strong>Backlog Management:</strong> Defer non-critical features to Phase 2</li>
 <li><strong>Stakeholder Alignment:</strong> Weekly status meetings</li>
-<li><strong>Contract Terms:</strong> Fixed scope for fixed price, or time & materials with cap</li>
+<li><strong>Contract Terms:</strong> Fixed scope for fixed price, or time &amp; materials with cap</li>
 
 <hr>
 
-<h4>**Challenge 9: Integration with Legacy Systems**</h4>
+<h4><strong>Challenge 9: Integration with Legacy Systems</strong></h4>
 
-<p><strong>Risk Level:</strong> Medium  </p>
+<p><strong>Risk Level:</strong> Medium</p>
 <p><strong>Impact:</strong> Cannot replace existing systems, must integrate</p>
 
 <p><strong>Common Legacy Systems:</strong></p>
@@ -703,13 +725,13 @@
 
 <h3>10.1 How to Start (Week 1 Action Plan)</h3>
 
-<h4>**Day 1-2: Assemble Core Team**</h4>
+<h4><strong>Day 1-2: Assemble Core Team</strong></h4>
 <li>[ ] Hire or assign Technical Lead</li>
 <li>[ ] Hire or assign 2 Backend Developers</li>
 <li>[ ] Hire or assign DevOps Engineer</li>
 <li>[ ] Hire or assign Business Analyst</li>
 
-<h4>**Day 3-5: Environment Setup**</h4>
+<h4><strong>Day 3-5: Environment Setup</strong></h4>
 <li>[ ] Create GitHub organization</li>
 <li>[ ] Set up AWS account (or Azure)</li>
 <li>[ ] Set up development, staging, production environments</li>
@@ -717,7 +739,7 @@
 <li>[ ] Set up project management tool (JIRA, Linear)</li>
 <li>[ ] Set up communication tools (Slack, Teams)</li>
 
-<h4>**Week 1 Deliverables:**</h4>
+<h4><strong>Week 1 Deliverables:</strong></h4>
 <li>[ ] Team assembled</li>
 <li>[ ] Development environment ready</li>
 <li>[ ] Git repository created</li>
@@ -744,7 +766,7 @@
 
 <p><strong>Why:</strong> This is the revenue-generating core. Get claims out the door.</p>
 
-<p><strong>Priority 3 (Weeks 17-24): Submission & Payment</strong></p>
+<p><strong>Priority 3 (Weeks 17-24): Submission &amp; Payment</strong></p>
 <li>Clearinghouse integration</li>
 <li>Claim submission</li>
 <li>Payment posting (manual)</li>
@@ -767,6 +789,13 @@
 <li>Patient portal</li>
 
 <p><strong>Why:</strong> Differentiation and efficiency gains.</p>
+
+<h4><strong>Stage-Gate Approvals</strong></h4>
+<p>To control scope and ensure quality, the project will use stage-gate approvals. Moving to the next phase requires formal sign-off on the current phase's deliverables:</p>
+<li><strong>Gate 1 (Foundation → Core):</strong> Tech Lead signs off on architecture; Business Owners sign off on data model.</li>
+<li><strong>Gate 2 (Core → Billing):</strong> UAT sign-off on Patient Registration and Eligibility modules.</li>
+<li><strong>Gate 3 (Billing → Submission):</strong> Compliance sign-off on claim scrubbing rules and HIPAA controls.</li>
+<li><strong>Gate 4 (Submission → Go-Live):</strong> Successful end-to-end parallel run with legacy system.</li>
 
 <hr>
 
@@ -889,7 +918,7 @@
 
 <h3>10.4 Scaling Strategy</h3>
 
-<h4>**Phase 1: Single Hospital (Months 1-12)**</h4>
+<h4><strong>Phase 1: Single Hospital (Months 1-12)</strong></h4>
 <li>Build and deploy MVP</li>
 <li>Onboard 1 hospital (100-300 users)</li>
 <li>Process 1,000-3,000 claims/month</li>
@@ -899,7 +928,7 @@
 
 <hr>
 
-<h4>**Phase 2: Multi-Hospital (Months 13-24)**</h4>
+<h4><strong>Phase 2: Multi-Hospital (Months 13-24)</strong></h4>
 <li>Add multi-tenancy support</li>
 <li>Onboard 5-10 hospitals</li>
 <li>Process 10,000-30,000 claims/month</li>
@@ -909,7 +938,7 @@
 
 <hr>
 
-<h4>**Phase 3: Regional Expansion (Months 25-36)**</h4>
+<h4><strong>Phase 3: Regional Expansion (Months 25-36)</strong></h4>
 <li>Onboard 50-100 hospitals</li>
 <li>Process 100,000-300,000 claims/month</li>
 <li>Add regional data centers</li>
@@ -919,7 +948,7 @@
 
 <hr>
 
-<h4>**Phase 4: National Platform (Year 3+)**</h4>
+<h4><strong>Phase 4: National Platform (Year 3+)</strong></h4>
 <li>Onboard 500+ hospitals</li>
 <li>Process 1M+ claims/month</li>
 <li>Build marketplace for third-party integrations</li>
@@ -931,7 +960,7 @@
 
 <h3>10.5 Best Practices</h3>
 
-<h4>**Development Best Practices**</h4>
+<h4><strong>Development Best Practices</strong></h4>
 
 <li><strong>Code Quality</strong></li>
 <li>Maintain 80%+ test coverage</li>
@@ -946,9 +975,9 @@
 <li>Regular security audits</li>
 
 <li><strong>Performance</strong></li>
-<li>Database queries <50ms</li>
-<li>API responses <200ms</li>
-<li>Page loads <2 seconds</li>
+<li>Database queries &lt;50ms</li>
+<li>API responses &lt;200ms</li>
+<li>Page loads &lt;2 seconds</li>
 <li>Use Redis caching aggressively</li>
 
 <li><strong>Documentation</strong></li>
@@ -965,7 +994,7 @@
 
 <hr>
 
-<h4>**Project Management Best Practices**</h4>
+<h4><strong>Project Management Best Practices</strong></h4>
 
 <li><strong>Agile Methodology</strong></li>
 <li>2-week sprints</li>
@@ -996,41 +1025,41 @@
 <h3>10.6 Success Metrics</h3>
 
 <p><strong>Technical Metrics:</strong></p>
-<li>System uptime: >99.9%</li>
-<li>API response time: <200ms (p95)</li>
-<li>Database query time: <50ms (p95)</li>
-<li>Page load time: <2 seconds</li>
-<li>Test coverage: >80%</li>
-<li>Security vulnerabilities: 0 critical, <5 high</li>
+<li>System uptime: &gt;99.9%</li>
+<li>API response time: &lt;200ms (p95)</li>
+<li>Database query time: &lt;50ms (p95)</li>
+<li>Page load time: &lt;2 seconds</li>
+<li>Test coverage: &gt;80%</li>
+<li>Security vulnerabilities: 0 critical, &lt;5 high</li>
 
 <p><strong>Business Metrics:</strong></p>
-<li>Clean claim rate: >95%</li>
-<li>Denial rate: <5%</li>
-<li>Days in AR: <40 days</li>
-<li>Net collection rate: >95%</li>
-<li>User adoption: >90% active users</li>
-<li>User satisfaction: >4.0/5.0</li>
+<li>Clean claim rate: &gt;95%</li>
+<li>Denial rate: &lt;5%</li>
+<li>Days in AR: &lt;40 days</li>
+<li>Net collection rate: &gt;95%</li>
+<li>User adoption: &gt;90% active users</li>
+<li>User satisfaction: &gt;4.0/5.0</li>
 
 <p><strong>Financial Metrics:</strong></p>
-<li>Revenue leakage: <2%</li>
-<li>Cost to collect: <$0.05 per $1</li>
-<li>ROI: System pays for itself in <12 months</li>
+<li>Revenue leakage: &lt;2%</li>
+<li>Cost to collect: &lt;$0.05 per $1</li>
+<li>ROI: System pays for itself in &lt;12 months</li>
 <li>Annual savings: $1.5M-$3M per hospital</li>
 
 <hr>
 
-<h2>11. Conclusion & Next Steps</h2>
+<h2>11. Conclusion &amp; Next Steps</h2>
 
 <h3>11.1 Executive Summary</h3>
 
 <p>You are building a <strong>Healthcare Revenue Cycle Management (RCM) platform</strong> that will:</p>
 
-<p>✅ <strong>Automate</strong> the complete financial workflow from patient registration to payment collection  </p>
-<p>✅ <strong>Reduce</strong> claim denial rate from 10-15% to <5%  </p>
-<p>✅ <strong>Accelerate</strong> payment collection from 50-60 days to <40 days  </p>
-<p>✅ <strong>Recover</strong> $1.5M-$3M annually in lost revenue per hospital  </p>
-<p>✅ <strong>Ensure</strong> HIPAA compliance and data security  </p>
-<p>✅ <strong>Scale</strong> from 1 hospital to 100+ hospitals  </p>
+<p>✅ <strong>Automate</strong> the complete financial workflow from patient registration to payment collection</p>
+<p>✅ <strong>Reduce</strong> claim denial rate from 10-15% to &lt;5%</p>
+<p>✅ <strong>Accelerate</strong> payment collection from 50-60 days to &lt;40 days</p>
+<p>✅ <strong>Recover</strong> $1.5M-$3M annually in lost revenue per hospital</p>
+<p>✅ <strong>Ensure</strong> HIPAA compliance and data security</p>
+<p>✅ <strong>Scale</strong> from 1 hospital to 100+ hospitals</p>
 
 <p><strong>Technology Stack:</strong></p>
 <li>Frontend: React + TypeScript + TailwindCSS</li>
@@ -1039,9 +1068,9 @@
 <li>AI: AWS Bedrock for coding assistance and automation</li>
 <li>Integrations: Waystar (clearinghouse), Stripe (payments), Mirth Connect (HL7)</li>
 
-<p><strong>Timeline:</strong> 12 months (or 6 months for MVP)  </p>
-<p><strong>Budget:</strong> $530K (or $250K for MVP)  </p>
-<p><strong>Team:</strong> 14 people (or 8 for MVP)  </p>
+<p><strong>Timeline:</strong> 12 months (or 6 months for MVP)</p>
+<p><strong>Budget:</strong> $530K (or $250K for MVP)</p>
+<p><strong>Team:</strong> 14 people (or 8 for MVP)</p>
 <p><strong>Ongoing Cost:</strong> $2,200-$5,000/month (infrastructure + APIs)</p>
 
 <hr>
@@ -1127,16 +1156,16 @@
 
 <hr>
 
-<h3>11.5 Resources & References</h3>
+<h3>11.5 Resources &amp; References</h3>
 
 <p><strong>Documentation Files:</strong></p>
-<li><code>02<em>System</em>Requirements_Summary.md</code> - What to build</li>
-<li><code>03<em>Database</em>Design.md</code> - Database schema</li>
-<li><code>04<em>User</em>Roles_Permissions.md</code> - Security model</li>
-<li><code>05<em>API</em>Integration_Requirements.md</code> - External integrations</li>
-<li><code>06<em>UI</em>UX_Workflows.md</code> - Screen designs</li>
-<li><code>07<em>Technology</em>Stack<em>Vendor</em>Guide.md</code> - APIs and vendors</li>
-<li><code>08<em>Implementation</em>Guide<em>Speed</em>Security_Scale.md</code> - How to build</li>
+<li><code>02_System_Requirements_Summary.md</code> - What to build</li>
+<li><code>03_Database_Design.md</code> - Database schema</li>
+<li><code>04_User_Roles_Permissions.md</code> - Security model</li>
+<li><code>05_API_Integration_Requirements.md</code> - External integrations</li>
+<li><code>06_UI_UX_Workflows.md</code> - Screen designs</li>
+<li><code>07_Technology_Stack_Vendor_Guide.md</code> - APIs and vendors</li>
+<li><code>08_Implementation_Guide_Speed_Security_Scale.md</code> - How to build</li>
 
 <p><strong>External Resources:</strong></p>
 <li>CMS NCCI Edits: https://www.cms.gov/medicare/coding-billing/national-correct-coding-initiative-ncci</li>
@@ -1151,15 +1180,15 @@
 <h2>You Are Ready to Build! 🚀</h2>
 
 <p>You now have:</p>
-<p>✅ Complete understanding of RCM workflow (22 modules)  </p>
-<p>✅ Detailed system architecture  </p>
-<p>✅ Technology stack recommendations  </p>
-<p>✅ Third-party API integration guide  </p>
-<p>✅ AI feature implementation plan  </p>
-<p>✅ 12-month development roadmap  </p>
-<p>✅ Team structure and hiring guide  </p>
-<p>✅ Risk mitigation strategies  </p>
-<p>✅ Execution strategy and best practices  </p>
+<p>✅ Complete understanding of RCM workflow (22 modules)</p>
+<p>✅ Detailed system architecture</p>
+<p>✅ Technology stack recommendations</p>
+<p>✅ Third-party API integration guide</p>
+<p>✅ AI feature implementation plan</p>
+<p>✅ 12-month development roadmap</p>
+<p>✅ Team structure and hiring guide</p>
+<p>✅ Risk mitigation strategies</p>
+<p>✅ Execution strategy and best practices</p>
 
 <p><strong>Total Documentation:</strong> 9 comprehensive documents, 400+ pages of specifications</p>
 
@@ -1169,9 +1198,9 @@
 
 <hr>
 
-<p><strong>Document Prepared By:</strong> AI Assistant  </p>
+<p><strong>Document Prepared By:</strong> AI Assistant</p>
 
-<p><strong>Version:</strong> 1.0  </p>
+<p><strong>Version:</strong> 1.0</p>
 <p><strong>Status:</strong> Ready for Technical Review</p>
 
 </body>

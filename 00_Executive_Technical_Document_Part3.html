@@ -13,7 +13,7 @@
 
 <hr>
 
-<h2>6. AI Features & Implementation</h2>
+<h2>6. AI Features &amp; Implementation</h2>
 
 <h3>6.1 AI Use Cases in RCM</h3>
 
@@ -74,34 +74,39 @@
 
 <h3>6.2 Detailed AI Feature Implementation</h3>
 
-<h4>**Feature 1: AI-Assisted Medical Coding**</h4>
+<h4><strong>Feature 1: AI-Assisted Medical Coding</strong></h4>
 
-<p><strong>Problem:</strong>  </p>
+<p><strong>Problem:</strong></p>
 <p>Medical coders spend 15-30 minutes per encounter manually searching for correct ICD-10/CPT codes.</p>
 
-<p><strong>AI Solution:</strong>  </p>
+<p><strong>AI Solution:</strong></p>
 <p>Use GPT-4 or AWS Bedrock to analyze clinical notes and suggest codes.</p>
 
 <p><strong>How It Works:</strong></p>
 <li>Coder opens encounter</li>
 <li>System sends clinical note to AI</li>
-<li>AI returns suggested ICD-10 and CPT codes with confidence scores</li>
-<li>Coder reviews and confirms/modifies suggestions</li>
-<li>System learns from coder corrections</li>
+<li>AI returns suggested ICD-10 and CPT codes with confidence scores and explanations.</li>
+<li><strong>Human Review:</strong> Coder reviews and confirms/modifies suggestions before final coding is applied.</li>
+<li><strong>Audit Trail:</strong> System logs which AI suggestions were accepted, rejected, or modified.</li>
+<li>System learns from coder corrections to improve accuracy.</li>
 
 <p><strong>Technical Implementation:</strong></p>
 
 <pre><code class="language-python">
 import boto3
 import json
+
 bedrock = boto3.client('bedrock-runtime', region_name='us-east-1')
+
 def suggest_codes(clinical_note: str) -&gt; dict:
     prompt = f"""You are an expert medical coder. Analyze this clinical note and suggest:
 1. ICD-10 diagnosis codes (with descriptions)
 2. CPT procedure codes (with descriptions)
 3. Confidence score for each code (0-100)
+
 Clinical Note:
 {clinical_note}
+
 Return JSON format:
 {{
   "diagnoses": [
@@ -112,6 +117,7 @@ Return JSON format:
   ]
 }}
 """
+
     response = bedrock.invoke_model(
         modelId='anthropic.claude-v2',
         body=json.dumps({
@@ -120,9 +126,10 @@ Return JSON format:
             'temperature': 0.1  # Low temperature for consistent medical coding
         })
     )
+    
     result = json.loads(response['body'].read())
     return json.loads(result['completion'])
-</pre>
+</code></pre>
 
 <p><strong>Cost Estimate:</strong></p>
 <li>Average clinical note: 500 tokens input, 200 tokens output</li>
@@ -139,20 +146,21 @@ Return JSON format:
 
 <hr>
 
-<h4>**Feature 2: Denial Prediction**</h4>
+<h4><strong>Feature 2: Denial Prediction</strong></h4>
 
-<p><strong>Problem:</strong>  </p>
+<p><strong>Problem:</strong></p>
 <p>10-15% of claims are denied, costing $50-$100 per denial to rework.</p>
 
-<p><strong>AI Solution:</strong>  </p>
+<p><strong>AI Solution:</strong></p>
 <p>Predict which claims will be denied before submission.</p>
 
 <p><strong>How It Works:</strong></p>
 <li>Before claim submission, AI analyzes claim data</li>
 <li>AI predicts denial probability based on historical patterns</li>
-<li>If high risk (>50%), alert biller to review</li>
+<li>If high risk (&gt;50%), alert biller to review</li>
 <li>Biller fixes issues before submission</li>
 <li>Prevents denial before it happens</li>
+<li><strong>Feedback Loop:</strong> Actual denial outcomes are fed back to train and improve future prediction rules.</li>
 
 <p><strong>Technical Implementation:</strong></p>
 
@@ -160,6 +168,7 @@ Return JSON format:
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
+
 # Train model on historical claims
 def train_denial_model():
     # Load historical claims data
@@ -178,25 +187,33 @@ def train_denial_model():
         WHERE c.submission_date &gt; NOW() - INTERVAL '2 years'
         GROUP BY c.id
     """, db_connection)
+    
     # Features
     X = claims[[
         'payer_id', 'claim_type', 'total_charge', 'line_count',
         'has_authorization', 'days_since_service', 'is_clean_claim'
     ]]
+    
     # Target (was claim denied?)
     y = claims['was_denied']
+    
     # Train model
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
     model = RandomForestClassifier(n_estimators=100)
     model.fit(X_train, y_train)
+    
     # Accuracy
     accuracy = model.score(X_test, y_test)
     print(f"Model accuracy: {accuracy:.2%}")
+    
     return model
+
 # Predict denial risk for new claim
 def predict_denial_risk(claim_id: str) -&gt; dict:
     claim_data = get_claim_features(claim_id)
+    
     denial_probability = model.predict_proba([claim_data])[0][1]
+    
     # Get top risk factors
     feature_importance = model.feature_importances_
     risk_factors = sorted(
@@ -204,12 +221,13 @@ def predict_denial_risk(claim_id: str) -&gt; dict:
         key=lambda x: x[1],
         reverse=True
     )[:3]
+    
     return {
         'denial_probability': denial_probability,
         'risk_level': 'High' if denial_probability &gt; 0.5 else 'Low',
         'top_risk_factors': risk_factors
     }
-</pre>
+</code></pre>
 
 <p><strong>Expected Results:</strong></p>
 <li>Model accuracy: 75-85%</li>
@@ -218,12 +236,12 @@ def predict_denial_risk(claim_id: str) -&gt; dict:
 
 <hr>
 
-<h4>**Feature 3: OCR Insurance Card Extraction**</h4>
+<h4><strong>Feature 3: OCR Insurance Card Extraction</strong></h4>
 
-<p><strong>Problem:</strong>  </p>
+<p><strong>Problem:</strong></p>
 <p>Front desk staff manually types insurance information from cards (slow, error-prone).</p>
 
-<p><strong>AI Solution:</strong>  </p>
+<p><strong>AI Solution:</strong></p>
 <p>Use AWS Textract to automatically extract data from insurance card images.</p>
 
 <p><strong>How It Works:</strong></p>
@@ -239,23 +257,29 @@ def predict_denial_risk(claim_id: str) -&gt; dict:
 <pre><code class="language-python">
 import boto3
 import re
+
 textract = boto3.client('textract')
 s3 = boto3.client('s3')
+
 def extract_insurance_card(image_path: str) -&gt; dict:
     # Upload to S3
     bucket = 'insurance-cards'
     key = f'temp/{uuid.uuid4()}.jpg'
     s3.upload_file(image_path, bucket, key)
+    
     # Extract text with Textract
     response = textract.detect_document_text(
         Document={'S3Object': {'Bucket': bucket, 'Name': key}}
     )
+    
     # Extract all text
     text_blocks = []
     for item in response['Blocks']:
         if item['BlockType'] == 'LINE':
             text_blocks.append(item['Text'])
+    
     full_text = ' '.join(text_blocks)
+    
     # Parse insurance fields using regex
     insurance_data = {
         'payer_name': extract_payer_name(full_text),
@@ -264,7 +288,9 @@ def extract_insurance_card(image_path: str) -&gt; dict:
         'rx_bin': extract_rx_bin(full_text),
         'phone': extract_phone(full_text)
     }
+    
     return insurance_data
+
 def extract_member_id(text: str) -&gt; str:
     # Common patterns: "Member ID: ABC123456" or "ID: ABC123456"
     patterns = [
@@ -272,19 +298,24 @@ def extract_member_id(text: str) -&gt; str:
         r'ID[:\s]+([A-Z0-9]+)',
         r'Subscriber ID[:\s]+([A-Z0-9]+)'
     ]
+    
     for pattern in patterns:
         match = re.search(pattern, text, re.IGNORECASE)
         if match:
             return match.group(1)
+    
     return None
+
 def extract_payer_name(text: str) -&gt; str:
     # Match against known payer list
     payers = ['Blue Cross Blue Shield', 'UnitedHealthcare', 'Aetna', 'Cigna']
+    
     for payer in payers:
         if payer.lower() in text.lower():
             return payer
+    
     return None
-</pre>
+</code></pre>
 
 <p><strong>Accuracy:</strong></p>
 <li>Field extraction accuracy: 90-95%</li>
@@ -297,12 +328,12 @@ def extract_payer_name(text: str) -&gt; str:
 
 <hr>
 
-<h4>**Feature 4: Clinical Note Summarization**</h4>
+<h4><strong>Feature 4: Clinical Note Summarization</strong></h4>
 
-<p><strong>Problem:</strong>  </p>
+<p><strong>Problem:</strong></p>
 <p>Coders must read lengthy clinical notes (500-2000 words) to extract key information.</p>
 
-<p><strong>AI Solution:</strong>  </p>
+<p><strong>AI Solution:</strong></p>
 <p>Summarize clinical notes into structured format for faster coding.</p>
 
 <p><strong>How It Works:</strong></p>
@@ -320,8 +351,10 @@ def extract_payer_name(text: str) -&gt; str:
 <pre><code class="language-python">
 def summarize_clinical_note(note: str) -&gt; dict:
     prompt = f"""Summarize this clinical note into structured format:
+
 Clinical Note:
 {note}
+
 Return JSON:
 {{
   "chief_complaint": "...",
@@ -331,6 +364,7 @@ Return JSON:
   "follow_up": "..."
 }}
 """
+
     response = bedrock.invoke_model(
         modelId='anthropic.claude-v2',
         body=json.dumps({
@@ -338,8 +372,9 @@ Return JSON:
             'max_tokens_to_sample': 500
         })
     )
+    
     return json.loads(response['completion'])
-</pre>
+</code></pre>
 
 <p><strong>Time Savings:</strong></p>
 <li>Reduce note review time from 5 minutes to 2 minutes</li>
@@ -347,12 +382,12 @@ Return JSON:
 
 <hr>
 
-<h4>**Feature 5: Claim Error Detection**</h4>
+<h4><strong>Feature 5: Claim Error Detection</strong></h4>
 
-<p><strong>Problem:</strong>  </p>
+<p><strong>Problem:</strong></p>
 <p>Claims submitted with errors are rejected (not denied, but bounced back immediately).</p>
 
-<p><strong>AI Solution:</strong>  </p>
+<p><strong>AI Solution:</strong></p>
 <p>AI reviews claim before submission and flags potential errors.</p>
 
 <p><strong>How It Works:</strong></p>
@@ -372,6 +407,7 @@ Return JSON:
 def detect_claim_errors(claim_id: str) -&gt; list:
     claim = get_claim_with_details(claim_id)
     errors = []
+    
     # Check 1: Missing authorization
     if claim.requires_authorization and not claim.authorization_number:
         errors.append({
@@ -380,6 +416,7 @@ def detect_claim_errors(claim_id: str) -&gt; list:
             'message': 'Prior authorization required but missing',
             'suggestion': 'Obtain authorization or remove procedure'
         })
+    
     # Check 2: Medical necessity
     for line in claim.lines:
         if not check_medical_necessity(line.diagnosis_codes, line.cpt_code):
@@ -389,9 +426,11 @@ def detect_claim_errors(claim_id: str) -&gt; list:
                 'message': f'Diagnosis may not support {line.cpt_code}',
                 'suggestion': 'Review LCD/NCD guidelines'
             })
+    
     # Check 3: NCCI edits
     ncci_errors = check_ncci_edits(claim.lines)
     errors.extend(ncci_errors)
+    
     # Check 4: Timely filing
     days_since_service = (datetime.now() - claim.service_date).days
     if days_since_service &gt; claim.payer.timely_filing_days:
@@ -401,8 +440,9 @@ def detect_claim_errors(claim_id: str) -&gt; list:
             'message': f'Claim exceeds timely filing limit ({days_since_service} days)',
             'suggestion': 'File appeal for late filing'
         })
+    
     return errors
-</pre>
+</code></pre>
 
 <p><strong>Impact:</strong></p>
 <li>Reduce claim rejection rate from 5% to 1%</li>
@@ -410,12 +450,12 @@ def detect_claim_errors(claim_id: str) -&gt; list:
 
 <hr>
 
-<h4>**Feature 6: Patient Support Chatbot**</h4>
+<h4><strong>Feature 6: Patient Support Chatbot</strong></h4>
 
-<p><strong>Problem:</strong>  </p>
+<p><strong>Problem:</strong></p>
 <p>Patients call with billing questions, overwhelming call center.</p>
 
-<p><strong>AI Solution:</strong>  </p>
+<p><strong>AI Solution:</strong></p>
 <p>AI chatbot answers common billing questions 24/7.</p>
 
 <p><strong>How It Works:</strong></p>
@@ -432,15 +472,19 @@ def detect_claim_errors(claim_id: str) -&gt; list:
 def chatbot_response(patient_id: str, question: str) -&gt; str:
     # Get patient account context
     account = get_patient_account(patient_id)
+    
     context = f"""
 Patient Account Summary:
 - Total Balance: ${account.balance}
 - Insurance Paid: ${account.insurance_paid}
 - Patient Responsibility: ${account.patient_responsibility}
 - Recent Services: {account.recent_services}
+
 Patient Question: {question}
+
 Provide a helpful, empathetic response in plain language.
 """
+
     response = bedrock.invoke_model(
         modelId='anthropic.claude-v2',
         body=json.dumps({
@@ -448,8 +492,9 @@ Provide a helpful, empathetic response in plain language.
             'max_tokens_to_sample': 300
         })
     )
+    
     return response['completion']
-</pre>
+</code></pre>
 
 <p><strong>Common Questions Handled:</strong></p>
 <li>"Why do I owe money if I have insurance?"</li>
@@ -556,7 +601,7 @@ Provide a helpful, empathetic response in plain language.
 
 <h3>7.1 Phase-by-Phase Development Roadmap</h3>
 
-<h4>**Phase 1: Foundation & Planning (Weeks 1-4)**</h4>
+<h4><strong>Phase 1: Foundation &amp; Planning (Weeks 1-4)</strong></h4>
 
 <p><strong>Objectives:</strong></p>
 <li>Finalize requirements</li>
@@ -566,7 +611,7 @@ Provide a helpful, empathetic response in plain language.
 
 <p><strong>Deliverables:</strong></p>
 
-<p><strong>Week 1: Requirements & Workflow</strong></p>
+<p><strong>Week 1: Requirements &amp; Workflow</strong></p>
 <li>[ ] Review all 8 documentation files</li>
 <li>[ ] Conduct stakeholder interviews (front desk, coders, billers, AR managers)</li>
 <li>[ ] Document current workflow pain points</li>
@@ -595,12 +640,12 @@ Provide a helpful, empathetic response in plain language.
 <li>[ ] Set up database backup strategy</li>
 <li>[ ] Seed reference data (payers, ICD-10 codes, CPT codes)</li>
 
-<p><strong>Team:</strong> 1 Tech Lead, 1 Backend Dev, 1 DevOps, 1 BA  </p>
+<p><strong>Team:</strong> 1 Tech Lead, 1 Backend Dev, 1 DevOps, 1 BA</p>
 <p><strong>Budget:</strong> $40,000</p>
 
 <hr>
 
-<h4>**Phase 2: Authentication & Core Modules (Weeks 5-12)**</h4>
+<h4><strong>Phase 2: Authentication &amp; Core Modules (Weeks 5-12)</strong></h4>
 
 <p><strong>Objectives:</strong></p>
 <li>Implement authentication</li>
@@ -645,12 +690,12 @@ Provide a helpful, empathetic response in plain language.
 <li>[ ] Integrate SendGrid for email reminders</li>
 <li>[ ] Build appointment confirmation workflow</li>
 
-<p><strong>Team:</strong> 2 Backend Devs, 2 Frontend Devs, 1 QA  </p>
+<p><strong>Team:</strong> 2 Backend Devs, 2 Frontend Devs, 1 QA</p>
 <p><strong>Budget:</strong> $80,000</p>
 
 <hr>
 
-<h4>**Phase 3: Clinical & Billing Modules (Weeks 13-20)**</h4>
+<h4><strong>Phase 3: Clinical &amp; Billing Modules (Weeks 13-20)</strong></h4>
 
 <p><strong>Objectives:</strong></p>
 <li>Build encounter management</li>
@@ -684,7 +729,7 @@ Provide a helpful, empathetic response in plain language.
 <li>[ ] Integrate AI coding assistant (optional)</li>
 <li>[ ] Build coding productivity reports</li>
 
-<p><strong>Week 19-20: Claim Creation & Scrubbing</strong></p>
+<p><strong>Week 19-20: Claim Creation &amp; Scrubbing</strong></p>
 <li>[ ] Build claim generation engine</li>
 <li>[ ] Generate CMS-1500 and UB-04 formats</li>
 <li>[ ] Implement claim scrubbing (200+ rules)</li>
@@ -692,12 +737,12 @@ Provide a helpful, empathetic response in plain language.
 <li>[ ] Build claim detail UI</li>
 <li>[ ] Implement claim status tracking</li>
 
-<p><strong>Team:</strong> 3 Backend Devs, 2 Frontend Devs, 1 QA, 1 BA  </p>
+<p><strong>Team:</strong> 3 Backend Devs, 2 Frontend Devs, 1 QA, 1 BA</p>
 <p><strong>Budget:</strong> $100,000</p>
 
 <hr>
 
-<h4>**Phase 4: Submission & Payment Modules (Weeks 21-28)**</h4>
+<h4><strong>Phase 4: Submission &amp; Payment Modules (Weeks 21-28)</strong></h4>
 
 <p><strong>Objectives:</strong></p>
 <li>Integrate clearinghouse</li>
@@ -738,12 +783,12 @@ Provide a helpful, empathetic response in plain language.
 <li>[ ] Track appeal outcomes</li>
 <li>[ ] Build denial analytics dashboard</li>
 
-<p><strong>Team:</strong> 3 Backend Devs, 2 Frontend Devs, 1 QA, 1 Integration Specialist  </p>
+<p><strong>Team:</strong> 3 Backend Devs, 2 Frontend Devs, 1 QA, 1 Integration Specialist</p>
 <p><strong>Budget:</strong> $100,000</p>
 
 <hr>
 
-<h4>**Phase 5: Patient Billing & AR (Weeks 29-32)**</h4>
+<h4><strong>Phase 5: Patient Billing &amp; AR (Weeks 29-32)</strong></h4>
 
 <p><strong>Objectives:</strong></p>
 <li>Build patient billing</li>
@@ -760,7 +805,7 @@ Provide a helpful, empathetic response in plain language.
 <li>[ ] Implement automated billing cycles</li>
 <li>[ ] Build payment confirmation emails</li>
 
-<p><strong>Week 31-32: AR Management & Collections</strong></p>
+<p><strong>Week 31-32: AR Management &amp; Collections</strong></p>
 <li>[ ] Build AR aging reports</li>
 <li>[ ] Build collections worklists</li>
 <li>[ ] Implement collection notice automation</li>
@@ -768,12 +813,12 @@ Provide a helpful, empathetic response in plain language.
 <li>[ ] Build charity care screening</li>
 <li>[ ] Build AR analytics dashboard</li>
 
-<p><strong>Team:</strong> 2 Backend Devs, 2 Frontend Devs, 1 QA  </p>
+<p><strong>Team:</strong> 2 Backend Devs, 2 Frontend Devs, 1 QA</p>
 <p><strong>Budget:</strong> $50,000</p>
 
 <hr>
 
-<h4>**Phase 6: Reporting & Analytics (Weeks 33-36)**</h4>
+<h4><strong>Phase 6: Reporting &amp; Analytics (Weeks 33-36)</strong></h4>
 
 <p><strong>Objectives:</strong></p>
 <li>Build standard reports</li>
@@ -799,12 +844,12 @@ Provide a helpful, empathetic response in plain language.
 <li>[ ] Integrate Tableau or Power BI (optional)</li>
 <li>[ ] Build custom report builder</li>
 
-<p><strong>Team:</strong> 2 Backend Devs, 1 Frontend Dev, 1 Data Analyst  </p>
+<p><strong>Team:</strong> 2 Backend Devs, 1 Frontend Dev, 1 Data Analyst</p>
 <p><strong>Budget:</strong> $40,000</p>
 
 <hr>
 
-<h4>**Phase 7: AI Features & Optimization (Weeks 37-40)**</h4>
+<h4><strong>Phase 7: AI Features &amp; Optimization (Weeks 37-40)</strong></h4>
 
 <p><strong>Objectives:</strong></p>
 <li>Implement AI features</li>
@@ -821,7 +866,7 @@ Provide a helpful, empathetic response in plain language.
 <li>[ ] Implement patient chatbot</li>
 <li>[ ] Train models on historical data</li>
 
-<p><strong>Week 39-40: Optimization & Security</strong></p>
+<p><strong>Week 39-40: Optimization &amp; Security</strong></p>
 <li>[ ] Performance testing and optimization</li>
 <li>[ ] Database query optimization</li>
 <li>[ ] Implement Redis caching strategy</li>
@@ -829,12 +874,12 @@ Provide a helpful, empathetic response in plain language.
 <li>[ ] HIPAA compliance review</li>
 <li>[ ] Load testing (1000+ concurrent users)</li>
 
-<p><strong>Team:</strong> 1 AI/ML Engineer, 2 Backend Devs, 1 Security Specialist  </p>
+<p><strong>Team:</strong> 1 AI/ML Engineer, 2 Backend Devs, 1 Security Specialist</p>
 <p><strong>Budget:</strong> $50,000</p>
 
 <hr>
 
-<h4>**Phase 8: Testing & Deployment (Weeks 41-48)**</h4>
+<h4><strong>Phase 8: Testing &amp; Deployment (Weeks 41-48)</strong></h4>
 
 <p><strong>Objectives:</strong></p>
 <li>Comprehensive testing</li>
@@ -844,13 +889,15 @@ Provide a helpful, empathetic response in plain language.
 
 <p><strong>Deliverables:</strong></p>
 
-<p><strong>Week 41-44: Testing</strong></p>
+<p><strong>Week 41-44: Testing &amp; Readiness</strong></p>
 <li>[ ] Unit testing (80%+ code coverage)</li>
-<li>[ ] Integration testing</li>
+<li>[ ] Integration testing with all external APIs</li>
 <li>[ ] End-to-end testing</li>
 <li>[ ] Performance testing</li>
-<li>[ ] Security testing</li>
+<li>[ ] Security testing (Penetration testing)</li>
 <li>[ ] HIPAA compliance testing</li>
+<li>[ ] <strong>Data Migration Dry Run:</strong> Verify data integrity.</li>
+<li>[ ] <strong>Go-Live Rollback Plan:</strong> Verify rollback procedures.</li>
 <li>[ ] Bug fixing</li>
 
 <p><strong>Week 45-46: User Acceptance Testing (UAT)</strong></p>
@@ -869,7 +916,7 @@ Provide a helpful, empathetic response in plain language.
 <li>[ ] Conduct smoke testing</li>
 <li>[ ] Monitor for issues</li>
 
-<p><strong>Week 48: Training & Go-Live</strong></p>
+<p><strong>Week 48: Training &amp; Go-Live</strong></p>
 <li>[ ] Train all users (100-300 users)</li>
 <li>[ ] Create user manuals and video tutorials</li>
 <li>[ ] Set up help desk support</li>
@@ -877,7 +924,7 @@ Provide a helpful, empathetic response in plain language.
 <li>[ ] Monitor closely for first week</li>
 <li>[ ] Gradual rollout to all departments</li>
 
-<p><strong>Team:</strong> 2 QA Engineers, 1 DevOps, 1 Trainer, 1 Support Lead  </p>
+<p><strong>Team:</strong> 2 QA Engineers, 1 DevOps, 1 Trainer, 1 Support Lead</p>
 <p><strong>Budget:</strong> $70,000</p>
 
 <hr>
@@ -913,14 +960,14 @@ Provide a helpful, empathetic response in plain language.
 <td>Encounters, coding, claims</td>
 </tr>
 <tr>
-<td>4. Submission & Payment</td>
+<td>4. Submission &amp; Payment</td>
 <td>8 weeks</td>
 <td>6 people</td>
 <td>$100K</td>
 <td>Clearinghouse, payments, denials</td>
 </tr>
 <tr>
-<td>5. Patient Billing & AR</td>
+<td>5. Patient Billing &amp; AR</td>
 <td>4 weeks</td>
 <td>5 people</td>
 <td>$50K</td>
@@ -934,14 +981,14 @@ Provide a helpful, empathetic response in plain language.
 <td>Reports, dashboards, analytics</td>
 </tr>
 <tr>
-<td>7. AI & Optimization</td>
+<td>7. AI &amp; Optimization</td>
 <td>4 weeks</td>
 <td>4 people</td>
 <td>$50K</td>
 <td>AI features, performance, security</td>
 </tr>
 <tr>
-<td>8. Testing & Deployment</td>
+<td>8. Testing &amp; Deployment</td>
 <td>8 weeks</td>
 <td>5 people</td>
 <td>$70K</td>
@@ -955,8 +1002,8 @@ Provide a helpful, empathetic response in plain language.
 <td><strong>Production-ready RCM platform</strong></td>
 </tr>
 
-<p><strong>Total Project Duration:</strong> 12 months (1 year)  </p>
-<p><strong>Total Development Cost:</strong> $530,000  </p>
+<p><strong>Total Project Duration:</strong> 12 months (1 year)</p>
+<p><strong>Total Development Cost:</strong> $530,000</p>
 <p><strong>Ongoing Monthly Cost:</strong> $2,200-$5,000 (infrastructure + APIs)</p>
 
 <hr>
@@ -986,13 +1033,13 @@ Provide a helpful, empathetic response in plain language.
 <li>Advanced analytics</li>
 <li>HL7/FHIR integration</li>
 
-<p><strong>MVP Timeline:</strong> 24 weeks (6 months)  </p>
-<p><strong>MVP Budget:</strong> $250,000  </p>
+<p><strong>MVP Timeline:</strong> 24 weeks (6 months)</p>
+<p><strong>MVP Budget:</strong> $250,000</p>
 <p><strong>MVP Team:</strong> 3 backend, 2 frontend, 1 QA, 1 DevOps</p>
 
 <hr>
 
-<p><em>[Continue to Part 4 for Team Structure, Challenges, and Execution Strategy]</em></p>
+<p>*[Continue to Part 4 for Team Structure, Challenges, and Execution Strategy]*</p>
 
 </body>
 </html>

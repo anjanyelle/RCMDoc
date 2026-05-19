@@ -9,8 +9,8 @@
 <body>
 <h1>Module 4: Appointment Scheduling - Flow Documentation</h1>
 
-<p><strong>Version:</strong> 1.0  </p>
-<p><strong>Module ID:</strong> MOD-004  </p>
+<p><strong>Version:</strong> 1.0</p>
+<p><strong>Module ID:</strong> MOD-004</p>
 <p><strong>Category:</strong> Patient Management</p>
 
 <hr>
@@ -20,6 +20,8 @@
 <p><strong>Purpose:</strong> Schedule patient appointments with doctors, manage calendar, send reminders.</p>
 
 <p><strong>Why Hospitals Use It:</strong> Optimize doctor schedules, reduce no-shows, improve patient experience.</p>
+
+<p><strong>Business Goal:</strong> Reduce no-shows, improve doctor schedule utilization, avoid double-booking, and improve patient appointment experience.</p>
 
 <p><strong>Main Users:</strong> Front Desk Staff, Patients (via portal), Scheduling Team</p>
 
@@ -56,8 +58,13 @@
 │    - SendGrid (Email reminders)                  │
 │    - Google Calendar (Optional sync)             │
 │                                                  │
+│ 6. Scheduling Team / Call Center                 │
+│    - Handles phone appointment requests          │
+│    - Manages reschedule/cancellation requests    │
+│    - Helps patients find doctors/time slots      │
+│                                                  │
 └─────────────────────────────────────────────────┘
-</pre>
+</code></pre>
 
 <hr>
 
@@ -162,14 +169,38 @@
      │ - Copay: $25    │
      └────┬────────────┘
           ↓
-     ┌─────────────────┐
-     │ Click "Confirm" │
-     └────┬────────────┘
-          ↓
-     ┌─────────────────┐
-     │ Backend Saves   │
-     │ Appointment     │
-     └────┬────────────┘
+      ┌─────────────────┐
+      │ Click "Confirm" │
+      └────┬────────────┘
+           ↓
+      ┌─────────────────┐
+      │ Backend Runs    │
+      │ Pre-book Checks │
+      │ (Avail, Dups,   │
+      │  Prior Auth)    │
+      └────┬────────────┘
+           ├──────────────────────────────┐
+     [Pass]│                              │ [Warning/Fail]
+           ▼                              ▼
+      ┌─────────────────┐          ┌─────────────────┐
+      │ Backend Saves   │          │ Show Booking    │
+      │ Appointment     │          │ Alert &amp; Warning │
+      └────┬────────────┘          └────────┬────────┘
+           │                                │
+           │                                ▼
+           │                       ┌─────────────────┐
+           │                       │ Options:        │
+           │                       │ 1. Override     │
+           │                       │ 2. Cancel/Edit  │
+           │                       │ 3. Link to Auth │
+           │                       └────────┬────────┘
+           │                                │
+           ├────────────────────────────────┘
+           ↓
+      ┌─────────────────┐
+      │ Backend Saves   │
+      │ Appointment     │
+      └────┬────────────┘
           ↓
      ┌─────────────────┐
      │ Generate        │
@@ -211,7 +242,7 @@
      │ - 24 hrs before │
      │ - 2 hrs before  │
      └─────────────────┘
-</pre>
+</code></pre>
 
 <hr>
 
@@ -258,10 +289,26 @@
 └──────────┬──────────┘
            ↓
 ┌─────────────────────┐
+│ Apply Buffer Time   │
+│ Between Appts       │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Check Overbooking   │
+│ Rules (Doc/Dept/    │
+│ Visit Type)         │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Block Double-Booking│
+│ (Unless Authorized) │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
 │ Return Available    │
 │ Slots Only          │
 └─────────────────────┘
-</pre>
+</code></pre>
 
 <hr>
 
@@ -289,10 +336,24 @@
        └─────────────────────────────────&gt;│ Cancel           │
                                           │ Appointment      │
                                           └──────────────────┘
+
 ┌──────────────┐                          ┌──────────────────┐
-│ Patient      │─────────────────────────&gt;│ Receive          │
-│              │                          │ Confirmation     │
+│ Patient      │─────────────────────────&gt;│ Request Appt     │
+│              │                          │ from Portal      │
 └──────────────┘                          └──────────────────┘
+        │                                          │
+        │                                 ┌─────────┴─────────┐
+        │                                 │                   │
+        │                                 ▼                   ▼
+        │                         ┌──────────────┐    ┌──────────────┐
+        │                         │ Staff        │    │ Auto         │
+        │                         │ Approval     │    │ Confirmation │
+        │                         └──────────────┘    └──────────────┘
+        │
+        │                                 ┌──────────────────┐
+        └────────────────────────────────&gt;│ Receive          │
+                                          │ Confirmation     │
+                                          └──────────────────┘
                                                    │
                                           ┌────────┴────────┐
                                           │                 │
@@ -300,6 +361,7 @@
                                   ┌──────────────┐  ┌──────────────┐
                                   │ SMS Reminder │  │Email Reminder│
                                   └──────────────┘  └──────────────┘
+
 ┌──────────────┐                          ┌──────────────────┐
 │ Doctor       │─────────────────────────&gt;│ View Schedule    │
 │              │                          └──────────────────┘
@@ -307,11 +369,12 @@
        │                                  ┌──────────────────┐
        └─────────────────────────────────&gt;│ Block Time Slots │
                                           └──────────────────┘
+
 ┌──────────────┐                          ┌──────────────────┐
 │ System       │─────────────────────────&gt;│ Send Auto        │
 │              │                          │ Reminders        │
 └──────────────┘                          └──────────────────┘
-</pre>
+</code></pre>
 
 <hr>
 
@@ -328,6 +391,31 @@
 └────┬────────────────┘
      │
      ▼
+    ╱ ╲
+   ╱   ╲
+  ╱Action╲───Reschedule───&gt;┌─────────────────────┐
+  ╲ Type ╱                 │ Select New Slot &amp;   │
+   ╲   ╱                   │ Confirm booking.    │
+    │New                   │ Then release old    │
+    │                      │ slot in database.   │
+    │                      └──────────┬──────────┘
+    ├────────Cancel───────&gt;┌──────────▼──────────┐
+    │                      │ Capture Cancellation│
+    │                      │ Reason              │
+    │                      └──────────┬──────────┘
+    │                                 │
+    │                                 ▼
+    │                      ┌─────────────────────┐
+    │                      │ Release Slot &amp;      │
+    │                      │ Update Status to    │
+    │                      │ 'Cancelled'         │
+    │                      └──────────┬──────────┘
+    │                                 │
+    │                                 ▼
+    │                             ┌───────┐
+    │                             │  END  │
+    │                             └───────┘
+    ▼
 ┌─────────────────────┐
 │ Select Department   │
 └────┬────────────────┘
@@ -452,7 +540,7 @@
      ┌─────────┐
      │   END   │
      └─────────┘
-</pre>
+</code></pre>
 
 <hr>
 
@@ -478,16 +566,24 @@ Staff    Frontend    Backend    Database    Twilio    SendGrid
   │          │          │ INSERT   │          │          │
   │          │          │ appointment         │          │
   │          │          ├─────────&gt;│          │          │
+  │          │          │ Audit Log    │          │          │
+  │          │          │ ├──┐       │          │          │
+  │          │          │ │  │       │          │          │
+  │          │          │ │&lt;─┘       │          │          │
   │          │          │          │          │          │
   │          │          │ Send SMS │          │          │
   │          │          ├──────────────────&gt;│          │
-  │          │          │          │          │          │
-  │          │          │          │          │ SMS Sent │
+  │          │          │ SMS Deliv│          │          │
+  │          │          │&lt;──────────────────┤          │
+  │          │          │ Update   │          │          │
+  │          │          ├─────────&gt;│          │          │
   │          │          │          │          │          │
   │          │          │ Send Email          │          │
   │          │          ├───────────────────────────────&gt;│
-  │          │          │          │          │          │
-  │          │          │          │          │ Email Sent│
+  │          │          │ Email Deliv                    │
+  │          │          │&lt;───────────────────────────────┤
+  │          │          │ Update   │          │          │
+  │          │          ├─────────&gt;│          │          │
   │          │          │          │          │          │
   │          │ Response │          │          │          │
   │          │&lt;─────────┤          │          │          │
@@ -495,7 +591,7 @@ Staff    Frontend    Backend    Database    Twilio    SendGrid
   │ Success  │          │          │          │          │
   │&lt;─────────┤          │          │          │          │
   │          │          │          │          │          │
-</pre>
+</code></pre>
 
 <hr>
 
@@ -507,23 +603,32 @@ POST /api/appointments
 {
   "patientId": "PAT-00001",
   "doctorId": "DOC-001",
+  "departmentId": "DEP-005",
+  "locationId": "LOC-002",
   "appointmentDate": "2026-05-20",
   "appointmentTime": "10:30",
   "visitType": "Follow-up",
   "visitReason": "Check blood pressure",
+  "insuranceVerified": true,
+  "priorAuthRequired": false,
+  "source": "Portal",
   "notes": "Patient prefers morning slots"
 }
-</pre>
+</code></pre>
 
 <p><strong>Response:</strong></p>
 <pre><code class="language-json">
 {
   "appointmentId": "APT-00001",
+  "confirmationNumber": "CNF-88990011",
   "status": "confirmed",
+  "calendarStatus": "synced",
+  "smsStatus": "pending",
+  "emailStatus": "sent",
   "confirmationSent": true,
   "reminderScheduled": true
 }
-</pre>
+</code></pre>
 
 <hr>
 
@@ -535,26 +640,48 @@ SELECT * FROM appointments
 WHERE doctor_id = 'DOC-001'
   AND appointment_date = '2026-05-20'
   AND appointment_time = '10:30';
+
 -- Insert appointment
 INSERT INTO appointments (
     appointment_id,
     patient_id,
     doctor_id,
+    department_id,
+    location_id,
     appointment_date,
     appointment_time,
     visit_type,
+    visit_reason,
     status,
-    created_by
+    appointment_source,
+    insurance_verification_status,
+    prior_auth_required,
+    cancellation_reason,
+    rescheduled_from_appointment_id,
+    created_by,
+    created_at,
+    updated_at
 ) VALUES (
     'APT-00001',
     'PAT-00001',
     'DOC-001',
+    'DEP-005',
+    'LOC-002',
     '2026-05-20',
     '10:30',
     'Follow-up',
+    'Check blood pressure',
     'confirmed',
-    'USR-001'
+    'Portal',
+    'verified',
+    false,
+    NULL,
+    NULL,
+    'USR-001',
+    NOW(),
+    NOW()
 );
+
 -- Schedule reminders
 INSERT INTO scheduled_notifications (
     appointment_id,
@@ -564,7 +691,7 @@ INSERT INTO scheduled_notifications (
 ) VALUES
     ('APT-00001', '2026-05-19 10:30', 'sms', 'pending'),
     ('APT-00001', '2026-05-20 08:30', 'sms', 'pending');
-</pre>
+</code></pre>
 
 <hr>
 
@@ -578,11 +705,13 @@ Show error
 Refresh calendar
    ↓
 Select different slot
+
 Error 2: Doctor Not Available
    ↓
 Show alternative doctors
    ↓
 Or select different date
+
 Error 3: SMS Failed
    ↓
 Log error
@@ -590,48 +719,105 @@ Log error
 Continue (don't fail booking)
    ↓
 Staff informs patient manually
-</pre>
+
+Error 4: Duplicate Appointment Found
+   ↓
+Show duplicate warning to user
+   ↓
+Provide options to view existing or override and continue
+
+Error 5: Patient Not Found
+   ↓
+Redirect to Patient Registration module
+   ↓
+Register patient and return to scheduling
+
+Error 6: Insurance Not Verified
+   ↓
+Prompt to run real-time verification (RTE)
+   ↓
+Or flag as self-pay/pending verification
+
+Error 7: Prior Authorization Required
+   ↓
+Show prior authorization alert
+   ↓
+Provide link to Prior Auth module to start request
+
+Error 8: Email Failed
+   ↓
+Log error and mark emailStatus as 'failed'
+   ↓
+Retry via queue or notify staff to print confirmation
+
+Error 9: Calendar Sync Failed
+   ↓
+Queue sync request for background retry
+   ↓
+Alert administrator if sync remains pending &gt; 1 hour
+
+Error 10: Reminder Job Failed
+   ↓
+Trigger system alert and log failure reason
+   ↓
+Retry job run for missed reminders
+
+Error 11: User Not Authorized to Overbook
+   ↓
+Block double-booking save action
+   ↓
+Prompt for supervisor override code/credentials
+</code></pre>
 
 <hr>
 
-<h2>11. Dashboard & Status Flow</h2>
+<h2>11. Dashboard &amp; Status Flow</h2>
 
 <pre><code>
-┌─────────────────────┐
-│ Appointment Booked  │
-│ (status: confirmed) │
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│ Reminder Sent       │
-│ (24 hrs before)     │
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│ Reminder Sent       │
-│ (2 hrs before)      │
-└──────────┬──────────┘
-           ↓
-    ┌──────┴──────┐
-    │             │
-    ▼             ▼
-┌─────────┐  ┌─────────────┐
-│Patient  │  │ No-Show     │
-│Checked  │  │ (auto-mark  │
-│In       │  │  after 15min)│
-└────┬────┘  └──────┬──────┘
-     │              │
-     ▼              ▼
-┌─────────┐  ┌─────────────┐
-│In       │  │ Cancelled   │
-│Progress │  │ by Patient  │
-└────┬────┘  └─────────────┘
-     │
-     ▼
-┌─────────┐
-│Completed│
-└─────────┘
-</pre>
+                     ┌───────────────────────┐
+                     │  Requested (Portal)   │
+                     └──────────┬────────────┘
+                                │
+                                ▼
+                     ┌───────────────────────┐
+                     │ Pending Confirmation  │
+                     └──────────┬────────────┘
+                                │
+              ┌─────────────────┴─────────────────┐
+              ▼                                   ▼
+  ┌───────────────────────┐           ┌───────────────────────┐
+  │  Awaiting Insurance   │           │  Prior Auth Required  │
+  └──────────┬────────────┘           └────────┬──────────────┘
+             │                                 │
+             └─────────────────┬───────────────┘
+                               ▼
+                     ┌───────────────────────┐
+                     │ Confirmed / Booked    │
+                     └──────────┬────────────┘
+                                │
+                       ┌────────┴────────┐
+                       ▼                 ▼
+             ┌──────────────────┐  ┌───────────┐
+             │  Reminder Sent   │  │ Reminder  │
+             └────────┬─────────┘  │  Failed   │
+                      │            └───────────┘
+                      ▼
+               ┌──────────────┐
+               │ Checked-in   │
+               └──────┬───────┘
+                      │
+         ┌────────────┼──────────────┬──────────────┐
+         ▼            ▼              ▼              ▼
+   ┌──────────┐   ┌───────────┐  ┌───────────┐  ┌───────────┐
+   │    In    │   │  No-Show  │  │ Cancelled │  │Rescheduled│
+   │ Progress │   └───────────┘  │by Patient │  └───────────┘
+   └────┬─────┘                  ├───────────┤
+        │                        │ Cancelled │
+        ▼                        │ by Clinic │
+   ┌──────────┐                  └───────────┘
+   │Completed │
+   └──────────┘
+</code></pre>
 
 <hr>
 
@@ -666,22 +852,53 @@ Staff informs patient manually
 │  at 10:30 AM"       │
 └──────────┬──────────┘
            ↓
-┌─────────────────────┐
-│ Send via Twilio     │
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│ Mark as Sent        │
-└──────────┬──────────┘
-           ↓
+    ╱ ╲
+   ╱   ╲
+  ╱Patient╲───Yes (Opt-out)──┐
+  ╲Opted  ╱                  │
+   ╲Out? ╱                   │
+    │No                      │
+    ▼                        ▼
+┌─────────┐          ┌───────────────┐
+│ Send to │          │ Mark Status   │
+│ Twilio/ │          │ 'Opted-Out'   │
+│ SendGrid│          └───────┬───────┘
+└────┬────┘                  │
+     ├───────────────────────┘
+     ▼
+    ╱ ╲
+   ╱   ╲
+  ╱Success?╲───No (Fail)────┐
+  ╲       ╱                 │
+   ╲     ╱                  │
+    │Yes                    ▼
+    ▼               ┌───────────────┐
+┌─────────┐         │ Trigger Retry │
+│ Store   │         │ Policy (Max 3)│
+│ Delivery│         └───────┬───────┘
+│ Response│                 │
+└────┬────┘                 ▼
+     │              ┌───────────────┐
+     │              │ Save Failure  │
+     │              │ Reason &amp; Alert│
+     │              └───────┬───────┘
+     │                      │
+     ├──────────────────────┘
+     ▼
+┌─────────┐
+│ Mark as │
+│ Sent/   │
+│ Failed  │
+└────┬────┘
+     ↓
 ┌─────────────────────┐
 │ Log Delivery Status │
 └─────────────────────┘
-</pre>
+</code></pre>
 
 <hr>
 
-<p><strong>Next Module:</strong> <a href="Flows<em>Module</em>05<em>Patient</em>Checkin.md">Module 5: Patient Check-in</a></p>
+<p><strong>Next Module:</strong> <a href="Flows_Module_05_Patient_Checkin.md">Module 5: Patient Check-in</a></p>
 
 </body>
 </html>
