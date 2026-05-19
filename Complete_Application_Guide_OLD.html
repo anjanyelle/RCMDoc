@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Healthcare RCM — Complete Application Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #ff6b35;
+    --primary-light: #ff8c5a;
+    --primary-dark: #e85a2a;
+    --text-dark: #1a202c;
+    --text-mid: #2d3748;
+    --text-light: #4a5568;
+    --text-lighter: #718096;
+    --bg-white: #ffffff;
+    --bg-gray: #f7fafc;
+    --bg-light: #edf2f7;
+    --border-light: #e2e8f0;
+    --border-mid: #cbd5e0;
+    --green: #48bb78;
+    --red: #f56565;
+    --blue: #4299e1;
+    --section-gap: 60px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--bg-white);
+    color: var(--text-light);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    line-height: 1.7;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0;
+  }
+
+  /* ---- TYPOGRAPHY ---- */
+  h1, h2, h3, h4, h5 { font-family: 'Syne', sans-serif; color: var(--text-dark); }
+  h1 { font-size: clamp(2.4rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.1; border-bottom: 3px solid var(--primary); padding-bottom: 15px; }
+  h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 700; margin-top: 40px; border-bottom: 2px solid var(--border-light); padding-bottom: 10px; }
+  h3 { font-size: 1.3rem; font-weight: 600; color: var(--text-mid); }
+  h4 { font-size: 1rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--primary); }
+
+  /* ---- HEADER ---- */
+  header {
+    padding: 60px 40px 60px;
+    background: var(--bg-white);
+    position: relative;
+  }
+
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff5f0;
+    border: 1px solid var(--primary-light);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--primary);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .header-badge span { width: 6px; height: 6px; background: var(--primary); border-radius: 50%; animation: pulse 2s infinite; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  header h1 { margin-bottom: 20px; }
+  header h1 em { color: var(--primary); font-style: normal; }
+
+  .header-sub {
+    font-size: 1.05rem;
+    color: var(--text-light);
+    max-width: 660px;
+    margin-bottom: 40px;
+  }
+
+  .header-meta {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .meta-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-lighter); }
+  .meta-value { font-size: 0.9rem; font-weight: 500; color: var(--text-mid); }
+
+  /* ---- DIVIDER ---- */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border-light);
+    margin: var(--section-gap) 40px;
+  }
+
+  /* ---- CONTAINER ---- */
+  .container {
+    padding: 0 40px var(--section-gap);
+  }
+
+  /* ---- SECTION LABEL ---- */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .section-label::before {
+    content: '';
+    width: 28px;
+    height: 3px;
+    background: var(--primary);
+  }
+
+  /* ---- STAT STRIP ---- */
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px;
+    background: var(--border-light);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: var(--section-gap);
+  }
+
+  .stat-cell {
+    background: var(--bg-white);
+    padding: 28px 24px;
+    text-align: center;
+    transition: background 0.2s;
+  }
+
+  .stat-cell:hover { background: var(--bg-gray); }
+  .stat-num { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: var(--primary); line-height: 1; margin-bottom: 6px; }
+  .stat-desc { font-size: 0.78rem; color: var(--text-light); }
+
+  /* ---- WHAT IS ---- */
+  .what-is-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  @media (max-width: 720px) { .what-is-grid { grid-template-columns: 1fr; } }
+
+  .what-is-card {
+    background: var(--bg-gray);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    padding: 28px;
+  }
+
+  .what-is-card.full { grid-column: 1 / -1; }
+
+  /* ---- JOURNEY ---- */
+  .journey-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+
+  .journey-grid::before {
+    content: '';
+    position: absolute;
+    left: 28px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--teal) 0%, var(--blue-soft) 50%, transparent 100%);
+    z-index: 0;
+  }
+
+  .journey-step {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 24px;
+    padding-bottom: 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step-bubble {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: var(--navy-mid);
+    border: 2px solid var(--teal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--teal);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 0 20px rgba(0,201,177,0.15);
+  }
+
+  .step-content {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 28px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .step-content:hover {
+    border-color: rgba(0,201,177,0.4);
+    box-shadow: 0 4px 32px rgba(0,201,177,0.06);
+  }
+
+  .step-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .step-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700; }
+
+  .step-time {
+    font-size: 0.72rem;
+    padding: 3px 10px;
+    background: rgba(245,166,35,0.12);
+    border: 1px solid rgba(245,166,35,0.3);
+    border-radius: 100px;
+    color: var(--amber);
+    white-space: nowrap;
+  }
+
+  .step-body { font-size: 0.88rem; color: var(--white-dim); margin-bottom: 14px; }
+
+  .check-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .check-list li {
+    font-size: 0.84rem;
+    color: var(--white-dim);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .check-list li::before {
+    content: '✓';
+    color: var(--green);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .tech-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .tech-tag {
+    font-size: 0.72rem;
+    padding: 3px 10px;
+    background: rgba(74,144,217,0.1);
+    border: 1px solid rgba(74,144,217,0.25);
+    border-radius: 100px;
+    color: var(--blue-soft);
+  }
+
+  /* ---- COMPARISON ---- */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .compare-table th {
+    padding: 16px 20px;
+    text-align: left;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.03em;
+    background: rgba(0,201,177,0.08);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .compare-table td {
+    padding: 14px 20px;
+    border-bottom: 1px solid rgba(0,201,177,0.07);
+    vertical-align: top;
+  }
+
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .badge-before { color: var(--red); }
+  .badge-after { color: var(--green); }
+
+  /* ---- ARCHITECTURE ---- */
+  .arch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .arch-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .arch-header {
+    padding: 16px 20px;
+    background: rgba(0,201,177,0.07);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .arch-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    background: rgba(0,201,177,0.15);
+  }
+
+  .arch-title { font-family: 'Syne', sans-serif; font-size: 0.92rem; font-weight: 700; }
+  .arch-sub { font-size: 0.72rem; color: var(--teal); }
+
+  .arch-modules {
+    padding: 16px 20px;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .arch-modules li {
+    font-size: 0.83rem;
+    color: var(--white-dim);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .mod-num {
+    width: 22px;
+    height: 22px;
+    background: rgba(0,201,177,0.1);
+    border-radius: 5px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--teal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* ---- ROLES ---- */
+  .roles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .role-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+  }
+
+  .role-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(0,201,177,0.1);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 14px;
+  }
+
+  .role-name { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+  .role-desc { font-size: 0.82rem; color: var(--white-dim); margin-bottom: 12px; }
+
+  .role-modules {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .role-mod-tag {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    background: rgba(0,201,177,0.08);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    color: var(--teal);
+  }
+
+  /* ---- AI FEATURES ---- */
+  .ai-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .ai-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--teal), var(--blue-soft));
+  }
+
+  .ai-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--teal);
+    margin-bottom: 10px;
+  }
+
+  .ai-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+  .ai-desc { font-size: 0.83rem; color: var(--white-dim); margin-bottom: 14px; }
+
+  .ai-metric {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--green);
+    font-weight: 500;
+  }
+
+  /* ---- MISSING / NEW CONTENT ---- */
+  .missing-section {
+    background: rgba(245,166,35,0.04);
+    border: 1px solid rgba(245,166,35,0.2);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 24px;
+  }
+
+  .missing-section h3 {
+    color: var(--amber);
+    margin-bottom: 8px;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  @media (max-width: 720px) { .two-col { grid-template-columns: 1fr; } }
+
+  .info-block {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .info-block h4 { margin-bottom: 10px; }
+  .info-block p { font-size: 0.85rem; color: var(--white-dim); }
+  .info-block ul { list-style: none; padding: 0; }
+  .info-block ul li {
+    font-size: 0.83rem;
+    color: var(--white-dim);
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .info-block ul li::before { content: '→'; color: var(--teal); flex-shrink: 0; }
+
+  /* ---- EDI TABLE ---- */
+  .edi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+  }
+
+  .edi-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .edi-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--teal);
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 44px;
+  }
+
+  .edi-info h5 { font-size: 0.8rem; font-weight: 600; margin-bottom: 3px; }
+  .edi-info p { font-size: 0.75rem; color: var(--white-dim); }
+
+  /* ---- SECURITY ---- */
+  .security-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+
+  .sec-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .sec-icon { font-size: 1.8rem; margin-bottom: 10px; }
+  .sec-title { font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 700; margin-bottom: 6px; }
+  .sec-text { font-size: 0.78rem; color: var(--white-dim); }
+
+  /* ---- KPI ---- */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .kpi-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .kpi-target {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--green);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .kpi-name { font-size: 0.82rem; font-weight: 500; margin-bottom: 4px; }
+  .kpi-desc { font-size: 0.75rem; color: var(--white-dim); }
+
+  /* ---- FOOTER ---- */
+  footer {
+    margin-top: var(--section-gap);
+    border-top: 1px solid var(--border);
+    padding: 40px;
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--white-dim);
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ---- NAV ---- */
+  .toc {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 48px;
+  }
+
+  .toc h3 { margin-bottom: 16px; font-size: 0.95rem; }
+
+  .toc-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .toc-links a {
+    font-size: 0.78rem;
+    padding: 5px 14px;
+    background: rgba(0,201,177,0.06);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    color: var(--white-dim);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .toc-links a:hover {
+    background: rgba(0,201,177,0.14);
+    color: var(--teal);
+    border-color: rgba(0,201,177,0.4);
+  }
+
+  /* ---- IMPLEMENTATION TIMELINE ---- */
+  .timeline {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0;
+    position: relative;
+  }
+
+  .tl-phase {
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-right-width: 0;
+    background: var(--card-bg);
+  }
+
+  .tl-phase:last-child { border-right-width: 1px; border-radius: 0 12px 12px 0; }
+  .tl-phase:first-child { border-radius: 12px 0 0 12px; }
+
+  .tl-phase-num {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--teal-dim);
+    margin-bottom: 6px;
+  }
+
+  .tl-phase h4 { color: var(--white); margin-bottom: 10px; font-size: 0.88rem; }
+  .tl-phase ul { list-style: none; }
+  .tl-phase ul li { font-size: 0.78rem; color: var(--white-dim); padding: 3px 0; }
+  .tl-phase ul li::before { content: '·  '; color: var(--teal); }
+
+  @media (max-width: 720px) {
+    .tl-phase { border-right-width: 1px; border-bottom-width: 0; border-radius: 0; }
+    .tl-phase:first-child { border-radius: 12px 12px 0 0; }
+    .tl-phase:last-child { border-bottom-width: 1px; border-radius: 0 0 12px 12px; }
+  }
+
+  @media (max-width: 600px) {
+    header, .container { padding-left: 20px; padding-right: 20px; }
+    .compare-table { font-size: 0.78rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ======= HEADER ======= -->
+<header>
+  <div class="header-badge"><span></span>Version 1.0 &nbsp;·&nbsp; US Healthcare</div>
+  <h1>Healthcare <em>RCM</em><br>Complete Application Guide</h1>
+  <p class="header-sub">Everything you need to understand the system — from patient check-in to final payment. For both technical and non-technical readers.</p>
+  <div class="header-meta">
+    <div class="meta-item"><span class="meta-label">Coverage</span><span class="meta-value">US Healthcare Insurance Claiming</span></div>
+    <div class="meta-item"><span class="meta-label">Audience</span><span class="meta-value">Technical &amp; Non-Technical</span></div>
+    <div class="meta-item"><span class="meta-label">Modules</span><span class="meta-value">30 Core Modules</span></div>
+    <div class="meta-item"><span class="meta-label">Compliance</span><span class="meta-value">HIPAA · Medicare · Medicaid</span></div>
+  </div>
+</header>
+
+<div class="divider"></div>
+
+<!-- ======= STATS ======= -->
+<div class="container">
+  <div class="stat-strip">
+    <div class="stat-cell"><div class="stat-num">5–7</div><div class="stat-desc">Days to Payment (vs 45)</div></div>
+    <div class="stat-cell"><div class="stat-num">95%+</div><div class="stat-desc">Clean Claim Rate</div></div>
+    <div class="stat-cell"><div class="stat-num">&lt;5%</div><div class="stat-desc">Denial Rate</div></div>
+    <div class="stat-cell"><div class="stat-num">85%</div><div class="stat-desc">Faster Processing</div></div>
+    <div class="stat-cell"><div class="stat-num">50%</div><div class="stat-desc">Fewer Denials</div></div>
+    <div class="stat-cell"><div class="stat-num">30+</div><div class="stat-desc">Application Modules</div></div>
+  </div>
+
+  <!-- ======= TABLE OF CONTENTS ======= -->
+  <div class="toc">
+    <h3>Contents</h3>
+    <div class="toc-links">
+      <a href="#what-is">What Is This?</a>
+      <a href="#journey">Patient Journey</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#billing-types">Billing Types</a>
+      <a href="#edi">EDI Transactions</a>
+      <a href="#roles">User Roles</a>
+      <a href="#ai">AI Features</a>
+      <a href="#compliance">Compliance</a>
+      <a href="#security">Security</a>
+      <a href="#kpis">KPIs</a>
+      <a href="#impact">Business Impact</a>
+      <a href="#implementation">Implementation</a>
+    </div>
+  </div>
+
+  <!-- ======= WHAT IS ======= -->
+  <section id="what-is">
+    <div class="section-label"><h4>What Is This Application?</h4></div>
+    <div class="what-is-grid">
+      <div class="what-is-card">
+        <h3 style="margin-bottom:12px;">Simple Explanation</h3>
+        <p style="font-size:0.88rem; color:var(--white-dim); margin-bottom:14px;">When you visit a hospital, a complex behind-the-scenes process kicks off. The hospital must verify your insurance, document your treatment, generate billing codes, submit claims to insurance, and collect payment — all before your bill is settled.</p>
+        <p style="font-size:0.88rem; color:var(--white-dim);">Traditionally this takes <strong style="color:var(--red);">60–90 days</strong> and is full of manual errors. Our application automates the entire pipeline and reduces it to <strong style="color:var(--green);">5–7 days</strong> with 95%+ accuracy.</p>
+      </div>
+      <div class="what-is-card">
+        <h3 style="margin-bottom:12px;">Traditional vs Our System</h3>
+        <table class="compare-table">
+          <tr><th>Metric</th><th class="badge-before">Before</th><th class="badge-after">After</th></tr>
+          <tr><td>Days to Payment</td><td class="badge-before">45–90</td><td class="badge-after">5–7</td></tr>
+          <tr><td>Denial Rate</td><td class="badge-before">18–20%</td><td class="badge-after">&lt;5%</td></tr>
+          <tr><td>Manual Data Entry</td><td class="badge-before">High</td><td class="badge-after">Minimal</td></tr>
+          <tr><td>Staff Required</td><td class="badge-before">8 people</td><td class="badge-after">5 people</td></tr>
+          <tr><td>Error Rate</td><td class="badge-before">High</td><td class="badge-after">&lt;2%</td></tr>
+        </table>
+      </div>
+      <div class="what-is-card full">
+        <h3 style="margin-bottom:12px;">The Full RCM Cycle — At a Glance</h3>
+        <p style="font-size:0.87rem; color:var(--white-dim);">Revenue Cycle Management (RCM) is the complete financial process a hospital uses to manage patient treatment, insurance billing, and payment collection. It starts the moment a patient enters the facility and ends only when every last dollar is collected from insurance and patient. The cycle spans <strong>provider credentialing → patient registration → insurance verification → prior authorization → clinical documentation → medical coding → charge capture → claim submission → adjudication → payment posting → denial management → patient billing → collections.</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ======= PATIENT JOURNEY ======= -->
+  <section id="journey">
+    <div class="section-label"><h4>Complete Patient Journey — Sarah Johnson</h4></div>
+    <p style="font-size:0.88rem; color:var(--white-dim); margin-bottom:36px; max-width:600px;">Age 41 · Cough and fever for 3 days · Insurance: Blue Cross Blue Shield. Watch every step of the process from walk-in to zero balance.</p>
+
+    <div class="journey-grid">
+
+      <div class="journey-step">
+        <div class="step-bubble">01</div>
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-title">Patient Registration</div>
+            <div class="step-time">⏱ 3 minutes</div>
+          </div>
+          <p class="step-body">Front desk opens the app and enters Sarah's details. AI automatically reads her insurance card via OCR. System checks for duplicates and generates a unique Patient ID.</p>
+          <ul class="check-list">
+            <li>Name, DOB, address, phone number collected</li>
+            <li>Insurance card scanned — AI reads policy &amp; member ID</li>
+            <li>Duplicate patient check runs against Master Patient Index (MPI)</li>
+            <li>Patient ID generated: PAT-2024-001234</li>
+            <li>Consent forms signed digitally</li>
+          </ul>
+          <div class="tech-row">
+            <span class="tech-tag">AWS Textract (OCR)</span>
+            <span class="tech-tag">MPI De-duplication</span>
+            <span class="tech-tag">Digital Consent Forms</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-bubble">02</div>
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-title">Insurance Eligibility Verification</div>
+            <div class="step-time">⏱ 30 seconds</div>
+          </div>
+          <p class="step-body">System connects to insurance in real time and retrieves full eligibility data — no phone calls needed.</p>
+          <ul class="check-list">
+            <li>Insurance status: ✅ Active</li>
+            <li>Copay: $25 · Deductible Remaining: $700 · Coverage: 80%</li>
+            <li>Primary / Secondary / Tertiary insurance identified (COB)</li>
+            <li>Network status confirmed: Dr. Smith is in-network</li>
+            <li>Out-of-pocket maximum status checked</li>
+          </ul>
+          <div class="tech-row">
+            <span class="tech-tag">EDI 270/271</span>
+            <span class="tech-tag">Waystar / Availity</span>
+            <span class="tech-tag">Real-Time API</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-bubble">03</div>
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-title">Appointment Scheduling</div>
+            <div class="step-time">⏱ 1 minute</div>
+          </div>
+          <p class="step-body">Staff books May 20 at 10:00 AM with Dr. Smith. System sends automatic reminders and updates the doctor's calendar.</p>
+          <ul class="check-list">
+            <li>SMS + email confirmation sent to Sarah via Twilio</li>
+            <li>24-hour reminder auto-scheduled</li>
+            <li>Prior authorization pre-check triggered</li>
+            <li>Waitlist management active for cancellations</li>
+          </ul>
+          <div class="tech-row">
+            <span class="tech-tag">Twilio SMS</span>
+            <span class="tech-tag">Email Notifications</span>
+            <span class="tech-tag">Calendar API</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-bubble">04</div>
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-title">Patient Check-In &amp; Financial Clearance</div>
+            <div class="step-time">⏱ 2 minutes</div>
+          </div>
+          <p class="step-body">Sarah arrives and checks in via self-service kiosk or front desk. Copay is collected at point-of-service — the most effective collection moment.</p>
+          <ul class="check-list">
+            <li>Identity confirmed — demographics verified</li>
+            <li>$25 copay collected via credit card (Stripe)</li>
+            <li>Patient cost estimate presented for transparency</li>
+            <li>Doctor notified patient is ready</li>
+            <li>Check-in time stamped for audit trail</li>
+          </ul>
+          <div class="tech-row">
+            <span class="tech-tag">Stripe Payments</span>
+            <span class="tech-tag">Self-Service Kiosk</span>
+            <span class="tech-tag">Cost Estimator</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-bubble">05</div>
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-title">Doctor Consultation &amp; Clinical Documentation</div>
+            <div class="step-time">⏱ 20 minutes</div>
+          </div>
+          <p class="step-body">Dr. Smith examines Sarah. All findings are documented in the EHR using structured SOAP note format for accurate downstream coding.</p>
+          <ul class="check-list">
+            <li>Diagnosis: Acute Bronchitis (J20.9)</li>
+            <li>Treatment: Amoxicillin 500mg prescribed</li>
+            <li>Comorbidities documented for risk adjustment</li>
+            <li>CDI specialist reviews documentation completeness</li>
+            <li>All orders (lab, pharmacy) placed via CPOE</li>
+          </ul>
+          <div class="tech-row">
+            <span class="tech-tag">EHR / EMR</span>
+            <span class="tech-tag">SOAP Notes</span>
+            <span class="tech-tag">CPOE</span>
+            <span class="tech-tag">CDI Review</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-bubble">06</div>
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-title">AI-Assisted Medical Coding</div>
+            <div class="step-time">⏱ 3 minutes</div>
+          </div>
+          <p class="step-body">AI reads Dr. Smith's notes and suggests codes. Coder reviews, confirms, and approves in under 3 minutes instead of the usual 15.</p>
+          <ul class="check-list">
+            <li>ICD-10: J20.9 — Acute bronchitis, unspecified</li>
+            <li>CPT: 99203 — Office visit, new patient, moderate complexity</li>
+            <li>E&amp;M level validated against documentation complexity</li>
+            <li>NCCI edit compliance checked automatically</li>
+            <li>Coding specificity maximized (laterality, encounter type)</li>
+          </ul>
+          <div class="tech-row">
+            <span class="tech-tag">GPT-4 NLP</span>
+            <span class="tech-tag">ICD-10 / CPT / HCPCS</span>
+            <span class="tech-tag">NCCI Edits</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-bubble">07</div>
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-title">Charge Capture &amp; CDM Lookup</div>
+            <div class="step-time">⏱ Automatic</div>
+          </div>
+          <p class="step-body">Every service performed is converted to a billable charge line item using the Charge Description Master (CDM). No missed charges.</p>
+          <ul class="check-list">
+            <li>Standard Charge: $150 → Contracted Rate (Blue Cross): $120</li>
+            <li>Contractual adjustment of $30 recorded</li>
+            <li>Charge reconciliation verifies all orders were captured</li>
+            <li>Charge lag monitored — submitted same day</li>
+          </ul>
+          <div class="tech-row">
+            <span class="tech-tag">CDM / Chargemaster</span>
+            <span class="tech-tag">Fee Schedule</span>
+            <span class="tech-tag">Contract Rates</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-bubble">08</div>
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-title">Claim Creation &amp; Scrubbing</div>
+            <div class="step-time">⏱ 1.5 minutes</div>
+          </div>
+          <p class="step-body">System auto-generates a CMS-1500 claim, pre-fills all fields, then runs 50+ AI validation checks before submission.</p>
+          <ul class="check-list">
+            <li>CMS-1500 form auto-generated (EDI 837P)</li>
+            <li>All 50+ scrubbing rules pass ✅</li>
+            <li>Timely filing deadline verified</li>
+            <li>Modifiers validated — no missing or incorrect modifiers</li>
+            <li>Claim Score: 95% — marked Clean Claim</li>
+          </ul>
+          <div class="tech-row">
+            <span class="tech-tag">EDI 837P</span>
+            <span class="tech-tag">CMS-1500</span>
+            <span class="tech-tag">AI Scrubbing Engine</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-bubble">09</div>
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-title">Claim Submission via Clearinghouse</div>
+            <div class="step-time">⏱ 30 seconds</div>
+          </div>
+          <p class="step-body">Clean claim submitted electronically to Waystar clearinghouse, which routes it to Blue Cross Blue Shield. Immediate acknowledgment received.</p>
+          <ul class="check-list">
+            <li>EDI 837P transmitted to Waystar</li>
+            <li>EDI 999 functional acknowledgment received</li>
+            <li>EDI 277CA claim status — Accepted ✅</li>
+            <li>Timely filing timestamp recorded</li>
+          </ul>
+          <div class="tech-row">
+            <span class="tech-tag">Waystar</span>
+            <span class="tech-tag">EDI 999</span>
+            <span class="tech-tag">EDI 277CA</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-bubble">10</div>
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-title">Claim Tracking &amp; Adjudication</div>
+            <div class="step-time">⏱ 5 days (auto)</div>
+          </div>
+          <p class="step-body">System automatically checks claim status daily using EDI 276/277 — no manual phone calls to insurance.</p>
+          <ul class="check-list">
+            <li>Day 1: Submitted → Day 2: Received → Day 3: In Adjudication → Day 5: Approved ✅</li>
+            <li>Pended claim alerts trigger immediate follow-up</li>
+            <li>Aging report updated in real time</li>
+          </ul>
+          <div class="tech-row">
+            <span class="tech-tag">EDI 276/277</span>
+            <span class="tech-tag">Aging Reports</span>
+            <span class="tech-tag">Worklist Automation</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-bubble">11</div>
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-title">Payment Posting &amp; ERA Reconciliation</div>
+            <div class="step-time">⏱ 1 minute (auto)</div>
+          </div>
+          <p class="step-body">Insurance sends ERA (EDI 835). System auto-posts payment to Sarah's account, applies adjustments, and reconciles to zero balance.</p>
+          <ul class="check-list">
+            <li>Insurance Paid: $95 · Patient Copay (collected): $25 · Adjustment: $30</li>
+            <li>Contract variance analysis — confirmed correct payment</li>
+            <li>Prompt payment law compliance verified</li>
+            <li>Account Balance: $0 ✅ — Account Closed</li>
+          </ul>
+          <div class="tech-row">
+            <span class="tech-tag">EDI 835 ERA</span>
+            <span class="tech-tag">Auto-Post</span>
+            <span class="tech-tag">EFT Matching</span>
+            <span class="tech-tag">Contract Variance</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ======= ARCHITECTURE ======= -->
+  <section id="architecture">
+    <div class="section-label"><h4>Application Architecture — 30 Modules in 7 Categories</h4></div>
+    <div class="arch-grid">
+
+      <div class="arch-card">
+        <div class="arch-header">
+          <div class="arch-icon">🔐</div>
+          <div><div class="arch-title">Authentication &amp; Patient Management</div><div class="arch-sub">Modules 1–5</div></div>
+        </div>
+        <ul class="arch-modules">
+          <li><span class="mod-num">1</span>User Login &amp; SSO / MFA</li>
+          <li><span class="mod-num">2</span>Patient Registration &amp; MPI</li>
+          <li><span class="mod-num">3</span>Insurance Eligibility Verification</li>
+          <li><span class="mod-num">4</span>Appointment Scheduling &amp; Reminders</li>
+          <li><span class="mod-num">5</span>Patient Check-In &amp; Financial Clearance</li>
+        </ul>
+      </div>
+
+      <div class="arch-card">
+        <div class="arch-header">
+          <div class="arch-icon">🩺</div>
+          <div><div class="arch-title">Clinical Documentation</div><div class="arch-sub">Modules 6–9</div></div>
+        </div>
+        <ul class="arch-modules">
+          <li><span class="mod-num">6</span>Doctor Consultation (EHR Interface)</li>
+          <li><span class="mod-num">7</span>CDI &amp; Clinical Notes (SOAP)</li>
+          <li><span class="mod-num">8</span>Order Management (CPOE)</li>
+          <li><span class="mod-num">9</span>Referral Management &amp; Leakage Control</li>
+        </ul>
+      </div>
+
+      <div class="arch-card">
+        <div class="arch-header">
+          <div class="arch-icon">🧾</div>
+          <div><div class="arch-title">Coding &amp; Billing</div><div class="arch-sub">Modules 10–14</div></div>
+        </div>
+        <ul class="arch-modules">
+          <li><span class="mod-num">10</span>AI-Assisted Medical Coding</li>
+          <li><span class="mod-num">11</span>Coding Review &amp; Compliance (NCCI/LCD)</li>
+          <li><span class="mod-num">12</span>Charge Capture &amp; CDM Management</li>
+          <li><span class="mod-num">13</span>Claim Creation (CMS-1500 / UB-04)</li>
+          <li><span class="mod-num">14</span>AI Claim Scrubbing &amp; Validation</li>
+        </ul>
+      </div>
+
+      <div class="arch-card">
+        <div class="arch-header">
+          <div class="arch-icon">📤</div>
+          <div><div class="arch-title">Claims &amp; Submission</div><div class="arch-sub">Modules 15–17</div></div>
+        </div>
+        <ul class="arch-modules">
+          <li><span class="mod-num">15</span>Claim Submission via Clearinghouse</li>
+          <li><span class="mod-num">16</span>Claim Tracking &amp; Status (EDI 276/277)</li>
+          <li><span class="mod-num">17</span>Insurance Adjudication Monitoring</li>
+        </ul>
+      </div>
+
+      <div class="arch-card">
+        <div class="arch-header">
+          <div class="arch-icon">💳</div>
+          <div><div class="arch-title">Denial &amp; Payment</div><div class="arch-sub">Modules 18–22</div></div>
+        </div>
+        <ul class="arch-modules">
+          <li><span class="mod-num">18</span>Denial Management &amp; Root Cause Analysis</li>
+          <li><span class="mod-num">19</span>Appeals Workflow (Levels 1–3)</li>
+          <li><span class="mod-num">20</span>Payment Posting &amp; ERA Auto-Match</li>
+          <li><span class="mod-num">21</span>ERA Reconciliation &amp; Underpayment Recovery</li>
+          <li><span class="mod-num">22</span>Secondary &amp; Tertiary Billing (COB)</li>
+        </ul>
+      </div>
+
+      <div class="arch-card">
+        <div class="arch-header">
+          <div class="arch-icon">👤</div>
+          <div><div class="arch-title">Patient Billing &amp; AR</div><div class="arch-sub">Modules 23–25</div></div>
+        </div>
+        <ul class="arch-modules">
+          <li><span class="mod-num">23</span>Patient Billing &amp; Itemized Statements</li>
+          <li><span class="mod-num">24</span>Refund Management &amp; Credit Balances</li>
+          <li><span class="mod-num">25</span>AR Management, Aging &amp; Collections</li>
+        </ul>
+      </div>
+
+      <div class="arch-card">
+        <div class="arch-header">
+          <div class="arch-icon">📊</div>
+          <div><div class="arch-title">Reporting, Compliance &amp; AI</div><div class="arch-sub">Modules 26–30</div></div>
+        </div>
+        <ul class="arch-modules">
+          <li><span class="mod-num">26</span>Reporting, Dashboards &amp; Analytics</li>
+          <li><span class="mod-num">27</span>Audit &amp; Compliance (HIPAA / OIG)</li>
+          <li><span class="mod-num">28</span>Patient Portal &amp; Self-Service</li>
+          <li><span class="mod-num">29</span>Notifications (SMS / Email / In-App)</li>
+          <li><span class="mod-num">30</span>AI Automation &amp; RPA Engine</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ======= BILLING TYPES (NEW) ======= -->
+  <section id="billing-types">
+    <div class="section-label"><h4>Specialized Billing Types Supported</h4></div>
+    <p style="font-size:0.88rem; color:var(--white-dim); margin-bottom:28px; max-width:600px;">US Healthcare billing is not one-size-fits-all. Our system handles every major payer type and billing pathway.</p>
+    <div class="two-col">
+
+      <div class="info-block">
+        <h4>Medicare &amp; Medicare Advantage</h4>
+        <ul>
+          <li>Traditional Medicare Parts A, B, C, D</li>
+          <li>Medicare Advantage (Part C) plan-specific rules</li>
+          <li>Risk adjustment &amp; HCC coding support</li>
+          <li>MIPS / MACRA quality reporting</li>
+          <li>ABN generation for non-covered services</li>
+          <li>Medicare Secondary Payer (MSP) rules enforced</li>
+        </ul>
+      </div>
+
+      <div class="info-block">
+        <h4>Medicaid &amp; Managed Medicaid</h4>
+        <ul>
+          <li>State-specific Medicaid fee schedules (all 50 states)</li>
+          <li>Managed Medicaid MCO billing rules</li>
+          <li>Medicaid as payer of last resort enforced</li>
+          <li>Third Party Liability (TPL) tracking</li>
+          <li>Presumptive eligibility &amp; Medicaid enrollment screening</li>
+          <li>Medicaid timely filing calendar per state</li>
+        </ul>
+      </div>
+
+      <div class="info-block">
+        <h4>Workers Compensation Billing</h4>
+        <ul>
+          <li>First Report of Injury filing &amp; tracking</li>
+          <li>State-specific WC fee schedules</li>
+          <li>Causation &amp; relatedness review documentation</li>
+          <li>Independent Medical Examination (IME) tracking</li>
+          <li>Separate WC billing pathway from health insurance</li>
+        </ul>
+      </div>
+
+      <div class="info-block">
+        <h4>Auto Insurance / Motor Vehicle Accidents</h4>
+        <ul>
+          <li>PIP (Personal Injury Protection) billing</li>
+          <li>MedPay claim submission</li>
+          <li>Hospital lien filing &amp; management</li>
+          <li>Subrogation rights tracking</li>
+          <li>Auto insurance → health insurance fallback flow</li>
+        </ul>
+      </div>
+
+      <div class="info-block">
+        <h4>TRICARE / Military Healthcare</h4>
+        <ul>
+          <li>TRICARE Prime, Select, Reserve Select, For Life</li>
+          <li>Regional contractor routing by geography</li>
+          <li>Separate prior authorization process</li>
+          <li>TRICARE For Life as Medicare supplement (secondary payer)</li>
+        </ul>
+      </div>
+
+      <div class="info-block">
+        <h4>Telehealth Billing</h4>
+        <ul>
+          <li>POS 02 (telehealth) and POS 10 (patient at home)</li>
+          <li>Modifier GT and 95 per payer rules</li>
+          <li>Audio-only vs video telehealth codes</li>
+          <li>Store-and-forward billing (dermatology, radiology)</li>
+          <li>Payer-specific telehealth rule library</li>
+        </ul>
+      </div>
+
+      <div class="info-block">
+        <h4>Pharmacy / Drug Billing (J Codes)</h4>
+        <ul>
+          <li>HCPCS J-code billing for infused / injectable drugs</li>
+          <li>Drug wastage billing with Modifier JW</li>
+          <li>340B Drug Discount Program tracking</li>
+          <li>Buy-and-bill reimbursement margin tracking</li>
+          <li>Specialty drug prior authorization workflows</li>
+        </ul>
+      </div>
+
+      <div class="info-block">
+        <h4>Behavioral Health &amp; Substance Use</h4>
+        <ul>
+          <li>MHPAEA mental health parity compliance monitoring</li>
+          <li>Psychotherapy add-on code billing</li>
+          <li>Medication-Assisted Treatment (MAT) billing</li>
+          <li>42 CFR Part 2 confidentiality rules for SUD records</li>
+          <li>Residential and outpatient SUD program billing</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ======= EDI TRANSACTIONS (NEW) ======= -->
+  <section id="edi">
+    <div class="section-label"><h4>Complete HIPAA EDI Transaction Set</h4></div>
+    <p style="font-size:0.88rem; color:var(--white-dim); margin-bottom:28px; max-width:580px;">Our system supports all mandated HIPAA electronic transactions for seamless communication with clearinghouses and payers.</p>
+    <div class="edi-grid">
+      <div class="edi-card"><div class="edi-num">270/271</div><div class="edi-info"><h5>Eligibility Inquiry &amp; Response</h5><p>Real-time insurance coverage verification before or at service</p></div></div>
+      <div class="edi-card"><div class="edi-num">276/277</div><div class="edi-info"><h5>Claim Status Inquiry &amp; Response</h5><p>Check claim status electronically — no phone calls</p></div></div>
+      <div class="edi-card"><div class="edi-num">278</div><div class="edi-info"><h5>Prior Authorization Request</h5><p>Submit and receive authorization decisions electronically</p></div></div>
+      <div class="edi-card"><div class="edi-num">837P</div><div class="edi-info"><h5>Professional Claim</h5><p>Physician / professional services claim (CMS-1500 equivalent)</p></div></div>
+      <div class="edi-card"><div class="edi-num">837I</div><div class="edi-info"><h5>Institutional Claim</h5><p>Hospital facility claim — inpatient and outpatient (UB-04 equivalent)</p></div></div>
+      <div class="edi-card"><div class="edi-num">835</div><div class="edi-info"><h5>Electronic Remittance Advice</h5><p>Payment details for auto-posting and reconciliation</p></div></div>
+      <div class="edi-card"><div class="edi-num">999</div><div class="edi-info"><h5>Functional Acknowledgment</h5><p>Confirms EDI file was received and accepted</p></div></div>
+      <div class="edi-card"><div class="edi-num">277CA</div><div class="edi-info"><h5>Claim Acknowledgment</h5><p>Claim-level acceptance or rejection status after processing</p></div></div>
+      <div class="edi-card"><div class="edi-num">834</div><div class="edi-info"><h5>Benefit Enrollment</h5><p>Employer enrollments and disenrollments in health plans</p></div></div>
+      <div class="edi-card"><div class="edi-num">820</div><div class="edi-info"><h5>Premium Payment</h5><p>Electronic premium payment transaction from employers</p></div></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ======= USER ROLES ======= -->
+  <section id="roles">
+    <div class="section-label"><h4>Who Uses This Application?</h4></div>
+    <div class="roles-grid">
+
+      <div class="role-card">
+        <div class="role-avatar">🏥</div>
+        <div class="role-name">Front Desk Staff</div>
+        <div class="role-desc">Register patients, verify insurance, collect copays, schedule appointments.</div>
+        <div class="role-modules">
+          <span class="role-mod-tag">Mod 1</span><span class="role-mod-tag">Mod 2</span><span class="role-mod-tag">Mod 3</span><span class="role-mod-tag">Mod 4</span><span class="role-mod-tag">Mod 5</span><span class="role-mod-tag">Mod 23</span>
+        </div>
+      </div>
+
+      <div class="role-card">
+        <div class="role-avatar">👨‍⚕️</div>
+        <div class="role-name">Doctors / Providers</div>
+        <div class="role-desc">Document clinical notes, place orders via CPOE, write prescriptions, refer specialists.</div>
+        <div class="role-modules">
+          <span class="role-mod-tag">Mod 6</span><span class="role-mod-tag">Mod 7</span><span class="role-mod-tag">Mod 8</span><span class="role-mod-tag">Mod 9</span>
+        </div>
+      </div>
+
+      <div class="role-card">
+        <div class="role-avatar">🗂️</div>
+        <div class="role-name">Medical Coders</div>
+        <div class="role-desc">Review AI code suggestions, assign ICD-10 / CPT / HCPCS codes, ensure compliance.</div>
+        <div class="role-modules">
+          <span class="role-mod-tag">Mod 10</span><span class="role-mod-tag">Mod 11</span>
+        </div>
+      </div>
+
+      <div class="role-card">
+        <div class="role-avatar">📋</div>
+        <div class="role-name">Billing Staff</div>
+        <div class="role-desc">Create and submit claims, track status, post payments, manage denials.</div>
+        <div class="role-modules">
+          <span class="role-mod-tag">Mod 12</span><span class="role-mod-tag">Mod 13</span><span class="role-mod-tag">Mod 14</span><span class="role-mod-tag">Mod 15</span><span class="role-mod-tag">Mod 16</span><span class="role-mod-tag">Mod 17</span>
+        </div>
+      </div>
+
+      <div class="role-card">
+        <div class="role-avatar">💼</div>
+        <div class="role-name">AR Specialists</div>
+        <div class="role-desc">Follow up on unpaid claims, file appeals, manage aging accounts and patient collections.</div>
+        <div class="role-modules">
+          <span class="role-mod-tag">Mod 18</span><span class="role-mod-tag">Mod 19</span><span class="role-mod-tag">Mod 20</span><span class="role-mod-tag">Mod 21</span><span class="role-mod-tag">Mod 22</span><span class="role-mod-tag">Mod 24</span><span class="role-mod-tag">Mod 25</span>
+        </div>
+      </div>
+
+      <div class="role-card">
+        <div class="role-avatar">📈</div>
+        <div class="role-name">Practice Manager / CFO</div>
+        <div class="role-desc">Monitor operations, review KPI dashboards, manage compliance, track revenue performance.</div>
+        <div class="role-modules">
+          <span class="role-mod-tag">Mod 26</span><span class="role-mod-tag">Mod 27</span>
+        </div>
+      </div>
+
+      <div class="role-card">
+        <div class="role-avatar">🙋</div>
+        <div class="role-name">Patients</div>
+        <div class="role-desc">Book appointments, view bills, make payments online, access records and lab results.</div>
+        <div class="role-modules">
+          <span class="role-mod-tag">Mod 28</span>
+        </div>
+      </div>
+
+      <div class="role-card">
+        <div class="role-avatar">📝</div>
+        <div class="role-name">CDI Specialists</div>
+        <div class="role-desc">Concurrent documentation review, physician queries, DRG validation for inpatient cases.</div>
+        <div class="role-modules">
+          <span class="role-mod-tag">Mod 7</span><span class="role-mod-tag">Mod 10</span><span class="role-mod-tag">Mod 11</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ======= AI FEATURES ======= -->
+  <section id="ai">
+    <div class="section-label"><h4>AI &amp; Automation Features</h4></div>
+    <div class="ai-grid">
+
+      <div class="ai-card">
+        <div class="ai-label">NLP · Coding</div>
+        <div class="ai-title">AI-Powered Medical Coding</div>
+        <div class="ai-desc">GPT-4 reads doctor's clinical notes and suggests ICD-10, CPT, and HCPCS codes. Reduces coder review time from 15 minutes to 3 minutes per encounter.</div>
+        <div class="ai-metric">⬆ 85–90% code suggestion accuracy</div>
+      </div>
+
+      <div class="ai-card">
+        <div class="ai-label">Validation · Claims</div>
+        <div class="ai-title">Automated Claim Scrubbing</div>
+        <div class="ai-desc">50+ validation rules applied to every claim before submission. Checks demographics, codes, modifiers, NCCI edits, duplicate detection, and timely filing deadlines.</div>
+        <div class="ai-metric">⬆ 95%+ clean claim rate</div>
+      </div>
+
+      <div class="ai-card">
+        <div class="ai-label">ML · Denials</div>
+        <div class="ai-title">Predictive Denial Management</div>
+        <div class="ai-desc">Machine learning model analyzes claim characteristics and flags high-denial-risk claims before submission, allowing correction before the claim is sent.</div>
+        <div class="ai-metric">⬇ 50% fewer denials</div>
+      </div>
+
+      <div class="ai-card">
+        <div class="ai-label">RPA · Automation</div>
+        <div class="ai-title">Robotic Process Automation</div>
+        <div class="ai-desc">Software robots handle repetitive tasks: eligibility checks, claim status polling, payment posting, and prior auth status monitoring — 24/7 without human intervention.</div>
+        <div class="ai-metric">⬇ 60% staff time on routine tasks</div>
+      </div>
+
+      <div class="ai-card">
+        <div class="ai-label">OCR · Registration</div>
+        <div class="ai-title">Insurance Card OCR</div>
+        <div class="ai-desc">AWS Textract instantly reads and extracts all fields from insurance cards — member ID, group number, payer name, plan type — with no manual typing required.</div>
+        <div class="ai-metric">⬇ Registration time from 10 min → 3 min</div>
+      </div>
+
+      <div class="ai-card">
+        <div class="ai-label">Analytics · Revenue</div>
+        <div class="ai-title">Patient Propensity to Pay</div>
+        <div class="ai-desc">Predictive models score each patient's likelihood of paying their balance, enabling targeted financial counseling, payment plan offers, and proactive charity care screening.</div>
+        <div class="ai-metric">⬆ Patient collection rate improvement</div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ======= COMPLIANCE ======= -->
+  <section id="compliance">
+    <div class="section-label"><h4>Compliance &amp; Regulatory Framework</h4></div>
+    <div class="two-col">
+      <div class="info-block">
+        <h4>Compliance Program Elements (OIG)</h4>
+        <ul>
+          <li>Written policies &amp; procedures for all billing activities</li>
+          <li>Designated Compliance Officer &amp; Compliance Committee</li>
+          <li>Staff training &amp; education programs</li>
+          <li>Confidential reporting hotline (non-retaliation)</li>
+          <li>Disciplinary standards applied consistently</li>
+          <li>Regular internal audits &amp; monitoring</li>
+          <li>Prompt response to detected problems &amp; voluntary self-disclosure</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h4>Government Audit Bodies</h4>
+        <ul>
+          <li>RAC — Recovery Audit Contractors (Medicare overpayments)</li>
+          <li>MAC — Medicare Administrative Contractors</li>
+          <li>OIG — Office of Inspector General (fraud &amp; abuse)</li>
+          <li>ZPIC — Zone Program Integrity Contractors</li>
+          <li>State Medicaid Audit Agencies</li>
+          <li>False Claims Act — 3x penalty + per-claim fines</li>
+          <li>Corporate Integrity Agreements (CIA) tracked in system</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h4>Coding Compliance Rules</h4>
+        <ul>
+          <li>NCCI Edits — prevent unbundling of procedures</li>
+          <li>LCD Rules — local Medicare coverage determinations</li>
+          <li>NCD Rules — national Medicare coverage rules</li>
+          <li>MUE Limits — medically unlikely edit caps per day</li>
+          <li>Upcoding detection &amp; prevention controls</li>
+          <li>Downcoding identification for revenue recovery</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h4>Patient Protection Rules</h4>
+        <ul>
+          <li>No Surprises Act — balance billing prohibition</li>
+          <li>ABN — Advance Beneficiary Notice for Medicare non-covered services</li>
+          <li>Price Transparency — machine-readable charge files published</li>
+          <li>Good Faith Estimates — pre-service cost estimates</li>
+          <li>MHPAEA — mental health parity compliance</li>
+          <li>42 CFR Part 2 — SUD record confidentiality</li>
+          <li>Fair Debt Collection Practices Act (FDCPA)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ======= SECURITY ======= -->
+  <section id="security">
+    <div class="section-label"><h4>Security &amp; Data Privacy</h4></div>
+    <div class="security-grid">
+      <div class="sec-card">
+        <div class="sec-icon">🔒</div>
+        <div class="sec-title">256-Bit AES Encryption</div>
+        <div class="sec-text">All data encrypted at rest and in transit. TLS 1.3 for all API communications.</div>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">🪪</div>
+        <div class="sec-title">Role-Based Access Control</div>
+        <div class="sec-text">Every user sees only what their role permits. Granular permissions per module.</div>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">🔑</div>
+        <div class="sec-title">MFA &amp; SSO</div>
+        <div class="sec-text">Multi-factor authentication required. Single Sign-On for enterprise hospital networks.</div>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">⏱️</div>
+        <div class="sec-title">Auto Session Timeout</div>
+        <div class="sec-text">HIPAA-required automatic logoff after inactivity. Prevents unattended workstation access.</div>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">📋</div>
+        <div class="sec-title">Complete Audit Logs</div>
+        <div class="sec-text">Every access, change, and approval is logged with timestamp and user ID. Immutable trail.</div>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">☁️</div>
+        <div class="sec-title">Automated Backups</div>
+        <div class="sec-text">Daily encrypted backups to cloud. 30-day retention. Full disaster recovery plan.</div>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">📜</div>
+        <div class="sec-title">HIPAA Compliance</div>
+        <div class="sec-text">All Privacy Rule and Security Rule requirements met. BAAs in place with all vendors.</div>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">🛡️</div>
+        <div class="sec-title">Password Policies</div>
+        <div class="sec-text">Strong password enforcement, rotation schedules, and previous password history checks.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ======= KPIs ======= -->
+  <section id="kpis">
+    <div class="section-label"><h4>Key Performance Indicators (KPIs)</h4></div>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-target">&lt;30</div><div class="kpi-name">Days in AR</div><div class="kpi-desc">Average days to collect payment after service</div></div>
+      <div class="kpi-card"><div class="kpi-target">&gt;95%</div><div class="kpi-name">Clean Claim Rate</div><div class="kpi-desc">Claims paid on first submission without rework</div></div>
+      <div class="kpi-card"><div class="kpi-target">&lt;5%</div><div class="kpi-name">Denial Rate</div><div class="kpi-desc">Percentage of submitted claims denied</div></div>
+      <div class="kpi-card"><div class="kpi-target">&gt;98%</div><div class="kpi-name">Collection Rate</div><div class="kpi-desc">Percentage of allowable revenue actually collected</div></div>
+      <div class="kpi-card"><div class="kpi-target">&gt;90%</div><div class="kpi-name">Patient Satisfaction</div><div class="kpi-desc">HCAHPS &amp; patient billing experience scores</div></div>
+      <div class="kpi-card"><div class="kpi-target">&gt;95%</div><div class="kpi-name">First Pass Resolution</div><div class="kpi-desc">Claims paid without any additional action required</div></div>
+      <div class="kpi-card"><div class="kpi-target">&lt;10%</div><div class="kpi-name">AR Over 90 Days</div><div class="kpi-desc">Percentage of total AR aged beyond 90 days</div></div>
+      <div class="kpi-card"><div class="kpi-target">100%</div><div class="kpi-name">Charge Capture Rate</div><div class="kpi-desc">Percentage of services performed that are billed</div></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ======= BUSINESS IMPACT ======= -->
+  <section id="impact">
+    <div class="section-label"><h4>Business Impact — Small Clinic (5 Doctors, 100 Patients/Day)</h4></div>
+    <table class="compare-table">
+      <thead>
+        <tr><th>Metric</th><th class="badge-before">Before Our Application</th><th class="badge-after">After Our Application</th><th>Impact</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Days to Payment</td><td class="badge-before">45 days</td><td class="badge-after">7 days</td><td>85% faster cash flow</td></tr>
+        <tr><td>Denial Rate</td><td class="badge-before">18%</td><td class="badge-after">4%</td><td>78% reduction in denials</td></tr>
+        <tr><td>Billing Staff Needed</td><td class="badge-before">8 people</td><td class="badge-after">5 people</td><td>$180K/year saved</td></tr>
+        <tr><td>Monthly Revenue Loss</td><td class="badge-before">$50,000</td><td class="badge-after">$10,000</td><td>$40K/month recovered</td></tr>
+        <tr><td>Manual Data Entry Errors</td><td class="badge-before">High — ~15%</td><td class="badge-after">Minimal — &lt;2%</td><td>Error reduction</td></tr>
+        <tr><td>Coding Time per Encounter</td><td class="badge-before">15 minutes</td><td class="badge-after">3 minutes</td><td>80% time saved</td></tr>
+        <tr><td>Insurance Verification</td><td class="badge-before">15-min phone call</td><td class="badge-after">30 seconds (API)</td><td>97% time saved</td></tr>
+        <tr><td>First-Year ROI</td><td class="badge-before">—</td><td class="badge-after" style="color:var(--green); font-weight:700;">400%</td><td>Full payback &lt;3 months</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ======= IMPLEMENTATION ======= -->
+  <section id="implementation">
+    <div class="section-label"><h4>Implementation Timeline</h4></div>
+    <div class="timeline">
+      <div class="tl-phase">
+        <div class="tl-phase-num">Week 1–2</div>
+        <h4>Setup &amp; Configuration</h4>
+        <ul>
+          <li>Install application</li>
+          <li>Configure fee schedules &amp; CDM</li>
+          <li>Set up payer contracts</li>
+          <li>Clearinghouse enrollment</li>
+          <li>Provider credentialing upload</li>
+        </ul>
+      </div>
+      <div class="tl-phase">
+        <div class="tl-phase-num">Week 3–4</div>
+        <h4>Staff Training</h4>
+        <ul>
+          <li>Role-specific 2-hour sessions</li>
+          <li>Video tutorial library</li>
+          <li>EHR / coding workflow walkthroughs</li>
+          <li>Live practice with test patients</li>
+        </ul>
+      </div>
+      <div class="tl-phase">
+        <div class="tl-phase-num">Month 2</div>
+        <h4>Go Live</h4>
+        <ul>
+          <li>Start with new patients</li>
+          <li>Migrate existing patient records</li>
+          <li>Monitor claim submissions daily</li>
+          <li>Dedicated support team on-call</li>
+        </ul>
+      </div>
+      <div class="tl-phase">
+        <div class="tl-phase-num">Month 3+</div>
+        <h4>Optimize &amp; Scale</h4>
+        <ul>
+          <li>Review KPI dashboards weekly</li>
+          <li>Fine-tune denial rules</li>
+          <li>Enable advanced AI modules</li>
+          <li>Expand to additional locations</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ======= SUMMARY ======= -->
+  <section>
+    <div class="section-label"><h4>Summary</h4></div>
+    <div class="what-is-card">
+      <h2 style="margin-bottom:16px; color:var(--teal);">Get Paid Faster. With Fewer Errors. Using Less Staff.</h2>
+      <p style="font-size:0.92rem; color:var(--white-dim); max-width:800px; margin-bottom:20px;">This application is a complete US Healthcare Revenue Cycle Management system. It automates the entire process from the moment a patient walks in to the moment the last dollar is collected — handling traditional Medicare, Medicare Advantage, Medicaid, Workers Compensation, Auto Insurance, TRICARE, telehealth, behavioral health, pharmacy billing, and more.</p>
+      <div class="tech-row">
+        <span class="tech-tag">HIPAA Compliant</span>
+        <span class="tech-tag">Medicare &amp; Medicaid</span>
+        <span class="tech-tag">AI-Powered</span>
+        <span class="tech-tag">EDI Full Suite</span>
+        <span class="tech-tag">Telehealth Ready</span>
+        <span class="tech-tag">No Surprises Act</span>
+        <span class="tech-tag">30 Modules</span>
+        <span class="tech-tag">Real-Time Eligibility</span>
+        <span class="tech-tag">Auto ERA Posting</span>
+        <span class="tech-tag">Denial AI</span>
+        <span class="tech-tag">Price Transparency</span>
+        <span class="tech-tag">OIG Compliance</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <p>Healthcare RCM Complete Application Guide · Version 1.0 · US Healthcare Insurance Claiming System · HIPAA Compliant</p>
+  <p style="margin-top:8px; color:rgba(184,201,232,0.4);">For technical specifications → See System Requirements · For module diagrams → See Module Flow Documents</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare RCM - Complete Application Guide</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .explanation {
+            background-color: #fff5f0;
+            border-left: 4px solid #ff6b35;
+            padding: 12px 16px;
+            margin: 10px 0 20px 0;
+            font-size: 0.95em;
+            line-height: 1.6;
+            color: #333;
+        }
+        .module-section {
+            margin-bottom: 40px;
+        }
+        .step-box {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .step-box h4 {
+            color: #ff6b35;
+            margin-top: 0;
+        }
+        .highlight {
+            background-color: #fff5f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        ul, ol {
+            line-height: 1.8;
+        }
+        .toc {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .toc li {
+            margin: 8px 0;
+        }
+        .toc a {
+            color: #ff6b35;
+            text-decoration: none;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Healthcare RCM Application</h1>
+            <p class="subtitle">Complete Guide for Everyone - Understanding Every Feature & Flow</p>
+        </header>
+
+        <div class="content">
+            <section>
+                <h2>🎯 What is This Application?</h2>
+                <div class="explanation">
+                    <strong>Simple Explanation:</strong> This is a complete healthcare billing system that automates the entire process from patient registration to payment collection. It reduces billing time from 60-90 days to just 5-7 days with 95%+ accuracy using AI and automation.
+                </div>
+
+                <p>Imagine a hospital or clinic. When you visit a doctor:</p>
+                <ol>
+                    <li>You register at the front desk</li>
+                    <li>They check your insurance</li>
+                    <li>Doctor treats you</li>
+                    <li>Hospital sends bill to insurance</li>
+                    <li>Insurance pays the hospital</li>
+                    <li>You pay remaining amount</li>
+                </ol>
+
+                <p><strong>The Problem:</strong> This entire process takes 60-90 days and has many errors.</p>
+                <p><strong>Our Solution:</strong> Automates this entire process and reduces time to 5-7 days with 95%+ accuracy.</p>
+            </section>
+
+            <section>
+                <h2>📖 Complete Patient Journey (Real Example)</h2>
+                <div class="explanation">
+                    <strong>Patient Journey Overview:</strong> Follow Sarah Johnson's complete experience from walking into the clinic to final payment. This real-world example shows how every module works together to process a patient visit efficiently.
+                </div>
+
+                <h3>Meet Sarah Johnson</h3>
+                <ul>
+                    <li><strong>Age:</strong> 41 years old</li>
+                    <li><strong>Problem:</strong> Cough and fever for 3 days</li>
+                    <li><strong>Insurance:</strong> Blue Cross Blue Shield</li>
+                </ul>
+
+                <div class="step-box">
+                    <h4>Step 1: Patient Registration (3 minutes)</h4>
+                    <p><strong>What Happens:</strong></p>
+                    <ul>
+                        <li>Sarah walks into clinic</li>
+                        <li>Front desk staff opens our application</li>
+                        <li>Enters Sarah's information: Name, DOB, Address, Phone</li>
+                        <li>Takes photo of insurance card</li>
+                        <li>Our AI reads the card automatically (OCR)</li>
+                        <li>System checks if Sarah visited before (duplicate check)</li>
+                    </ul>
+                    <p><strong>Behind the Scenes:</strong> Data saved in database, insurance card scanned using AWS Textract, duplicate patient check runs, Patient ID generated: PAT-2024-001234</p>
+                    <p><strong>Time Saved:</strong> 3 minutes (vs 10 minutes manual)</p>
+                </div>
+
+                <div class="step-box">
+                    <h4>Step 2: Insurance Verification (30 seconds)</h4>
+                    <p><strong>What Happens:</strong></p>
+                    <ul>
+                        <li>Staff clicks "Verify Insurance" button</li>
+                        <li>System connects to insurance company</li>
+                        <li>Gets real-time eligibility information</li>
+                    </ul>
+                    <p><strong>Result Shown:</strong> ✅ Insurance Active, Copay: $25, Deductible Remaining: $700, Coverage: 80% after deductible</p>
+                    <p><strong>Behind the Scenes:</strong> EDI 270 request sent to Waystar/Availity, EDI 271 response received, data parsed and displayed</p>
+                    <p><strong>Time Saved:</strong> 30 seconds (vs 15 minutes phone call)</p>
+                </div>
+
+                <div class="step-box">
+                    <h4>Step 3: Appointment Scheduling (1 minute)</h4>
+                    <p><strong>What Happens:</strong></p>
+                    <ul>
+                        <li>Staff opens calendar</li>
+                        <li>Selects available slot: May 20, 10:00 AM</li>
+                        <li>Assigns doctor: Dr. Smith</li>
+                        <li>Books appointment</li>
+                    </ul>
+                    <p><strong>Automatic Actions:</strong> SMS reminder sent to Sarah, email confirmation sent, doctor's calendar updated, reminder set for 24 hours before</p>
+                    <p><strong>Behind the Scenes:</strong> Appointment saved in database, Twilio API sends SMS, email service sends confirmation</p>
+                </div>
+
+                <div class="step-box">
+                    <h4>Step 4: Patient Check-in (2 minutes)</h4>
+                    <p><strong>What Happens:</strong></p>
+                    <ul>
+                        <li>Sarah arrives at clinic at 9:55 AM</li>
+                        <li>Uses self-service kiosk OR front desk</li>
+                        <li>Confirms personal information</li>
+                        <li>Signs consent forms digitally</li>
+                        <li>Pays $25 copay via credit card</li>
+                    </ul>
+                    <p><strong>Behind the Scenes:</strong> Check-in status updated, payment processed via Stripe, receipt generated, doctor notified patient is ready</p>
+                </div>
+
+                <div class="step-box">
+                    <h4>Step 5: Doctor Consultation (20 minutes)</h4>
+                    <p><strong>What Happens:</strong></p>
+                    <ul>
+                        <li>Dr. Smith examines Sarah</li>
+                        <li>Diagnosis: Acute Bronchitis</li>
+                        <li>Prescribes: Antibiotics</li>
+                        <li>Doctor enters notes in system</li>
+                    </ul>
+                    <p><strong>Doctor Enters:</strong> Chief Complaint, Examination findings, Diagnosis, Treatment Plan, Prescription</p>
+                    <p><strong>Behind the Scenes:</strong> Clinical notes saved, prescription sent to pharmacy, encounter marked complete, ready for coding</p>
+                </div>
+
+                <div class="step-box">
+                    <h4>Step 6: Medical Coding with AI (3 minutes)</h4>
+                    <p><strong>What Happens:</strong></p>
+                    <ul>
+                        <li>AI reads doctor's notes automatically</li>
+                        <li>Suggests medical codes: CPT 99213 (Office Visit), ICD-10 J20.9 (Acute Bronchitis)</li>
+                        <li>Coder reviews and approves</li>
+                    </ul>
+                    <p><strong>Behind the Scenes:</strong> AI model analyzes clinical notes, suggests codes with confidence scores, coder validates, codes locked for billing</p>
+                    <p><strong>Time Saved:</strong> 3 minutes (vs 15 minutes manual coding)</p>
+                </div>
+
+                <div class="step-box">
+                    <h4>Step 7: Claim Scrubbing (1 minute)</h4>
+                    <p><strong>What Happens:</strong></p>
+                    <ul>
+                        <li>System automatically checks claim for errors</li>
+                        <li>Validates codes, patient info, insurance details</li>
+                        <li>Shows green checkmark: "Ready to Submit"</li>
+                    </ul>
+                    <p><strong>Checks Performed:</strong> 47 validation rules, code compatibility, insurance coverage, required fields</p>
+                </div>
+
+                <div class="step-box">
+                    <h4>Step 8: Claim Submission (2 minutes)</h4>
+                    <p><strong>What Happens:</strong></p>
+                    <ul>
+                        <li>Biller clicks "Submit Claim"</li>
+                        <li>Claim sent electronically to Blue Cross Blue Shield</li>
+                        <li>Confirmation received: Claim ID CLM-2024-567890</li>
+                    </ul>
+                    <p><strong>Behind the Scenes:</strong> EDI 837 file created, sent via Waystar clearinghouse, acknowledgment received, claim status set to "Submitted"</p>
+                </div>
+
+                <div class="step-box">
+                    <h4>Step 9: Claim Status Tracking (Automatic)</h4>
+                    <p><strong>What Happens:</strong></p>
+                    <ul>
+                        <li>System automatically checks claim status every 3 days</li>
+                        <li>Day 5: Status shows "In Review"</li>
+                        <li>Day 7: Status shows "Approved - Payment Pending"</li>
+                    </ul>
+                    <p><strong>Behind the Scenes:</strong> EDI 276 inquiry sent, EDI 277 response received, status updated in dashboard</p>
+                </div>
+
+                <div class="step-box">
+                    <h4>Step 10: Payment Posting (Day 10)</h4>
+                    <p><strong>What Happens:</strong></p>
+                    <ul>
+                        <li>Insurance payment received: $120 (80% of $150 charge)</li>
+                        <li>System automatically posts payment</li>
+                        <li>Patient balance calculated: $30 remaining</li>
+                    </ul>
+                    <p><strong>Behind the Scenes:</strong> ERA (835) file received, payment auto-posted, patient account updated, ready for patient billing</p>
+                </div>
+
+                <div class="step-box">
+                    <h4>Step 11: Patient Billing (Day 11)</h4>
+                    <p><strong>What Happens:</strong></p>
+                    <ul>
+                        <li>System generates patient statement: $30 due</li>
+                        <li>Email sent to Sarah with payment link</li>
+                        <li>Sarah pays online via patient portal</li>
+                    </ul>
+                    <p><strong>Behind the Scenes:</strong> Statement generated, email sent, payment processed via Stripe, receipt emailed, account marked as paid</p>
+                </div>
+
+                <p><strong>Total Time:</strong> 11 days from visit to final payment (vs 60-90 days traditional)</p>
+                <p><strong>Manual Work Reduced:</strong> 85% automation</p>
+            </section>
+
+            <section class="module-section">
+                <h2>🔧 All 30 Modules Explained</h2>
+                <div class="explanation">
+                    <strong>Module Overview:</strong> The RCM system consists of 30 interconnected modules organized into 7 categories. Each module handles a specific part of the revenue cycle, from patient registration to final payment collection.
+                </div>
+
+                <h3>Category 1: Patient Management (5 Modules)</h3>
+
+                <h4>Module 1: User Login & Authentication</h4>
+                <div class="explanation">This module handles secure user access to the system with username/password and optional two-factor authentication. It ensures only authorized staff can access patient data and perform their designated tasks.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Username/password login</li>
+                    <li>Two-factor authentication (2FA) via SMS</li>
+                    <li>Role-based access control</li>
+                    <li>Session management and timeout</li>
+                    <li>Password reset functionality</li>
+                </ul>
+
+                <h4>Module 2: Patient Registration</h4>
+                <div class="explanation">This module captures and stores patient demographic information, insurance details, and contact information. It uses AI to scan insurance cards and automatically checks for duplicate patient records.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Demographic data entry</li>
+                    <li>Insurance card scanning (OCR)</li>
+                    <li>Duplicate patient detection</li>
+                    <li>Emergency contact information</li>
+                    <li>Patient ID generation</li>
+                </ul>
+
+                <h4>Module 3: Insurance Verification</h4>
+                <div class="explanation">This module connects to insurance companies in real-time to verify patient coverage and benefits. It retrieves copay amounts, deductibles, and coverage percentages within seconds.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Real-time eligibility check (EDI 270/271)</li>
+                    <li>Coverage details display</li>
+                    <li>Copay and deductible information</li>
+                    <li>Multi-payer support</li>
+                    <li>Verification history tracking</li>
+                </ul>
+
+                <h4>Module 4: Appointment Scheduling</h4>
+                <div class="explanation">This module manages doctor calendars and patient appointments with automated reminders. It sends SMS and email confirmations to reduce no-shows and improve patient experience.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Calendar management</li>
+                    <li>Provider availability tracking</li>
+                    <li>Automated SMS/email reminders</li>
+                    <li>Appointment rescheduling</li>
+                    <li>No-show tracking</li>
+                </ul>
+
+                <h4>Module 5: Patient Check-in</h4>
+                <div class="explanation">This module allows patients to check in using kiosks or front desk, confirm their information, and pay copays. It updates the queue and notifies doctors when patients are ready.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Self-service kiosk support</li>
+                    <li>Information verification</li>
+                    <li>Digital consent forms</li>
+                    <li>Copay collection</li>
+                    <li>Queue management</li>
+                </ul>
+
+                <h3>Category 2: Clinical & Coding (2 Modules)</h3>
+
+                <h4>Module 6: Medical Coding with AI</h4>
+                <div class="explanation">This module uses artificial intelligence to automatically assign correct medical codes (CPT, ICD-10) from doctor's notes. It reduces coding time from hours to minutes and improves accuracy to 95%+.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>AI-powered code suggestion</li>
+                    <li>CPT and ICD-10 code libraries</li>
+                    <li>Confidence scoring</li>
+                    <li>Coder review workflow</li>
+                    <li>Coding accuracy tracking</li>
+                </ul>
+
+                <h4>Module 7: Charge Entry</h4>
+                <div class="explanation">This module records all services provided to patients with their corresponding charges and codes. It ensures every procedure, medication, and service is properly documented for billing.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Service and procedure entry</li>
+                    <li>Fee schedule management</li>
+                    <li>Modifier support</li>
+                    <li>Charge validation</li>
+                    <li>Batch charge entry</li>
+                </ul>
+
+                <h3>Category 3: Claims Management (5 Modules)</h3>
+
+                <h4>Module 8: Claim Scrubbing</h4>
+                <div class="explanation">This module automatically checks claims for errors before submission to insurance companies. It validates codes, patient information, and insurance details to prevent claim rejections.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>47+ validation rules</li>
+                    <li>Error detection and correction</li>
+                    <li>Code compatibility checking</li>
+                    <li>Missing information alerts</li>
+                    <li>Pre-submission quality check</li>
+                </ul>
+
+                <h4>Module 9: Claim Submission</h4>
+                <div class="explanation">This module electronically submits claims to insurance companies using EDI 837 format. It tracks submission status and provides confirmation of receipt from payers.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Electronic claim submission (EDI 837)</li>
+                    <li>Clearinghouse integration</li>
+                    <li>Batch submission support</li>
+                    <li>Submission confirmation</li>
+                    <li>Rejection handling</li>
+                </ul>
+
+                <h4>Module 10: Claim Status Tracking</h4>
+                <div class="explanation">This module monitors the progress of submitted claims through the insurance review process. It sends automatic inquiries (EDI 276) and receives status updates (EDI 277).</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Automatic status inquiries (EDI 276/277)</li>
+                    <li>Real-time status updates</li>
+                    <li>Aging report</li>
+                    <li>Follow-up alerts</li>
+                    <li>Status history log</li>
+                </ul>
+
+                <h4>Module 11: Payment Posting</h4>
+                <div class="explanation">This module records payments received from insurance companies and patients into the system. It automatically matches payments to claims and updates account balances.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Automatic ERA (835) processing</li>
+                    <li>Manual payment entry</li>
+                    <li>Payment matching to claims</li>
+                    <li>Adjustment posting</li>
+                    <li>Reconciliation reports</li>
+                </ul>
+
+                <h4>Module 12: Denial Management</h4>
+                <div class="explanation">This module tracks rejected claims and identifies reasons for denial using AI prediction. It prioritizes high-value denials and guides staff through the appeal process.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>AI denial prediction</li>
+                    <li>Denial reason categorization</li>
+                    <li>Appeal workflow</li>
+                    <li>Priority ranking</li>
+                    <li>Denial trend analysis</li>
+                </ul>
+
+                <h3>Category 4: Patient Financial Services (2 Modules)</h3>
+
+                <h4>Module 13: Patient Billing</h4>
+                <div class="explanation">This module generates and sends bills to patients for their remaining balance after insurance payment. It supports multiple payment methods including online payments, payment plans, and automatic reminders.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Statement generation</li>
+                    <li>Online payment portal</li>
+                    <li>Payment plan setup</li>
+                    <li>Multiple payment methods</li>
+                    <li>Automated reminders</li>
+                </ul>
+
+                <h4>Module 14: Reporting & Analytics</h4>
+                <div class="explanation">This module provides dashboards and reports showing key metrics like revenue, claim status, and denial rates. It helps management make data-driven decisions to improve financial performance.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Revenue dashboards</li>
+                    <li>KPI tracking</li>
+                    <li>Custom report builder</li>
+                    <li>Trend analysis</li>
+                    <li>Export capabilities</li>
+                </ul>
+
+                <h3>Category 5: Financial Management (2 Modules)</h3>
+
+                <h4>Module 15: Accounts Receivable (AR)</h4>
+                <div class="explanation">This module tracks all outstanding payments owed by insurance companies and patients. It categorizes debts by age (30, 60, 90+ days) and helps prioritize collection efforts.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>AR aging reports</li>
+                    <li>Collection prioritization</li>
+                    <li>Write-off management</li>
+                    <li>Bad debt tracking</li>
+                    <li>Collection agency integration</li>
+                </ul>
+
+                <h4>Module 16: Compliance & Audit</h4>
+                <div class="explanation">This module maintains detailed logs of all system activities for HIPAA compliance and auditing. It tracks who accessed what data, when, and what changes were made.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>HIPAA compliance tracking</li>
+                    <li>Audit trail logging</li>
+                    <li>Access control monitoring</li>
+                    <li>Compliance reports</li>
+                    <li>Security alerts</li>
+                </ul>
+
+                <h3>Category 6: Administration (4 Modules)</h3>
+
+                <h4>Module 17: User Management</h4>
+                <div class="explanation">This module allows administrators to create user accounts, assign roles, and manage permissions. It ensures staff members only have access to features necessary for their job function.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>User account creation</li>
+                    <li>Role assignment</li>
+                    <li>Permission management</li>
+                    <li>User activity tracking</li>
+                    <li>Account deactivation</li>
+                </ul>
+
+                <h4>Module 18: Third-Party Integration</h4>
+                <div class="explanation">This module connects the RCM system with external services like Waystar, Availity, Twilio, and Stripe. It enables real-time data exchange and automates communication with insurance companies.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Waystar/Availity integration</li>
+                    <li>Twilio SMS service</li>
+                    <li>Stripe payment processing</li>
+                    <li>AWS Textract OCR</li>
+                    <li>API management</li>
+                </ul>
+
+                <h4>Module 19: Document Management</h4>
+                <div class="explanation">This module stores and organizes all patient documents, insurance cards, and medical records securely. It uses OCR to extract text from scanned documents and makes them searchable.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Secure document storage</li>
+                    <li>OCR text extraction</li>
+                    <li>Document categorization</li>
+                    <li>Search functionality</li>
+                    <li>Version control</li>
+                </ul>
+
+                <h4>Module 20: Notification System</h4>
+                <div class="explanation">This module sends automated alerts and reminders to staff and patients via SMS, email, and in-app notifications. It keeps everyone informed about appointments, claim status, and pending tasks.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>SMS notifications</li>
+                    <li>Email alerts</li>
+                    <li>In-app notifications</li>
+                    <li>Customizable templates</li>
+                    <li>Delivery tracking</li>
+                </ul>
+
+                <h3>Category 7: Advanced Features (10 Modules)</h3>
+
+                <h4>Module 21: Eligibility Batch Processing</h4>
+                <div class="explanation">This module verifies insurance eligibility for multiple patients automatically overnight or on-demand. It reduces manual verification work and ensures up-to-date coverage information.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Bulk eligibility verification</li>
+                    <li>Scheduled batch jobs</li>
+                    <li>Coverage status updates</li>
+                    <li>Exception reporting</li>
+                    <li>Automated overnight processing</li>
+                </ul>
+
+                <h4>Module 22: ERA Processing</h4>
+                <div class="explanation">This module automatically processes Electronic Remittance Advice (ERA/835) files from insurance companies. It posts payments, adjustments, and denials without manual data entry.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Automatic ERA (835) download</li>
+                    <li>Payment auto-posting</li>
+                    <li>Adjustment processing</li>
+                    <li>Denial extraction</li>
+                    <li>Reconciliation matching</li>
+                </ul>
+
+                <h4>Module 23: Credentialing Management</h4>
+                <div class="explanation">This module tracks provider licenses, certifications, and insurance network enrollments. It sends alerts before credentials expire and maintains compliance with payer requirements.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Provider credential tracking</li>
+                    <li>License expiration alerts</li>
+                    <li>Insurance network enrollment</li>
+                    <li>Document repository</li>
+                    <li>Renewal reminders</li>
+                </ul>
+
+                <h4>Module 24: Contract Management</h4>
+                <div class="explanation">This module stores and manages contracts with insurance companies including fee schedules and reimbursement rates. It helps verify correct payment amounts and identify underpayments.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Payer contract storage</li>
+                    <li>Fee schedule management</li>
+                    <li>Reimbursement rate tracking</li>
+                    <li>Contract renewal alerts</li>
+                    <li>Underpayment detection</li>
+                </ul>
+
+                <h4>Module 25: Patient Portal</h4>
+                <div class="explanation">This module provides patients with online access to view their bills, make payments, and schedule appointments. It improves patient satisfaction and reduces phone calls to the office.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Online bill viewing</li>
+                    <li>Secure payment processing</li>
+                    <li>Appointment scheduling</li>
+                    <li>Document access</li>
+                    <li>Communication messaging</li>
+                </ul>
+
+                <h4>Module 26: Revenue Cycle Dashboard</h4>
+                <div class="explanation">This module displays real-time key performance indicators (KPIs) for the entire revenue cycle. It shows metrics like days in AR, collection rate, and claim denial percentage.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Real-time KPI display</li>
+                    <li>Days in AR tracking</li>
+                    <li>Collection rate monitoring</li>
+                    <li>Denial percentage tracking</li>
+                    <li>Performance trending</li>
+                </ul>
+
+                <h4>Module 27: Automated Workflows</h4>
+                <div class="explanation">This module creates and manages automated business rules and workflows for common tasks. It reduces manual work by automatically routing claims, assigning tasks, and triggering actions.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Business rule engine</li>
+                    <li>Task automation</li>
+                    <li>Workflow designer</li>
+                    <li>Trigger-based actions</li>
+                    <li>Process optimization</li>
+                </ul>
+
+                <h4>Module 28: Data Import/Export</h4>
+                <div class="explanation">This module allows bulk import of patient data from other systems and export of reports. It supports various file formats and ensures data integrity during transfers.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Bulk data import</li>
+                    <li>CSV/Excel support</li>
+                    <li>Data validation</li>
+                    <li>Export scheduling</li>
+                    <li>Format conversion</li>
+                </ul>
+
+                <h4>Module 29: System Configuration</h4>
+                <div class="explanation">This module allows administrators to customize system settings, fee schedules, and business rules. It adapts the RCM system to match specific practice workflows and requirements.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Practice settings management</li>
+                    <li>Fee schedule configuration</li>
+                    <li>Business rule setup</li>
+                    <li>Workflow customization</li>
+                    <li>Integration settings</li>
+                </ul>
+
+                <h4>Module 30: Backup & Recovery</h4>
+                <div class="explanation">This module automatically backs up all system data daily and provides disaster recovery capabilities. It ensures patient data is never lost and can be restored quickly if needed.</div>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Automated daily backups</li>
+                    <li>Point-in-time recovery</li>
+                    <li>Disaster recovery planning</li>
+                    <li>Data integrity verification</li>
+                    <li>Backup monitoring</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>👥 User Roles & Permissions</h2>
+                <div class="explanation">
+                    <strong>Role-Based Access:</strong> The system supports 8 different user roles, each with specific permissions and access levels. This ensures staff members only see and can perform tasks relevant to their job function.
+                </div>
+
+                <h3>1. Front Desk Staff</h3>
+                <p><strong>Access:</strong> Patient Registration, Appointment Scheduling, Check-in, Insurance Verification</p>
+                <p><strong>Restrictions:</strong> Cannot view financial reports, cannot modify billing</p>
+
+                <h3>2. Medical Coder</h3>
+                <p><strong>Access:</strong> Medical Coding, Charge Entry, Code Review</p>
+                <p><strong>Restrictions:</strong> Cannot submit claims, cannot post payments</p>
+
+                <h3>3. Biller</h3>
+                <p><strong>Access:</strong> Claim Submission, Claim Status, Payment Posting, Denial Management</p>
+                <p><strong>Restrictions:</strong> Cannot modify patient demographics, cannot change codes</p>
+
+                <h3>4. Collections Specialist</h3>
+                <p><strong>Access:</strong> Patient Billing, AR Management, Payment Plans</p>
+                <p><strong>Restrictions:</strong> Cannot access clinical notes, cannot modify claims</p>
+
+                <h3>5. Practice Manager</h3>
+                <p><strong>Access:</strong> All modules except system administration</p>
+                <p><strong>Restrictions:</strong> Cannot create users, cannot modify system settings</p>
+
+                <h3>6. Physician/Provider</h3>
+                <p><strong>Access:</strong> Clinical Documentation, Patient Charts, Revenue Reports</p>
+                <p><strong>Restrictions:</strong> Cannot access billing details, cannot modify charges</p>
+
+                <h3>7. Compliance Officer</h3>
+                <p><strong>Access:</strong> Audit Logs, Compliance Reports, Security Monitoring</p>
+                <p><strong>Restrictions:</strong> Read-only access, cannot modify data</p>
+
+                <h3>8. System Administrator</h3>
+                <p><strong>Access:</strong> All modules, User Management, System Configuration</p>
+                <p><strong>Restrictions:</strong> None - full system access</p>
+            </section>
+
+            <section>
+                <h2>🔒 Security & Compliance</h2>
+                <div class="explanation">
+                    <strong>HIPAA Compliance:</strong> The system implements comprehensive security measures to protect patient data and comply with HIPAA regulations. All data is encrypted, access is logged, and regular audits ensure ongoing compliance.
+                </div>
+
+                <h3>Data Security</h3>
+                <ul>
+                    <li><strong>Encryption:</strong> AES-256 encryption at rest, TLS 1.3 in transit</li>
+                    <li><strong>Access Control:</strong> Role-based permissions, multi-factor authentication</li>
+                    <li><strong>Audit Trails:</strong> Complete logging of all data access and modifications</li>
+                    <li><strong>Data Backup:</strong> Automated daily backups with 30-day retention</li>
+                    <li><strong>Disaster Recovery:</strong> 4-hour recovery time objective (RTO)</li>
+                </ul>
+
+                <h3>HIPAA Compliance Features</h3>
+                <ul>
+                    <li>Patient consent management</li>
+                    <li>Breach notification system</li>
+                    <li>Business Associate Agreements (BAA) tracking</li>
+                    <li>Regular security risk assessments</li>
+                    <li>Employee training tracking</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>📊 Business Impact</h2>
+                <div class="explanation">
+                    <strong>ROI & Benefits:</strong> Implementing this RCM system delivers measurable improvements in revenue, efficiency, and patient satisfaction. Most practices see positive ROI within 6-8 months of implementation.
+                </div>
+
+                <h3>Key Metrics Improvement</h3>
+                <ul>
+                    <li><strong>Days in AR:</strong> Reduced from 45-60 days to 25-30 days</li>
+                    <li><strong>Collection Rate:</strong> Increased from 85% to 96%+</li>
+                    <li><strong>Claim Denial Rate:</strong> Reduced from 15% to 3-5%</li>
+                    <li><strong>First Pass Resolution:</strong> Increased from 75% to 92%</li>
+                    <li><strong>Staff Productivity:</strong> 40% increase in claims processed per FTE</li>
+                    <li><strong>Patient Satisfaction:</strong> 30% improvement in billing experience scores</li>
+                </ul>
+
+                <h3>Cost Savings</h3>
+                <ul>
+                    <li><strong>Reduced Staff Costs:</strong> 30% reduction in billing staff needed</li>
+                    <li><strong>Lower Denial Costs:</strong> $50,000+ saved annually on rework</li>
+                    <li><strong>Faster Payments:</strong> Improved cash flow by 35%</li>
+                    <li><strong>Reduced Bad Debt:</strong> 25% reduction in write-offs</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>🚀 Implementation Timeline</h2>
+                <div class="explanation">
+                    <strong>Deployment Plan:</strong> The system is implemented in phases over 12-16 weeks to minimize disruption and ensure proper training. Each phase builds on the previous one, gradually transitioning from legacy systems.
+                </div>
+
+                <h3>Phase 1: Foundation (Weeks 1-4)</h3>
+                <ul>
+                    <li>System setup and configuration</li>
+                    <li>User account creation</li>
+                    <li>Data migration planning</li>
+                    <li>Initial staff training</li>
+                </ul>
+
+                <h3>Phase 2: Patient Management (Weeks 5-8)</h3>
+                <ul>
+                    <li>Patient Registration module</li>
+                    <li>Insurance Verification integration</li>
+                    <li>Appointment Scheduling deployment</li>
+                    <li>Front desk staff training</li>
+                </ul>
+
+                <h3>Phase 3: Billing & Claims (Weeks 9-12)</h3>
+                <ul>
+                    <li>Medical Coding with AI</li>
+                    <li>Claim Submission integration</li>
+                    <li>Payment Posting automation</li>
+                    <li>Billing staff training</li>
+                </ul>
+
+                <h3>Phase 4: Advanced Features (Weeks 13-16)</h3>
+                <ul>
+                    <li>Denial Management</li>
+                    <li>Patient Portal</li>
+                    <li>Analytics & Reporting</li>
+                    <li>Full system optimization</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>📞 Support & Training</h2>
+                <div class="explanation">
+                    <strong>Ongoing Support:</strong> Comprehensive training and 24/7 support ensure smooth operations and quick resolution of any issues. Regular updates and enhancements keep the system current with industry changes.
+                </div>
+
+                <h3>Training Programs</h3>
+                <ul>
+                    <li><strong>Initial Training:</strong> 2-day onsite training for all staff</li>
+                    <li><strong>Role-Specific Training:</strong> Customized sessions for each user role</li>
+                    <li><strong>Video Tutorials:</strong> On-demand training library</li>
+                    <li><strong>Refresher Courses:</strong> Quarterly update sessions</li>
+                </ul>
+
+                <h3>Support Options</h3>
+                <ul>
+                    <li><strong>24/7 Help Desk:</strong> Phone and email support</li>
+                    <li><strong>Live Chat:</strong> In-app support chat</li>
+                    <li><strong>Knowledge Base:</strong> Searchable documentation</li>
+                    <li><strong>Dedicated Account Manager:</strong> For enterprise clients</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>✅ Next Steps</h2>
+                <div class="explanation">
+                    <strong>Getting Started:</strong> Ready to transform your revenue cycle? Follow these steps to begin your implementation journey and start seeing results within weeks.
+                </div>
+
+                <ol>
+                    <li><strong>Schedule Demo:</strong> See the system in action with your data</li>
+                    <li><strong>Needs Assessment:</strong> We analyze your current processes</li>
+                    <li><strong>Custom Proposal:</strong> Tailored implementation plan and pricing</li>
+                    <li><strong>Contract Signing:</strong> Finalize agreement and timeline</li>
+                    <li><strong>Kickoff Meeting:</strong> Begin implementation process</li>
+                    <li><strong>Go Live:</strong> Start processing claims in the new system</li>
+                </ol>
+
+                <p><strong>Contact Information:</strong></p>
+                <ul>
+                    <li>Email: sales@healthcarercm.com</li>
+                    <li>Phone: 1-800-RCM-HELP</li>
+                    <li>Website: www.healthcarercm.com</li>
+                </ul>
+            </section>
+        </div>
+
+        <footer>
+            <p>&copy; 2024 Healthcare RCM Application. All rights reserved.</p>
+            <p><a href="index.html">Back to Documentation Home</a></p>
+        </footer>
+    </div>
+</body>
+</html>
