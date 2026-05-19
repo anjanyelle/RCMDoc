@@ -71,12 +71,16 @@
 │  │ AI Services │  │ Notification│  │ Payer APIs  │            │
 │  │ (OpenAI/AWS)│  │ (Twilio)    │  │             │            │
 │  └─────────────┘  └─────────────┘  └─────────────┘            │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐            │
+│  │ Lab/PACS/Rx │  │ HIE        │  │ Error Queue │            │
+│  │ (Mirth)     │  │            │  │ /Monitoring │            │
+│  └─────────────┘  └─────────────┘  └─────────────┘            │
 └─────────────────────────────────────────────────────────────────┘
-</pre>
+</code></pre>
 
 <h3>3.2 Detailed Component Architecture</h3>
 
-<h4>**Frontend Architecture**</h4>
+<h4><strong>Frontend Architecture</strong></h4>
 
 <pre><code>
 React Application
@@ -105,7 +109,7 @@ React Application
 │   ├── hooks/               # Custom React hooks
 │   ├── utils/               # Helper functions
 │   └── App.tsx              # Root component
-</pre>
+</code></pre>
 
 <p><strong>Key Technologies:</strong></p>
 <li><strong>React 18+</strong> with TypeScript</li>
@@ -116,7 +120,7 @@ React Application
 <li><strong>React Router</strong> for navigation</li>
 <li><strong>Axios</strong> for HTTP requests</li>
 
-<h4>**Backend Architecture (Microservices)**</h4>
+<h4><strong>Backend Architecture (Microservices)</strong></h4>
 
 <pre><code>
 Backend Services
@@ -136,7 +140,7 @@ Backend Services
     ├── auth/                # JWT authentication
     ├── database/            # DB connection
     └── messaging/           # RabbitMQ/Kafka
-</pre>
+</code></pre>
 
 <p><strong>Key Technologies:</strong></p>
 <li><strong>Python 3.11+</strong> with FastAPI</li>
@@ -147,7 +151,7 @@ Backend Services
 <li><strong>Redis</strong> for caching</li>
 <li><strong>Alembic</strong> for database migrations</li>
 
-<h4>**Database Architecture**</h4>
+<h4><strong>Database Architecture</strong></h4>
 
 <p><strong>PostgreSQL Schema:</strong></p>
 <pre><code>
@@ -172,7 +176,7 @@ rcm_database
 └── Partitioning
     ├── audit_logs (by month)
     └── claims (by submission_date)
-</pre>
+</code></pre>
 
 <p><strong>Redis Cache Structure:</strong></p>
 <pre><code>
@@ -183,7 +187,7 @@ Redis Keys
 ├── icd10_codes:{code}                     # TTL: 7 days
 ├── cpt_codes:{code}                       # TTL: 7 days
 └── session:{user_id}                      # TTL: 15 min
-</pre>
+</code></pre>
 
 <hr>
 
@@ -265,7 +269,7 @@ Redis Keys
     "zod": "^3.21.0"
   }
 }
-</pre>
+</code></pre>
 
 <h3>4.2 Backend Stack</h3>
 
@@ -334,7 +338,7 @@ passlib[bcrypt]==1.7.4
 python-multipart==0.0.6
 pytest==7.4.0
 loguru==0.7.0
-</pre>
+</code></pre>
 
 <p><strong>Alternative: Node.js Stack</strong></p>
 <pre><code>
@@ -343,7 +347,7 @@ loguru==0.7.0
 - Bull (job queue)
 - Passport.js (auth)
 - Jest (testing)
-</pre>
+</code></pre>
 
 <h3>4.3 Database Stack</h3>
 
@@ -384,9 +388,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";      -- UUID generation
 CREATE EXTENSION IF NOT EXISTS "pg_trgm";        -- Fuzzy text search
 CREATE EXTENSION IF NOT EXISTS "btree_gin";      -- Index optimization
 CREATE EXTENSION IF NOT EXISTS "timescaledb";    -- Time-series data
-</pre>
+</code></pre>
 
-<h3>4.4 Cloud & DevOps Stack</h3>
+<h3>4.4 Cloud &amp; DevOps Stack</h3>
 
 <tr>
 <td>Component</td>
@@ -462,7 +466,7 @@ CREATE EXTENSION IF NOT EXISTS "timescaledb";    -- Time-series data
 - Azure Blob Storage
 - Azure Application Gateway
 - Azure DevOps
-</pre>
+</code></pre>
 
 <h3>4.5 Security Stack</h3>
 
@@ -520,6 +524,21 @@ CREATE EXTENSION IF NOT EXISTS "timescaledb";    -- Time-series data
 <td><strong>Vulnerability Scanning</strong></td>
 <td>Snyk</td>
 <td>Dependency scanning, container scanning</td>
+</tr>
+<tr>
+<td><strong>Webhook Security</strong></td>
+<td>Signature Verification</td>
+<td>Prevents spoofing of callbacks</td>
+</tr>
+<tr>
+<td><strong>Network Security</strong></td>
+<td>IP Allowlist</td>
+<td>Restricts access to trusted vendor IPs</td>
+</tr>
+<tr>
+<td><strong>Data Protection</strong></td>
+<td>PHI Masking</td>
+<td>Prevents PHI leakage in logs</td>
 </tr>
 
 <h3>4.6 Integration Stack</h3>
@@ -600,11 +619,18 @@ CREATE EXTENSION IF NOT EXISTS "timescaledb";    -- Time-series data
 
 <hr>
 
-<h2>5. Third-Party APIs & Integrations</h2>
+<h2>5. Third-Party APIs &amp; Integrations</h2>
+
+<p><strong>Production Integration Controls:</strong></p>
+<p>All external integrations must implement the following controls to ensure reliability and data integrity:</p>
+<li><strong>Correlation ID &amp; Traceability:</strong> Track messages across systems.</li>
+<li><strong>Idempotency &amp; Duplicate Detection:</strong> Prevent duplicate claims or payments on retry.</li>
+<li><strong>Dead-Letter Queue (DLQ) &amp; Retry Policy:</strong> Handle transient failures safely.</li>
+<li><strong>Daily Reconciliation Points:</strong> Verify totals between RCM and external systems (e.g., clearinghouse, bank).</li>
 
 <h3>5.1 Clearinghouse APIs</h3>
 
-<h4>**Waystar (Recommended)**</h4>
+<h4><strong>Waystar (Recommended)</strong></h4>
 
 <p><strong>Purpose:</strong> Submit claims to insurance companies, check eligibility, track claim status</p>
 
@@ -614,7 +640,7 @@ CREATE EXTENSION IF NOT EXISTS "timescaledb";    -- Time-series data
 <li>Claim Tracking (EDI 276/277)</li>
 <li>Payment Posting (EDI 835)</li>
 
-<p><strong>API Type:</strong> REST API + EDI file exchange  </p>
+<p><strong>API Type:</strong> REST API + EDI file exchange</p>
 <p><strong>Cost Model:</strong> Per-transaction pricing</p>
 <li>Eligibility check: $0.25-$0.50 per check</li>
 <li>Claim submission: $0.50-$2.00 per claim</li>
@@ -624,12 +650,13 @@ CREATE EXTENSION IF NOT EXISTS "timescaledb";    -- Time-series data
 <li><strong>Paid API:</strong> Available to all customers, pay-per-transaction</li>
 <li><strong>Enterprise:</strong> Volume discounts, dedicated support, SLA guarantees</li>
 
-<p><strong>Integration Complexity:</strong> Medium  </p>
+<p><strong>Integration Complexity:</strong> Medium</p>
 <p><strong>Documentation:</strong> https://www.waystar.com/developers</p>
 
 <p><strong>Sample Code:</strong></p>
 <pre><code class="language-python">
 import requests
+
 def check_eligibility(patient, insurance):
     response = requests.post(
         'https://api.waystar.com/v1/eligibility',
@@ -647,43 +674,43 @@ def check_eligibility(patient, insurance):
         }
     )
     return response.json()
-</pre>
+</code></pre>
 
 <hr>
 
-<h4>**Availity**</h4>
+<h4><strong>Availity</strong></h4>
 
 <p><strong>Purpose:</strong> Alternative clearinghouse, multi-payer connectivity</p>
 
-<p><strong>Modules Using It:</strong> Same as Waystar  </p>
-<p><strong>Cost Model:</strong> Similar to Waystar, sometimes lower fees  </p>
-<p><strong>Enterprise vs Paid:</strong> Paid API, enterprise contracts available  </p>
+<p><strong>Modules Using It:</strong> Same as Waystar</p>
+<p><strong>Cost Model:</strong> Similar to Waystar, sometimes lower fees</p>
+<p><strong>Enterprise vs Paid:</strong> Paid API, enterprise contracts available</p>
 <p><strong>Integration Complexity:</strong> Medium</p>
 
 <p><strong>Why Use:</strong> Some payers prefer Availity, good for multi-clearinghouse strategy</p>
 
 <hr>
 
-<h4>**Change Healthcare**</h4>
+<h4><strong>Change Healthcare</strong></h4>
 
 <p><strong>Purpose:</strong> Large clearinghouse, extensive payer network</p>
 
-<p><strong>Modules Using It:</strong> Same as Waystar  </p>
-<p><strong>Cost Model:</strong> Enterprise pricing, typically higher than Waystar/Availity  </p>
-<p><strong>Enterprise vs Paid:</strong> Primarily enterprise contracts  </p>
+<p><strong>Modules Using It:</strong> Same as Waystar</p>
+<p><strong>Cost Model:</strong> Enterprise pricing, typically higher than Waystar/Availity</p>
+<p><strong>Enterprise vs Paid:</strong> Primarily enterprise contracts</p>
 <p><strong>Integration Complexity:</strong> High (more complex API)</p>
 
 <p><strong>Why Use:</strong> Required by some large hospital systems, comprehensive analytics</p>
 
 <hr>
 
-<h4>**Eligible API**</h4>
+<h4><strong>Eligible API</strong></h4>
 
 <p><strong>Purpose:</strong> Developer-friendly eligibility checking</p>
 
-<p><strong>Modules Using It:</strong> Insurance Verification only  </p>
-<p><strong>Cost Model:</strong> $0.25-$0.75 per eligibility check  </p>
-<p><strong>Enterprise vs Paid:</strong> Paid API, no enterprise requirement  </p>
+<p><strong>Modules Using It:</strong> Insurance Verification only</p>
+<p><strong>Cost Model:</strong> $0.25-$0.75 per eligibility check</p>
+<p><strong>Enterprise vs Paid:</strong> Paid API, no enterprise requirement</p>
 <p><strong>Integration Complexity:</strong> Low (simple REST API)</p>
 
 <p><strong>Why Use:</strong> Easier integration for startups, good for MVP</p>
@@ -691,6 +718,7 @@ def check_eligibility(patient, insurance):
 <p><strong>Sample Code:</strong></p>
 <pre><code class="language-python">
 import requests
+
 response = requests.post(
     'https://gw.eligibleapi.com/v1.5/coverage/all.json',
     auth=(ELIGIBLE_API_KEY, ''),
@@ -706,13 +734,13 @@ response = requests.post(
         'service_date': '2026-05-18'
     }
 )
-</pre>
+</code></pre>
 
 <hr>
 
 <h3>5.2 EMR/EHR Integration</h3>
 
-<h4>**Epic Systems**</h4>
+<h4><strong>Epic Systems</strong></h4>
 
 <p><strong>Purpose:</strong> Largest EMR vendor in US, clinical data exchange</p>
 
@@ -722,9 +750,9 @@ response = requests.post(
 <li>Clinical Documentation (ORU messages)</li>
 <li>Order Management (ORM messages)</li>
 
-<p><strong>API Type:</strong> HL7 v2.x + FHIR R4  </p>
-<p><strong>Cost Model:</strong> Enterprise licensing (hospital already pays Epic)  </p>
-<p><strong>Enterprise vs Paid:</strong> Enterprise only (Epic is $500K-$50M+ implementation)  </p>
+<p><strong>API Type:</strong> HL7 v2.x + FHIR R4</p>
+<p><strong>Cost Model:</strong> Enterprise licensing (hospital already pays Epic)</p>
+<p><strong>Enterprise vs Paid:</strong> Enterprise only (Epic is $500K-$50M+ implementation)</p>
 <p><strong>Integration Complexity:</strong> High</p>
 
 <p><strong>HL7 Message Types:</strong></p>
@@ -744,32 +772,32 @@ MSH|^~\&amp;|EPIC|HOSPITAL|||20260518120000||ADT^A04|MSG123|P|2.5
 EVN|A04|20260518120000
 PID|1||MRN123456||DOE^JOHN^A||19800115|M|||123 MAIN ST^^BOSTON^MA^02101
 PV1|1|O|||||1234567890^SMITH^JANE^^^MD
-</pre>
+</code></pre>
 
 <hr>
 
-<h4>**Cerner (Oracle Health)**</h4>
+<h4><strong>Cerner (Oracle Health)</strong></h4>
 
 <p><strong>Purpose:</strong> Second-largest EMR vendor</p>
 
-<p><strong>Modules Using It:</strong> Same as Epic  </p>
-<p><strong>API Type:</strong> HL7 v2.x + FHIR R4  </p>
-<p><strong>Cost Model:</strong> Enterprise licensing  </p>
-<p><strong>Enterprise vs Paid:</strong> Enterprise only  </p>
+<p><strong>Modules Using It:</strong> Same as Epic</p>
+<p><strong>API Type:</strong> HL7 v2.x + FHIR R4</p>
+<p><strong>Cost Model:</strong> Enterprise licensing</p>
+<p><strong>Enterprise vs Paid:</strong> Enterprise only</p>
 <p><strong>Integration Complexity:</strong> High</p>
 
 <p><strong>Similar to Epic integration</strong></p>
 
 <hr>
 
-<h4>**Athenahealth**</h4>
+<h4><strong>Athenahealth</strong></h4>
 
 <p><strong>Purpose:</strong> Cloud-based EMR/RCM for small-medium practices</p>
 
-<p><strong>Modules Using It:</strong> Full RCM integration (they have built-in RCM)  </p>
-<p><strong>API Type:</strong> REST API (athenaNet API)  </p>
-<p><strong>Cost Model:</strong> Per-provider subscription  </p>
-<p><strong>Enterprise vs Paid:</strong> Paid subscription  </p>
+<p><strong>Modules Using It:</strong> Full RCM integration (they have built-in RCM)</p>
+<p><strong>API Type:</strong> REST API (athenaNet API)</p>
+<p><strong>Cost Model:</strong> Per-provider subscription</p>
+<p><strong>Enterprise vs Paid:</strong> Paid subscription</p>
 <p><strong>Integration Complexity:</strong> Medium</p>
 
 <p><strong>Why Use:</strong> If practice already uses Athenahealth, leverage their RCM features</p>
@@ -778,13 +806,13 @@ PV1|1|O|||||1234567890^SMITH^JANE^^^MD
 
 <h3>5.3 HL7/FHIR Integration</h3>
 
-<h4>**Mirth Connect (Recommended)**</h4>
+<h4><strong>Mirth Connect (Recommended)</strong></h4>
 
 <p><strong>Purpose:</strong> Open-source HL7 integration engine</p>
 
-<p><strong>Modules Using It:</strong> All EMR integrations  </p>
-<p><strong>Cost Model:</strong> <strong>FREE</strong> (open-source)  </p>
-<p><strong>Enterprise vs Paid:</strong> Free, optional paid support from NextGen  </p>
+<p><strong>Modules Using It:</strong> All EMR integrations</p>
+<p><strong>Cost Model:</strong> <strong>FREE</strong> (open-source)</p>
+<p><strong>Enterprise vs Paid:</strong> Free, optional paid support from NextGen</p>
 <p><strong>Integration Complexity:</strong> Medium (learning curve)</p>
 
 <p><strong>Why Use:</strong></p>
@@ -798,17 +826,17 @@ PV1|1|O|||||1234567890^SMITH^JANE^^^MD
 # Download from https://www.nextgen.com/products-and-services/mirth-connect
 # Run installer
 # Access web interface at http://localhost:8080
-</pre>
+</code></pre>
 
 <hr>
 
-<h4>**Redox**</h4>
+<h4><strong>Redox</strong></h4>
 
 <p><strong>Purpose:</strong> Healthcare API integration platform (Mirth alternative)</p>
 
-<p><strong>Modules Using It:</strong> All EMR integrations  </p>
-<p><strong>Cost Model:</strong> $10,000-$50,000/year subscription  </p>
-<p><strong>Enterprise vs Paid:</strong> Paid subscription  </p>
+<p><strong>Modules Using It:</strong> All EMR integrations</p>
+<p><strong>Cost Model:</strong> $10,000-$50,000/year subscription</p>
+<p><strong>Enterprise vs Paid:</strong> Paid subscription</p>
 <p><strong>Integration Complexity:</strong> Low (managed service)</p>
 
 <p><strong>Why Use:</strong> Easier than Mirth, managed service, faster implementation</p>
@@ -819,13 +847,13 @@ PV1|1|O|||||1234567890^SMITH^JANE^^^MD
 
 <h3>5.4 Payment Processing</h3>
 
-<h4>**Stripe (Recommended)**</h4>
+<h4><strong>Stripe (Recommended)</strong></h4>
 
 <p><strong>Purpose:</strong> Patient payment processing (credit cards, ACH)</p>
 
-<p><strong>Modules Using It:</strong> Patient Billing, Collections  </p>
-<p><strong>Cost Model:</strong> 2.9% + $0.30 per transaction  </p>
-<p><strong>Enterprise vs Paid:</strong> Paid per-transaction, enterprise pricing available  </p>
+<p><strong>Modules Using It:</strong> Patient Billing, Collections</p>
+<p><strong>Cost Model:</strong> 2.9% + $0.30 per transaction</p>
+<p><strong>Enterprise vs Paid:</strong> Paid per-transaction, enterprise pricing available</p>
 <p><strong>Integration Complexity:</strong> Low</p>
 
 <p><strong>Why Use:</strong></p>
@@ -837,7 +865,9 @@ PV1|1|O|||||1234567890^SMITH^JANE^^^MD
 <p><strong>Sample Code:</strong></p>
 <pre><code class="language-python">
 import stripe
+
 stripe.api_key = STRIPE_SECRET_KEY
+
 # Create payment intent
 payment_intent = stripe.PaymentIntent.create(
     amount=5000,  # $50.00 in cents
@@ -848,17 +878,17 @@ payment_intent = stripe.PaymentIntent.create(
         'account_number': 'ACC456'
     }
 )
-</pre>
+</code></pre>
 
 <hr>
 
-<h4>**Cedar**</h4>
+<h4><strong>Cedar</strong></h4>
 
 <p><strong>Purpose:</strong> Patient billing and payment platform</p>
 
-<p><strong>Modules Using It:</strong> Patient Billing, Collections, Payment Plans  </p>
-<p><strong>Cost Model:</strong> % of collected revenue (typically 3-5%)  </p>
-<p><strong>Enterprise vs Paid:</strong> Enterprise contracts  </p>
+<p><strong>Modules Using It:</strong> Patient Billing, Collections, Payment Plans</p>
+<p><strong>Cost Model:</strong> % of collected revenue (typically 3-5%)</p>
+<p><strong>Enterprise vs Paid:</strong> Enterprise contracts</p>
 <p><strong>Integration Complexity:</strong> Medium</p>
 
 <p><strong>Why Use:</strong> Full patient engagement platform, not just payments</p>
@@ -867,42 +897,44 @@ payment_intent = stripe.PaymentIntent.create(
 
 <h3>5.5 Communication APIs</h3>
 
-<h4>**Twilio**</h4>
+<h4><strong>Twilio</strong></h4>
 
 <p><strong>Purpose:</strong> SMS appointment reminders, payment reminders</p>
 
-<p><strong>Modules Using It:</strong> Appointment Scheduling, Patient Billing  </p>
-<p><strong>Cost Model:</strong> $0.0079 per SMS (US)  </p>
-<p><strong>Enterprise vs Paid:</strong> Paid per-message, volume discounts  </p>
+<p><strong>Modules Using It:</strong> Appointment Scheduling, Patient Billing</p>
+<p><strong>Cost Model:</strong> $0.0079 per SMS (US)</p>
+<p><strong>Enterprise vs Paid:</strong> Paid per-message, volume discounts</p>
 <p><strong>Integration Complexity:</strong> Low</p>
 
 <p><strong>Sample Code:</strong></p>
 <pre><code class="language-python">
 from twilio.rest import Client
+
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+
 message = client.messages.create(
     body='Reminder: You have an appointment tomorrow at 10:00 AM with Dr. Smith.',
     from_='+15551234567',
     to=patient.phone
 )
-</pre>
+</code></pre>
 
 <hr>
 
-<h4>**SendGrid**</h4>
+<h4><strong>SendGrid</strong></h4>
 
 <p><strong>Purpose:</strong> Email notifications (statements, reminders, receipts)</p>
 
-<p><strong>Modules Using It:</strong> All modules needing email  </p>
-<p><strong>Cost Model:</strong> Free tier (100 emails/day), then $0.0006 per email  </p>
-<p><strong>Enterprise vs Paid:</strong> Paid per-email  </p>
+<p><strong>Modules Using It:</strong> All modules needing email</p>
+<p><strong>Cost Model:</strong> Free tier (100 emails/day), then $0.0006 per email</p>
+<p><strong>Enterprise vs Paid:</strong> Paid per-email</p>
 <p><strong>Integration Complexity:</strong> Low</p>
 
 <hr>
 
 <h3>5.6 AI Services</h3>
 
-<h4>**OpenAI API (GPT-4)**</h4>
+<h4><strong>OpenAI API (GPT-4)</strong></h4>
 
 <p><strong>Purpose:</strong> Medical coding assistance, clinical note summarization, denial prediction</p>
 
@@ -916,7 +948,7 @@ message = client.messages.create(
 <li>GPT-4: $0.03 per 1K input tokens, $0.06 per 1K output tokens</li>
 <li>GPT-3.5-turbo: $0.0015 per 1K input tokens, $0.002 per 1K output tokens</li>
 
-<p><strong>Enterprise vs Paid:</strong> Paid per-token, enterprise agreements available  </p>
+<p><strong>Enterprise vs Paid:</strong> Paid per-token, enterprise agreements available</p>
 <p><strong>Integration Complexity:</strong> Low</p>
 
 <p><strong>HIPAA Compliance:</strong> <strong>NOT HIPAA-compliant by default</strong></p>
@@ -926,7 +958,9 @@ message = client.messages.create(
 <p><strong>Sample Code:</strong></p>
 <pre><code class="language-python">
 import openai
+
 openai.api_key = OPENAI_API_KEY
+
 response = openai.ChatCompletion.create(
     model="gpt-4",
     messages=[
@@ -934,18 +968,19 @@ response = openai.ChatCompletion.create(
         {"role": "user", "content": f"Suggest ICD-10 codes for: {clinical_note}"}
     ]
 )
+
 suggested_codes = response.choices[0].message.content
-</pre>
+</code></pre>
 
 <hr>
 
-<h4>**AWS Bedrock (Claude, Llama)**</h4>
+<h4><strong>AWS Bedrock (Claude, Llama)</strong></h4>
 
 <p><strong>Purpose:</strong> HIPAA-compliant alternative to OpenAI</p>
 
-<p><strong>Modules Using It:</strong> Same as OpenAI  </p>
-<p><strong>Cost Model:</strong> Pay-per-token (similar to OpenAI)  </p>
-<p><strong>Enterprise vs Paid:</strong> Paid per-token  </p>
+<p><strong>Modules Using It:</strong> Same as OpenAI</p>
+<p><strong>Cost Model:</strong> Pay-per-token (similar to OpenAI)</p>
+<p><strong>Enterprise vs Paid:</strong> Paid per-token</p>
 <p><strong>Integration Complexity:</strong> Low</p>
 
 <p><strong>Why Use:</strong></p>
@@ -957,26 +992,29 @@ suggested_codes = response.choices[0].message.content
 
 <hr>
 
-<h4>**AWS Textract**</h4>
+<h4><strong>AWS Textract</strong></h4>
 
 <p><strong>Purpose:</strong> OCR for insurance cards, medical forms, prescriptions</p>
 
-<p><strong>Modules Using It:</strong> Patient Registration (insurance card scanning)  </p>
-<p><strong>Cost Model:</strong> $0.0015 per page  </p>
-<p><strong>Enterprise vs Paid:</strong> Paid per-page  </p>
+<p><strong>Modules Using It:</strong> Patient Registration (insurance card scanning)</p>
+<p><strong>Cost Model:</strong> $0.0015 per page</p>
+<p><strong>Enterprise vs Paid:</strong> Paid per-page</p>
 <p><strong>Integration Complexity:</strong> Low</p>
 
 <p><strong>Sample Code:</strong></p>
 <pre><code class="language-python">
 import boto3
+
 textract = boto3.client('textract')
+
 response = textract.detect_document_text(
     Document={'S3Object': {'Bucket': 'insurance-cards', 'Name': 'card123.jpg'}}
 )
+
 for item in response['Blocks']:
     if item['BlockType'] == 'LINE':
         print(item['Text'])  # Extract text from insurance card
-</pre>
+</code></pre>
 
 <hr>
 
@@ -1103,12 +1141,12 @@ for item in response['Blocks']:
 <td><strong>Must Have</strong></td>
 </tr>
 
-<p><strong>Must Have (MVP):</strong> Waystar, Mirth Connect, Stripe, Twilio, SendGrid, Auth0  </p>
+<p><strong>Must Have (MVP):</strong> Waystar, Mirth Connect, Stripe, Twilio, SendGrid, Auth0</p>
 <p><strong>Total MVP Cost:</strong> ~$2,000-$5,000/month + per-transaction fees</p>
 
 <hr>
 
-<p><em>[Continue to Part 3 for AI Features, Development Plan, and Execution Strategy]</em></p>
+<p>*[Continue to Part 3 for AI Features, Development Plan, and Execution Strategy]*</p>
 
 </body>
 </html>

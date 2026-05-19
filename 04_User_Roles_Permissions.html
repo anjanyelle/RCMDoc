@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<h1>Healthcare RCM Application - User Roles & Permissions Matrix</h1>
+<h1>Healthcare RCM Application - User Roles &amp; Permissions Matrix</h1>
 
-<p><strong>Version:</strong> 1.0  </p>
+<p><strong>Version:</strong> 1.0</p>
 
 <p><strong>For:</strong> Development Team</p>
 
@@ -19,8 +19,10 @@
 
 <p>This document defines all user roles, their responsibilities, and granular permissions for each module in the RCM application.</p>
 
-<p><strong>Total Roles:</strong> 10  </p>
+<p><strong>Total Roles:</strong> 10</p>
 <p><strong>Permission Model:</strong> Role-Based Access Control (RBAC)</p>
+
+<p>*Note: For production, roles may expand to include Prior Authorization Specialist, Tenant/Branch Admin, External Auditor, Collections Manager, and Financial Counselor based on business need.</p>
 
 <hr>
 
@@ -91,6 +93,36 @@
 <td>Provider (Doctor)</td>
 <td>Clinical documentation, encounter review</td>
 <td>5-100</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Prior Authorization Specialist</td>
+<td>Manage prior authorizations</td>
+<td>2-10</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Tenant/Branch Admin</td>
+<td>Admin for specific tenant/branch</td>
+<td>1-5</td>
+</tr>
+<tr>
+<td>13</td>
+<td>External Auditor</td>
+<td>Read-only audit access</td>
+<td>1-5</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Collections Manager</td>
+<td>Approve refunds and external collections</td>
+<td>1-2</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Financial Counselor</td>
+<td>Screen for charity care</td>
+<td>1-5</td>
 </tr>
 
 <hr>
@@ -227,6 +259,10 @@
 <li>View all audit logs</li>
 <li>Export all data</li>
 <li>Configure integrations (EMR, clearinghouse, payers)</li>
+<li>Deactivate users instead of delete where possible</li>
+<li>MFA required for login</li>
+<li>All admin actions are audited</li>
+<li>Tenant/branch scope applies if the platform is multi-tenant</li>
 
 <hr>
 
@@ -279,8 +315,8 @@
 <td>✅</td>
 <td>✅</td>
 <td>✅</td>
-<td>✅</td>
-<td>Full appointment management</td>
+<td>❌</td>
+<td>Full appointment management (Cancel instead of Delete)</td>
 </tr>
 <tr>
 <td>Encounters</td>
@@ -328,6 +364,7 @@
 <li>Cannot access coding or billing modules</li>
 <li>Cannot modify charges or claims</li>
 <li>Can only view encounters they created</li>
+<li>Appointments should be cancelled, not deleted. Cancellation reason must be captured and audited.</li>
 
 <p><strong>Workflow:</strong></p>
 <li>Patient arrives → Search patient or create new</li>
@@ -417,6 +454,8 @@
 <li>Cannot access financial data</li>
 <li>Cannot create or modify charges</li>
 <li>Cannot view payment information</li>
+<li>Some orders may require provider review/co-sign based on clinic policy.</li>
+<li>Clinical staff cannot finalize provider documentation unless authorized.</li>
 
 <hr>
 
@@ -519,6 +558,30 @@
 <td>❌</td>
 <td>Coding productivity reports</td>
 </tr>
+<tr>
+<td>Coding Worklist</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌</td>
+<td>Access assigned worklist</td>
+</tr>
+<tr>
+<td>Provider Query</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌</td>
+<td>Send queries to providers</td>
+</tr>
+<tr>
+<td>Coding Review Status</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌</td>
+<td>Update coding status</td>
+</tr>
 
 <p><strong>Restrictions:</strong></p>
 <li>Cannot create or submit claims</li>
@@ -529,6 +592,7 @@
 <p><strong>Workflow:</strong></p>
 <li>Open coding worklist → Select encounter</li>
 <li>Review clinical documentation</li>
+<li>If documentation is incomplete, send query to provider before final coding.</li>
 <li>Assign diagnosis codes (ICD-10)</li>
 <li>Assign procedure codes (CPT)</li>
 <li>Link diagnoses to procedures</li>
@@ -544,6 +608,8 @@
 <li>Submit claims to clearinghouse</li>
 <li>Track claim status</li>
 <li>Correct and resubmit rejected claims</li>
+<li>Track 999/277CA/clearinghouse acknowledgment</li>
+<li>Fix claim rejections (separate from denial workflow)</li>
 
 <p><strong>Permissions:</strong></p>
 
@@ -654,7 +720,8 @@
 <li>Review coded encounters → Create claim</li>
 <li>Scrub claim → Fix errors</li>
 <li>Mark as clean → Submit to clearinghouse</li>
-<li>Monitor acknowledgments → Update claim status</li>
+<li>Monitor acknowledgments (999, 277CA) → Update claim status</li>
+<li>Fix claim rejections immediately (rejection workflow is separate from denial workflow)</li>
 
 <hr>
 
@@ -750,6 +817,14 @@
 <td>View payer info</td>
 </tr>
 <tr>
+<td>AR Follow-up Worklist</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌</td>
+<td>Manage follow-up tasks</td>
+</tr>
+<tr>
 <td>Contracts</td>
 <td>❌</td>
 <td>✅</td>
@@ -774,8 +849,8 @@
 <p><strong>Workflow:</strong></p>
 <li>Import ERA file → Auto-post payments</li>
 <li>Review unapplied payments → Manually post</li>
-<li>Identify denials → Assign to denial worklist</li>
-<li>Review denial → Create appeal or correct claim</li>
+<li>Identify denials → Assign to denial worklist with denial reason category and appeal deadline</li>
+<li>Review denial → Create appeal or correct claim, log payer call notes and next action date</li>
 <li>Monitor AR aging → Follow up with payers</li>
 
 <hr>
@@ -837,7 +912,7 @@
 <td>✅</td>
 <td>✅</td>
 <td>❌</td>
-<td>Manage collection accounts</td>
+<td>Manage collection accounts (External collections require approval)</td>
 </tr>
 <tr>
 <td>Charity Care</td>
@@ -853,7 +928,7 @@
 <td>✅</td>
 <td>❌</td>
 <td>❌</td>
-<td>Request refunds (approval required)</td>
+<td>Request refunds (Requires approval from Collections Manager, AR Manager, or Finance Manager)</td>
 </tr>
 <tr>
 <td>Claims</td>
@@ -880,8 +955,8 @@
 <p><strong>Workflow:</strong></p>
 <li>Generate monthly statements → Mail/email to patients</li>
 <li>Patient calls → Process payment or set up plan</li>
-<li>Account >90 days → Make collection call</li>
-<li>Account >120 days → Send to external collections</li>
+<li>Account &gt;90 days → Make collection call</li>
+<li>Account &gt;120 days → Send to external collections</li>
 
 <hr>
 
@@ -973,8 +1048,8 @@
 <td>✅</td>
 <td>✅</td>
 <td>✅</td>
-<td>✅</td>
-<td>Full reporting access</td>
+<td>❌</td>
+<td>Full reporting access (Archive/Disable instead of Delete)</td>
 </tr>
 <tr>
 <td>Dashboards</td>
@@ -1107,6 +1182,10 @@
 <li>Run random audit samples</li>
 <li>Flag accounts for review</li>
 <li>Generate compliance reports</li>
+<li>Review emergency access (Break-the-Glass) logs</li>
+<li>Monitor unusual access patterns</li>
+<li>Review role changes</li>
+<li>Close compliance alerts with a mandatory reason</li>
 
 <p><strong>Key Reports:</strong></p>
 <li>Coding accuracy audit</li>
@@ -1227,7 +1306,9 @@
 <li>Document visit (SOAP notes)</li>
 <li>Enter diagnoses and procedures</li>
 <li>Write orders (labs, meds, imaging)</li>
-<li>Sign encounter → Sends to coding</li>
+<li>Sign encounter (with e-signature timestamp) → Confirms clinical services and sends to coding.</li>
+
+<p>*Note: Provider signs encounter and confirms clinical services. Billing/coding team validates charge/coding rules.*</p>
 
 <hr>
 
@@ -1253,6 +1334,8 @@
 <td>No Access</td>
 <td>Cannot perform action</td>
 </tr>
+
+<p>*Note: Limited access can be based on own records, assigned worklist, department, branch, tenant, or emergency access.*</p>
 
 <hr>
 
@@ -1304,16 +1387,35 @@
 <td>Provider</td>
 <td>Only their own patients</td>
 </tr>
+<tr>
+<td>Tenant/Branch Admin</td>
+<td>Only assigned tenant/branch</td>
+</tr>
+<tr>
+<td>Prior Authorization Specialist</td>
+<td>Patients/orders assigned for authorization</td>
+</tr>
+<tr>
+<td>External Auditor</td>
+<td>Temporary read-only access</td>
+</tr>
 
 <h3>Break-the-Glass Access:</h3>
 <li>Emergency access to any patient record</li>
-<li>Requires justification</li>
-<li>Automatically logged and flagged for review</li>
+<li>User must enter a reason before access is granted.</li>
+<li>Automatically logged and flagged for review.</li>
+<li>Compliance Officer must review break-the-glass access within a defined timeframe.</li>
 <li>Available to: Providers, Clinical Staff (in emergencies only)</li>
 
 <hr>
 
 <h2>6. Approval Workflows</h2>
+
+<h3>Approval Status Flow:</h3>
+<p>Requested -&gt; Pending Review -&gt; Approved -&gt; Processed -&gt; Completed or Rejected</p>
+
+<h3>Rules:</h3>
+<li><strong>Maker-Checker Rule:</strong> The request creator cannot approve the same request.</li>
 
 <h3>Actions Requiring Approval:</h3>
 
@@ -1323,12 +1425,12 @@
 <td>Approval Method</td>
 </tr>
 <tr>
-<td>Write-off >$1,000</td>
+<td>Write-off &gt;$1,000</td>
 <td>AR Manager or Finance Manager</td>
 <td>In-app approval</td>
 </tr>
 <tr>
-<td>Refund >$500</td>
+<td>Refund &gt;$500</td>
 <td>Finance Manager</td>
 <td>In-app approval</td>
 </tr>
@@ -1367,6 +1469,9 @@
 <hr>
 
 <h2>8. Audit Requirements</h2>
+
+<p><strong>General Logged Fields:</strong></p>
+<p>In addition to specific data, all audit logs must include: module name, record ID, device/browser, IP/location, old value, new value, and reason for change (where applicable).</p>
 
 <h3>Actions That Are Audited:</h3>
 
@@ -1407,6 +1512,12 @@
 <td>User, report type, parameters, timestamp</td>
 </tr>
 
+<p><strong>Additional Audited Actions:</strong></p>
+<li>Authorization request submitted</li>
+<li>Document uploaded</li>
+<li>Status updated</li>
+<li>Authorization number updated</li>
+
 <p><strong>Audit Log Retention:</strong> 7 years (HIPAA requirement)</p>
 
 <hr>
@@ -1420,12 +1531,19 @@ CREATE TABLE roles (
   role_name VARCHAR(50) UNIQUE NOT NULL,
   permissions JSONB NOT NULL
 );
+
 CREATE TABLE users (
   user_id UUID PRIMARY KEY,
   username VARCHAR(50) UNIQUE NOT NULL,
-  role_id UUID REFERENCES roles(role_id)
+  role_id UUID REFERENCES roles(role_id),
+  user_status VARCHAR(20) NOT NULL,
+  tenant_id UUID,
+  branch_id UUID,
+  mfa_enabled BOOLEAN DEFAULT FALSE,
+  last_login_at TIMESTAMP,
+  failed_login_count INT DEFAULT 0
 );
-</pre>
+</code></pre>
 
 <h3>Permissions JSON Structure:</h3>
 <pre><code class="language-json">
@@ -1435,7 +1553,8 @@ CREATE TABLE users (
     "read": true,
     "update": true,
     "delete": false,
-    "scope": "all" // or "own", "assigned"
+    "scope": "all",
+    "conditions": {}
   },
   "encounters": {
     "create": false,
@@ -1445,7 +1564,7 @@ CREATE TABLE users (
     "scope": "assigned"
   }
 }
-</pre>
+</code></pre>
 
 <h3>Middleware Example (Node.js):</h3>
 <pre><code class="language-javascript">
@@ -1453,6 +1572,7 @@ function checkPermission(resource, action) {
   return (req, res, next) =&gt; {
     const userRole = req.user.role;
     const permissions = userRole.permissions;
+    
     if (permissions[resource]?.[action]) {
       next();
     } else {
@@ -1460,22 +1580,25 @@ function checkPermission(resource, action) {
     }
   };
 }
+
 // Usage:
 app.post('/api/patients', 
   checkPermission('patients', 'create'), 
   createPatient
 );
-</pre>
+</code></pre>
 
 <hr>
 
 <h2>10. Security Best Practices</h2>
 
 <li><strong>Principle of Least Privilege:</strong> Users only get permissions they need</li>
-<li><strong>Separation of Duties:</strong> No single user can complete entire billing cycle alone</li>
-<li><strong>Regular Access Reviews:</strong> Quarterly review of user permissions</li>
-<li><strong>Immediate Revocation:</strong> Disable access immediately upon termination</li>
-<li><strong>Role Assignment Approval:</strong> New user role assignments require manager approval</li>
+<li><strong>Separation of Duties:</strong> No single user can complete entire billing cycle alone. Billing and payment duties must stay separated.</li>
+<li><strong>Regular Access Reviews:</strong> Quarterly review of user permissions. Access review evidence must be documented.</li>
+<li><strong>Immediate Revocation:</strong> Disable access immediately upon termination.</li>
+<li><strong>Role Assignment Approval:</strong> New user role assignments require manager approval.</li>
+<li><strong>Access Requests:</strong> New access requires manager approval.</li>
+<li><strong>Temporary Access:</strong> Temporary access must expire automatically.</li>
 
 <hr>
 
