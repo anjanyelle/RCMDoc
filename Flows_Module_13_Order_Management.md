@@ -1,0 +1,806 @@
+# Module 10: Order Management - Flow Documentation
+**Updated for Business, Production, and Industry-Level RCM Workflow**
+
+**Version:** 1.0 - Updated  
+**Module ID:** MOD-010  
+**Category:** Clinical Workflow / Order Management / Charge Capture Support  
+**Next Module:** Module 11: Charge Capture / Service Documentation  
+
+---
+
+## 1. Module Overview
+* **Purpose:** Create, manage, track, complete, modify, and cancel clinical orders such as lab, radiology/imaging, pharmacy/medication, referrals, procedures, and other services ordered during an encounter.
+* **Why Hospitals Use It:** Ensure ordered services are completed, documented, authorized when needed, connected to results, and available for charge capture and billing.
+* **Main Users:** Provider / Doctor, Clinical Staff, Nurses, Lab Team, Radiology Team, Pharmacy Team, Prior Authorization Specialist, Billing Team, Patient.
+* **Business Goal:** Reduce missed services, missed charges, duplicate orders, authorization-related delays, patient safety risks, and claim denials by making sure each order has clear status, ownership, result tracking, provider review, and billing linkage.
+
+---
+
+## 2. Actors Involved
+```
++---------------------------------------------------------------+
+| ACTORS IN ORDER MANAGEMENT MODULE                             |
++---------------------------------------------------------------+
+| 1. Provider / Doctor                                          |
+|    - Creates clinical orders during patient encounter          |
+|    - Selects diagnosis, service, priority, and instructions    |
+|    - Reviews and signs critical orders/results when required   |
+|                                                               |
+| 2. Clinical Staff / Nurse                                     |
+|    - Supports order entry based on provider instruction        |
+|    - Collects specimens or prepares patient for service        |
+|    - Updates order status and documents completion             |
+|                                                               |
+| 3. Lab Team                                                   |
+|    - Receives lab orders                                      |
+|    - Collects/processes specimens                             |
+|    - Sends lab results back to RCM/EMR                         |
+|                                                               |
+| 4. Radiology / Imaging Team                                   |
+|    - Receives imaging orders                                  |
+|    - Schedules and completes imaging studies                   |
+|    - Sends imaging result/status and accession number          |
+|                                                               |
+| 5. Pharmacy Team                                              |
+|    - Receives medication/dispense orders                       |
+|    - Dispenses medication                                     |
+|    - Sends dispense details for billing/charge capture         |
+|                                                               |
+| 6. Prior Authorization Specialist                             |
+|    - Checks orders that need payer approval                    |
+|    - Links authorization status/number to the order            |
+|                                                               |
+| 7. Billing / Charge Capture Team                              |
+|    - Reviews completed orders for charge capture               |
+|    - Confirms CPT/HCPCS/charge mapping, units, and billability |
+|                                                               |
+| 8. Patient                                                    |
+|    - Receives order instructions when needed                   |
+|    - Completes scheduled lab, imaging, pharmacy, or procedure  |
+|    - Follows preparation instructions before service           |
+|                                                               |
+| 9. System                                                     |
+|    - Order rules engine, safety checks, notification service   |
+|    - Integration, audit, status tracking, and database layer   |
+|                                                               |
+| 10. External Systems                                          |
+|    - EMR/EHR, Lab LIS, Radiology/PACS, Pharmacy System         |
+|    - Payer/Clearinghouse for authorization if required         |
++---------------------------------------------------------------+
+```
+
+---
+
+## 3. Step-by-Step Workflow
+```
++--------------------------+
+| Provider Opens Encounter |
+| or Clinical Order Screen |
++------------+-------------+
+             |
+             v
++--------------------------+
+| Select Order Type:       |
+| Lab / Imaging / Pharmacy |
+| Referral / Procedure     |
++------------+-------------+
+             |
+             v
++--------------------------+
+| Enter Order Details:     |
+| - Diagnosis code         |
+| - CPT/LOINC/NDC/HCPCS    |
+| - Priority / reason      |
+| - Service date           |
+| - Units / quantity       |
+| - Patient instructions   |
++------------+-------------+
+             |
+             v
++--------------------------+
+| System Checks Required   |
+| Fields and Duplicates    |
++------------+-------------+
+             |
+             v
++--------------------------+
+| Check Clinical Safety:   |
+| allergies, contraind.,   |
+| duplicate meds/orders,   |
+| provider approval need   |
++------------+-------------+
+             |
+       +-----+------+
+       |            |
+       v            v
++-------------+  +--------------------------+
+| Duplicate   |  | Valid New Order          |
+| Warning     |  +------------+-------------+
++------+------+               |
+       |                      v
+       |          +--------------------------+
+       |          | Check Authorization Need |
+       |          | by payer + service/CPT   |
+       |          +------------+-------------+
+       |                      |
+       |             +--------+--------+
+       |             |                 |
+       |             v                 v
+       |     +----------------+  +--------------------------+
+       |     | Auth Required  |  | No Auth Required         |
+       |     +-------+--------+  +------------+-------------+
+       |             |                       |
+       |             v                       |
+       |     +----------------+              |
+       |     | Send to Prior  |              |
+       |     | Auth Module    |              |
+       |     +-------+--------+              |
+       |             |                       |
+       +-------------+-----------------------+
+                                   |
+                                   v
+                      +--------------------------+
+                      | Save Order with Status   |
+                      | Pending / Auth Pending   |
+                      +------------+-------------+
+                                   |
+                                   v
+                      +--------------------------+
+                      | Route Order to Correct   |
+                      | Department/System        |
+                      +------------+-------------+
+                                   |
+                    +--------------+--------------+
+                    |              |              |
+                    v              v              v
+             +-----------+  +--------------+  +------------+
+             | Lab / LIS |  | Imaging/PACS |  | Pharmacy   |
+             +-----+-----+  +------+-------+  +-----+------+
+                   |               |                |
+                   v               v                v
+             +--------------------------------------------+
+             | Order Accepted / In Progress / Completed   |
+             +----------------------+---------------------+
+                                    |
+                                    v
+             +--------------------------------------------+
+             | Results / Dispense / Completion Received   |
+             +----------------------+---------------------+
+                                    |
+                                    v
+             +--------------------------------------------+
+             | Update Status, Notify Provider,            |
+             | and Mark Provider Review if needed         |
+             +----------------------+---------------------+
+                                    |
+                                    v
+             +--------------------------------------------+
+             | If Completed and Billable, Trigger          |
+             | Charge Capture / Billing Review            |
+             +--------------------------------------------+
+```
+
+---
+
+## 4. Order Transaction / Integration Flow
+```
+RCM / EMR Backend        External System         Department Team       Billing
+        |                      |                       |                 |
+        | Build order message  |                       |                 |
+        | - Order ID           |                       |                 |
+        | - Patient ID/MRN     |                       |                 |
+        | - Provider NPI       |                       |                 |
+        | - Diagnosis code     |                       |                 |
+        | - Service/CPT/LOINC  |                       |                 |
+        | - Priority           |                       |                 |
+        | - Units / quantity   |                       |                 |
+        | - Trace ID           |                       |                 |
+        +--------------------->|                       |                 |
+        |                      | Acknowledgment        |                 |
+        |<---------------------+                       |                 |
+        |                      | Order received        |                 |
+        |                      +---------------------->|                 |
+        |                      |                       | Perform service |
+        |                      | Status/result         |                 |
+        |<---------------------+<----------------------+                 |
+        |                      |                       |                 |
+        | Save raw message,    |                       |                 |
+        | parsed response, ack,|                       |                 |
+        | result/status        |                       |                 |
+        |                      |                       |                 |
+        | If completed and billable, create charge review item            |
+        +------------------------------------------------------------->|
+```
+* **Important:** Use HL7 ORM/O01 for orders and ORU/R01 for results where applicable.
+* **Important:** Use DICOM/HL7 linkage for imaging orders and accession numbers.
+* **Important:** Use pharmacy dispense data with NDC to HCPCS/charge mapping where applicable.
+* **Important:** Store trace ID/message ID, raw order message, raw result message, parsed response, and external acknowledgment for every order sent and response received.
+
+---
+
+## 5. Use Case Diagram
+```
++-------------------+                     +-------------------------+
+| Provider / Doctor |-------------------->| Create Clinical Order   |
++-------------------+                     +-------------------------+
+                                                   |
++-------------------+                     +-------------------------+
+| Clinical Staff    |-------------------->| Prepare / Update Order  |
++-------------------+                     +-------------------------+
+                                                   |
++-------------------+                     +-------------------------+
+| System            |-------------------->| Validate Order Rules    |
++-------------------+                     +-------------------------+
+                                                   |
+                 +---------------------------------+------------------+
+                 |                                 |                  |
+                 v                                 v                  v
+        +----------------+              +----------------+    +--------------+
+        | Send Lab Order |              | Send Imaging   |    | Send Pharmacy|
+        | to LIS         |              | Order to PACS   |    | Order        |
+        +----------------+              +----------------+    +--------------+
+                 |                                 |                  |
+                 v                                 v                  v
+        +----------------+              +----------------+    +--------------+
+        | Receive Result |              | Receive Result |    | Receive      |
+        | / Status       |              | / Accession No.|    | Dispense Data|
+        +----------------+              +----------------+    +--------------+
+                                                   |
++-------------------+                     +-------------------------+
+| Prior Auth Team   |-------------------->| Check / Link Auth       |
++-------------------+                     +-------------------------+
+                                                   |
++-------------------+                     +-------------------------+
+| Billing Team      |-------------------->| Review Completed Order  |
+|                   |                     | for Charge Capture      |
++-------------------+                     +-------------------------+
+                                                   |
++-------------------+                     +-------------------------+
+| Provider /        |-------------------->| Cancel or Modify Order  |
+| Clinical Staff    |                     +-------------------------+
++-------------------+                                |
+                                                   v
++-------------------+                     +-------------------------+
+| System            |-------------------->| Send Update/Cancel to   |
+|                   |                     | External System if sent |
++-------------------+                     +-------------------------+
+```
+
+---
+
+## 6. Activity Flow Diagram
+```
++-------+
+| START |
++---+---+
+    |
+    v
++-----------------------+
+| Select Patient /      |
+| Encounter             |
++---+-------------------+
+    |
+    v
++-----------------------+
+| Select Order Type     |
++---+-------------------+
+    |
+    v
++-----------------------+
+| Enter Order Details   |
++---+-------------------+
+    |
+    v
+   /   /Req /Data? \     /
+  \   /
+   \ /
+  No|Yes
+    |                         
+    |                         v
+    |              +-----------------------+
+    |              | Check Duplicate Order |
+    |              +---+-------------------+
+    |                  |
+    |                  v
+    |                 /     |                /Dup    |               /?       |               \    /
+    |                \  /
+    |                 \/
+    |       +---------+---------+
+    |       |                   |
+    |       v                   v
+    | +-------------+   +-----------------------+
+    | |Show Warning |   | Safety + Auth Check   |
+    | |Require      |   +---+-------------------+
+    | |Reason if    |       |
+    | |continued    |       v
+    | +------+------+      /     |        |            /Auth    |        |           /Req?     |        |           \     /
+    |        |            \   /
+    |        |             \/
+    |        |      +------+------+
+    |        |      |             |
+    |        |      v             v
+    |        | +----------+ +-------------------+
+    |        | |Auth      | | Save Active Order |
+    |        | |Pending   | +---------+---------+
+    |        | +----+-----+           |
+    |        |      |                 v
+    |        |      |       +-------------------+
+    |        |      |       | Route to Dept /   |
+    |        |      |       | External System   |
+    |        |      |       +---------+---------+
+    |        |      |                 |
+    |        |      |                 v
+    |        |      |       +-------------------+
+    |        |      |       | Track Status      |
+    |        |      |       +---------+---------+
+    |        |      |                 |
+    |        |      |                 v
+    |        |      |       +-------------------+
+    |        |      |       | Result / Complete |
+    |        |      |       +---------+---------+
+    |        |      |                 |
+    |        +------+-----------------+
+           |
+           v
++-----------------------+
+| Notify Provider and   |
+| Trigger Charge Review |
+| if billable           |
++---+-------------------+
+    |
+    v
++-------+
+|  END  |
++-------+
+```
+
+---
+
+## 7. Sequence Diagram
+```
+User     Frontend     Backend     Rules/Auth     External Sys     Database     Provider     Billing     Audit Log
+ |          |           |            |              |              |            |           |           |
+ | Create   |           |            |              |              |            |           |           |
+ | Order    |           |            |              |              |            |           |           |
+ +--------->|           |            |              |              |            |           |           |
+ |          | POST /orders           |              |              |            |           |           |
+ |          +---------->|            |              |              |            |           |           |
+ |          |           | Validate   |              |              |            |           |           |
+ |          |           | order data |              |              |            |           |           |
+ |          |           +----------->|              |              |            |           |           |
+ |          |           | Auth/rules |              |              |            |           |           |
+ |          |           |<-----------+              |              |            |           |           |
+ |          |           | Save order |              |              |            |           |           |
+ |          |           +----------------------------------------->|           |           |
+ |          |           | Record audit action       |              |            |           |           |
+ |          |           +---------------------------------------------------------------->|
+ |          |           | Send order message        |              |            |           |           |
+ |          |           +------------------------>|              |            |           |           |
+ |          | Response  |            |              |              |            |           |           |
+ |          |<----------+            |              |              |            |           |           |
+ | Display  |           |            |              |              |            |           |           |
+ | Status   |           |            |              |              |            |           |           |
+ |<---------+           |            |              |              |            |           |           |
+ |          |           | Result/status response    |              |            |           |           |
+ |          |           |<--------------------------+              |            |           |           |
+ |          |           | Update order/result        |              |            |           |           |
+ |          |           +----------------------------------------->|           |           |
+ |          |           | Audit result/status update |              |            |           |           |
+ |          |           +---------------------------------------------------------------->|
+ |          |           | Notify provider            |              |            |           |           |
+ |          |           +---------------------------------------------------->|
+ |          |           | If completed and billable, notify charge/billing    |           |
+ |          |           +-------------------------------------------------------------->|
+ |          |           | If critical result, track provider acknowledgment   |           |
+ |          |           +---------------------------------------------------->|           |
+```
+
+---
+
+## 8. API Flow
+
+### Request
+```json
+POST /api/orders
+{
+  "patientId": "PAT-00001",
+  "encounterId": "ENC-00001",
+  "providerId": "DOC-001",
+  "providerNpi": "1234567890",
+  "orderType": "imaging",
+  "serviceType": "MRI Brain",
+  "cptCode": "70551",
+  "diagnosisCodes": ["R51.9"],
+  "priority": "routine",
+  "clinicalPriorityReason": "Routine follow-up",
+  "serviceDate": "2026-05-20",
+  "departmentId": "RAD-001",
+  "locationId": "LOC-001",
+  "units": 1,
+  "quantity": 1,
+  "instructions": "MRI brain without contrast",
+  "patientInstructions": "Arrive 15 minutes early and bring insurance card",
+  "orderSource": "provider_entry",
+  "authRequired": true,
+  "traceId": "TRC-ORD-00001",
+  "requestedBy": "USR-001"
+}
+```
+
+### Response - Order Created
+```json
+{
+  "orderId": "ORD-00001",
+  "status": "auth_pending",
+  "message": "Order created and authorization required",
+  "authorizationRequired": true,
+  "routedTo": "Prior Authorization Module",
+  "traceId": "TRC-ORD-00001"
+}
+```
+
+### Response - Completed / Result Received
+```json
+{
+  "orderId": "ORD-00001",
+  "status": "completed",
+  "externalSystemStatus": "completed",
+  "resultAvailable": true,
+  "rawResultStored": true,
+  "providerReviewRequired": true,
+  "accessionNumber": "ACC-98765",
+  "chargeReviewRequired": true,
+  "message": "Order completed and ready for provider review and charge capture review"
+}
+```
+
+### Response - Modified / Cancelled
+```json
+{
+  "orderId": "ORD-00001",
+  "status": "cancelled",
+  "cancelReason": "Patient cancelled service",
+  "externalSystemNotified": true,
+  "message": "Order cancelled and department notified"
+}
+```
+
+---
+
+## 9. Database Flow
+```sql
+-- Create order
+INSERT INTO orders (
+    order_id,
+    patient_id,
+    encounter_id,
+    provider_id,
+    provider_npi,
+    order_type,
+    service_type,
+    cpt_code,
+    diagnosis_codes,
+    priority,
+    clinical_priority_reason,
+    service_date,
+    department_id,
+    location_id,
+    units,
+    quantity,
+    patient_instructions,
+    order_source,
+    auth_required,
+    authorization_id,
+    status,
+    trace_id,
+    requested_by,
+    provider_review_required,
+    review_status,
+    created_at,
+    updated_at
+) VALUES (...);
+
+-- Save order integration message
+INSERT INTO order_messages (
+    message_id,
+    order_id,
+    external_system,
+    message_type,
+    trace_id,
+    status,
+    sent_at,
+    raw_payload,
+    raw_response,
+    parsed_response_json,
+    acknowledgment_status
+) VALUES (...);
+
+-- Update order status/result
+UPDATE orders
+SET status = 'completed',
+    result_available = true,
+    result_received_at = NOW(),
+    accession_number = 'ACC-98765',
+    provider_review_required = true,
+    review_status = 'pending',
+    updated_at = NOW()
+WHERE order_id = 'ORD-00001';
+
+-- Save result or completion details
+INSERT INTO order_results (
+    result_id,
+    order_id,
+    result_type,
+    result_summary,
+    result_file_url,
+    is_critical,
+    received_at,
+    reviewed_by,
+    reviewed_at,
+    acknowledged_by,
+    acknowledged_at
+) VALUES (...);
+
+-- Modify or cancel order
+UPDATE orders
+SET status = 'cancelled',
+    cancel_reason = 'Patient cancelled service',
+    modified_reason = 'Cancellation requested before service',
+    updated_at = NOW()
+WHERE order_id = 'ORD-00001';
+
+-- Create charge review item when billable service is completed
+INSERT INTO charge_capture_queue (
+    queue_id,
+    order_id,
+    encounter_id,
+    patient_id,
+    cpt_code,
+    units,
+    status,
+    created_at
+) VALUES (...);
+```
+
+---
+
+## 10. Error Scenarios
+```
+Error 1: Required Order Data Missing
+   |
+   v
+Show missing field list
+   |
+   v
+User completes required data before saving
+
+Error 2: Duplicate Order Found
+   |
+   v
+Show existing similar order
+   |
+   v
+User cancels duplicate or confirms with permission and reason
+
+Error 3: Authorization Required
+   |
+   v
+Create order as auth_pending
+   |
+   v
+Route to Prior Authorization module
+
+Error 4: External System Down
+   |
+   v
+Retry based on policy
+   |
+   v
+Move to manual follow-up/error queue
+
+Error 5: Order Rejected by External System
+   |
+   v
+Show rejection reason
+   |
+   v
+Correct order details and resend
+
+Error 6: Result Not Received
+   |
+   v
+Create follow-up task
+   |
+   v
+Notify department/team
+
+Error 7: Order Cancelled After Submission
+   |
+   v
+Send cancellation to external system if supported
+   |
+   v
+Mark cancelled with reason
+
+Error 8: Service Completed but Charge Missing
+   |
+   v
+Add to charge capture exception queue
+   |
+   v
+Billing/charge team reviews
+
+Error 9: Wrong CPT/Service Mapping
+   |
+   v
+Hold charge capture
+   |
+   v
+Correct mapping before billing
+
+Error 10: Result Received for Unknown Order
+   |
+   v
+Move to unmatched result queue
+   |
+   v
+Manual matching by support/clinical team
+
+Error 11: Order Modified After Submission
+   |
+   v
+Send update to external system if supported
+   |
+   v
+Audit modification reason and notify department
+
+Error 12: Critical Result Not Acknowledged
+   |
+   v
+Escalate to provider and department supervisor
+   |
+   v
+Track acknowledgment timestamp
+
+Error 13: Patient Did Not Complete Ordered Service
+   |
+   v
+Mark order as no-show / not completed
+   |
+   v
+Notify provider and scheduling team if follow-up is needed
+```
+
+---
+
+## 11. Dashboard & Status Flow
+```
++----------------------+
+| Draft Order          |
++----------+-----------+
+           |
+           v
++----------------------+
+| Pending Validation   |
++----------+-----------+
+           |
+           v
++----------------------+
+| Auth Check           |
++----------+-----------+
+     |                 |
+     v                 v
++-------------+   +----------------------+
+| Auth        |   | Order Active         |
+| Pending     |   +----------+-----------+
++------+------+              |
+       |                     v
+       |          +----------------------+
+       |          | Sent to External     |
+       |          | System / Department  |
+       |          +----------+-----------+
+       |                     |
+       |        +------------+-------------+----------------+
+       |        |            |             |                |
+       v        v            v             v                v
++----------+ +----------+ +------------+ +----------------+ +--------------+
+| Waiting  | | Accepted | | In Progress| | Result Pending | | Rejected     |
+| for Auth | +----+-----+ +-----+------+ +--------+-------+ +------+-------+
++----+-----+      |             |                 |                |
+     |            v             v                 v                v
+     |       +----------+ +-------------+ +----------------+ +-------------+
+     |       | Completed| | Cancelled   | | Follow-up      | | Correction  |
+     |       +----+-----+ +-------------+ | Required       | | Needed      |
+     |            |                     +----------------+ +-------------+
+     |            v
+     |       +----------------------+
+     |       | Provider Review      |
+     |       | Pending if needed    |
+     |       +----------+-----------+
+     |                  |
+     |                  v
+     |       +----------------------+
+     |       | Charge Review        |
+     |       +----------+-----------+
+     |                  |
+     |                  v
+     |       +----------------------+
+     |       | Ready for Billing    |
+     |       +----------------------+
+     |
+
+Other possible statuses: Duplicate Warning, Modified, Unmatched Result, External System Down, Charge Exception, No-Show / Not Completed, Critical Result Pending Acknowledgment.
+```
+
+---
+
+## 12. Follow-up & Notification Flow
+```
++--------------------------+
+| Order Created            |
++------------+-------------+
+             |
+             v
++--------------------------+
+| Notify Responsible Team  |
+| Lab / Radiology / Pharm  |
++------------+-------------+
+             |
+             v
++--------------------------+
+| If Auth Required         |
+| Notify Prior Auth Team   |
++------------+-------------+
+             |
+             v
++--------------------------+
+| If Order Pending > SLA   |
+| Create Follow-up Task    |
++------------+-------------+
+             |
+             v
++--------------------------+
+| If Result Received       |
+| Notify Provider          |
++------------+-------------+
+             |
+             v
++--------------------------+
+| If Provider Review       |
+| Pending > SLA, Create    |
+| Reminder/Escalation Task |
++------------+-------------+
+             |
+             v
++--------------------------+
+| If Completed and Billable|
+| Notify Charge/Billing    |
++------------+-------------+
+             |
+             v
++--------------------------+
+| If Modified After Submit |
+| Notify Department and    |
+| Resend Update if allowed |
++------------+-------------+
+             |
+             v
++--------------------------+
+| If Patient Did Not       |
+| Complete Service, Notify |
+| Provider/Scheduling      |
++------------+-------------+
+             |
+             v
++--------------------------+
+| If Rejected/Failed       |
+| Notify Ordering User and |
+| Responsible Department   |
++--------------------------+
+```
+* **Important:** If critical or stat order is delayed, escalate to provider and department supervisor.
+* **Important:** If order is cancelled, notify department and billing/charge capture team if any charge was already created.
+* **Important:** If result is abnormal or critical, notify provider based on clinical escalation policy and track acknowledgment.
+* **Important:** If completed order has missing charge mapping, create charge exception task.
+* **Important:** If order is modified after submission, notify responsible department and resend update if supported.
+* **Important:** If patient does not complete ordered service, notify provider/scheduling for follow-up.
