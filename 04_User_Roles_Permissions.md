@@ -13,6 +13,8 @@ This document defines all user roles, their responsibilities, and granular permi
 **Total Roles:** 10  
 **Permission Model:** Role-Based Access Control (RBAC)
 
+*Note: For production, roles may expand to include Prior Authorization Specialist, Tenant/Branch Admin, External Auditor, Collections Manager, and Financial Counselor based on business need.
+
 ---
 
 ## 2. User Roles Summary
@@ -29,6 +31,11 @@ This document defines all user roles, their responsibilities, and granular permi
 | 8 | Finance Manager | Reporting, analytics, financial oversight | 1-5 |
 | 9 | Compliance Officer | Audits, compliance monitoring | 1-3 |
 | 10 | Provider (Doctor) | Clinical documentation, encounter review | 5-100 |
+| 11 | Prior Authorization Specialist | Manage prior authorizations | 2-10 |
+| 12 | Tenant/Branch Admin | Admin for specific tenant/branch | 1-5 |
+| 13 | External Auditor | Read-only audit access | 1-5 |
+| 14 | Collections Manager | Approve refunds and external collections | 1-2 |
+| 15 | Financial Counselor | Screen for charity care | 1-5 |
 
 ---
 
@@ -67,6 +74,10 @@ This document defines all user roles, their responsibilities, and granular permi
 - View all audit logs
 - Export all data
 - Configure integrations (EMR, clearinghouse, payers)
+- Deactivate users instead of delete where possible
+- MFA required for login
+- All admin actions are audited
+- Tenant/branch scope applies if the platform is multi-tenant
 
 ---
 
@@ -87,7 +98,7 @@ This document defines all user roles, their responsibilities, and granular permi
 | Patients | ✅ | ✅ | ✅ | ❌ | Register and update patients |
 | Patient Insurance | ✅ | ✅ | ✅ | ❌ | Add/update insurance info |
 | Eligibility Checks | ✅ | ✅ | ❌ | ❌ | Run eligibility verification |
-| Appointments | ✅ | ✅ | ✅ | ✅ | Full appointment management |
+| Appointments | ✅ | ✅ | ✅ | ❌ | Full appointment management (Cancel instead of Delete) |
 | Encounters | ✅ | ✅ | ⚠️ | ❌ | Create encounter at check-in, limited update |
 | Authorizations | ⚠️ | ✅ | ⚠️ | ❌ | View auth status, limited create |
 | Patient Payments | ✅ | ✅ | ❌ | ❌ | Collect copays/payments |
@@ -99,6 +110,7 @@ This document defines all user roles, their responsibilities, and granular permi
 - Cannot access coding or billing modules
 - Cannot modify charges or claims
 - Can only view encounters they created
+- Appointments should be cancelled, not deleted. Cancellation reason must be captured and audited.
 
 **Workflow:**
 1. Patient arrives → Search patient or create new
@@ -133,6 +145,8 @@ This document defines all user roles, their responsibilities, and granular permi
 - Cannot access financial data
 - Cannot create or modify charges
 - Cannot view payment information
+- Some orders may require provider review/co-sign based on clinic policy.
+- Clinical staff cannot finalize provider documentation unless authorized.
 
 ---
 
@@ -159,6 +173,9 @@ This document defines all user roles, their responsibilities, and granular permi
 | LCD/NCD Rules | ❌ | ✅ | ❌ | ❌ | View coverage rules |
 | Claims | ❌ | ⚠️ | ❌ | ❌ | View claim status only |
 | Reports | ❌ | ⚠️ | ❌ | ❌ | Coding productivity reports |
+| Coding Worklist | ❌ | ✅ | ✅ | ❌ | Access assigned worklist |
+| Provider Query | ✅ | ✅ | ✅ | ❌ | Send queries to providers |
+| Coding Review Status | ❌ | ✅ | ✅ | ❌ | Update coding status |
 
 **Restrictions:**
 - Cannot create or submit claims
@@ -169,10 +186,11 @@ This document defines all user roles, their responsibilities, and granular permi
 **Workflow:**
 1. Open coding worklist → Select encounter
 2. Review clinical documentation
-3. Assign diagnosis codes (ICD-10)
-4. Assign procedure codes (CPT)
-5. Link diagnoses to procedures
-6. Mark encounter as "Coded - Ready to Bill"
+3. If documentation is incomplete, send query to provider before final coding.
+4. Assign diagnosis codes (ICD-10)
+5. Assign procedure codes (CPT)
+6. Link diagnoses to procedures
+7. Mark encounter as "Coded - Ready to Bill"
 
 ---
 
@@ -184,6 +202,8 @@ This document defines all user roles, their responsibilities, and granular permi
 - Submit claims to clearinghouse
 - Track claim status
 - Correct and resubmit rejected claims
+- Track 999/277CA/clearinghouse acknowledgment
+- Fix claim rejections (separate from denial workflow)
 
 **Permissions:**
 
@@ -211,7 +231,8 @@ This document defines all user roles, their responsibilities, and granular permi
 1. Review coded encounters → Create claim
 2. Scrub claim → Fix errors
 3. Mark as clean → Submit to clearinghouse
-4. Monitor acknowledgments → Update claim status
+4. Monitor acknowledgments (999, 277CA) → Update claim status
+5. Fix claim rejections immediately (rejection workflow is separate from denial workflow)
 
 ---
 
@@ -237,6 +258,7 @@ This document defines all user roles, their responsibilities, and granular permi
 | Appeals | ✅ | ✅ | ✅ | ❌ | Create and track appeals |
 | Adjustments | ✅ | ✅ | ✅ | ❌ | Post adjustments |
 | Payers | ❌ | ✅ | ❌ | ❌ | View payer info |
+| AR Follow-up Worklist | ❌ | ✅ | ✅ | ❌ | Manage follow-up tasks |
 | Contracts | ❌ | ✅ | ❌ | ❌ | View contract rates |
 | Reports | ❌ | ✅ | ❌ | ❌ | AR aging, denial reports |
 
@@ -248,8 +270,8 @@ This document defines all user roles, their responsibilities, and granular permi
 **Workflow:**
 1. Import ERA file → Auto-post payments
 2. Review unapplied payments → Manually post
-3. Identify denials → Assign to denial worklist
-4. Review denial → Create appeal or correct claim
+3. Identify denials → Assign to denial worklist with denial reason category and appeal deadline
+4. Review denial → Create appeal or correct claim, log payer call notes and next action date
 5. Monitor AR aging → Follow up with payers
 
 ---
@@ -271,9 +293,9 @@ This document defines all user roles, their responsibilities, and granular permi
 | Patient Statements | ✅ | ✅ | ❌ | ❌ | Generate statements |
 | Patient Payments | ✅ | ✅ | ❌ | ❌ | Process payments |
 | Payment Plans | ✅ | ✅ | ✅ | ❌ | Manage payment plans |
-| Collections | ✅ | ✅ | ✅ | ❌ | Manage collection accounts |
+| Collections | ✅ | ✅ | ✅ | ❌ | Manage collection accounts (External collections require approval) |
 | Charity Care | ⚠️ | ✅ | ⚠️ | ❌ | Screen for charity care |
-| Refunds | ⚠️ | ✅ | ❌ | ❌ | Request refunds (approval required) |
+| Refunds | ⚠️ | ✅ | ❌ | ❌ | Request refunds (Requires approval from Collections Manager, AR Manager, or Finance Manager) |
 | Claims | ❌ | ⚠️ | ❌ | ❌ | View claim status only |
 | Reports | ❌ | ⚠️ | ❌ | ❌ | Patient AR reports |
 
@@ -311,7 +333,7 @@ This document defines all user roles, their responsibilities, and granular permi
 | Denials | ❌ | ✅ | ❌ | ❌ | View denial data |
 | Collections | ❌ | ✅ | ❌ | ❌ | View collection data |
 | Contracts | ❌ | ✅ | ⚠️ | ❌ | View contracts, approve changes |
-| Reports | ✅ | ✅ | ✅ | ✅ | Full reporting access |
+| Reports | ✅ | ✅ | ✅ | ❌ | Full reporting access (Archive/Disable instead of Delete) |
 | Dashboards | ✅ | ✅ | ✅ | ❌ | Create custom dashboards |
 
 **Restrictions:**
@@ -360,6 +382,10 @@ This document defines all user roles, their responsibilities, and granular permi
 - Run random audit samples
 - Flag accounts for review
 - Generate compliance reports
+- Review emergency access (Break-the-Glass) logs
+- Monitor unusual access patterns
+- Review role changes
+- Close compliance alerts with a mandatory reason
 
 **Key Reports:**
 - Coding accuracy audit
@@ -404,7 +430,9 @@ This document defines all user roles, their responsibilities, and granular permi
 2. Document visit (SOAP notes)
 3. Enter diagnoses and procedures
 4. Write orders (labs, meds, imaging)
-5. Sign encounter → Sends to coding
+5. Sign encounter (with e-signature timestamp) → Confirms clinical services and sends to coding.
+
+*Note: Provider signs encounter and confirms clinical services. Billing/coding team validates charge/coding rules.*
 
 ---
 
@@ -415,6 +443,8 @@ This document defines all user roles, their responsibilities, and granular permi
 | ✅ | Full Access | Can perform action without restrictions |
 | ⚠️ | Limited Access | Can perform action with restrictions (e.g., only own records) |
 | ❌ | No Access | Cannot perform action |
+
+*Note: Limited access can be based on own records, assigned worklist, department, branch, tenant, or emergency access.*
 
 ---
 
@@ -434,16 +464,26 @@ This document defines all user roles, their responsibilities, and granular permi
 | Finance Manager | All patients (aggregated data) |
 | Compliance Officer | All patients (for audits) |
 | Provider | Only their own patients |
+| Tenant/Branch Admin | Only assigned tenant/branch |
+| Prior Authorization Specialist | Patients/orders assigned for authorization |
+| External Auditor | Temporary read-only access |
 
 ### Break-the-Glass Access:
 - Emergency access to any patient record
-- Requires justification
-- Automatically logged and flagged for review
+- User must enter a reason before access is granted.
+- Automatically logged and flagged for review.
+- Compliance Officer must review break-the-glass access within a defined timeframe.
 - Available to: Providers, Clinical Staff (in emergencies only)
 
 ---
 
 ## 6. Approval Workflows
+
+### Approval Status Flow:
+Requested -> Pending Review -> Approved -> Processed -> Completed or Rejected
+
+### Rules:
+- **Maker-Checker Rule:** The request creator cannot approve the same request.
 
 ### Actions Requiring Approval:
 
@@ -471,6 +511,9 @@ This document defines all user roles, their responsibilities, and granular permi
 
 ## 8. Audit Requirements
 
+**General Logged Fields:**
+In addition to specific data, all audit logs must include: module name, record ID, device/browser, IP/location, old value, new value, and reason for change (where applicable).
+
 ### Actions That Are Audited:
 
 | Action | Logged Data |
@@ -483,6 +526,12 @@ This document defines all user roles, their responsibilities, and granular permi
 | Refund | User, amount, recipient, timestamp |
 | User login/logout | User, timestamp, IP address |
 | Report generation | User, report type, parameters, timestamp |
+
+**Additional Audited Actions:**
+- Authorization request submitted
+- Document uploaded
+- Status updated
+- Authorization number updated
 
 **Audit Log Retention:** 7 years (HIPAA requirement)
 
@@ -501,7 +550,13 @@ CREATE TABLE roles (
 CREATE TABLE users (
   user_id UUID PRIMARY KEY,
   username VARCHAR(50) UNIQUE NOT NULL,
-  role_id UUID REFERENCES roles(role_id)
+  role_id UUID REFERENCES roles(role_id),
+  user_status VARCHAR(20) NOT NULL,
+  tenant_id UUID,
+  branch_id UUID,
+  mfa_enabled BOOLEAN DEFAULT FALSE,
+  last_login_at TIMESTAMP,
+  failed_login_count INT DEFAULT 0
 );
 ```
 
@@ -513,7 +568,8 @@ CREATE TABLE users (
     "read": true,
     "update": true,
     "delete": false,
-    "scope": "all" // or "own", "assigned"
+    "scope": "all",
+    "conditions": {}
   },
   "encounters": {
     "create": false,
@@ -552,10 +608,12 @@ app.post('/api/patients',
 ## 10. Security Best Practices
 
 1. **Principle of Least Privilege:** Users only get permissions they need
-2. **Separation of Duties:** No single user can complete entire billing cycle alone
-3. **Regular Access Reviews:** Quarterly review of user permissions
-4. **Immediate Revocation:** Disable access immediately upon termination
-5. **Role Assignment Approval:** New user role assignments require manager approval
+2. **Separation of Duties:** No single user can complete entire billing cycle alone. Billing and payment duties must stay separated.
+3. **Regular Access Reviews:** Quarterly review of user permissions. Access review evidence must be documented.
+4. **Immediate Revocation:** Disable access immediately upon termination.
+5. **Role Assignment Approval:** New user role assignments require manager approval.
+6. **Access Requests:** New access requires manager approval.
+7. **Temporary Access:** Temporary access must expire automatically.
 
 ---
 

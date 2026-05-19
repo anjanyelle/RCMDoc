@@ -32,9 +32,10 @@ Use GPT-4 or AWS Bedrock to analyze clinical notes and suggest codes.
 **How It Works:**
 1. Coder opens encounter
 2. System sends clinical note to AI
-3. AI returns suggested ICD-10 and CPT codes with confidence scores
-4. Coder reviews and confirms/modifies suggestions
-5. System learns from coder corrections
+3. AI returns suggested ICD-10 and CPT codes with confidence scores and explanations.
+4. **Human Review:** Coder reviews and confirms/modifies suggestions before final coding is applied.
+5. **Audit Trail:** System logs which AI suggestions were accepted, rejected, or modified.
+6. System learns from coder corrections to improve accuracy.
 
 **Technical Implementation:**
 
@@ -106,6 +107,7 @@ Predict which claims will be denied before submission.
 3. If high risk (>50%), alert biller to review
 4. Biller fixes issues before submission
 5. Prevents denial before it happens
+6. **Feedback Loop:** Actual denial outcomes are fed back to train and improve future prediction rules.
 
 **Technical Implementation:**
 
@@ -787,13 +789,15 @@ Provide a helpful, empathetic response in plain language.
 
 **Deliverables:**
 
-**Week 41-44: Testing**
+**Week 41-44: Testing & Readiness**
 - [ ] Unit testing (80%+ code coverage)
-- [ ] Integration testing
+- [ ] Integration testing with all external APIs
 - [ ] End-to-end testing
 - [ ] Performance testing
-- [ ] Security testing
+- [ ] Security testing (Penetration testing)
 - [ ] HIPAA compliance testing
+- [ ] **Data Migration Dry Run:** Verify data integrity.
+- [ ] **Go-Live Rollback Plan:** Verify rollback procedures.
 - [ ] Bug fixing
 
 **Week 45-46: User Acceptance Testing (UAT)**

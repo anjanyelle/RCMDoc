@@ -2,7 +2,8 @@
 
 **Version:** 2.0  
 **Updated:** May 18, 2026  
-**For:** Development Team (Non-Healthcare Background)
+**For:** Development Team (Non-Healthcare Background)  
+**UAT Acceptance:** [ ] Pending Sign-off by Business Owner
 
 ---
 
@@ -83,6 +84,7 @@ A complete **AI-powered** Revenue Cycle Management system that helps hospitals:
 ### Module 4: Patient Registration
 **Who uses it:** Front desk  
 **What it does:** Capture patient demographics and insurance info  
+**SLA/TAT:** Registration completed in <5 minutes.  
 **Key Features:**
 - Capture: Name, DOB, address, phone, insurance card
 - Master Patient Index (MPI) prevents duplicate records
@@ -111,6 +113,7 @@ A complete **AI-powered** Revenue Cycle Management system that helps hospitals:
 ### Module 5: Insurance Verification (Real-Time)
 **Who uses it:** Front desk (before appointment)  
 **What it does:** Check if insurance is active and what patient owes  
+**SLA/TAT:** Verification completed in <30 seconds.  
 **Key Features:**
 - **Real-time eligibility check** (EDI 270/271 via Waystar/Availity)
 - Response time: <30 seconds
@@ -251,6 +254,7 @@ POST https://api.waystar.com/eligibility/v1/inquiries
 ### Module 12: Medical Coding (AI-Assisted)
 **Who uses it:** Medical coders  
 **What it does:** Assign standardized codes to diagnoses and procedures  
+**SLA/TAT:** Coding completed within 24 hours of encounter lock.  
 **Key Features:**
 - Coding worklist (encounters ready to code)
 - Search ICD-10 (diagnosis codes) and CPT (procedure codes)
@@ -316,6 +320,7 @@ AI Output:
 ### Module 14: Claim Creation (Automated)
 **Who uses it:** Billing team  
 **What it does:** Generate insurance claim from coded encounter  
+**SLA/TAT:** Claim generated within 12 hours of coding.  
 **Key Features:**
 - **Auto-generate CMS-1500** (professional) or **UB-04** (hospital) claim
 - Populate all required fields from encounter data
@@ -382,6 +387,7 @@ AI Output:
 ### Module 16: Claim Submission (Electronic)
 **Who uses it:** Billing team  
 **What it does:** Send claims to insurance companies  
+**SLA/TAT:** Claim submitted within 24 hours of generation.  
 **Key Features:**
 - **Clearinghouse integration** (Waystar, Availity, Change Healthcare)
 - **EDI 837P** (professional claims) and **EDI 837I** (institutional claims)
@@ -433,6 +439,7 @@ POST https://api.waystar.com/claims/v1/submit
 ### Module 18: Payment Posting (ERA - Automated)
 **Who uses it:** AR team  
 **What it does:** Record insurance payments  
+**SLA/TAT:** Payments posted within 48 hours of ERA receipt.  
 **Key Features:**
 - Import **EDI 835** (Electronic Remittance Advice)
 - **Auto-posting** (match payment to claim automatically - 95% success rate)
@@ -461,6 +468,7 @@ POST https://api.waystar.com/claims/v1/submit
 ### Module 19: Denial Management (Advanced)
 **Who uses it:** Denial team  
 **What it does:** Handle rejected claims and automate appeals  
+**SLA/TAT:** Appeals filed within 5 days of denial.  
 **Key Features:**
 - Denial tracking with reason codes
 - Denial worklist (prioritize high $ denials)
@@ -970,6 +978,10 @@ payment_intent = stripe.PaymentIntent.create(
 ### Rule 10: Price Transparency
 - MUST provide cost estimates upon request (No Surprises Act)
 - Good faith estimates for uninsured/self-pay patients
+
+### Rule 11: Rejection vs Denial
+- **Rejection:** Technical error *before* payer acceptance (handled by Billing).
+- **Denial:** Coverage/Medical necessity issue *after* adjudication (handled by AR/Denials).
 
 ---
 

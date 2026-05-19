@@ -1,7 +1,9 @@
-# Healthcare RCM Application - System Requirements Summary
+# Healthcare RCM Application - System Requirements Summary (Old/Reference)
+
+> [!NOTE]
+> This is an older version of the system requirements. Please refer to [02_System_Requirements_Summary_v2.md](file:///c:/Lalataksha%20V%20Company/RCM%20-%20All%20Lakshya/RCMDoc/02_System_Requirements_Summary_v2.md) for the current version.
 
 **Version:** 1.0  
-
 **For:** Development Team (Non-Healthcare Background)
 
 ---
@@ -10,10 +12,13 @@
 
 A complete Revenue Cycle Management system that helps hospitals:
 - Register patients and verify insurance
+- Obtain prior authorization before service when required
 - Capture all services provided
 - Code services using medical codes
+- Scrub claims for errors before submission
 - Submit claims to insurance companies
 - Track payments and denials
+- Post payments automatically from ERA
 - Bill patients for remaining balances
 - Generate financial reports
 
@@ -513,13 +518,13 @@ A complete Revenue Cycle Management system that helps hospitals:
 
 ---
 
-## 9. Next Documents Needed
+## 9. Documents Status
 
-1. **Database Design** - Tables, relationships, fields for all modules
-2. **API Specifications** - Integration with EMR, clearinghouse, payers
-3. **UI/UX Wireframes** - Screen designs for each module
-4. **User Stories** - Detailed requirements for each feature
-5. **Test Cases** - How to verify each feature works correctly
+1. **Database Design** - Completed (See `03_Database_Design.md`)
+2. **API Specifications** - Completed (See `05_API_Integration_Requirements.md`)
+3. **UI/UX Workflows** - Completed (See `06_UI_UX_Workflows.md`)
+4. **User Stories** - Covered in Module Flows
+5. **Test Cases** - Covered in Implementation Guide
 
 ---
 

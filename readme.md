@@ -1,5 +1,7 @@
 # Healthcare RCM Application - Documentation Index
 
+Healthcare Revenue Cycle Management documentation covering workflow, modules, database, API integrations, roles, security, MVP, and development phases.
+
 ## Executive & Technical Documents
 + ✅ 00_Executive_Technical_Document_Part1.md - Overview & Workflow
 + ✅ 00_Executive_Technical_Document_Part2.md - Architecture & APIs
@@ -7,7 +9,8 @@
 + ✅ 00_Executive_Technical_Document_Part4.md - Team & Execution
 
 ## Detailed Specifications
-+ ✅ 02_System_Requirements_Summary.md - Business requirements
++ ⚠️ 02_System_Requirements_Summary.md - Old/Reference (Use v2 if approved)
++ ✅ 02_System_Requirements_Summary_v2.md - Current Version
 + ✅ 03_Database_Design.md - 35 database tables
 + ✅ 04_User_Roles_Permissions.md - Security model
 + ✅ 05_API_Integration_Requirements.md - HL7/FHIR/EDI specs
@@ -30,3 +33,12 @@
 + ✅ **Development_Phase_Guide_Part3_ClinicalBilling.md** - Phase 2: Medical coding (AI), claim creation, submission (with code)
 + ✅ **Development_Phase_Guide_Part4_PaymentDenials.md** - Phase 3: Payment posting, denial management, patient billing (with code)
 + ✅ **Development_Phase_Guide_Part5_ReportsDeployment.md** - Phase 4: Reports, compliance, AWS deployment, team structure
+
+## Module Flows
++ ✅ **Flows_Module_01_User_Login.md** - User Login Flow
++ ✅ **Flows_Module_02_Patient_Registration.md** - Patient Registration Flow
++ ✅ **Flows_Module_03_Insurance_Verification.md** - Insurance Verification Flow
++ ✅ **Flows_Module_04_Appointment_Scheduling.md** - Appointment Scheduling Flow
++ ✅ **Flows_Module_05_Patient_Checkin.md** - Patient Check-in Flow
++ ✅ **Flows_Module_06_Medical_Coding.md** - Medical Coding Flow
++ ✅ **Flows_Module_07_10_Remaining.md** - Remaining Modules (Claims, Payments, Denials, etc.)

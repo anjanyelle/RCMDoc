@@ -62,6 +62,10 @@
 │  │ AI Services │  │ Notification│  │ Payer APIs  │            │
 │  │ (OpenAI/AWS)│  │ (Twilio)    │  │             │            │
 │  └─────────────┘  └─────────────┘  └─────────────┘            │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐            │
+│  │ Lab/PACS/Rx │  │ HIE        │  │ Error Queue │            │
+│  │ (Mirth)     │  │            │  │ /Monitoring │            │
+│  └─────────────┘  └─────────────┘  └─────────────┘            │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -313,6 +317,9 @@ CREATE EXTENSION IF NOT EXISTS "timescaledb";    -- Time-series data
 | **DDoS Protection** | AWS Shield | Layer 3/4 protection |
 | **Compliance** | Vanta | Automated HIPAA compliance monitoring |
 | **Vulnerability Scanning** | Snyk | Dependency scanning, container scanning |
+| **Webhook Security** | Signature Verification | Prevents spoofing of callbacks |
+| **Network Security** | IP Allowlist | Restricts access to trusted vendor IPs |
+| **Data Protection** | PHI Masking | Prevents PHI leakage in logs |
 
 ### 4.6 Integration Stack
 
@@ -339,6 +346,13 @@ CREATE EXTENSION IF NOT EXISTS "timescaledb";    -- Time-series data
 ---
 
 ## 5. Third-Party APIs & Integrations
+
+**Production Integration Controls:**
+All external integrations must implement the following controls to ensure reliability and data integrity:
+- **Correlation ID & Traceability:** Track messages across systems.
+- **Idempotency & Duplicate Detection:** Prevent duplicate claims or payments on retry.
+- **Dead-Letter Queue (DLQ) & Retry Policy:** Handle transient failures safely.
+- **Daily Reconciliation Points:** Verify totals between RCM and external systems (e.g., clearinghouse, bank).
 
 ### 5.1 Clearinghouse APIs
 

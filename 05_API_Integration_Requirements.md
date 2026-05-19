@@ -13,6 +13,8 @@ This document defines all external system integrations required for the RCM appl
 **Total Integrations:** 8 major integration points  
 **Integration Standards:** HL7 v2.x, HL7 FHIR, EDI X12, REST APIs
 
+**Business Goal:** Reduce claim errors, improve eligibility accuracy, speed up payment posting, reduce manual work, and support audit-ready healthcare data exchange.
+
 ---
 
 ## 2. Integration Architecture
@@ -28,6 +30,8 @@ This document defines all external system integrations required for the RCM appl
     │ System │  │ System │  │ (PACS) │  │ Portal │  │ house  │
     └────────┘  └────────┘  └────────┘  └────────┘  └────────┘
 ```
+
+*Note: Payment Gateway, Pharmacy, HIE, Monitoring, and Error Queue also connect to the RCM application.*
 
 ---
 
@@ -75,6 +79,14 @@ IN1|1|BCBS001|BCBS|Blue Cross Blue Shield||||GRP123456|POL987654
 **ADT^A04 - Patient Registration**
 **ADT^A08 - Patient Information Update**
 **ADT^A11 - Cancel Admission**
+**ADT^A02 - Patient Transfer**
+**ADT^A03 - Patient Discharge**
+
+#### SIU Messages (Scheduling):
+**SIU - Appointment Scheduling**
+
+#### MDM Messages (Medical Document Management):
+**MDM - Clinical Document Exchange**
 
 #### DFT Messages (Financial Transactions):
 
@@ -172,6 +184,13 @@ GET /Procedure?patient=123456&encounter=789012
 GET /DiagnosticReport?patient=123456
 ```
 
+**6. Coverage Resource (Insurance)**
+**7. Claim Resource (Claim Data)**
+**8. ClaimResponse Resource (Payer Response)**
+**9. ExplanationOfBenefit Resource (Adjudication/Payment Details)**
+**10. Practitioner Resource (Provider)**
+**11. Organization Resource (Facility/Payer)**
+
 ---
 
 ### Implementation Requirements:
@@ -192,6 +211,12 @@ GET /DiagnosticReport?patient=123456
 - Retry failed messages 3 times with exponential backoff
 - Log all failed messages for manual review
 - Alert integration team if >10 messages fail in 1 hour
+
+**Data Integrity & Controls:**
+- Use message control ID and correlation ID for tracking
+- Implement duplicate detection and idempotent processing
+- Use patient MRN matching
+- Route unmatched patients to a manual exception queue
 
 **Data Mapping:**
 - Map HL7 PID segment → patients table
@@ -223,6 +248,10 @@ Submit insurance claims electronically and receive acknowledgments and payments.
 
 **837P (Professional Claims - CMS-1500)**
 **837I (Institutional Claims - UB-04)**
+
+**Claim Lifecycle Note:**
+- Clearinghouse rejection is handled by Billing Specialist before payer acceptance.
+- Payer denial is handled by AR/Denial team after payer adjudication.
 
 **Transmission Method:** SFTP or API
 
@@ -312,6 +341,11 @@ IEA*1*000000002~
 
 ---
 
+#### EDI 278 - Prior Authorization
+- **278:** Prior Authorization Request/Response when supported by payer or clearinghouse
+
+---
+
 #### 3. EDI 276/277 - Claim Status Inquiry/Response
 
 **276 - Claim Status Inquiry (Outbound)**
@@ -360,6 +394,11 @@ IEA*1*000000003~
 - PR-3: Copay
 - CO-16: Claim lacks information
 - CO-97: Service not covered
+
+#### 5. Acknowledgments
+- **TA1:** Interchange Acknowledgment
+- **999:** Functional Acknowledgment
+- **277CA:** Claim Acknowledgment/Acceptance or Rejection
 
 ---
 
@@ -434,6 +473,8 @@ Content-Type: application/json
 ### Purpose:
 Direct integration with major insurance payers for eligibility, authorization, claim submission, and status checks.
 
+*Note: Primary claim submission should normally go through clearinghouse. Direct payer APIs are mainly for eligibility, authorization, claim status, and special payer workflows unless payer contract supports direct claim submission.*
+
 ### Supported Payers:
 - Medicare (CMS)
 - Medicaid (state-specific)
@@ -471,7 +512,7 @@ Content-Type: application/json
   "providerNPI": "1234567890",
   "serviceDate": "2026-05-18",
   "diagnosisCodes": ["E11.9"],
-  "serviceLinesLines": [
+  "serviceLines": [
     {
       "cptCode": "99213",
       "chargeAmount": 150.00
@@ -532,7 +573,8 @@ Receive lab orders and results.
 - ORU^R01: Lab result
 
 **Charge Capture Trigger:**
-When ORU^R01 received → Auto-generate lab charge based on CPT code in OBR segment
+- Charge can trigger on order completed, specimen collected, or result received based on hospital policy.
+- Add LOINC mapping for lab tests and CPT/charge mapping for billing.
 
 ---
 
@@ -542,7 +584,12 @@ When ORU^R01 received → Auto-generate lab charge based on CPT code in OBR segm
 Receive imaging orders and results.
 
 ### Integration Standard:
-**HL7 v2.x ORM/ORU messages**
+- **HL7 v2.x ORM/ORU messages**
+- **DICOM** for image storage/viewing
+
+**Data Details:**
+- HL7 is used for order, result, and status messages.
+- Store accession number, modality, study status, and CPT mapping.
 
 **Outbound (RCM → PACS):**
 - ORM^O01: Imaging order
@@ -569,12 +616,20 @@ Receive medication dispensing records for charge capture.
 **Charge Capture Trigger:**
 When medication dispensed → Auto-generate medication charge (HCPCS J-code)
 
+**Implementation Details:**
+- Map NDC code to HCPCS J-code/charge item.
+- Capture quantity, units, dispense date, administration date, and wastage when applicable.
+
 ---
 
 ## 9. Integration 7: Payment Gateway
 
 ### Purpose:
 Process patient credit card and ACH payments.
+
+**Security & Controls:**
+- Do not store card numbers. Store only token, transaction ID, amount, status, receipt, and gateway response.
+- Verify webhook signature.
 
 ### Supported Gateways:
 - Stripe
@@ -625,6 +680,11 @@ Share patient data with regional/national health information networks.
 ### Integration Standard:
 **HL7 FHIR**
 
+**Security & Controls:**
+- Check patient consent before sharing data.
+- Log every HIE query/submission.
+- Use strong patient matching before importing external records.
+
 **Query Patient Data:**
 ```http
 GET /Patient?identifier=MRN123456
@@ -666,8 +726,10 @@ Content-Type: application/json
 | Lab System | HL7 v2.x | Bi-directional | Real-time | ⚠️ Medium |
 | PACS | HL7 v2.x | Bi-directional | Real-time | ⚠️ Medium |
 | Pharmacy | HL7 v2.x | Inbound | Real-time | ⚠️ Medium |
-| Payment Gateway | REST API | Outbound | Real-time | ✅ Yes |
-| HIE | FHIR | Bi-directional | On-demand | ❌ No |
+| Payment Gateway | REST API | Bi-directional | Real-time | ✅ Yes |
+| HIE | FHIR | Bi-directional | On-demand | ❌ No * |
+
+*\* Note: HIE criticality depends on whether the business requires external health data exchange.*
 
 ---
 
@@ -677,6 +739,13 @@ Content-Type: application/json
 - Failed API calls: Retry 3 times with exponential backoff (1s, 5s, 15s)
 - Failed HL7 messages: Retry 3 times, then move to error queue
 - Failed EDI transmissions: Retry next batch cycle
+
+### Advanced Error Controls:
+- Failed messages after retry move to Dead Letter Queue.
+- Every message has a correlation/trace ID.
+- Replay should be controlled and audited.
+- Duplicate messages must not create duplicate records (idempotency).
+- Vendor outage should move work to a pending/manual queue.
 
 ### Monitoring:
 - Integration health dashboard
@@ -688,6 +757,9 @@ Content-Type: application/json
 - Log all inbound/outbound messages
 - Log all API requests/responses
 - Retention: 90 days
+- Mask PHI in logs where possible.
+- Store raw HL7/EDI securely.
+- Logs should be searchable by patient ID, claim ID, trace ID, and message ID.
 
 ---
 
@@ -697,6 +769,16 @@ Content-Type: application/json
 - OAuth 2.0 for REST APIs
 - API keys for clearinghouse/payer portals
 - Mutual TLS for HL7 connections
+- Rotate API keys/secrets regularly.
+- Restrict vendor IPs where supported (IP allowlist).
+- Use least-privilege service accounts.
+
+### Webhook Security:
+- Verify webhook signatures.
+
+### Audit & Payload Security:
+- Audit all integration configuration changes.
+- Encrypt stored message payloads.
 
 ### Encryption:
 - TLS 1.2+ for all connections
@@ -704,7 +786,8 @@ Content-Type: application/json
 
 ### Compliance:
 - HIPAA-compliant data transmission
-- Business Associate Agreements (BAA) with all vendors
+- Business Associate Agreements (BAA) must be completed before production use.
+- Vendor data retention and breach notification terms should be confirmed before go-live.
 
 ---
 
@@ -714,11 +797,26 @@ Content-Type: application/json
 - Test environment for each integration
 - Sample HL7/EDI messages for unit testing
 - Mock API responses for development
+- Negative testing (invalid HL7/EDI messages, payer rejections)
+- Load testing (high-volume claim batches)
+- Webhook testing and retry flow
+- Downtime testing (clearinghouse downtime)
+- Duplicate message testing
+- End-to-end claim lifecycle testing (from registration to payment posting)
 
 ### Certification:
 - Clearinghouse certification testing
 - Payer connectivity testing
 - HL7 conformance testing
+
+### Production Go-Live Readiness:
+- Verify sandbox completion.
+- Verify vendor credentials.
+- Verify webhook endpoints.
+- Verify monitoring alerts.
+- Confirm clearinghouse certification and payer connectivity.
+- Define rollback process.
+- Ensure support team readiness.
 
 ---
 
