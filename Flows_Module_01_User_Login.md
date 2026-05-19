@@ -240,6 +240,53 @@ const handleLogin = async (e: FormEvent) => {
 
 ---
 
+### Refresh Token Architecture
+
+#### Purpose
+Improve security by separating short-lived access tokens and long-lived refresh tokens.
+
+#### Workflow
+
+```text
+User Login
+    ↓
+Generate Access Token (15 min)
+    ↓
+Generate Refresh Token (7 days)
+    ↓
+Store Refresh Token in Database/Redis
+    ↓
+Return Both Tokens
+    ↓
+Access Token Expires
+    ↓
+Frontend Calls /refresh-token
+    ↓
+Backend Verifies Refresh Token
+    ↓
+Generate New Access Token
+```
+
+#### Database Table
+```sql
+CREATE TABLE refresh_tokens (
+    refresh_token_id UUID PRIMARY KEY,
+    user_id UUID REFERENCES users(user_id),
+    token_hash TEXT NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    is_revoked BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+#### Security Features
+- Token rotation
+- Token revocation
+- Logout-all-devices
+- Device-specific refresh tokens
+
+---
+
 ### Backend Actions
 
 **Technology:** Python FastAPI
@@ -388,6 +435,38 @@ VALUES ('USR-001', 'LOGIN', '192.168.1.1', NOW());
 -- 4. Track failed attempt (if password wrong)
 INSERT INTO failed_login_attempts (username, ip_address, attempted_at)
 VALUES ('john.doe', '192.168.1.1', NOW());
+```
+
+---
+
+### Additional Security Tables
+
+#### trusted_devices
+
+```sql
+CREATE TABLE trusted_devices (
+    device_id UUID PRIMARY KEY,
+    user_id UUID REFERENCES users(user_id),
+    device_name VARCHAR(255),
+    browser VARCHAR(100),
+    os VARCHAR(100),
+    ip_address VARCHAR(50),
+    last_used_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+#### password_reset_tokens
+
+```sql
+CREATE TABLE password_reset_tokens (
+    reset_token_id UUID PRIMARY KEY,
+    user_id UUID REFERENCES users(user_id),
+    token_hash TEXT NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    used BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 ```
 
 ---
@@ -1022,6 +1101,42 @@ Content-Type: application/json
 
 ---
 
+## 8.1 Password Reset Flow
+
+### Workflow
+
+```text
+User Clicks Forgot Password
+        ↓
+Enter Email Address
+        ↓
+Backend Validates User
+        ↓
+Generate Reset Token
+        ↓
+Send Email Link
+        ↓
+User Opens Reset Link
+        ↓
+Enter New Password
+        ↓
+Password Updated
+        ↓
+Audit Log Created
+```
+
+### API Endpoints
+- Request Reset: `POST /api/auth/forgot-password`
+- Reset Password: `POST /api/auth/reset-password`
+
+### Security Features
+- Token expiry (15 minutes)
+- Single-use reset tokens
+- Audit logging
+- Password history validation
+
+---
+
 ## 9. Database Flow
 
 ### Tables Involved
@@ -1433,6 +1548,47 @@ Roles:
 
 ---
 
+## 12.1 Advanced HIPAA Security
+
+### Break-Glass Access
+
+Emergency access workflow for critical patient care situations.
+
+```text
+Doctor Emergency Access Request
+        ↓
+Temporary Elevated Permissions
+        ↓
+Mandatory Reason Entry
+        ↓
+Audit Logging
+        ↓
+Automatic Expiration
+```
+
+### PHI Access Monitoring
+
+Monitor:
+- Patient chart access
+- Failed access attempts
+- Unauthorized access
+- Bulk record exports
+
+### Security Monitoring
+- Suspicious login detection
+- Impossible travel detection
+- Brute-force attack monitoring
+- Geo-location monitoring
+- Device fingerprinting
+
+### Session Security
+- Concurrent session limits
+- Forced logout
+- Token revocation
+- Session inactivity timeout
+
+---
+
 ## 13. Third-Party APIs Used
 
 ### Twilio SMS API
@@ -1468,6 +1624,41 @@ Body=Your%20RCM%20login%20code%20is%3A%20123456&From=%2B15551234567&To=%2B155598
 
 ---
 
+## 13.1 Enterprise SSO Integration
+
+### Supported Providers
+
+- Microsoft Azure AD
+- Okta
+- Google Workspace
+- Active Directory
+- SAML Providers
+
+### SSO Workflow
+
+```text
+User Clicks SSO Login
+        ↓
+Redirect to Identity Provider
+        ↓
+User Authenticates
+        ↓
+Provider Returns SAML/OAuth Token
+        ↓
+Backend Verifies Token
+        ↓
+Create Session
+        ↓
+Redirect to Dashboard
+```
+
+### Supported Standards
+- OAuth2
+- OpenID Connect
+- SAML 2.0
+
+---
+
 ## 14. Performance Metrics
 
 ### Target Metrics
@@ -1496,6 +1687,64 @@ Alerts:
 - Response time > 1 second
 - OTP delivery failure > 5%
 ```
+
+---
+
+## 14.1 Security Monitoring & Rate Limiting
+
+### Rate Limiting
+
+```text
+Login Attempts:
+- Max 5 attempts per 15 minutes
+- CAPTCHA after repeated failures
+- IP-based throttling
+```
+
+### Security Monitoring Stack
+
+```
+Security Monitoring
+├── AWS WAF
+├── CloudWatch
+├── Datadog
+├── Splunk
+├── Sentry
+└── SIEM Integration
+```
+
+### Monitoring Alerts
+- Brute-force attack detection
+- Multiple failed logins
+- Suspicious geo-location login
+- Excessive OTP requests
+- Token abuse detection
+
+---
+
+## Enterprise Production Enhancements
+
+### Recommended Enterprise Tools
+
+| Area | Tool |
+|---|---|
+| Authentication | Auth0 / Keycloak |
+| Session Store | Redis |
+| Secrets Management | AWS Secrets Manager |
+| API Gateway | Kong / AWS API Gateway |
+| Security Monitoring | Splunk / Datadog |
+| SSO | Azure AD / Okta |
+
+### Enterprise Features
+
+- Multi-tenant authentication
+- Device management
+- Refresh token rotation
+- SSO integration
+- Session revocation
+- Security analytics
+- Advanced audit logging
+- HIPAA emergency access workflows
 
 ---
 

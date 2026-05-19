@@ -51,7 +51,61 @@ Capture and store complete patient demographic and insurance information for bil
 │    - Address Validation API                      │
 │    - Availity (insurance verification)           │
 │                                                  │
+│ 5. Self-Service Kiosk                           │
+│    - Patient self check-in                       │
+│    - ID scan                                     │
+│    - Insurance scan                              │
+│    - Digital signature                           │
+│                                                  │
 └─────────────────────────────────────────────────┘
+```
+
+---
+
+## 2.1 Pre-Registration Workflow
+
+In real hospitals:
+* Registration starts before patient arrival
+* Appointments trigger pre-registration
+* Insurance is partially verified before visit
+
+```
+┌──────────────────────────┐
+│ Appointment Scheduled    │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Pre-Registration Link    │
+│ Sent to Patient          │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Patient Completes        │
+│ Demographics             │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Insurance Information    │
+│ Uploaded                 │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Consent Forms Signed     │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Eligibility Verification │
+│ Triggered                │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Financial Estimate       │
+│ Generated                │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Patient Ready for Visit  │
+└──────────────────────────┘
 ```
 
 ---
@@ -145,7 +199,8 @@ Capture and store complete patient demographic and insurance information for bil
      │            ▼         │
      │   ┌─────────────────┐│
      │   │ Scan Insurance  ││
-     │   │ Card (Front)    ││
+     │   │ Card (Front &   ││
+     │   │ Back)           ││
      │   └────────┬────────┘│
      │            │         │
      │            ▼         │
@@ -203,6 +258,34 @@ Capture and store complete patient demographic and insurance information for bil
      │   │  from patient)  ││
      │   └────────┬────────┘│
      │            │         │
+     │            ▼         │
+     │   ┌─────────────────┐│
+     │   │ Present Consent ││
+     │   │ Forms           ││
+     │   └────────┬────────┘│
+     │            │         │
+     │            ▼         │
+     │   ┌─────────────────┐│
+     │   │ HIPAA Consent   ││
+     │   │ Financial       ││
+     │   │ Consent         ││
+     │   │ Treatment       ││
+     │   │ Consent         ││
+     │   └────────┬────────┘│
+     │            │         │
+     │            ▼         │
+     │   ┌─────────────────┐│
+     │   │ Capture Digital ││
+     │   │ Signature       ││
+     │   └────────┬────────┘│
+     │            │         │
+     │            ▼         │
+     │   ┌─────────────────┐│
+     │   │ Save Consent PDF││
+     │   │ to Document     ││
+     │   │ Management      ││
+     │   └────────┬────────┘│
+     │            │         │
      └────────────┼─────────┘
                   │
                   ▼
@@ -218,6 +301,32 @@ Capture and store complete patient demographic and insurance information for bil
          │ Backend Saves   │
          │ to Database     │
          └────────┬────────┘
+                  ↓
+         ┌─────────────────────────┐
+         │ Trigger Real-Time       │
+         │ Eligibility Verification│
+         └────────┬────────────────┘
+                  ↓
+         ┌─────────────────────────┐
+         │ Verify Active Insurance │
+         │ Coverage                │
+         └────────┬────────────────┘
+                  ↓
+         ┌─────────────────────────┐
+         │ Store Eligibility       │
+         │ Response                │
+         └────────┬────────────────┘
+                  ↓
+         ┌─────────────────────────┐
+         │ Calculate Copay         │
+         │ Deductible              │
+         │ Coinsurance             │
+         └────────┬────────────────┘
+                  ↓
+         ┌─────────────────────────┐
+         │ Show Estimated Patient  │
+         │ Balance                 │
+         └────────┬────────────────┘
                   ↓
          ┌─────────────────┐
          │ Generate Patient│
@@ -277,23 +386,29 @@ Capture and store complete patient demographic and insurance information for bil
    - Send to backend for OCR processing
    - Display extracted data for review
 
-4. Real-time validation:
+4. Identity verification:
+   - Driver license scan
+   - Government ID validation
+   - Face match (optional)
+   - Fraud detection
+
+5. Real-time validation:
    - SSN format: XXX-XX-XXXX
    - Phone format: (XXX) XXX-XXXX
    - Email format: valid email
    - DOB: Must be in past
    - Zip code: 5 digits
 
-5. Address autocomplete:
+6. Address autocomplete:
    - Use Google Places API
    - Auto-fill city, state, zip
 
-6. Save patient:
+7. Save patient:
    - POST /api/patients
    - Show loading spinner
    - Handle success/error
 
-7. Print wristband:
+8. Print wristband:
    - Generate PDF with patient info + barcode
    - Send to printer
 ```
@@ -449,9 +564,16 @@ const PatientRegistration = () => {
    - Record patient creation
    - Store who created it
 
-9. Return response
-   - Patient ID
-   - Success message
+9. Advanced audit logging:
+   - Before/after values
+   - Field-level changes
+   - User IP address
+   - Device information
+   - Record access tracking
+
+10. Return response
+    - Patient ID
+    - Success message
 ```
 
 **Code Example:**
@@ -802,7 +924,39 @@ Best regards,
 Boston General Hospital
 ```
 
-3. **In-App Success**
+3. **Portal Activation Email:**
+   - Activation link
+   - Temporary password
+   - MFA enrollment
+   - Portal setup instructions
+
+```
+┌──────────────────────────┐
+│ Patient Registered       │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Portal Account Created   │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Activation Email Sent    │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Patient Sets Password    │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ MFA Enrollment           │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Portal Activated         │
+└──────────────────────────┘
+```
+
+4. **In-App Success**
 ```
 ✅ Patient registered successfully!
 Patient ID: PAT-00001
@@ -1040,6 +1194,31 @@ Patient ID: PAT-00001
 │ (if different)      │               │
 └────┬────────────────┘               │
      │                                 │
+     ▼                                 │
+┌─────────────────────┐               │
+│ Present Consent     │               │
+│ Forms               │               │
+└────┬────────────────┘               │
+     │                                 │
+     ▼                                 │
+┌─────────────────────┐               │
+│ HIPAA Consent       │               │
+│ Financial Consent   │               │
+│ Treatment Consent   │               │
+└────┬────────────────┘               │
+     │                                 │
+     ▼                                 │
+┌─────────────────────┐               │
+│ Capture Digital     │               │
+│ Signature           │               │
+└────┬────────────────┘               │
+     │                                 │
+     ▼                                 │
+┌─────────────────────┐               │
+│ Save Consent PDF    │               │
+│ to Document Mgmt    │               │
+└────┬────────────────┘               │
+     │                                 │
      ▼◄────────────────────────────────┘
 ┌─────────────────────┐
 │ Review All Data     │
@@ -1235,7 +1414,6 @@ Front Desk    Frontend      Backend API    Database    AWS Textract   Twilio
     │             │              │ INSERT     │             │            │
     │             │              │ emergency  │             │            │
     │             │              ├───────────>│             │            │
-    │             │              │            │             │            │
     │             │              │            │             │ Send SMS   │
     │             │              │            │             ├───────────>│
     │             │              │            │             │            │
@@ -1414,6 +1592,18 @@ patients (Main table)
     └── appointments (1:Many)
 ```
 
+### Multi-Tenant Architecture
+
+Every table contains:
+- tenant_id
+- organization_id
+- facility_id
+
+Purpose:
+- Isolate hospital data
+- Support SaaS architecture
+- Enable multi-hospital deployment
+
 ### Table Schemas
 
 **patients:**
@@ -1502,6 +1692,33 @@ Options:
 
 ---
 
+### Scenario 1a: Duplicate Merge Workflow
+
+```
+┌──────────────────────────┐
+│ Duplicate Patient        │
+│ Detected                 │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Send to MPI Review Queue │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ HIM Team Review          │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Merge Approval           │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Record Reconciliation    │
+└──────────────────────────┘
+```
+
+---
+
 ### Scenario 2: OCR Fails
 
 **Trigger:** Insurance card image is blurry or unsupported format
@@ -1567,41 +1784,90 @@ Show warning to staff:
 
 ---
 
-## 11. Dashboard & Status Flow
-
-### Patient Status States
+### Scenario 5: Emergency Patient Registration
 
 ```
-┌─────────────────────┐
-│   New Registration  │
-│   (status: active)  │
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│   Insurance Added   │
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│   Insurance Verified│
-│   (next module)     │
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│   Appointment       │
-│   Scheduled         │
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│   Checked In        │
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│   In Consultation   │
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│   Discharged        │
-└─────────────────────┘
+┌──────────────────────────┐
+│ Unknown Patient Arrives  │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Generate Temporary MRN   │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Minimal Demographics     │
+│ Collected                │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Emergency Treatment      │
+│ Begins                   │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Full Registration        │
+│ Completed Later          │
+└──────────────────────────┘
+```
+
+---
+
+## 11. Dashboard & Status Flow
+
+### Registration Queue Management
+
+Queue Types:
+- Walk-in queue
+- Appointment queue
+- Emergency queue
+- VIP queue
+- Kiosk queue
+
+Features:
+- Wait time tracking
+- Queue priority
+- Real-time dashboard
+
+### Enterprise Registration Status Lifecycle
+
+```
+┌──────────────────────────┐
+│      Pre-Registered      │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│         Arrived          │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│       Checked-In         │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Registration Complete    │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Eligibility Verified     │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Financial Clearance      │
+│ Complete                 │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Ready for Encounter      │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│     In Consultation      │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│       Discharged         │
+└──────────────────────────┘
 ```
 
 ---
@@ -1655,6 +1921,43 @@ message = client.messages.create(
 
 ---
 
+### HL7 / FHIR Integration
+
+```
+┌──────────────────────────┐
+│ Registration Completed   │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Generate HL7 ADT A04     │
+│ Message                  │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Send to EMR / EHR        │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Create FHIR Patient      │
+│ Resource                 │
+└──────────────────────────┘
+```
+
+---
+
+## 13. Document Management
+
+- Insurance cards
+- Consent PDFs
+- Driver licenses
+- Referral documents
+- Prior authorization files
+- Secure S3 storage
+- Signed URL access
+- OCR metadata indexing
+
+---
+
 ## Summary
 
 **Module:** Patient Registration  
@@ -1663,15 +1966,37 @@ message = client.messages.create(
 **Dependencies:** AWS Textract, Twilio, Database  
 **Critical:** Yes (first step in RCM)  
 
+**Security Features:**
+- AES-256 encryption
+- TLS 1.2+
+- MFA authentication
+- RBAC authorization
+- PHI audit tracking
+- Signed URL document access
+- HIPAA retention policies
+
 **Key Features:**
-✅ Duplicate detection  
-✅ OCR for insurance cards  
-✅ Real-time validation  
-✅ Welcome notifications  
-✅ Emergency contacts  
-✅ Guarantor support  
-✅ Audit logging  
-✅ HIPAA compliant (SSN encryption)  
+✅ Pre-registration workflow
+✅ Duplicate detection
+✅ Duplicate merge workflow
+✅ OCR for insurance cards (Front & Back)
+✅ Real-time validation
+✅ Identity verification
+✅ Consent management
+✅ Real-time eligibility verification
+✅ Financial responsibility estimation
+✅ Welcome notifications
+✅ Portal activation with MFA
+✅ Emergency contacts
+✅ Guarantor support
+✅ Audit logging (advanced)
+✅ HIPAA compliant (SSN encryption)
+✅ Multi-tenant architecture
+✅ HL7 / FHIR integration
+✅ Document management
+✅ Queue management
+✅ Self-service kiosk support
+✅ Emergency patient registration
 
 ---
 
