@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare RCM Application - Development Phase Guide</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Healthcare RCM Application - Development Phase Guide</h1>
+<h2>Part 1: Introduction & Phase 1 (Foundation Setup)</h2>
+
+<p><strong>Version:</strong> 1.0  </p>
+<p><strong>For:</strong> Technical Lead & Development Team  </p>
+<p><strong>Purpose:</strong> Step-by-step development guide from scratch</p>
+
+<hr>
+
+<h2>1. Project Overview</h2>
+
+<h3>What We're Building</h3>
+<p>A <strong>Healthcare Revenue Cycle Management (RCM)</strong> system that helps hospitals and clinics:</p>
+<li>Register patients and verify their insurance</li>
+<li>Track doctor visits and services provided</li>
+<li>Convert services into medical codes</li>
+<li>Create and submit insurance claims</li>
+<li>Receive and track payments</li>
+<li>Handle claim denials and appeals</li>
+<li>Bill patients for their portion</li>
+
+<p><strong>Think of it like:</strong> An automated billing system for hospitals that reduces errors and speeds up payment collection.</p>
+
+<h3>Business Goals</h3>
+<li><strong>Reduce claim denials</strong> from 15% to <5%</li>
+<li><strong>Speed up payment collection</strong> from 60 days to 30 days</li>
+<li><strong>Increase revenue</strong> by capturing all charges correctly</li>
+<li><strong>Reduce manual work</strong> by 70% through automation</li>
+
+<h3>Technical Goals</h3>
+<li>Build a modern, cloud-based web application</li>
+<li>Use AI to assist with medical coding and error detection</li>
+<li>Integrate with insurance companies via APIs</li>
+<li>Ensure HIPAA compliance and data security</li>
+<li>Create an intuitive, easy-to-use interface</li>
+
+<hr>
+
+<h2>2. Development Approach</h2>
+
+<h3>Why NOT Build All Modules at Once? ❌</h3>
+
+<p><strong>Problem with building everything:</strong></p>
+<li><strong>Takes too long</strong> (12-18 months)</li>
+<li>Team gets exhausted</li>
+<li>Market changes during development</li>
+<li>Technology becomes outdated</li>
+
+<li><strong>Too risky</strong> ($1M+ investment)</li>
+<li>What if users don't like it?</li>
+<li>What if we built wrong features?</li>
+<li>Hard to change direction later</li>
+
+<li><strong>Too complex to manage</strong></li>
+<li>More bugs to fix</li>
+<li>Harder to test</li>
+<li>Difficult to coordinate team</li>
+
+<li><strong>No feedback until the end</strong></li>
+<li>Can't learn from real users</li>
+<li>Might build features nobody wants</li>
+<li>Wasted development time</li>
+
+<p><strong>Real-world example:</strong></p>
+<p>Imagine building a house. You wouldn't build all rooms, pool, garden, and garage at once. You'd build the essential rooms first (bedroom, bathroom, kitchen), move in, then add more rooms based on what you actually need.</p>
+
+<hr>
+
+<h3>Why MVP (Minimum Viable Product) Approach? ✅</h3>
+
+<p><strong>MVP = Build the smallest version that works</strong></p>
+
+<p><strong>Benefits:</strong></p>
+<li><strong>Launch faster</strong> (3-4 months instead of 18 months)</li>
+<li><strong>Lower cost</strong> ($400K instead of $1M+)</li>
+<li><strong>Get real user feedback</strong> early</li>
+<li><strong>Prove the concept</strong> before investing more</li>
+<li><strong>Start earning revenue</strong> sooner</li>
+<li><strong>Easier to manage</strong> with smaller team</li>
+
+<p><strong>MVP Strategy:</strong></p>
+<pre><code>
+Build → Launch → Learn → Improve → Repeat
+  ↓        ↓        ↓        ↓        ↓
+3 months  Test   Feedback  Add     Next
+         users            features version
+</pre>
+
+<p><strong>What to include in MVP:</strong></p>
+<li>✅ Patient registration</li>
+<li>✅ Insurance verification</li>
+<li>✅ Basic appointment scheduling</li>
+<li>✅ Medical coding</li>
+<li>✅ Claim creation and submission</li>
+<li>✅ Payment posting</li>
+<li>✅ Basic reports</li>
+
+<p><strong>What to add AFTER MVP:</strong></p>
+<li>❌ Advanced analytics</li>
+<li>❌ Patient portal</li>
+<li>❌ Mobile app</li>
+<li>❌ Revenue integrity</li>
+<li>❌ Advanced AI features</li>
+
+<hr>
+
+<h3>How to Divide Development into Phases</h3>
+
+<p><strong>Phase-by-Phase Approach:</strong></p>
+
+<pre><code>
+Phase 1: Foundation (Weeks 1-6)
+├── Setup infrastructure
+├── Build authentication
+├── Patient registration
+└── Insurance verification
+Phase 2: Clinical &amp; Billing (Weeks 7-12)
+├── Medical coding
+├── Claim creation
+├── Claim submission
+└── AI integration
+Phase 3: Payment &amp; Denials (Weeks 13-16)
+├── Payment posting
+├── Denial management
+└── Patient billing
+Phase 4: Reports &amp; Launch (Weeks 17-20)
+├── Reports and dashboards
+├── Testing
+├── Deployment
+└── Training
+</pre>
+
+<p><strong>Why this order?</strong></p>
+<li><strong>Foundation first</strong> - Can't build anything without login and database</li>
+<li><strong>Core workflow next</strong> - Patient → Claim → Payment is the main flow</li>
+<li><strong>Money features</strong> - Payment and denials directly impact revenue</li>
+<li><strong>Polish last</strong> - Reports and analytics help monitor performance</li>
+
+<p><strong>Think of it like building a car:</strong></p>
+<li>Phase 1: Engine, wheels, steering (must have to move)</li>
+<li>Phase 2: Body, seats, windows (makes it usable)</li>
+<li>Phase 3: Fuel system, brakes (makes it safe)</li>
+<li>Phase 4: Radio, AC, paint (makes it nice)</li>
+
+<hr>
+
+<h2>3. Phase 1 — Foundation Setup (Weeks 1-6)</h2>
+
+<p><strong>Goal:</strong> Set up the project infrastructure and build the first working modules</p>
+
+<p><strong>What we'll build:</strong></p>
+<li>Project setup (React, FastAPI, PostgreSQL)</li>
+<li>User authentication (login/logout)</li>
+<li>Patient registration</li>
+<li>Insurance verification</li>
+<li>Basic appointment scheduling</li>
+
+<p><strong>Why start here?</strong></p>
+<li>These are the foundation for everything else</li>
+<li>Can't submit claims without patients</li>
+<li>Can't bill without insurance verification</li>
+<li>Need authentication to secure the system</li>
+
+<hr>
+
+<h3>A. Requirement Understanding (Week 1)</h3>
+
+<p>Before writing any code, the team must understand how healthcare billing works.</p>
+
+<h4>1. Hospital Workflow Understanding</h4>
+
+<p><strong>What happens when a patient visits a hospital:</strong></p>
+
+<pre><code>
+Step 1: Patient arrives at front desk
+   ↓
+Step 2: Front desk registers patient (name, insurance, etc.)
+   ↓
+Step 3: Front desk verifies insurance (is it active?)
+   ↓
+Step 4: Front desk collects copay ($25)
+   ↓
+Step 5: Patient sees doctor
+   ↓
+Step 6: Doctor documents visit (diagnosis, treatment)
+   ↓
+Step 7: Medical coder assigns codes (ICD-10, CPT)
+   ↓
+Step 8: Biller creates claim
+   ↓
+Step 9: Claim submitted to insurance
+   ↓
+Step 10: Insurance pays (or denies)
+   ↓
+Step 11: Payment posted to account
+   ↓
+Step 12: Patient billed for remaining balance
+</pre>
+
+<p><strong>Key roles to understand:</strong></p>
+<li><strong>Front Desk:</strong> First point of contact, registers patients</li>
+<li><strong>Doctor:</strong> Provides medical care, documents visit</li>
+<li><strong>Medical Coder:</strong> Translates doctor's notes into billing codes</li>
+<li><strong>Biller:</strong> Creates and submits claims to insurance</li>
+<li><strong>AR Manager:</strong> Tracks payments and follows up on unpaid claims</li>
+
+<p><strong>Team Activity:</strong></p>
+<li>Watch YouTube videos on "healthcare revenue cycle"</li>
+<li>Read articles on medical billing basics</li>
+<li>Interview a medical biller (if possible)</li>
+<li>Create a flowchart of the entire process</li>
+
+<hr>
+
+<h4>2. Billing Workflow Understanding</h4>
+
+<p><strong>How billing works (simplified):</strong></p>
+
+<p><strong>Example: John Doe visits for flu</strong></p>
+
+<li><strong>Service provided:</strong></li>
+<li>Doctor diagnoses: Influenza (flu)</li>
+<li>Doctor prescribes: Antiviral medication</li>
+<li>Visit type: Office visit, 20 minutes</li>
+
+<li><strong>Medical coding:</strong></li>
+<li>Diagnosis code: J11.1 (Influenza with respiratory symptoms)</li>
+<li>Procedure code: 99213 (Office visit, moderate complexity)</li>
+<li>Charge: $150</li>
+
+<li><strong>Claim creation:</strong></li>
+<li>Patient: John Doe</li>
+<li>Insurance: Blue Cross Blue Shield</li>
+<li>Service date: May 20, 2026</li>
+<li>Diagnosis: J11.1</li>
+<li>Procedure: 99213</li>
+<li>Charge: $150</li>
+
+<li><strong>Claim submission:</strong></li>
+<li>Sent electronically to insurance company</li>
+<li>Format: EDI 837 (electronic claim format)</li>
+
+<li><strong>Insurance payment:</strong></li>
+<li>Insurance pays: $120 (contracted rate)</li>
+<li>Patient owes: $25 (copay, already collected)</li>
+<li>Write-off: $30 (contractual adjustment)</li>
+
+<p><strong>Key concepts to understand:</strong></p>
+<li><strong>ICD-10 codes:</strong> Diagnosis codes (what's wrong with patient)</li>
+<li><strong>CPT codes:</strong> Procedure codes (what doctor did)</li>
+<li><strong>EDI 837:</strong> Electronic claim format</li>
+<li><strong>EDI 835:</strong> Electronic payment format (ERA)</li>
+<li><strong>Copay:</strong> Fixed amount patient pays</li>
+<li><strong>Deductible:</strong> Amount patient pays before insurance kicks in</li>
+<li><strong>Coinsurance:</strong> Percentage patient pays (e.g., 20%)</li>
+
+<hr>
+
+<h4>3. Insurance Workflow Understanding</h4>
+
+<p><strong>How insurance verification works:</strong></p>
+
+<p><strong>Before patient visit:</strong></p>
+<pre><code>
+Hospital → Sends eligibility inquiry (EDI 270)
+              ↓
+         Insurance Company
+              ↓
+Hospital ← Receives eligibility response (EDI 271)
+</pre>
+
+<p><strong>What we check:</strong></p>
+<li>Is insurance active?</li>
+<li>What's the copay amount?</li>
+<li>How much deductible is left?</li>
+<li>Is prior authorization needed?</li>
+<li>Is provider in-network?</li>
+
+<p><strong>Why it's critical:</strong></p>
+<li>If insurance is inactive → Patient becomes self-pay</li>
+<li>If we don't collect copay → Lost revenue</li>
+<li>If prior auth needed but not obtained → Claim denied (100%)</li>
+
+<p><strong>Real example:</strong></p>
+<pre><code>
+Patient: Sarah Johnson
+Insurance: Aetna
+Policy: ABC123456789
+Verification Result:
+✅ Status: Active
+✅ Copay: $25
+✅ Deductible: $1,500 annual
+   - Met: $800
+   - Remaining: $700
+✅ Prior Auth: Not required for office visit
+</pre>
+
+<hr>
+
+<h4>4. Claim Lifecycle Understanding</h4>
+
+<p><strong>What happens to a claim after submission:</strong></p>
+
+<pre><code>
+Day 0: Claim submitted
+   ↓
+Day 1: Acknowledgment received (claim accepted by clearinghouse)
+   ↓
+Day 3-7: Insurance reviews claim
+   ↓
+Day 7-14: Insurance adjudicates (decides to pay or deny)
+   ↓
+Day 14-21: Payment sent (if approved)
+   ↓
+Day 21-30: Payment posted to account
+</pre>
+
+<p><strong>Possible outcomes:</strong></p>
+<li><strong>Paid in full</strong> ✅</li>
+<li>Insurance pays agreed amount</li>
+<li>Patient portion collected</li>
+<li>Claim closed</li>
+
+<li><strong>Partially paid</strong> ⚠️</li>
+<li>Insurance pays less than expected</li>
+<li>Need to investigate why</li>
+<li>May need to appeal</li>
+
+<li><strong>Denied</strong> ❌</li>
+<li>Insurance rejects claim</li>
+<li>Reason code provided</li>
+<li>Need to fix and resubmit or appeal</li>
+
+<p><strong>Common denial reasons:</strong></p>
+<li>Missing information (30%)</li>
+<li>Incorrect coding (25%)</li>
+<li>Eligibility issues (20%)</li>
+<li>Prior authorization missing (15%)</li>
+<li>Timely filing (10%)</li>
+
+<p><strong>Team Activity:</strong></p>
+<li>Study sample claims (CMS-1500 form)</li>
+<li>Learn common denial codes</li>
+<li>Understand appeal process</li>
+
+<hr>
+
+<h3>B. Documentation Preparation (Week 1-2)</h3>
+
+<p>Before coding, create these documents:</p>
+
+<h4>1. SRS Document (Software Requirements Specification)</h4>
+
+<p><strong>What it contains:</strong></p>
+<li>List of all features</li>
+<li>User roles and permissions</li>
+<li>Business rules</li>
+<li>Success criteria</li>
+
+<p><strong>Example section:</strong></p>
+<pre><code>
+Feature: Patient Registration
+Description:
+Front desk staff should be able to register new patients and 
+store their demographic and insurance information.
+Requirements:
+1. Capture patient name, DOB, gender, SSN
+2. Capture address, phone, email
+3. Capture insurance information (primary, secondary)
+4. Validate required fields
+5. Check for duplicate patients
+6. Generate unique patient ID
+Acceptance Criteria:
+- Registration completes in &lt;3 minutes
+- No duplicate patients created
+- All required fields validated
+- Insurance card can be scanned (OCR)
+</pre>
+
+<p><strong>Who creates it:</strong> Business Analyst + Technical Lead  </p>
+<p><strong>Time needed:</strong> 1 week</p>
+
+<hr>
+
+<h4>2. API Document</h4>
+
+<p><strong>What it contains:</strong></p>
+<li>List of all API endpoints</li>
+<li>Request/response formats</li>
+<li>Authentication requirements</li>
+<li>Error codes</li>
+
+<p><strong>Example:</strong></p>
+<pre><code>
+POST /api/v1/patients
+Description: Create new patient
+Request:
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "dob": "1980-05-15",
+  "gender": "M",
+  "ssn": "123-45-6789",
+  "phone": "(555) 123-4567",
+  "email": "john@email.com",
+  "insurance": {
+    "payerName": "Blue Cross",
+    "policyNumber": "ABC123456789",
+    "groupNumber": "GRP5000"
+  }
+}
+Response (Success):
+{
+  "patientId": "PAT-2026-001",
+  "message": "Patient created successfully"
+}
+Response (Error):
+{
+  "error": "Duplicate patient found",
+  "existingPatientId": "PAT-2026-000"
+}
+</pre>
+
+<p><strong>Who creates it:</strong> Backend Developer + Technical Lead  </p>
+<p><strong>Time needed:</strong> 3-4 days</p>
+
+<hr>
+
+<h4>3. Database Design Document</h4>
+
+<p><strong>What it contains:</strong></p>
+<li>All database tables</li>
+<li>Table relationships</li>
+<li>Field definitions</li>
+<li>Indexes and constraints</li>
+
+<p><strong>Example table:</strong></p>
+<pre><code class="language-sql">
+Table: patients
+Columns:
+- patient_id (VARCHAR, PRIMARY KEY) - Unique patient identifier
+- first_name (VARCHAR, NOT NULL) - Patient first name
+- last_name (VARCHAR, NOT NULL) - Patient last name
+- dob (DATE, NOT NULL) - Date of birth
+- gender (CHAR, NOT NULL) - M/F/O
+- ssn (VARCHAR, ENCRYPTED) - Social security number
+- phone (VARCHAR) - Phone number
+- email (VARCHAR) - Email address
+- created_at (TIMESTAMP) - Record creation time
+- updated_at (TIMESTAMP) - Last update time
+- created_by (VARCHAR) - User who created record
+Indexes:
+- idx_patient_name (first_name, last_name)
+- idx_patient_dob (dob)
+- idx_patient_ssn (ssn)
+Relationships:
+- Has many: patient_insurance (one patient, multiple insurances)
+- Has many: encounters (one patient, multiple visits)
+- Has many: claims (one patient, multiple claims)
+</pre>
+
+<p><strong>Total tables needed:</strong> 35-40 tables  </p>
+<p><strong>Who creates it:</strong> Database Architect + Backend Developer  </p>
+<p><strong>Time needed:</strong> 1 week</p>
+
+<hr>
+
+<h4>4. Screen Flow Document</h4>
+
+<p><strong>What it contains:</strong></p>
+<li>Wireframes for all screens</li>
+<li>User navigation flow</li>
+<li>Button actions</li>
+<li>Form validations</li>
+
+<p><strong>Example flow:</strong></p>
+<pre><code>
+Login Screen
+   ↓ (successful login)
+Dashboard
+   ↓ (click "New Patient")
+Patient Registration Form
+   ↓ (fill form, click "Save")
+Patient Details Screen
+   ↓ (click "Verify Insurance")
+Insurance Verification Results
+   ↓ (click "Schedule Appointment")
+Appointment Scheduler
+</pre>
+
+<p><strong>Tools to use:</strong></p>
+<li>Figma (for wireframes)</li>
+<li>Draw.io (for flowcharts)</li>
+<li>Miro (for collaboration)</li>
+
+<p><strong>Who creates it:</strong> UI/UX Designer + Frontend Developer  </p>
+<p><strong>Time needed:</strong> 1 week</p>
+
+<hr>
+
+<h4>5. Module Document</h4>
+
+<p><strong>What it contains:</strong></p>
+<li>List of all modules</li>
+<li>Module dependencies</li>
+<li>Development priority</li>
+<li>Integration points</li>
+
+<p><strong>Example:</strong></p>
+<pre><code>
+Module: Patient Registration
+Priority: High (Phase 1)
+Dependencies:
+- User Authentication (must be built first)
+- Database setup (must be ready)
+Sub-features:
+1. Patient demographics form
+2. Insurance information form
+3. Emergency contact form
+4. Duplicate patient check
+5. OCR for insurance card scanning
+Integration Points:
+- OCR API (AWS Textract)
+- Master Patient Index (MPI)
+Estimated Time: 1 week
+</pre>
+
+<p><strong>Who creates it:</strong> Technical Lead  </p>
+<p><strong>Time needed:</strong> 2-3 days</p>
+
+<hr>
+
+<h3>C. System Architecture (Week 2)</h3>
+
+<h4>1. Frontend Architecture</h4>
+
+<p><strong>Technology Stack:</strong></p>
+<li><strong>Framework:</strong> React.js 18+</li>
+<li><strong>Language:</strong> TypeScript (for type safety)</li>
+<li><strong>Styling:</strong> Tailwind CSS</li>
+<li><strong>State Management:</strong> React Query (for API calls) + Context API</li>
+<li><strong>Routing:</strong> React Router v6</li>
+<li><strong>Forms:</strong> React Hook Form</li>
+<li><strong>Charts:</strong> Chart.js</li>
+<li><strong>Icons:</strong> Lucide React</li>
+
+<p><strong>Folder Structure:</strong></p>
+<pre><code>
+frontend/
+├── public/
+│   └── index.html
+├── src/
+│   ├── components/          # Reusable components
+│   │   ├── common/         # Buttons, inputs, modals
+│   │   ├── layout/         # Header, sidebar, footer
+│   │   └── forms/          # Form components
+│   ├── pages/              # Page components
+│   │   ├── Login.tsx
+│   │   ├── Dashboard.tsx
+│   │   ├── PatientRegistration.tsx
+│   │   └── ...
+│   ├── services/           # API calls
+│   │   ├── api.ts          # Axios configuration
+│   │   ├── authService.ts
+│   │   ├── patientService.ts
+│   │   └── ...
+│   ├── hooks/              # Custom React hooks
+│   ├── utils/              # Utility functions
+│   ├── types/              # TypeScript types
+│   ├── context/            # React Context
+│   ├── App.tsx             # Main app component
+│   └── index.tsx           # Entry point
+├── package.json
+└── tailwind.config.js
+</pre>
+
+<p><strong>Why this structure?</strong></p>
+<li><strong>Organized:</strong> Easy to find files</li>
+<li><strong>Scalable:</strong> Can add more features easily</li>
+<li><strong>Maintainable:</strong> Clear separation of concerns</li>
+<li><strong>Team-friendly:</strong> Multiple developers can work without conflicts</li>
+
+<hr>
+
+<h4>2. Backend Architecture</h4>
+
+<p><strong>Technology Stack:</strong></p>
+<li><strong>Framework:</strong> Python FastAPI</li>
+<li><strong>ORM:</strong> SQLAlchemy 2.0</li>
+<li><strong>Database:</strong> PostgreSQL 15</li>
+<li><strong>Authentication:</strong> JWT tokens</li>
+<li><strong>Validation:</strong> Pydantic models</li>
+<li><strong>Background Tasks:</strong> Celery + Redis</li>
+<li><strong>API Documentation:</strong> Swagger UI (built-in)</li>
+
+<p><strong>Folder Structure:</strong></p>
+<pre><code>
+backend/
+├── app/
+│   ├── api/                # API endpoints
+│   │   ├── v1/
+│   │   │   ├── auth.py     # Login, logout
+│   │   │   ├── patients.py # Patient CRUD
+│   │   │   ├── claims.py   # Claim operations
+│   │   │   └── ...
+│   ├── core/               # Core functionality
+│   │   ├── config.py       # Configuration
+│   │   ├── security.py     # JWT, password hashing
+│   │   └── database.py     # Database connection
+│   ├── models/             # Database models
+│   │   ├── user.py
+│   │   ├── patient.py
+│   │   ├── claim.py
+│   │   └── ...
+│   ├── schemas/            # Pydantic schemas
+│   │   ├── user.py
+│   │   ├── patient.py
+│   │   └── ...
+│   ├── services/           # Business logic
+│   │   ├── auth_service.py
+│   │   ├── patient_service.py
+│   │   └── ...
+│   ├── utils/              # Utility functions
+│   │   ├── validators.py
+│   │   ├── formatters.py
+│   │   └── ...
+│   └── main.py             # FastAPI app
+├── tests/                  # Test files
+├── alembic/                # Database migrations
+├── requirements.txt        # Python dependencies
+└── .env                    # Environment variables
+</pre>
+
+<p><strong>API Structure:</strong></p>
+<pre><code>
+/api/v1/auth/login          POST   - User login
+/api/v1/auth/logout         POST   - User logout
+/api/v1/patients            POST   - Create patient
+/api/v1/patients/{id}       GET    - Get patient
+/api/v1/patients/{id}       PUT    - Update patient
+/api/v1/patients/search     GET    - Search patients
+/api/v1/eligibility/verify  POST   - Verify insurance
+/api/v1/claims              POST   - Create claim
+/api/v1/claims/{id}         GET    - Get claim
+/api/v1/claims/submit       POST   - Submit claim
+...
+</pre>
+
+<hr>
+
+<h4>3. Database Architecture</h4>
+
+<p><strong>Database:</strong> PostgreSQL 15</p>
+
+<p><strong>Why PostgreSQL?</strong></p>
+<li>Reliable and proven (30+ years)</li>
+<li>Handles complex relationships well</li>
+<li>ACID compliant (data integrity)</li>
+<li>JSON support (flexible data)</li>
+<li>Free and open-source</li>
+
+<p><strong>Core Tables (Phase 1):</strong></p>
+
+<pre><code class="language-sql">
+-- Users and Authentication
+users
+user_roles
+user_sessions
+-- Patients
+patients
+patient_insurance
+patient_contacts
+patient_addresses
+-- Providers
+providers
+provider_credentials
+-- Appointments
+appointments
+appointment_types
+-- Insurance
+insurance_payers
+insurance_plans
+eligibility_checks
+-- Audit
+audit_logs
+</pre>
+
+<p><strong>Database Design Principles:</strong></p>
+<li><strong>Normalization:</strong> Avoid data duplication</li>
+<li><strong>Indexes:</strong> Fast queries on frequently searched columns</li>
+<li><strong>Constraints:</strong> Enforce data integrity</li>
+<li><strong>Encryption:</strong> Sensitive data (SSN, DOB) encrypted</li>
+<li><strong>Audit trail:</strong> Track all changes</li>
+
+<hr>
+
+<h4>4. Security Architecture</h4>
+
+<p><strong>Security Layers:</strong></p>
+
+<li><strong>Network Security:</strong></li>
+<li>HTTPS only (TLS 1.2+)</li>
+<li>Firewall rules (AWS Security Groups)</li>
+<li>VPC (Virtual Private Cloud)</li>
+
+<li><strong>Authentication:</strong></li>
+<li>JWT tokens (8-hour expiration)</li>
+<li>Password hashing (bcrypt)</li>
+<li>Multi-factor authentication (optional)</li>
+
+<li><strong>Authorization:</strong></li>
+<li>Role-based access control (RBAC)</li>
+<li>Permission checks on every API call</li>
+<li>Row-level security (users see only their data)</li>
+
+<li><strong>Data Security:</strong></li>
+<li>Encryption at rest (AES-256)</li>
+<li>Encryption in transit (TLS)</li>
+<li>Encrypted database columns (SSN, DOB)</li>
+
+<li><strong>HIPAA Compliance:</strong></li>
+<li>Audit logging (all actions logged)</li>
+<li>Access controls (who can see what)</li>
+<li>Data retention (7 years)</li>
+<li>Breach notification procedures</li>
+
+<p><strong>Security Checklist:</strong></p>
+<li>✅ No passwords in code (use environment variables)</li>
+<li>✅ SQL injection prevention (use ORM)</li>
+<li>✅ XSS prevention (sanitize inputs)</li>
+<li>✅ CSRF protection (CSRF tokens)</li>
+<li>✅ Rate limiting (prevent abuse)</li>
+<li>✅ Session timeout (15 minutes)</li>
+
+<hr>
+
+<h3>D. Project Setup (Week 2-3)</h3>
+
+<h4>Frontend Setup (React.js)</h4>
+
+<p><strong>Step 1: Create React App</strong></p>
+<pre><code class="language-bash">
+# Create new React app with TypeScript
+npx create-react-app rcm-frontend --template typescript
+# Navigate to project
+cd rcm-frontend
+# Install dependencies
+npm install react-router-dom react-query axios
+npm install -D tailwindcss postcss autoprefixer
+npm install react-hook-form lucide-react chart.js
+</pre>
+
+<p><strong>Step 2: Configure Tailwind CSS</strong></p>
+<pre><code class="language-bash">
+# Initialize Tailwind
+npx tailwindcss init -p
+</pre>
+
+<p><strong>tailwind.config.js:</strong></p>
+<pre><code class="language-javascript">
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: '#3B82F6',
+        secondary: '#10B981',
+        danger: '#EF4444',
+      }
+    },
+  },
+  plugins: [],
+}
+</pre>
+
+<p><strong>Step 3: Setup Routing</strong></p>
+<pre><code class="language-typescript">
+// src/App.tsx
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import PatientRegistration from './pages/PatientRegistration';
+function App() {
+  return (
+    &lt;BrowserRouter&gt;
+      &lt;Routes&gt;
+        &lt;Route path="/login" element={&lt;Login /&gt;} /&gt;
+        &lt;Route path="/dashboard" element={&lt;Dashboard /&gt;} /&gt;
+        &lt;Route path="/patients/new" element={&lt;PatientRegistration /&gt;} /&gt;
+      &lt;/Routes&gt;
+    &lt;/BrowserRouter&gt;
+  );
+}
+export default App;
+</pre>
+
+<p><strong>Step 4: Setup API Service</strong></p>
+<pre><code class="language-typescript">
+// src/services/api.ts
+import axios from 'axios';
+const api = axios.create({
+  baseURL: 'http://localhost:8000/api/v1',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+// Add JWT token to requests
+api.interceptors.request.use((config) =&gt; {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+export default api;
+</pre>
+
+<hr>
+
+<h4>Backend Setup (Python FastAPI)</h4>
+
+<p><strong>Step 1: Create Project Structure</strong></p>
+<pre><code class="language-bash">
+# Create project folder
+mkdir rcm-backend
+cd rcm-backend
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+# Create folder structure
+mkdir -p app/api/v1 app/core app/models app/schemas app/services
+touch app/__init__.py app/main.py
+</pre>
+
+<p><strong>Step 2: Install Dependencies</strong></p>
+<pre><code class="language-bash">
+# Create requirements.txt
+cat &gt; requirements.txt &lt;&lt; EOF
+fastapi==0.104.1
+uvicorn==0.24.0
+sqlalchemy==2.0.23
+psycopg2-binary==2.9.9
+pydantic==2.5.0
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+alembic==1.12.1
+redis==5.0.1
+celery==5.3.4
+EOF
+# Install dependencies
+pip install -r requirements.txt
+</pre>
+
+<p><strong>Step 3: Create FastAPI App</strong></p>
+<pre><code class="language-python">
+# app/main.py
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from app.api.v1 import auth, patients
+app = FastAPI(
+    title="Healthcare RCM API",
+    description="Revenue Cycle Management System",
+    version="1.0.0"
+)
+# CORS configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # React app
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+# Include routers
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
+app.include_router(patients.router, prefix="/api/v1/patients", tags=["patients"])
+@app.get("/")
+def read_root():
+    return {"message": "Healthcare RCM API is running"}
+</pre>
+
+<p><strong>Step 4: Database Configuration</strong></p>
+<pre><code class="language-python">
+# app/core/database.py
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+import os
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql://user:password@localhost:5432/rcm_db"
+)
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+# Dependency for API routes
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+</pre>
+
+<p><strong>Step 5: Run the Application</strong></p>
+<pre><code class="language-bash">
+# Run FastAPI server
+uvicorn app.main:app --reload --port 8000
+# API documentation available at:
+# http://localhost:8000/docs (Swagger UI)
+# http://localhost:8000/redoc (ReDoc)
+</pre>
+
+<hr>
+
+<h4>Database Setup (PostgreSQL)</h4>
+
+<p><strong>Step 1: Install PostgreSQL</strong></p>
+<pre><code class="language-bash">
+# On Mac
+brew install postgresql@15
+# On Ubuntu
+sudo apt-get install postgresql-15
+# On Windows
+# Download installer from postgresql.org
+</pre>
+
+<p><strong>Step 2: Create Database</strong></p>
+<pre><code class="language-bash">
+# Start PostgreSQL
+brew services start postgresql@15  # Mac
+# Create database
+psql postgres
+CREATE DATABASE rcm_db;
+CREATE USER rcm_user WITH PASSWORD 'secure_password';
+GRANT ALL PRIVILEGES ON DATABASE rcm_db TO rcm_user;
+\q
+</pre>
+
+<p><strong>Step 3: Create Initial Tables</strong></p>
+<pre><code class="language-python">
+# app/models/user.py
+from sqlalchemy import Column, String, Boolean, DateTime
+from app.core.database import Base
+from datetime import datetime
+class User(Base):
+    __tablename__ = "users"
+    user_id = Column(String(50), primary_key=True)
+    username = Column(String(100), unique=True, nullable=False)
+    email = Column(String(255), unique=True, nullable=False)
+    hashed_password = Column(String(255), nullable=False)
+    full_name = Column(String(200))
+    role = Column(String(50), nullable=False)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+</pre>
+
+<p><strong>Step 4: Run Migrations</strong></p>
+<pre><code class="language-bash">
+# Initialize Alembic
+alembic init alembic
+# Create migration
+alembic revision --autogenerate -m "Create users table"
+# Run migration
+alembic upgrade head
+</pre>
+
+<hr>
+
+<h3>E. Authentication & Security (Week 3)</h3>
+
+<h4>1. User Login System</h4>
+
+<p><strong>What we're building:</strong></p>
+<li>Login page (username + password)</li>
+<li>JWT token generation</li>
+<li>Token storage in browser</li>
+<li>Protected routes (require login)</li>
+<li>Logout functionality</li>
+
+<p><strong>Backend: Login API</strong></p>
+<pre><code class="language-python">
+# app/api/v1/auth.py
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.orm import Session
+from app.core.database import get_db
+from app.core.security import verify_password, create_access_token
+from app.models.user import User
+router = APIRouter()
+@router.post("/login")
+def login(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db)
+):
+    # Find user
+    user = db.query(User).filter(User.username == form_data.username).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password"
+        )
+    # Verify password
+    if not verify_password(form_data.password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password"
+        )
+    # Check if user is active
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User account is inactive"
+        )
+    # Create JWT token
+    access_token = create_access_token(
+        data={"sub": user.username, "role": user.role}
+    )
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "user_id": user.user_id,
+            "username": user.username,
+            "full_name": user.full_name,
+            "role": user.role
+        }
+    }
+</pre>
+
+<p><strong>Security Module:</strong></p>
+<pre><code class="language-python">
+# app/core/security.py
+from datetime import datetime, timedelta
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+import os
+SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-here")
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_HOURS = 8
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+def verify_password(plain_password: str, hashed_password: str) -&gt; bool:
+    """Verify password against hash"""
+    return pwd_context.verify(plain_password, hashed_password)
+def get_password_hash(password: str) -&gt; str:
+    """Hash password"""
+    return pwd_context.hash(password)
+def create_access_token(data: dict) -&gt; str:
+    """Create JWT token"""
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(hours=ACCESS_TOKEN_EXPIRE_HOURS)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+def decode_access_token(token: str):
+    """Decode JWT token"""
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except JWTError:
+        return None
+</pre>
+
+<p><strong>Frontend: Login Page</strong></p>
+<pre><code class="language-typescript">
+// src/pages/Login.tsx
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
+function Login() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const handleSubmit = async (e: React.FormEvent) =&gt; {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('username', username);
+      formData.append('password', password);
+      const response = await api.post('/auth/login', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      // Store token
+      localStorage.setItem('token', response.data.access_token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      // Redirect to dashboard
+      navigate('/dashboard');
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+  return (
+    &lt;div className="min-h-screen flex items-center justify-center bg-gray-100"&gt;
+      &lt;div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8"&gt;
+        &lt;h2 className="text-2xl font-bold text-center mb-6"&gt;
+          Healthcare RCM Login
+        &lt;/h2&gt;
+        {error &amp;&amp; (
+          &lt;div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"&gt;
+            {error}
+          &lt;/div&gt;
+        )}
+        &lt;form onSubmit={handleSubmit}&gt;
+          &lt;div className="mb-4"&gt;
+            &lt;label className="block text-gray-700 text-sm font-bold mb-2"&gt;
+              Username
+            &lt;/label&gt;
+            &lt;input
+              type="text"
+              value={username}
+              onChange={(e) =&gt; setUsername(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            /&gt;
+          &lt;/div&gt;
+          &lt;div className="mb-6"&gt;
+            &lt;label className="block text-gray-700 text-sm font-bold mb-2"&gt;
+              Password
+            &lt;/label&gt;
+            &lt;input
+              type="password"
+              value={password}
+              onChange={(e) =&gt; setPassword(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            /&gt;
+          &lt;/div&gt;
+          &lt;button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+          &gt;
+            {loading ? 'Logging in...' : 'Login'}
+          &lt;/button&gt;
+        &lt;/form&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+export default Login;
+</pre>
+
+<hr>
+
+<h4>2. Role-Based Access Control (RBAC)</h4>
+
+<p><strong>User Roles:</strong></p>
+<li><strong>Admin</strong> - Full system access</li>
+<li><strong>Front Desk</strong> - Patient registration, appointments</li>
+<li><strong>Medical Coder</strong> - Coding and charge capture</li>
+<li><strong>Biller</strong> - Claim creation and submission</li>
+<li><strong>AR Manager</strong> - Payment posting, denials</li>
+<li><strong>Finance Manager</strong> - Reports and analytics</li>
+
+<p><strong>Implementation:</strong></p>
+<pre><code class="language-python">
+# app/core/permissions.py
+from fastapi import HTTPException, status
+from functools import wraps
+def require_role(*allowed_roles):
+    """Decorator to check user role"""
+    def decorator(func):
+        @wraps(func)
+        async def wrapper(*args, current_user=None, **kwargs):
+            if current_user.role not in allowed_roles:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Insufficient permissions"
+                )
+            return await func(*args, current_user=current_user, **kwargs)
+        return wrapper
+    return decorator
+# Usage in API:
+@router.post("/patients")
+@require_role("admin", "front_desk")
+async def create_patient(
+    patient_data: PatientCreate,
+    current_user: User = Depends(get_current_user)
+):
+    # Only admin and front_desk can create patients
+    ...
+</pre>
+
+<hr>
+
+<p><strong>Continue to Part 2 for remaining modules...</strong></p>
+
+<hr>
+
+<p><strong>Document Navigation:</strong></p>
+<li><strong>Part 1:</strong> Introduction & Phase 1 Foundation (This document)</li>
+<li><strong>Part 2:</strong> Phase 1 Core Modules (Patient, Insurance, Appointments)</li>
+<li><strong>Part 3:</strong> Phase 2 Clinical & Billing</li>
+<li><strong>Part 4:</strong> Phase 3 Payment & Denials</li>
+<li><strong>Part 5:</strong> Phase 4 Reports & Deployment</li>
+
+</body>
+</html>

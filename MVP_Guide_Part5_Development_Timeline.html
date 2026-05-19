@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare RCM Application - MVP Guide (Part 5: Development Plan & Timeline)</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Healthcare RCM Application - MVP Guide (Part 5: Development Plan & Timeline)</h1>
+
+<p><strong>Version:</strong> 1.0  </p>
+<p><strong>For:</strong> Development Team & Technical Lead</p>
+
+<hr>
+
+<h2>8. MVP Development Plan</h2>
+
+<h3>Development Approach: Agile Sprints</h3>
+
+<p><strong>Sprint Duration:</strong> 2 weeks  </p>
+<p><strong>Total MVP Timeline:</strong> 16 weeks (4 months)  </p>
+<p><strong>Team Size:</strong> 5-7 people</p>
+
+<hr>
+
+<h3>Phase 1: Foundation (Weeks 1-2)</h3>
+
+<p><strong>Goal:</strong> Set up infrastructure and core architecture</p>
+
+<h4>Week 1: Planning & Setup</h4>
+
+<p><strong>Tasks:</strong></p>
+<li><strong>Requirement Finalization</strong></li>
+<li>Review all MVP requirements</li>
+<li>Prioritize features</li>
+<li>Define acceptance criteria</li>
+<li>Create user stories</li>
+
+<li><strong>Development Environment Setup</strong></li>
+<li>Set up Git repository (GitHub/GitLab)</li>
+<li>Configure CI/CD pipeline</li>
+<li>Set up development, staging, production environments</li>
+<li>Install development tools</li>
+
+<li><strong>AWS Infrastructure Setup</strong></li>
+<li>Create AWS account</li>
+<li>Set up VPC and security groups</li>
+<li>Configure RDS PostgreSQL instance</li>
+<li>Set up S3 buckets</li>
+<li>Configure CloudFront CDN</li>
+<li>Set up load balancer</li>
+
+<li><strong>Database Design</strong></li>
+<li>Finalize database schema (35 tables)</li>
+<li>Create migration scripts</li>
+<li>Set up database versioning (Alembic)</li>
+<li>Create seed data for testing</li>
+
+<p><strong>Deliverables:</strong></p>
+<li>✅ AWS infrastructure running</li>
+<li>✅ PostgreSQL database created</li>
+<li>✅ Git repository with branching strategy</li>
+<li>✅ CI/CD pipeline configured</li>
+
+<hr>
+
+<h4>Week 2: API Planning & Core Setup</h4>
+
+<p><strong>Tasks:</strong></p>
+<li><strong>API Architecture</strong></li>
+<li>Design RESTful API structure</li>
+<li>Define API endpoints (50+ endpoints)</li>
+<li>Create API documentation (Swagger)</li>
+<li>Set up API versioning</li>
+
+<li><strong>Third-Party API Setup</strong></li>
+<li>Register for Waystar API (start approval process)</li>
+<li>Register for Stripe API</li>
+<li>Register for Twilio API (optional)</li>
+<li>Register for OpenAI API</li>
+<li>Test API credentials</li>
+
+<li><strong>Frontend Setup</strong></li>
+<li>Create React app with TypeScript</li>
+<li>Set up Tailwind CSS</li>
+<li>Configure routing (React Router)</li>
+<li>Set up state management (React Query)</li>
+<li>Create component library structure</li>
+
+<li><strong>Backend Setup</strong></li>
+<li>Create FastAPI project structure</li>
+<li>Set up authentication (JWT)</li>
+<li>Configure CORS</li>
+<li>Set up logging and monitoring</li>
+<li>Create base models and schemas</li>
+
+<p><strong>Deliverables:</strong></p>
+<li>✅ API documentation (Swagger)</li>
+<li>✅ React app skeleton</li>
+<li>✅ FastAPI backend skeleton</li>
+<li>✅ Third-party API credentials</li>
+
+<p><strong>Team Responsibilities:</strong></p>
+<li><strong>Backend Developer:</strong> FastAPI setup, database migrations</li>
+<li><strong>Frontend Developer:</strong> React setup, component library</li>
+<li><strong>DevOps Engineer:</strong> AWS infrastructure, CI/CD</li>
+<li><strong>Tech Lead:</strong> Architecture review, API design</li>
+
+<hr>
+
+<h3>Phase 2: Core Modules (Weeks 3-6)</h3>
+
+<p><strong>Goal:</strong> Build authentication, patient management, and insurance verification</p>
+
+<h4>Week 3-4: Authentication & Patient Registration</h4>
+
+<p><strong>Backend Tasks:</strong></p>
+<li><strong>User Authentication</strong></li>
+<p>   <code></code>`python</p>
+<p>   # Endpoints to build</p>
+<p>   POST /api/v1/auth/login</p>
+<p>   POST /api/v1/auth/logout</p>
+<p>   POST /api/v1/auth/refresh-token</p>
+<p>   GET /api/v1/auth/me</p>
+<p>   <code></code>`</p>
+<li>Implement JWT token generation</li>
+<li>Create password hashing (bcrypt)</li>
+<li>Build role-based access control (RBAC)</li>
+<li>Create user management endpoints</li>
+
+<li><strong>Patient Registration</strong></li>
+<p>   <code></code>`python</p>
+<p>   # Endpoints to build</p>
+<p>   POST /api/v1/patients</p>
+<p>   GET /api/v1/patients/{patient_id}</p>
+<p>   PUT /api/v1/patients/{patient_id}</p>
+<p>   GET /api/v1/patients/search?query=...</p>
+<p>   <code></code>`</p>
+<li>Create patient CRUD operations</li>
+<li>Implement patient search</li>
+<li>Add duplicate detection</li>
+<li>Create patient insurance endpoints</li>
+
+<p><strong>Frontend Tasks:</strong></p>
+<li><strong>Login Page</strong></li>
+<li>Create login form</li>
+<li>Implement authentication flow</li>
+<li>Store JWT token</li>
+<li>Handle token refresh</li>
+
+<li><strong>Patient Registration Form</strong></li>
+<li>Create multi-step form</li>
+<li>Add form validation</li>
+<li>Implement patient search</li>
+<li>Add insurance information section</li>
+
+<p><strong>Testing:</strong></p>
+<li>Unit tests for authentication</li>
+<li>Integration tests for patient CRUD</li>
+<li>UI tests for login and registration</li>
+
+<p><strong>Deliverables:</strong></p>
+<li>✅ Working login system</li>
+<li>✅ Patient registration module</li>
+<li>✅ Patient search functionality</li>
+
+<hr>
+
+<h4>Week 5-6: Insurance Verification & Appointments</h4>
+
+<p><strong>Backend Tasks:</strong></p>
+<li><strong>Insurance Verification (Waystar Integration)</strong></li>
+<p>   <code></code>`python</p>
+<p>   # Endpoints to build</p>
+<p>   POST /api/v1/eligibility/verify</p>
+<p>   GET /api/v1/eligibility/history/{patient_id}</p>
+<p>   <code></code>`</p>
+<li>Integrate Waystar eligibility API</li>
+<li>Parse EDI 270/271 responses</li>
+<li>Cache eligibility results (Redis)</li>
+<li>Store verification history</li>
+
+<li><strong>Appointment Scheduling</strong></li>
+<p>   <code></code>`python</p>
+<p>   # Endpoints to build</p>
+<p>   POST /api/v1/appointments</p>
+<p>   GET /api/v1/appointments?date=...&provider=...</p>
+<p>   PUT /api/v1/appointments/{appointment_id}</p>
+<p>   DELETE /api/v1/appointments/{appointment_id}</p>
+<p>   <code></code>`</p>
+<li>Create appointment CRUD</li>
+<li>Implement provider schedule management</li>
+<li>Add conflict detection</li>
+<li>Create calendar view API</li>
+
+<p><strong>Frontend Tasks:</strong></p>
+<li><strong>Insurance Verification UI</strong></li>
+<li>Create verification button</li>
+<li>Display verification results</li>
+<li>Show coverage details</li>
+<li>Add verification history</li>
+
+<li><strong>Appointment Scheduler</strong></li>
+<li>Create calendar view (day/week/month)</li>
+<li>Implement drag-and-drop</li>
+<li>Add appointment form</li>
+<li>Show provider availability</li>
+
+<p><strong>Testing:</strong></p>
+<li>Test Waystar API integration</li>
+<li>Test appointment scheduling logic</li>
+<li>UI tests for calendar</li>
+
+<p><strong>Deliverables:</strong></p>
+<li>✅ Real-time insurance verification</li>
+<li>✅ Appointment scheduling system</li>
+<li>✅ Calendar view</li>
+
+<hr>
+
+<h3>Phase 3: Billing Core (Weeks 7-10)</h3>
+
+<p><strong>Goal:</strong> Build medical coding, claim creation, and submission</p>
+
+<h4>Week 7-8: Medical Coding</h4>
+
+<p><strong>Backend Tasks:</strong></p>
+<li><strong>Code Database Setup</strong></li>
+<li>Import ICD-10 codes (100,000+ codes)</li>
+<li>Import CPT codes (10,000+ codes)</li>
+<li>Create code search endpoints</li>
+<li>Add code validation</li>
+
+<li><strong>Encounter Management</strong></li>
+<p>   <code></code>`python</p>
+<p>   # Endpoints to build</p>
+<p>   POST /api/v1/encounters</p>
+<p>   GET /api/v1/encounters/{encounter_id}</p>
+<p>   PUT /api/v1/encounters/{encounter_id}</p>
+<p>   POST /api/v1/encounters/{encounter_id}/diagnoses</p>
+<p>   POST /api/v1/encounters/{encounter_id}/procedures</p>
+<p>   <code></code>`</p>
+<li>Create encounter CRUD</li>
+<li>Link diagnoses to encounters</li>
+<li>Link procedures to encounters</li>
+<li>Calculate charges</li>
+
+<li><strong>AI Coding Assistant (Optional)</strong></li>
+<p>   <code></code>`python</p>
+<p>   # Endpoint to build</p>
+<p>   POST /api/v1/ai/suggest-codes</p>
+<p>   <code></code>`</p>
+<li>Integrate OpenAI API</li>
+<li>Create prompt engineering for coding</li>
+<li>Parse AI responses</li>
+<li>Store suggestions</li>
+
+<p><strong>Frontend Tasks:</strong></p>
+<li><strong>Encounter Form</strong></li>
+<li>Create encounter details form</li>
+<li>Add diagnosis code search</li>
+<li>Add procedure code search</li>
+<li>Show charge calculation</li>
+
+<li><strong>AI Coding Assistant UI</strong></li>
+<li>Add "Suggest Codes" button</li>
+<li>Display AI suggestions</li>
+<li>Allow one-click acceptance</li>
+<li>Show confidence scores</li>
+
+<p><strong>Testing:</strong></p>
+<li>Test code search performance</li>
+<li>Test AI coding accuracy</li>
+<li>UI tests for encounter form</li>
+
+<p><strong>Deliverables:</strong></p>
+<li>✅ Medical coding module</li>
+<li>✅ AI-assisted coding (optional)</li>
+<li>✅ Encounter management</li>
+
+<hr>
+
+<h4>Week 9-10: Claim Creation & Submission</h4>
+
+<p><strong>Backend Tasks:</strong></p>
+<li><strong>Claim Generation</strong></li>
+<p>   <code></code>`python</p>
+<p>   # Endpoints to build</p>
+<p>   POST /api/v1/claims/generate</p>
+<p>   GET /api/v1/claims/{claim_id}</p>
+<p>   PUT /api/v1/claims/{claim_id}</p>
+<p>   GET /api/v1/claims?status=...</p>
+<p>   <code></code>`</p>
+<li>Create claim from encounter</li>
+<li>Generate EDI 837 format</li>
+<li>Implement claim validation</li>
+<li>Add claim scrubbing (Waystar)</li>
+
+<li><strong>Claim Submission (Waystar Integration)</strong></li>
+<p>   <code></code>`python</p>
+<p>   # Endpoints to build</p>
+<p>   POST /api/v1/claims/submit</p>
+<p>   POST /api/v1/claims/batch-submit</p>
+<p>   GET /api/v1/claims/{claim_id}/status</p>
+<p>   <code></code>`</p>
+<li>Integrate Waystar claims API</li>
+<li>Handle batch submissions</li>
+<li>Process acknowledgments (EDI 999)</li>
+<li>Update claim status</li>
+
+<li><strong>Claim Status Tracking</strong></li>
+<li>Poll Waystar for claim status</li>
+<li>Parse EDI 277 responses</li>
+<li>Update claim status automatically</li>
+<li>Send notifications</li>
+
+<p><strong>Frontend Tasks:</strong></p>
+<li><strong>Claim Creation UI</strong></li>
+<li>Create claim review screen</li>
+<li>Show CMS-1500 preview</li>
+<li>Add claim validation warnings</li>
+<li>Allow manual edits</li>
+
+<li><strong>Claim Submission UI</strong></li>
+<li>Create claim list with filters</li>
+<li>Add batch selection</li>
+<li>Show submission progress</li>
+<li>Display submission results</li>
+
+<li><strong>Claim Status Dashboard</strong></li>
+<li>Show claim status overview</li>
+<li>Add status filters</li>
+<li>Display tracking numbers</li>
+<li>Show error messages</li>
+
+<p><strong>Testing:</strong></p>
+<li>Test EDI 837 generation</li>
+<li>Test Waystar submission</li>
+<li>Test claim status updates</li>
+<li>UI tests for claim workflow</li>
+
+<p><strong>Deliverables:</strong></p>
+<li>✅ Claim creation module</li>
+<li>✅ Electronic claim submission</li>
+<li>✅ Claim status tracking</li>
+
+<hr>
+
+<h3>Phase 4: Payments & Reports (Weeks 11-14)</h3>
+
+<p><strong>Goal:</strong> Build payment posting, denial management, and reporting</p>
+
+<h4>Week 11-12: Payment Posting & Denials</h4>
+
+<p><strong>Backend Tasks:</strong></p>
+<li><strong>ERA Processing</strong></li>
+<p>   <code></code>`python</p>
+<p>   # Endpoints to build</p>
+<p>   POST /api/v1/payments/upload-era</p>
+<p>   GET /api/v1/payments/era-files</p>
+<p>   POST /api/v1/payments/process-era</p>
+<p>   <code></code>`</p>
+<li>Download ERA files from Waystar</li>
+<li>Parse EDI 835 format</li>
+<li>Auto-match payments to claims</li>
+<li>Handle adjustments</li>
+
+<li><strong>Payment Posting</strong></li>
+<p>   <code></code>`python</p>
+<p>   # Endpoints to build</p>
+<p>   POST /api/v1/payments/post</p>
+<p>   GET /api/v1/payments?claim_id=...</p>
+<p>   PUT /api/v1/payments/{payment_id}</p>
+<p>   <code></code>`</p>
+<li>Create payment posting endpoints</li>
+<li>Update claim balances</li>
+<li>Calculate patient responsibility</li>
+<li>Update A/R</li>
+
+<li><strong>Patient Payments (Stripe Integration)</strong></li>
+<p>   <code></code>`python</p>
+<p>   # Endpoints to build</p>
+<p>   POST /api/v1/payments/patient/create-intent</p>
+<p>   POST /api/v1/payments/patient/confirm</p>
+<p>   GET /api/v1/payments/patient/history</p>
+<p>   <code></code>`</p>
+<li>Integrate Stripe API</li>
+<li>Handle copay collection</li>
+<li>Process credit card payments</li>
+<li>Generate receipts</li>
+
+<li><strong>Denial Management</strong></li>
+<p>   <code></code>`python</p>
+<p>   # Endpoints to build</p>
+<p>   GET /api/v1/denials</p>
+<p>   GET /api/v1/denials/stats</p>
+<p>   PUT /api/v1/denials/{claim_id}/resolve</p>
+<p>   <code></code>`</p>
+<li>Parse denial reason codes</li>
+<li>Categorize denials</li>
+<li>Calculate denial metrics</li>
+<li>Create denial workflow</li>
+
+<p><strong>Frontend Tasks:</strong></p>
+<li><strong>Payment Posting UI</strong></li>
+<li>Create ERA upload interface</li>
+<li>Show payment matching</li>
+<li>Allow manual posting</li>
+<li>Display payment details</li>
+
+<li><strong>Denial Dashboard</strong></li>
+<li>Show denied claims list</li>
+<li>Display denial reasons</li>
+<li>Add filters and sorting</li>
+<li>Show denial metrics</li>
+
+<li><strong>Patient Payment UI</strong></li>
+<li>Integrate Stripe Elements</li>
+<li>Create payment form</li>
+<li>Show payment confirmation</li>
+<li>Display receipt</li>
+
+<p><strong>Testing:</strong></p>
+<li>Test ERA parsing</li>
+<li>Test payment matching</li>
+<li>Test Stripe integration</li>
+<li>UI tests for payment posting</li>
+
+<p><strong>Deliverables:</strong></p>
+<li>✅ Payment posting module</li>
+<li>✅ ERA processing</li>
+<li>✅ Denial dashboard</li>
+<li>✅ Patient payment collection</li>
+
+<hr>
+
+<h4>Week 13-14: Reports & Analytics</h4>
+
+<p><strong>Backend Tasks:</strong></p>
+<li><strong>Reporting Engine</strong></li>
+<p>   <code></code>`python</p>
+<p>   # Endpoints to build</p>
+<p>   GET /api/v1/reports/daily-charges?date=...</p>
+<p>   GET /api/v1/reports/claims-status?start<em>date=...&end</em>date=...</p>
+<p>   GET /api/v1/reports/payments-summary?start<em>date=...&end</em>date=...</p>
+<p>   GET /api/v1/reports/aging?as<em>of</em>date=...</p>
+<p>   GET /api/v1/reports/denials?start<em>date=...&end</em>date=...</p>
+<p>   GET /api/v1/reports/provider-productivity?provider_id=...</p>
+<p>   <code></code>`</p>
+<li>Create report queries</li>
+<li>Optimize query performance</li>
+<li>Add caching for reports</li>
+<li>Generate PDF exports</li>
+
+<li><strong>Dashboard Metrics</strong></li>
+<p>   <code></code>`python</p>
+<p>   # Endpoints to build</p>
+<p>   GET /api/v1/dashboard/metrics</p>
+<p>   GET /api/v1/dashboard/charts</p>
+<p>   <code></code>`</p>
+<li>Calculate key metrics</li>
+<li>Create chart data</li>
+<li>Add real-time updates</li>
+
+<p><strong>Frontend Tasks:</strong></p>
+<li><strong>Reports Module</strong></li>
+<li>Create report selection page</li>
+<li>Add date range pickers</li>
+<li>Display report results</li>
+<li>Add export functionality</li>
+
+<li><strong>Dashboard</strong></li>
+<li>Create dashboard layout</li>
+<li>Add metric cards</li>
+<li>Create charts (Chart.js)</li>
+<li>Add filters</li>
+
+<p><strong>Testing:</strong></p>
+<li>Test report accuracy</li>
+<li>Test report performance</li>
+<li>UI tests for reports</li>
+
+<p><strong>Deliverables:</strong></p>
+<li>✅ 6 core reports</li>
+<li>✅ Dashboard with metrics</li>
+<li>✅ PDF export functionality</li>
+
+<hr>
+
+<h3>Phase 5: Testing & Deployment (Weeks 15-16)</h3>
+
+<p><strong>Goal:</strong> Comprehensive testing and production deployment</p>
+
+<h4>Week 15: Testing & Bug Fixes</h4>
+
+<p><strong>Tasks:</strong></p>
+<li><strong>Integration Testing</strong></li>
+<li>Test complete workflow (patient → payment)</li>
+<li>Test all API integrations</li>
+<li>Test error handling</li>
+<li>Test edge cases</li>
+
+<li><strong>Performance Testing</strong></li>
+<li>Load testing (100 concurrent users)</li>
+<li>Database query optimization</li>
+<li>API response time optimization</li>
+<li>Frontend performance optimization</li>
+
+<li><strong>Security Testing</strong></li>
+<li>Penetration testing</li>
+<li>SQL injection testing</li>
+<li>XSS testing</li>
+<li>Authentication testing</li>
+
+<li><strong>User Acceptance Testing (UAT)</strong></li>
+<li>Create test scenarios</li>
+<li>Train test users</li>
+<li>Collect feedback</li>
+<li>Fix critical bugs</li>
+
+<p><strong>Testing Checklist:</strong></p>
+<li>✅ All features working end-to-end</li>
+<li>✅ No critical bugs</li>
+<li>✅ API response time < 500ms</li>
+<li>✅ Page load time < 2 seconds</li>
+<li>✅ Security vulnerabilities fixed</li>
+<li>✅ HIPAA compliance verified</li>
+
+<hr>
+
+<h4>Week 16: Deployment & Launch</h4>
+
+<p><strong>Tasks:</strong></p>
+<li><strong>Production Deployment</strong></li>
+<li>Deploy backend to AWS EC2</li>
+<li>Deploy frontend to CloudFront</li>
+<li>Configure production database</li>
+<li>Set up SSL certificates</li>
+<li>Configure monitoring (CloudWatch)</li>
+
+<li><strong>Data Migration</strong></li>
+<li>Import ICD-10/CPT codes</li>
+<li>Import provider data</li>
+<li>Import payer information</li>
+<li>Create admin users</li>
+
+<li><strong>Documentation</strong></li>
+<li>Create user manual</li>
+<li>Create admin guide</li>
+<li>Create API documentation</li>
+<li>Create troubleshooting guide</li>
+
+<li><strong>Training</strong></li>
+<li>Train front desk staff</li>
+<li>Train medical billers</li>
+<li>Train practice manager</li>
+<li>Create training videos</li>
+
+<li><strong>Go-Live</strong></li>
+<li>Pilot with 1-2 providers</li>
+<li>Monitor system closely</li>
+<li>Fix any issues immediately</li>
+<li>Gradual rollout to all users</li>
+
+<p><strong>Launch Checklist:</strong></p>
+<li>✅ Production environment stable</li>
+<li>✅ All users trained</li>
+<li>✅ Documentation complete</li>
+<li>✅ Support team ready</li>
+<li>✅ Monitoring in place</li>
+<li>✅ Backup strategy tested</li>
+
+<hr>
+
+<h2>9. Team Responsibilities</h2>
+
+<h3>Team Structure (5-7 people)</h3>
+
+<h4>1. Frontend Developer (1-2 people)</h4>
+
+<p><strong>Primary Responsibilities:</strong></p>
+<li>Build React components</li>
+<li>Implement UI/UX designs</li>
+<li>Integrate with backend APIs</li>
+<li>Handle state management</li>
+<li>Ensure responsive design</li>
+<li>Optimize frontend performance</li>
+
+<p><strong>Skills Required:</strong></p>
+<li>React.js (Hooks, Context API)</li>
+<li>TypeScript</li>
+<li>Tailwind CSS</li>
+<li>React Query</li>
+<li>Git</li>
+
+<p><strong>Weekly Tasks:</strong></p>
+<li>Week 1-2: Setup React app, component library</li>
+<li>Week 3-4: Login, patient registration UI</li>
+<li>Week 5-6: Insurance verification, appointments UI</li>
+<li>Week 7-8: Medical coding UI</li>
+<li>Week 9-10: Claim creation, submission UI</li>
+<li>Week 11-12: Payment posting, denial dashboard</li>
+<li>Week 13-14: Reports, dashboard</li>
+<li>Week 15-16: Testing, bug fixes</li>
+
+<p><strong>Success Metrics:</strong></p>
+<li>All UI screens completed on time</li>
+<li>Page load time < 2 seconds</li>
+<li>Mobile responsive</li>
+<li>Zero critical UI bugs</li>
+
+<hr>
+
+<h4>2. Python Backend Developer (2 people)</h4>
+
+<p><strong>Primary Responsibilities:</strong></p>
+<li>Build FastAPI endpoints</li>
+<li>Design database schema</li>
+<li>Implement business logic</li>
+<li>Integrate third-party APIs</li>
+<li>Handle data validation</li>
+<li>Optimize database queries</li>
+
+<p><strong>Skills Required:</strong></p>
+<li>Python (FastAPI, SQLAlchemy)</li>
+<li>PostgreSQL</li>
+<li>RESTful API design</li>
+<li>EDI standards (270/271, 837, 835)</li>
+<li>Git</li>
+
+<p><strong>Weekly Tasks:</strong></p>
+<li>Week 1-2: Setup FastAPI, database schema</li>
+<li>Week 3-4: Authentication, patient APIs</li>
+<li>Week 5-6: Insurance verification, appointment APIs</li>
+<li>Week 7-8: Medical coding, encounter APIs</li>
+<li>Week 9-10: Claim generation, submission APIs</li>
+<li>Week 11-12: Payment posting, ERA processing</li>
+<li>Week 13-14: Reports, analytics APIs</li>
+<li>Week 15-16: Testing, optimization</li>
+
+<p><strong>Success Metrics:</strong></p>
+<li>All API endpoints completed on time</li>
+<li>API response time < 500ms</li>
+<li>95%+ test coverage</li>
+<li>Zero critical backend bugs</li>
+
+<hr>
+
+<h4>3. AI Engineer (1 person, part-time or full-time)</h4>
+
+<p><strong>Primary Responsibilities:</strong></p>
+<li>Integrate OpenAI API</li>
+<li>Build AI coding assistant</li>
+<li>Implement claim error prediction</li>
+<li>Create chatbot</li>
+<li>Train and fine-tune models</li>
+<li>Monitor AI accuracy</li>
+
+<p><strong>Skills Required:</strong></p>
+<li>Python</li>
+<li>OpenAI API / AWS Bedrock</li>
+<li>Prompt engineering</li>
+<li>Machine learning basics</li>
+<li>Healthcare domain knowledge</li>
+
+<p><strong>Weekly Tasks:</strong></p>
+<li>Week 1-4: Research and planning</li>
+<li>Week 5-8: Build AI coding assistant</li>
+<li>Week 9-12: Build claim error prediction</li>
+<li>Week 13-14: Build chatbot</li>
+<li>Week 15-16: Testing, accuracy improvements</li>
+
+<p><strong>Success Metrics:</strong></p>
+<li>AI coding accuracy > 85%</li>
+<li>Claim error prediction accuracy > 80%</li>
+<li>Chatbot response time < 2 seconds</li>
+<li>User satisfaction with AI features > 80%</li>
+
+<hr>
+
+<h4>4. QA Engineer (1 person)</h4>
+
+<p><strong>Primary Responsibilities:</strong></p>
+<li>Write test cases</li>
+<li>Perform manual testing</li>
+<li>Write automated tests</li>
+<li>Report bugs</li>
+<li>Verify bug fixes</li>
+<li>Perform regression testing</li>
+
+<p><strong>Skills Required:</strong></p>
+<li>Test case design</li>
+<li>Manual testing</li>
+<li>Automated testing (Playwright, Pytest)</li>
+<li>Bug tracking (Jira)</li>
+<li>Healthcare domain knowledge</li>
+
+<p><strong>Weekly Tasks:</strong></p>
+<li>Week 1-2: Create test plan</li>
+<li>Week 3-14: Test each module as developed</li>
+<li>Week 15: Integration and UAT</li>
+<li>Week 16: Final testing before launch</li>
+
+<p><strong>Testing Types:</strong></p>
+<li>Unit tests (backend)</li>
+<li>Integration tests (API)</li>
+<li>UI tests (frontend)</li>
+<li>End-to-end tests</li>
+<li>Performance tests</li>
+<li>Security tests</li>
+
+<p><strong>Success Metrics:</strong></p>
+<li>95%+ test coverage</li>
+<li>All critical bugs found before production</li>
+<li>Zero production bugs in first week</li>
+<li>Test automation for regression</li>
+
+<hr>
+
+<h4>5. DevOps Engineer (1 person, part-time)</h4>
+
+<p><strong>Primary Responsibilities:</strong></p>
+<li>Set up AWS infrastructure</li>
+<li>Configure CI/CD pipeline</li>
+<li>Manage deployments</li>
+<li>Monitor system health</li>
+<li>Handle backups</li>
+<li>Ensure security</li>
+
+<p><strong>Skills Required:</strong></p>
+<li>AWS (EC2, RDS, S3, CloudFront)</li>
+<li>Docker</li>
+<li>CI/CD (GitHub Actions, Jenkins)</li>
+<li>Linux</li>
+<li>Monitoring (CloudWatch, Datadog)</li>
+
+<p><strong>Weekly Tasks:</strong></p>
+<li>Week 1-2: Setup AWS infrastructure, CI/CD</li>
+<li>Week 3-14: Support development team</li>
+<li>Week 15: Performance testing, optimization</li>
+<li>Week 16: Production deployment</li>
+
+<p><strong>Success Metrics:</strong></p>
+<li>99.9% uptime</li>
+<li>Automated deployments</li>
+<li>Backup strategy in place</li>
+<li>Monitoring and alerts configured</li>
+
+<hr>
+
+<h4>6. Technical Lead (1 person)</h4>
+
+<p><strong>Primary Responsibilities:</strong></p>
+<li>Architecture design</li>
+<li>Code reviews</li>
+<li>Technical decision-making</li>
+<li>Unblock team members</li>
+<li>Coordinate with stakeholders</li>
+<li>Ensure quality standards</li>
+
+<p><strong>Skills Required:</strong></p>
+<li>Full-stack development</li>
+<li>System architecture</li>
+<li>Healthcare domain knowledge</li>
+<li>Leadership</li>
+<li>Communication</li>
+
+<p><strong>Weekly Tasks:</strong></p>
+<li>Daily standups</li>
+<li>Code reviews</li>
+<li>Architecture decisions</li>
+<li>Sprint planning</li>
+<li>Stakeholder updates</li>
+
+<p><strong>Success Metrics:</strong></p>
+<li>Project delivered on time</li>
+<li>High code quality</li>
+<li>Team productivity</li>
+<li>Stakeholder satisfaction</li>
+
+<hr>
+
+<h2>10. MVP Timeline Summary</h2>
+
+<h3>Gantt Chart View</h3>
+
+<pre><code>
+Phase 1: Foundation (Weeks 1-2)
+├── Week 1: Planning &amp; AWS Setup
+└── Week 2: API Planning &amp; Core Setup
+Phase 2: Core Modules (Weeks 3-6)
+├── Week 3-4: Authentication &amp; Patient Registration
+└── Week 5-6: Insurance Verification &amp; Appointments
+Phase 3: Billing Core (Weeks 7-10)
+├── Week 7-8: Medical Coding
+└── Week 9-10: Claim Creation &amp; Submission
+Phase 4: Payments &amp; Reports (Weeks 11-14)
+├── Week 11-12: Payment Posting &amp; Denials
+└── Week 13-14: Reports &amp; Analytics
+Phase 5: Testing &amp; Deployment (Weeks 15-16)
+├── Week 15: Testing &amp; Bug Fixes
+└── Week 16: Deployment &amp; Launch
+</pre>
+
+<h3>Timeline by Module</h3>
+
+<tr>
+<td>Module</td>
+<td>Start Week</td>
+<td>End Week</td>
+<td>Duration</td>
+</tr>
+<tr>
+<td>Infrastructure Setup</td>
+<td>1</td>
+<td>2</td>
+<td>2 weeks</td>
+</tr>
+<tr>
+<td>Authentication</td>
+<td>3</td>
+<td>4</td>
+<td>2 weeks</td>
+</tr>
+<tr>
+<td>Patient Registration</td>
+<td>3</td>
+<td>4</td>
+<td>2 weeks</td>
+</tr>
+<tr>
+<td>Insurance Verification</td>
+<td>5</td>
+<td>6</td>
+<td>2 weeks</td>
+</tr>
+<tr>
+<td>Appointment Scheduling</td>
+<td>5</td>
+<td>6</td>
+<td>2 weeks</td>
+</tr>
+<tr>
+<td>Medical Coding</td>
+<td>7</td>
+<td>8</td>
+<td>2 weeks</td>
+</tr>
+<tr>
+<td>Claim Creation</td>
+<td>9</td>
+<td>10</td>
+<td>2 weeks</td>
+</tr>
+<tr>
+<td>Claim Submission</td>
+<td>9</td>
+<td>10</td>
+<td>2 weeks</td>
+</tr>
+<tr>
+<td>Payment Posting</td>
+<td>11</td>
+<td>12</td>
+<td>2 weeks</td>
+</tr>
+<tr>
+<td>Denial Dashboard</td>
+<td>11</td>
+<td>12</td>
+<td>2 weeks</td>
+</tr>
+<tr>
+<td>Reports</td>
+<td>13</td>
+<td>14</td>
+<td>2 weeks</td>
+</tr>
+<tr>
+<td>Testing</td>
+<td>15</td>
+<td>15</td>
+<td>1 week</td>
+</tr>
+<tr>
+<td>Deployment</td>
+<td>16</td>
+<td>16</td>
+<td>1 week</td>
+</tr>
+
+<h3>Critical Path</h3>
+
+<p><strong>Must be completed in sequence:</strong></p>
+<li>Infrastructure Setup (Week 1-2)</li>
+<li>Authentication (Week 3-4)</li>
+<li>Patient Registration (Week 3-4)</li>
+<li>Insurance Verification (Week 5-6)</li>
+<li>Medical Coding (Week 7-8)</li>
+<li>Claim Creation (Week 9-10)</li>
+<li>Claim Submission (Week 9-10)</li>
+<li>Payment Posting (Week 11-12)</li>
+<li>Testing (Week 15)</li>
+<li>Deployment (Week 16)</li>
+
+<p><strong>Can be done in parallel:</strong></p>
+<li>Frontend and Backend development</li>
+<li>Reports while testing other modules</li>
+<li>AI features (can be added later if needed)</li>
+
+<h3>Risk Mitigation</h3>
+
+<p><strong>Potential Delays:</strong></p>
+
+<li><strong>Waystar API Approval (2-4 weeks)</strong></li>
+<li><strong>Mitigation:</strong> Start approval process in Week 1</li>
+<li><strong>Backup:</strong> Use Availity or mock data temporarily</li>
+
+<li><strong>Complex EDI Parsing</strong></li>
+<li><strong>Mitigation:</strong> Use Waystar's parsing libraries</li>
+<li><strong>Backup:</strong> Allocate extra time in Week 9-10</li>
+
+<li><strong>Performance Issues</strong></li>
+<li><strong>Mitigation:</strong> Load testing in Week 15</li>
+<li><strong>Backup:</strong> Database optimization, caching</li>
+
+<li><strong>Third-Party API Downtime</strong></li>
+<li><strong>Mitigation:</strong> Implement retry logic, error handling</li>
+<li><strong>Backup:</strong> Queue failed requests for later</li>
+
+<h3>Buffer Time</h3>
+
+<p><strong>Built-in buffers:</strong></p>
+<li>2 days per sprint for unexpected issues</li>
+<li>Week 15 entirely for testing and fixes</li>
+<li>Week 16 for deployment (can extend if needed)</li>
+
+<p><strong>Total Timeline:</strong></p>
+<li><strong>Optimistic:</strong> 14 weeks</li>
+<li><strong>Realistic:</strong> 16 weeks</li>
+<li><strong>Pessimistic:</strong> 20 weeks (with major delays)</li>
+
+<hr>
+
+<h2>11. Future Scaling After MVP</h2>
+
+<h3>What to Add After MVP Launch</h3>
+
+<p>Once MVP is stable and generating revenue, consider adding these modules:</p>
+
+<hr>
+
+<h3>1. Advanced AR Management 💰</h3>
+
+<p><strong>Features:</strong></p>
+<li>Automated follow-up workflows</li>
+<li>Aging bucket analysis</li>
+<li>Collection agency integration</li>
+<li>Payment plans for patients</li>
+<li>Bad debt write-offs</li>
+
+<p><strong>Timeline:</strong> 4-6 weeks  </p>
+<p><strong>Priority:</strong> High (improves cash flow)</p>
+
+<hr>
+
+<h3>2. Advanced Analytics & BI 📊</h3>
+
+<p><strong>Features:</strong></p>
+<li>Custom report builder</li>
+<li>Data visualization dashboards</li>
+<li>Predictive analytics</li>
+<li>Benchmarking against industry standards</li>
+<li>Executive dashboards</li>
+
+<p><strong>Timeline:</strong> 6-8 weeks  </p>
+<p><strong>Priority:</strong> Medium</p>
+
+<hr>
+
+<h3>3. Compliance & Audit 🔒</h3>
+
+<p><strong>Features:</strong></p>
+<li>HIPAA audit logs</li>
+<li>Compliance reporting</li>
+<li>Access control auditing</li>
+<li>Data breach detection</li>
+<li>Regulatory compliance checks</li>
+
+<p><strong>Timeline:</strong> 4-6 weeks  </p>
+<p><strong>Priority:</strong> High (for enterprise customers)</p>
+
+<hr>
+
+<h3>4. Denial Automation 🤖</h3>
+
+<p><strong>Features:</strong></p>
+<li>Automated denial appeals</li>
+<li>Denial pattern analysis</li>
+<li>Root cause analysis</li>
+<li>Automated corrective actions</li>
+<li>Denial prevention AI</li>
+
+<p><strong>Timeline:</strong> 6-8 weeks  </p>
+<p><strong>Priority:</strong> High (reduces revenue loss)</p>
+
+<hr>
+
+<h3>5. Revenue Integrity 💎</h3>
+
+<p><strong>Features:</strong></p>
+<li>Charge capture validation</li>
+<li>Undercoding detection</li>
+<li>Compliance checks</li>
+<li>Revenue leakage analysis</li>
+<li>Charge master management</li>
+
+<p><strong>Timeline:</strong> 8-10 weeks  </p>
+<p><strong>Priority:</strong> Medium</p>
+
+<hr>
+
+<h3>6. Advanced AI Features 🧠</h3>
+
+<p><strong>Features:</strong></p>
+<li>Automated coding (no human review)</li>
+<li>Natural language processing for notes</li>
+<li>Predictive denial prevention</li>
+<li>Intelligent claim routing</li>
+<li>Automated prior authorization</li>
+
+<p><strong>Timeline:</strong> 8-12 weeks  </p>
+<p><strong>Priority:</strong> Medium (differentiator)</p>
+
+<hr>
+
+<h3>7. Patient Portal 👥</h3>
+
+<p><strong>Features:</strong></p>
+<li>Online appointment booking</li>
+<li>View bills and statements</li>
+<li>Make payments online</li>
+<li>Upload insurance cards</li>
+<li>Secure messaging with staff</li>
+
+<p><strong>Timeline:</strong> 6-8 weeks  </p>
+<p><strong>Priority:</strong> Medium (improves patient experience)</p>
+
+<hr>
+
+<h3>8. Multi-Location Support 🏢</h3>
+
+<p><strong>Features:</strong></p>
+<li>Centralized billing for multiple locations</li>
+<li>Location-specific reporting</li>
+<li>Provider scheduling across locations</li>
+<li>Consolidated financial reporting</li>
+
+<p><strong>Timeline:</strong> 4-6 weeks  </p>
+<p><strong>Priority:</strong> High (for scaling)</p>
+
+<hr>
+
+<h3>9. EHR Integration 🏥</h3>
+
+<p><strong>Features:</strong></p>
+<li>Deep integration with Epic, Cerner, Allscripts</li>
+<li>Automated data sync</li>
+<li>Real-time encounter updates</li>
+<li>Bidirectional data flow</li>
+
+<p><strong>Timeline:</strong> 12-16 weeks  </p>
+<p><strong>Priority:</strong> High (for enterprise customers)</p>
+
+<hr>
+
+<h3>10. Mobile App 📱</h3>
+
+<p><strong>Features:</strong></p>
+<li>iOS and Android apps</li>
+<li>Mobile claim submission</li>
+<li>Mobile payment posting</li>
+<li>Push notifications</li>
+<li>Offline mode</li>
+
+<p><strong>Timeline:</strong> 12-16 weeks  </p>
+<p><strong>Priority:</strong> Low (nice-to-have)</p>
+
+<hr>
+
+<h3>Scaling Roadmap</h3>
+
+<p><strong>Year 1 (Post-MVP):</strong></p>
+<li>Q1: AR Management, Compliance</li>
+<li>Q2: Denial Automation, Multi-Location</li>
+<li>Q3: Advanced Analytics, Patient Portal</li>
+<li>Q4: EHR Integration</li>
+
+<p><strong>Year 2:</strong></p>
+<li>Q1: Revenue Integrity, Advanced AI</li>
+<li>Q2: Mobile App</li>
+<li>Q3: International expansion</li>
+<li>Q4: Enterprise features</li>
+
+<hr>
+
+<h2>Cost Estimates</h2>
+
+<h3>MVP Development Cost</h3>
+
+<p><strong>Team Cost (16 weeks):</strong></p>
+<li>Frontend Developer: $8,000/week × 16 = $128,000</li>
+<li>Backend Developer (2): $8,000/week × 16 × 2 = $256,000</li>
+<li>AI Engineer: $8,000/week × 16 = $128,000</li>
+<li>QA Engineer: $6,000/week × 16 = $96,000</li>
+<li>DevOps Engineer (part-time): $4,000/week × 16 = $64,000</li>
+<li>Technical Lead: $10,000/week × 16 = $160,000</li>
+
+<p><strong>Total Team Cost:</strong> $832,000</p>
+
+<p><strong>Infrastructure & APIs (16 weeks):</strong></p>
+<li>AWS: $100/month × 4 = $400</li>
+<li>Waystar: $500/month × 4 = $2,000</li>
+<li>OpenAI: $200/month × 4 = $800</li>
+<li>Stripe: Transaction-based (minimal)</li>
+<li>Other tools: $500</li>
+
+<p><strong>Total Infrastructure:</strong> $3,700</p>
+
+<p><strong>Grand Total MVP Cost:</strong> ~$835,700</p>
+
+<p><strong>Cost-Saving Options:</strong></p>
+<li>Hire offshore developers (50% cost reduction)</li>
+<li>Use freelancers for specific modules</li>
+<li>Delay AI features (save $128,000)</li>
+<li>Start with smaller team (4 people)</li>
+
+<p><strong>Lean MVP Cost:</strong> ~$400,000 - $500,000</p>
+
+<hr>
+
+<h2>Success Metrics</h2>
+
+<h3>MVP Success Criteria</h3>
+
+<p><strong>Technical Metrics:</strong></p>
+<li>✅ 99.5% uptime</li>
+<li>✅ API response time < 500ms</li>
+<li>✅ Page load time < 2 seconds</li>
+<li>✅ Zero critical bugs in production</li>
+
+<p><strong>Business Metrics:</strong></p>
+<li>✅ 3-5 pilot clinics using the system</li>
+<li>✅ 50+ claims submitted per day</li>
+<li>✅ 95%+ clean claim rate</li>
+<li>✅ Days in A/R < 35 days</li>
+
+<p><strong>User Metrics:</strong></p>
+<li>✅ 80%+ user satisfaction</li>
+<li>✅ < 2 hours training time per user</li>
+<li>✅ 90%+ feature adoption rate</li>
+
+<p><strong>Financial Metrics:</strong></p>
+<li>✅ $50K+ monthly recurring revenue (MRR)</li>
+<li>✅ Positive unit economics</li>
+<li>✅ Payback period < 18 months</li>
+
+<hr>
+
+<h2>Conclusion</h2>
+
+<p>This MVP guide provides a complete roadmap for building a Healthcare RCM application in 16 weeks with a team of 5-7 people.</p>
+
+<p><strong>Key Takeaways:</strong></p>
+
+<li><strong>Start Small:</strong> Focus on core workflow (patient → claim → payment)</li>
+<li><strong>Use Third-Party APIs:</strong> Leverage Waystar, Stripe, OpenAI for complex tasks</li>
+<li><strong>Modern Tech Stack:</strong> React, FastAPI, PostgreSQL, AWS</li>
+<li><strong>Agile Approach:</strong> 2-week sprints, continuous testing</li>
+<li><strong>AI Integration:</strong> Use AI to differentiate and improve efficiency</li>
+<li><strong>Scale Later:</strong> Add advanced features after MVP proves successful</li>
+
+<p><strong>Next Steps:</strong></p>
+
+<li>✅ Review this guide with your team</li>
+<li>✅ Finalize team composition</li>
+<li>✅ Start Waystar API approval process</li>
+<li>✅ Set up AWS infrastructure</li>
+<li>✅ Begin Phase 1 development</li>
+
+<p><strong>Questions to Discuss:</strong></p>
+
+<li>Do we have budget for full team or need to scale down?</li>
+<li>Should we delay AI features to reduce complexity?</li>
+<li>Which clearinghouse should we prioritize (Waystar vs Availity)?</li>
+<li>Do we need EHR integration in MVP or can it wait?</li>
+<li>What is our go-to-market strategy for pilot clinics?</li>
+
+<hr>
+
+<p><strong>Good luck with your MVP! 🚀</strong></p>
+
+<hr>
+
+<p><strong>Document Navigation:</strong></p>
+<li><strong>Part 1:</strong> Introduction & Goals</li>
+<li><strong>Part 2:</strong> Modules & Features</li>
+<li><strong>Part 3:</strong> Workflow & Tech Stack</li>
+<li><strong>Part 4:</strong> APIs & AI Integration</li>
+<li><strong>Part 5:</strong> Development Plan & Timeline (This document)</li>
+
+<hr>
+
+<p><strong>Document Prepared By:</strong> AI Assistant  </p>
+<p><strong>Version:</strong> 1.0  </p>
+<p><strong>Status:</strong> Ready for Team Discussion</p>
+
+</body>
+</html>

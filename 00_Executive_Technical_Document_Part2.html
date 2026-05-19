@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare RCM Application - Executive Technical Document (Part 2)</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Healthcare RCM Application - Executive Technical Document (Part 2)</h1>
+
+<p><strong>Continuation from Part 1</strong></p>
+
+<hr>
+
+<h2>3. System Architecture</h2>
+
+<h3>3.1 High-Level Architecture Diagram</h3>
+
+<pre><code>
+┌─────────────────────────────────────────────────────────────────┐
+│                         PRESENTATION LAYER                       │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
+│  │   Web App    │  │  Mobile App  │  │ Patient      │          │
+│  │   (React)    │  │ (React Native│  │ Portal       │          │
+│  └──────────────┘  └──────────────┘  └──────────────┘          │
+└────────────────────────┬────────────────────────────────────────┘
+                         │ HTTPS/REST API
+┌────────────────────────┼────────────────────────────────────────┐
+│                    API GATEWAY LAYER                             │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │  API Gateway (AWS API Gateway / Kong)                     │  │
+│  │  - Rate Limiting                                          │  │
+│  │  - Authentication (JWT)                                   │  │
+│  │  - Request Routing                                        │  │
+│  └──────────────────────────────────────────────────────────┘  │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+┌────────────────────────┼────────────────────────────────────────┐
+│                  APPLICATION LAYER (Microservices)               │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐            │
+│  │  Patient    │  │  Encounter  │  │  Coding     │            │
+│  │  Service    │  │  Service    │  │  Service    │            │
+│  └─────────────┘  └─────────────┘  └─────────────┘            │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐            │
+│  │  Claim      │  │  Payment    │  │  Denial     │            │
+│  │  Service    │  │  Service    │  │  Service    │            │
+│  └─────────────┘  └─────────────┘  └─────────────┘            │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐            │
+│  │  Reporting  │  │  AI/ML      │  │  Audit      │            │
+│  │  Service    │  │  Service    │  │  Service    │            │
+│  └─────────────┘  └─────────────┘  └─────────────┘            │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+┌────────────────────────┼────────────────────────────────────────┐
+│                     DATA LAYER                                   │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
+│  │ PostgreSQL   │  │ Redis Cache  │  │ S3 Storage   │          │
+│  │ (Primary DB) │  │ (Session/    │  │ (Documents)  │          │
+│  │              │  │  Cache)      │  │              │          │
+│  └──────────────┘  └──────────────┘  └──────────────┘          │
+└─────────────────────────────────────────────────────────────────┘
+                         │
+┌────────────────────────┼────────────────────────────────────────┐
+│                  INTEGRATION LAYER                               │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐            │
+│  │ Clearinghouse│  │ EMR/EHR    │  │ Payment     │            │
+│  │ (Waystar)   │  │ (HL7/FHIR) │  │ Gateway     │            │
+│  └─────────────┘  └─────────────┘  └─────────────┘            │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐            │
+│  │ AI Services │  │ Notification│  │ Payer APIs  │            │
+│  │ (OpenAI/AWS)│  │ (Twilio)    │  │             │            │
+│  └─────────────┘  └─────────────┘  └─────────────┘            │
+└─────────────────────────────────────────────────────────────────┘
+</pre>
+
+<h3>3.2 Detailed Component Architecture</h3>
+
+<h4>**Frontend Architecture**</h4>
+
+<pre><code>
+React Application
+├── src/
+│   ├── components/          # Reusable UI components
+│   │   ├── common/          # Buttons, inputs, modals
+│   │   ├── patient/         # Patient-specific components
+│   │   ├── claims/          # Claim-specific components
+│   │   └── dashboard/       # Dashboard widgets
+│   ├── pages/               # Page-level components
+│   │   ├── PatientSearch.tsx
+│   │   ├── EncounterDetail.tsx
+│   │   ├── ClaimWorkList.tsx
+│   │   └── Dashboard.tsx
+│   ├── services/            # API integration
+│   │   ├── api.ts           # Axios client
+│   │   ├── patientService.ts
+│   │   ├── claimService.ts
+│   │   └── authService.ts
+│   ├── store/               # Redux state management
+│   │   ├── slices/
+│   │   │   ├── authSlice.ts
+│   │   │   ├── patientSlice.ts
+│   │   │   └── claimSlice.ts
+│   │   └── store.ts
+│   ├── hooks/               # Custom React hooks
+│   ├── utils/               # Helper functions
+│   └── App.tsx              # Root component
+</pre>
+
+<p><strong>Key Technologies:</strong></p>
+<li><strong>React 18+</strong> with TypeScript</li>
+<li><strong>Redux Toolkit</strong> for state management</li>
+<li><strong>React Query</strong> for server state caching</li>
+<li><strong>TailwindCSS</strong> for styling</li>
+<li><strong>shadcn/ui</strong> for component library</li>
+<li><strong>React Router</strong> for navigation</li>
+<li><strong>Axios</strong> for HTTP requests</li>
+
+<h4>**Backend Architecture (Microservices)**</h4>
+
+<pre><code>
+Backend Services
+├── patient-service/
+│   ├── app/
+│   │   ├── api/             # REST endpoints
+│   │   ├── models/          # Database models
+│   │   ├── schemas/         # Pydantic schemas
+│   │   ├── services/        # Business logic
+│   │   └── utils/           # Helper functions
+│   ├── tests/
+│   └── main.py
+├── claim-service/
+├── payment-service/
+├── ai-service/
+└── shared/
+    ├── auth/                # JWT authentication
+    ├── database/            # DB connection
+    └── messaging/           # RabbitMQ/Kafka
+</pre>
+
+<p><strong>Key Technologies:</strong></p>
+<li><strong>Python 3.11+</strong> with FastAPI</li>
+<li><strong>SQLAlchemy</strong> ORM</li>
+<li><strong>Pydantic</strong> for data validation</li>
+<li><strong>Celery</strong> for background tasks</li>
+<li><strong>RabbitMQ</strong> for message queue</li>
+<li><strong>Redis</strong> for caching</li>
+<li><strong>Alembic</strong> for database migrations</li>
+
+<h4>**Database Architecture**</h4>
+
+<p><strong>PostgreSQL Schema:</strong></p>
+<pre><code>
+rcm_database
+├── Core Tables (35 tables)
+│   ├── users, roles
+│   ├── patients, patient_insurance
+│   ├── providers, facilities
+│   ├── payers
+│   ├── encounters, encounter_diagnoses, encounter_procedures
+│   ├── charges, chargemaster
+│   ├── claims, claim_lines
+│   ├── payments, payment_lines
+│   ├── denials, appeals
+│   ├── authorizations
+│   └── audit_logs
+├── Indexes (50+ indexes)
+│   ├── Primary keys (UUID)
+│   ├── Foreign keys
+│   ├── Composite indexes (patient_id + date)
+│   └── Partial indexes (active records only)
+└── Partitioning
+    ├── audit_logs (by month)
+    └── claims (by submission_date)
+</pre>
+
+<p><strong>Redis Cache Structure:</strong></p>
+<pre><code>
+Redis Keys
+├── eligibility:{policy_number}:{date}    # TTL: 15 min
+├── payers:all                             # TTL: 24 hours
+├── providers:active                       # TTL: 24 hours
+├── icd10_codes:{code}                     # TTL: 7 days
+├── cpt_codes:{code}                       # TTL: 7 days
+└── session:{user_id}                      # TTL: 15 min
+</pre>
+
+<hr>
+
+<h2>4. Recommended Technology Stack</h2>
+
+<h3>4.1 Frontend Stack</h3>
+
+<tr>
+<td>Component</td>
+<td>Technology</td>
+<td>Why This Choice</td>
+</tr>
+<tr>
+<td><strong>Framework</strong></td>
+<td>React.js 18+</td>
+<td>Industry standard, large ecosystem, component reusability</td>
+</tr>
+<tr>
+<td><strong>Language</strong></td>
+<td>TypeScript</td>
+<td>Type safety, better IDE support, fewer runtime errors</td>
+</tr>
+<tr>
+<td><strong>Styling</strong></td>
+<td>TailwindCSS</td>
+<td>Utility-first, fast development, consistent design</td>
+</tr>
+<tr>
+<td><strong>UI Components</strong></td>
+<td>shadcn/ui</td>
+<td>Accessible, customizable, modern design</td>
+</tr>
+<tr>
+<td><strong>State Management</strong></td>
+<td>Redux Toolkit</td>
+<td>Predictable state, DevTools, middleware support</td>
+</tr>
+<tr>
+<td><strong>Data Fetching</strong></td>
+<td>React Query</td>
+<td>Automatic caching, background refetch, optimistic updates</td>
+</tr>
+<tr>
+<td><strong>Routing</strong></td>
+<td>React Router v6</td>
+<td>Standard routing library, nested routes</td>
+</tr>
+<tr>
+<td><strong>Forms</strong></td>
+<td>React Hook Form</td>
+<td>Performance, validation, easy integration</td>
+</tr>
+<tr>
+<td><strong>Charts</strong></td>
+<td>Recharts</td>
+<td>React-native charts, responsive, customizable</td>
+</tr>
+<tr>
+<td><strong>HTTP Client</strong></td>
+<td>Axios</td>
+<td>Interceptors, request cancellation, timeout handling</td>
+</tr>
+
+<p><strong>Package.json:</strong></p>
+<pre><code class="language-json">
+{
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.0.0",
+    "@reduxjs/toolkit": "^1.9.5",
+    "@tanstack/react-query": "^4.29.0",
+    "react-router-dom": "^6.11.0",
+    "react-hook-form": "^7.43.0",
+    "axios": "^1.4.0",
+    "tailwindcss": "^3.3.0",
+    "recharts": "^2.5.0",
+    "date-fns": "^2.30.0",
+    "zod": "^3.21.0"
+  }
+}
+</pre>
+
+<h3>4.2 Backend Stack</h3>
+
+<tr>
+<td>Component</td>
+<td>Technology</td>
+<td>Why This Choice</td>
+</tr>
+<tr>
+<td><strong>Framework</strong></td>
+<td>FastAPI (Python)</td>
+<td>Fast, async support, automatic API docs, type hints</td>
+</tr>
+<tr>
+<td><strong>Language</strong></td>
+<td>Python 3.11+</td>
+<td>Rich healthcare libraries, AI/ML ecosystem, readable</td>
+</tr>
+<tr>
+<td><strong>ORM</strong></td>
+<td>SQLAlchemy 2.0</td>
+<td>Mature, supports complex queries, migrations</td>
+</tr>
+<tr>
+<td><strong>Validation</strong></td>
+<td>Pydantic v2</td>
+<td>Data validation, serialization, FastAPI integration</td>
+</tr>
+<tr>
+<td><strong>Task Queue</strong></td>
+<td>Celery + Redis</td>
+<td>Distributed tasks, retry logic, scheduling</td>
+</tr>
+<tr>
+<td><strong>API Docs</strong></td>
+<td>OpenAPI/Swagger</td>
+<td>Auto-generated from FastAPI, interactive testing</td>
+</tr>
+<tr>
+<td><strong>Authentication</strong></td>
+<td>OAuth2 + JWT</td>
+<td>Industry standard, stateless, scalable</td>
+</tr>
+<tr>
+<td><strong>Testing</strong></td>
+<td>Pytest</td>
+<td>Comprehensive, fixtures, async support</td>
+</tr>
+<tr>
+<td><strong>Logging</strong></td>
+<td>Loguru</td>
+<td>Structured logging, easy configuration</td>
+</tr>
+
+<p><strong>Requirements.txt:</strong></p>
+<pre><code>
+fastapi==0.100.0
+uvicorn[standard]==0.23.0
+sqlalchemy==2.0.19
+pydantic==2.1.0
+alembic==1.11.1
+celery==5.3.1
+redis==4.6.0
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+pytest==7.4.0
+loguru==0.7.0
+</pre>
+
+<p><strong>Alternative: Node.js Stack</strong></p>
+<pre><code>
+- Express.js + TypeScript
+- Prisma ORM
+- Bull (job queue)
+- Passport.js (auth)
+- Jest (testing)
+</pre>
+
+<h3>4.3 Database Stack</h3>
+
+<tr>
+<td>Component</td>
+<td>Technology</td>
+<td>Why This Choice</td>
+</tr>
+<tr>
+<td><strong>Primary Database</strong></td>
+<td>PostgreSQL 15+</td>
+<td>ACID compliance, JSON support, mature, HIPAA-ready</td>
+</tr>
+<tr>
+<td><strong>Cache</strong></td>
+<td>Redis 7+</td>
+<td>In-memory speed, pub/sub, session storage</td>
+</tr>
+<tr>
+<td><strong>Search</strong></td>
+<td>PostgreSQL Full-Text</td>
+<td>Built-in, no additional service needed</td>
+</tr>
+<tr>
+<td><strong>Data Warehouse</strong></td>
+<td>PostgreSQL (separate instance)</td>
+<td>Same technology, easier ETL</td>
+</tr>
+<tr>
+<td><strong>File Storage</strong></td>
+<td>AWS S3 / Azure Blob</td>
+<td>Scalable, encrypted, versioned, HIPAA-compliant</td>
+</tr>
+
+<p><strong>PostgreSQL Extensions:</strong></p>
+<pre><code class="language-sql">
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";      -- UUID generation
+CREATE EXTENSION IF NOT EXISTS "pg_trgm";        -- Fuzzy text search
+CREATE EXTENSION IF NOT EXISTS "btree_gin";      -- Index optimization
+CREATE EXTENSION IF NOT EXISTS "timescaledb";    -- Time-series data
+</pre>
+
+<h3>4.4 Cloud & DevOps Stack</h3>
+
+<tr>
+<td>Component</td>
+<td>Technology</td>
+<td>Why This Choice</td>
+</tr>
+<tr>
+<td><strong>Cloud Provider</strong></td>
+<td>AWS</td>
+<td>HIPAA-compliant, comprehensive services, market leader</td>
+</tr>
+<tr>
+<td><strong>Compute</strong></td>
+<td>ECS Fargate</td>
+<td>Serverless containers, auto-scaling, no server management</td>
+</tr>
+<tr>
+<td><strong>Database</strong></td>
+<td>RDS PostgreSQL</td>
+<td>Managed, automated backups, Multi-AZ, encryption</td>
+</tr>
+<tr>
+<td><strong>Cache</strong></td>
+<td>ElastiCache Redis</td>
+<td>Managed Redis, automatic failover</td>
+</tr>
+<tr>
+<td><strong>Storage</strong></td>
+<td>S3</td>
+<td>Encrypted, versioned, lifecycle policies</td>
+</tr>
+<tr>
+<td><strong>Load Balancer</strong></td>
+<td>Application Load Balancer</td>
+<td>Layer 7, SSL termination, health checks</td>
+</tr>
+<tr>
+<td><strong>CDN</strong></td>
+<td>CloudFront</td>
+<td>Global edge locations, HTTPS, caching</td>
+</tr>
+<tr>
+<td><strong>Monitoring</strong></td>
+<td>CloudWatch</td>
+<td>Metrics, logs, alarms, dashboards</td>
+</tr>
+<tr>
+<td><strong>Secrets</strong></td>
+<td>AWS Secrets Manager</td>
+<td>Encrypted, automatic rotation</td>
+</tr>
+<tr>
+<td><strong>CI/CD</strong></td>
+<td>GitHub Actions</td>
+<td>Free, integrated, Docker support</td>
+</tr>
+<tr>
+<td><strong>Containers</strong></td>
+<td>Docker</td>
+<td>Consistent environments, easy deployment</td>
+</tr>
+<tr>
+<td><strong>Orchestration</strong></td>
+<td>Kubernetes (EKS)</td>
+<td>Production-grade, auto-scaling, self-healing</td>
+</tr>
+
+<p><strong>Alternative: Azure Stack</strong></p>
+<pre><code>
+- Azure App Service
+- Azure Database for PostgreSQL
+- Azure Cache for Redis
+- Azure Blob Storage
+- Azure Application Gateway
+- Azure DevOps
+</pre>
+
+<h3>4.5 Security Stack</h3>
+
+<tr>
+<td>Component</td>
+<td>Technology</td>
+<td>Why This Choice</td>
+</tr>
+<tr>
+<td><strong>Authentication</strong></td>
+<td>Auth0 / Okta</td>
+<td>MFA, SSO, compliance certifications</td>
+</tr>
+<tr>
+<td><strong>Authorization</strong></td>
+<td>RBAC (custom)</td>
+<td>Granular permissions, role-based</td>
+</tr>
+<tr>
+<td><strong>API Security</strong></td>
+<td>JWT tokens</td>
+<td>Stateless, scalable, standard</td>
+</tr>
+<tr>
+<td><strong>Encryption (Transit)</strong></td>
+<td>TLS 1.3</td>
+<td>Industry standard, HIPAA required</td>
+</tr>
+<tr>
+<td><strong>Encryption (Rest)</strong></td>
+<td>AES-256</td>
+<td>NIST approved, HIPAA required</td>
+</tr>
+<tr>
+<td><strong>Secrets Management</strong></td>
+<td>AWS Secrets Manager</td>
+<td>Automatic rotation, audit logging</td>
+</tr>
+<tr>
+<td><strong>WAF</strong></td>
+<td>AWS WAF</td>
+<td>SQL injection, XSS protection</td>
+</tr>
+<tr>
+<td><strong>DDoS Protection</strong></td>
+<td>AWS Shield</td>
+<td>Layer 3/4 protection</td>
+</tr>
+<tr>
+<td><strong>Compliance</strong></td>
+<td>Vanta</td>
+<td>Automated HIPAA compliance monitoring</td>
+</tr>
+<tr>
+<td><strong>Vulnerability Scanning</strong></td>
+<td>Snyk</td>
+<td>Dependency scanning, container scanning</td>
+</tr>
+
+<h3>4.6 Integration Stack</h3>
+
+<tr>
+<td>Component</td>
+<td>Technology</td>
+<td>Why This Choice</td>
+</tr>
+<tr>
+<td><strong>HL7 Integration</strong></td>
+<td>Mirth Connect</td>
+<td>Open-source, widely used, supports HL7 v2/v3/FHIR</td>
+</tr>
+<tr>
+<td><strong>API Gateway</strong></td>
+<td>Kong / AWS API Gateway</td>
+<td>Rate limiting, authentication, routing</td>
+</tr>
+<tr>
+<td><strong>Message Queue</strong></td>
+<td>RabbitMQ / AWS SQS</td>
+<td>Reliable messaging, retry logic</td>
+</tr>
+<tr>
+<td><strong>Event Streaming</strong></td>
+<td>Apache Kafka (optional)</td>
+<td>High throughput, event sourcing</td>
+</tr>
+<tr>
+<td><strong>ETL</strong></td>
+<td>Apache Airflow</td>
+<td>Workflow orchestration, scheduling</td>
+</tr>
+<tr>
+<td><strong>API Documentation</strong></td>
+<td>Swagger/OpenAPI</td>
+<td>Interactive docs, client generation</td>
+</tr>
+
+<h3>4.7 AI/ML Stack</h3>
+
+<tr>
+<td>Component</td>
+<td>Technology</td>
+<td>Why This Choice</td>
+</tr>
+<tr>
+<td><strong>LLM Provider</strong></td>
+<td>OpenAI GPT-4</td>
+<td>Best-in-class, medical knowledge, API</td>
+</tr>
+<tr>
+<td><strong>Alternative LLM</strong></td>
+<td>AWS Bedrock (Claude)</td>
+<td>HIPAA-eligible, no data retention</td>
+</tr>
+<tr>
+<td><strong>OCR</strong></td>
+<td>AWS Textract</td>
+<td>Medical form recognition, table extraction</td>
+</tr>
+<tr>
+<td><strong>NLP</strong></td>
+<td>spaCy + scispaCy</td>
+<td>Medical entity recognition, free</td>
+</tr>
+<tr>
+<td><strong>ML Framework</strong></td>
+<td>scikit-learn</td>
+<td>Denial prediction, classification</td>
+</tr>
+<tr>
+<td><strong>Vector DB</strong></td>
+<td>pgvector (PostgreSQL)</td>
+<td>Semantic search, no additional service</td>
+</tr>
+
+<hr>
+
+<h2>5. Third-Party APIs & Integrations</h2>
+
+<h3>5.1 Clearinghouse APIs</h3>
+
+<h4>**Waystar (Recommended)**</h4>
+
+<p><strong>Purpose:</strong> Submit claims to insurance companies, check eligibility, track claim status</p>
+
+<p><strong>Modules Using It:</strong></p>
+<li>Insurance Verification (EDI 270/271)</li>
+<li>Claim Submission (EDI 837)</li>
+<li>Claim Tracking (EDI 276/277)</li>
+<li>Payment Posting (EDI 835)</li>
+
+<p><strong>API Type:</strong> REST API + EDI file exchange  </p>
+<p><strong>Cost Model:</strong> Per-transaction pricing</p>
+<li>Eligibility check: $0.25-$0.50 per check</li>
+<li>Claim submission: $0.50-$2.00 per claim</li>
+<li>ERA processing: $0.25-$0.50 per ERA</li>
+
+<p><strong>Enterprise vs Paid:</strong></p>
+<li><strong>Paid API:</strong> Available to all customers, pay-per-transaction</li>
+<li><strong>Enterprise:</strong> Volume discounts, dedicated support, SLA guarantees</li>
+
+<p><strong>Integration Complexity:</strong> Medium  </p>
+<p><strong>Documentation:</strong> https://www.waystar.com/developers</p>
+
+<p><strong>Sample Code:</strong></p>
+<pre><code class="language-python">
+import requests
+def check_eligibility(patient, insurance):
+    response = requests.post(
+        'https://api.waystar.com/v1/eligibility',
+        headers={'Authorization': f'Bearer {WAYSTAR_API_KEY}'},
+        json={
+            'payer_id': insurance.payer_code,
+            'provider_npi': '1234567890',
+            'member': {
+                'first_name': patient.first_name,
+                'last_name': patient.last_name,
+                'dob': patient.dob,
+                'member_id': insurance.policy_number
+            },
+            'service_date': '2026-05-18'
+        }
+    )
+    return response.json()
+</pre>
+
+<hr>
+
+<h4>**Availity**</h4>
+
+<p><strong>Purpose:</strong> Alternative clearinghouse, multi-payer connectivity</p>
+
+<p><strong>Modules Using It:</strong> Same as Waystar  </p>
+<p><strong>Cost Model:</strong> Similar to Waystar, sometimes lower fees  </p>
+<p><strong>Enterprise vs Paid:</strong> Paid API, enterprise contracts available  </p>
+<p><strong>Integration Complexity:</strong> Medium</p>
+
+<p><strong>Why Use:</strong> Some payers prefer Availity, good for multi-clearinghouse strategy</p>
+
+<hr>
+
+<h4>**Change Healthcare**</h4>
+
+<p><strong>Purpose:</strong> Large clearinghouse, extensive payer network</p>
+
+<p><strong>Modules Using It:</strong> Same as Waystar  </p>
+<p><strong>Cost Model:</strong> Enterprise pricing, typically higher than Waystar/Availity  </p>
+<p><strong>Enterprise vs Paid:</strong> Primarily enterprise contracts  </p>
+<p><strong>Integration Complexity:</strong> High (more complex API)</p>
+
+<p><strong>Why Use:</strong> Required by some large hospital systems, comprehensive analytics</p>
+
+<hr>
+
+<h4>**Eligible API**</h4>
+
+<p><strong>Purpose:</strong> Developer-friendly eligibility checking</p>
+
+<p><strong>Modules Using It:</strong> Insurance Verification only  </p>
+<p><strong>Cost Model:</strong> $0.25-$0.75 per eligibility check  </p>
+<p><strong>Enterprise vs Paid:</strong> Paid API, no enterprise requirement  </p>
+<p><strong>Integration Complexity:</strong> Low (simple REST API)</p>
+
+<p><strong>Why Use:</strong> Easier integration for startups, good for MVP</p>
+
+<p><strong>Sample Code:</strong></p>
+<pre><code class="language-python">
+import requests
+response = requests.post(
+    'https://gw.eligibleapi.com/v1.5/coverage/all.json',
+    auth=(ELIGIBLE_API_KEY, ''),
+    json={
+        'payer_id': '00001',
+        'provider_npi': '1234567890',
+        'member': {
+            'first_name': 'John',
+            'last_name': 'Doe',
+            'dob': '1980-01-15',
+            'member_id': 'POL123456'
+        },
+        'service_date': '2026-05-18'
+    }
+)
+</pre>
+
+<hr>
+
+<h3>5.2 EMR/EHR Integration</h3>
+
+<h4>**Epic Systems**</h4>
+
+<p><strong>Purpose:</strong> Largest EMR vendor in US, clinical data exchange</p>
+
+<p><strong>Modules Using It:</strong></p>
+<li>Patient Registration (ADT messages)</li>
+<li>Encounter Creation (ADT messages)</li>
+<li>Clinical Documentation (ORU messages)</li>
+<li>Order Management (ORM messages)</li>
+
+<p><strong>API Type:</strong> HL7 v2.x + FHIR R4  </p>
+<p><strong>Cost Model:</strong> Enterprise licensing (hospital already pays Epic)  </p>
+<p><strong>Enterprise vs Paid:</strong> Enterprise only (Epic is $500K-$50M+ implementation)  </p>
+<p><strong>Integration Complexity:</strong> High</p>
+
+<p><strong>HL7 Message Types:</strong></p>
+<li><strong>ADT^A01:</strong> Patient admission</li>
+<li><strong>ADT^A04:</strong> Patient registration</li>
+<li><strong>ADT^A08:</strong> Patient update</li>
+<li><strong>ORM^O01:</strong> Order message</li>
+<li><strong>ORU^R01:</strong> Results message</li>
+
+<p><strong>Integration Method:</strong></p>
+<li><strong>HL7 v2.x:</strong> Via Mirth Connect (free integration engine)</li>
+<li><strong>FHIR API:</strong> Epic's App Orchard (OAuth 2.0)</li>
+
+<p><strong>Sample HL7 Message:</strong></p>
+<pre><code>
+MSH|^~\&amp;|EPIC|HOSPITAL|||20260518120000||ADT^A04|MSG123|P|2.5
+EVN|A04|20260518120000
+PID|1||MRN123456||DOE^JOHN^A||19800115|M|||123 MAIN ST^^BOSTON^MA^02101
+PV1|1|O|||||1234567890^SMITH^JANE^^^MD
+</pre>
+
+<hr>
+
+<h4>**Cerner (Oracle Health)**</h4>
+
+<p><strong>Purpose:</strong> Second-largest EMR vendor</p>
+
+<p><strong>Modules Using It:</strong> Same as Epic  </p>
+<p><strong>API Type:</strong> HL7 v2.x + FHIR R4  </p>
+<p><strong>Cost Model:</strong> Enterprise licensing  </p>
+<p><strong>Enterprise vs Paid:</strong> Enterprise only  </p>
+<p><strong>Integration Complexity:</strong> High</p>
+
+<p><strong>Similar to Epic integration</strong></p>
+
+<hr>
+
+<h4>**Athenahealth**</h4>
+
+<p><strong>Purpose:</strong> Cloud-based EMR/RCM for small-medium practices</p>
+
+<p><strong>Modules Using It:</strong> Full RCM integration (they have built-in RCM)  </p>
+<p><strong>API Type:</strong> REST API (athenaNet API)  </p>
+<p><strong>Cost Model:</strong> Per-provider subscription  </p>
+<p><strong>Enterprise vs Paid:</strong> Paid subscription  </p>
+<p><strong>Integration Complexity:</strong> Medium</p>
+
+<p><strong>Why Use:</strong> If practice already uses Athenahealth, leverage their RCM features</p>
+
+<hr>
+
+<h3>5.3 HL7/FHIR Integration</h3>
+
+<h4>**Mirth Connect (Recommended)**</h4>
+
+<p><strong>Purpose:</strong> Open-source HL7 integration engine</p>
+
+<p><strong>Modules Using It:</strong> All EMR integrations  </p>
+<p><strong>Cost Model:</strong> <strong>FREE</strong> (open-source)  </p>
+<p><strong>Enterprise vs Paid:</strong> Free, optional paid support from NextGen  </p>
+<p><strong>Integration Complexity:</strong> Medium (learning curve)</p>
+
+<p><strong>Why Use:</strong></p>
+<li>Industry standard (90% of hospitals use it)</li>
+<li>Supports HL7 v2.x, v3, FHIR, EDI, XML, JSON</li>
+<li>Visual workflow designer</li>
+<li>Large community support</li>
+
+<p><strong>Installation:</strong></p>
+<pre><code class="language-bash">
+# Download from https://www.nextgen.com/products-and-services/mirth-connect
+# Run installer
+# Access web interface at http://localhost:8080
+</pre>
+
+<hr>
+
+<h4>**Redox**</h4>
+
+<p><strong>Purpose:</strong> Healthcare API integration platform (Mirth alternative)</p>
+
+<p><strong>Modules Using It:</strong> All EMR integrations  </p>
+<p><strong>Cost Model:</strong> $10,000-$50,000/year subscription  </p>
+<p><strong>Enterprise vs Paid:</strong> Paid subscription  </p>
+<p><strong>Integration Complexity:</strong> Low (managed service)</p>
+
+<p><strong>Why Use:</strong> Easier than Mirth, managed service, faster implementation</p>
+
+<p><strong>Trade-off:</strong> Mirth is free but requires expertise; Redox is paid but easier</p>
+
+<hr>
+
+<h3>5.4 Payment Processing</h3>
+
+<h4>**Stripe (Recommended)**</h4>
+
+<p><strong>Purpose:</strong> Patient payment processing (credit cards, ACH)</p>
+
+<p><strong>Modules Using It:</strong> Patient Billing, Collections  </p>
+<p><strong>Cost Model:</strong> 2.9% + $0.30 per transaction  </p>
+<p><strong>Enterprise vs Paid:</strong> Paid per-transaction, enterprise pricing available  </p>
+<p><strong>Integration Complexity:</strong> Low</p>
+
+<p><strong>Why Use:</strong></p>
+<li>Developer-friendly API</li>
+<li>PCI-compliant (no need to handle card data)</li>
+<li>Supports payment plans, subscriptions</li>
+<li>Excellent documentation</li>
+
+<p><strong>Sample Code:</strong></p>
+<pre><code class="language-python">
+import stripe
+stripe.api_key = STRIPE_SECRET_KEY
+# Create payment intent
+payment_intent = stripe.PaymentIntent.create(
+    amount=5000,  # $50.00 in cents
+    currency='usd',
+    payment_method_types=['card'],
+    metadata={
+        'patient_id': 'PAT123',
+        'account_number': 'ACC456'
+    }
+)
+</pre>
+
+<hr>
+
+<h4>**Cedar**</h4>
+
+<p><strong>Purpose:</strong> Patient billing and payment platform</p>
+
+<p><strong>Modules Using It:</strong> Patient Billing, Collections, Payment Plans  </p>
+<p><strong>Cost Model:</strong> % of collected revenue (typically 3-5%)  </p>
+<p><strong>Enterprise vs Paid:</strong> Enterprise contracts  </p>
+<p><strong>Integration Complexity:</strong> Medium</p>
+
+<p><strong>Why Use:</strong> Full patient engagement platform, not just payments</p>
+
+<hr>
+
+<h3>5.5 Communication APIs</h3>
+
+<h4>**Twilio**</h4>
+
+<p><strong>Purpose:</strong> SMS appointment reminders, payment reminders</p>
+
+<p><strong>Modules Using It:</strong> Appointment Scheduling, Patient Billing  </p>
+<p><strong>Cost Model:</strong> $0.0079 per SMS (US)  </p>
+<p><strong>Enterprise vs Paid:</strong> Paid per-message, volume discounts  </p>
+<p><strong>Integration Complexity:</strong> Low</p>
+
+<p><strong>Sample Code:</strong></p>
+<pre><code class="language-python">
+from twilio.rest import Client
+client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+message = client.messages.create(
+    body='Reminder: You have an appointment tomorrow at 10:00 AM with Dr. Smith.',
+    from_='+15551234567',
+    to=patient.phone
+)
+</pre>
+
+<hr>
+
+<h4>**SendGrid**</h4>
+
+<p><strong>Purpose:</strong> Email notifications (statements, reminders, receipts)</p>
+
+<p><strong>Modules Using It:</strong> All modules needing email  </p>
+<p><strong>Cost Model:</strong> Free tier (100 emails/day), then $0.0006 per email  </p>
+<p><strong>Enterprise vs Paid:</strong> Paid per-email  </p>
+<p><strong>Integration Complexity:</strong> Low</p>
+
+<hr>
+
+<h3>5.6 AI Services</h3>
+
+<h4>**OpenAI API (GPT-4)**</h4>
+
+<p><strong>Purpose:</strong> Medical coding assistance, clinical note summarization, denial prediction</p>
+
+<p><strong>Modules Using It:</strong></p>
+<li>Medical Coding (suggest ICD-10/CPT codes)</li>
+<li>Clinical Documentation (summarize notes)</li>
+<li>Denial Management (predict denial reasons)</li>
+<li>Patient Communication (chatbot)</li>
+
+<p><strong>Cost Model:</strong></p>
+<li>GPT-4: $0.03 per 1K input tokens, $0.06 per 1K output tokens</li>
+<li>GPT-3.5-turbo: $0.0015 per 1K input tokens, $0.002 per 1K output tokens</li>
+
+<p><strong>Enterprise vs Paid:</strong> Paid per-token, enterprise agreements available  </p>
+<p><strong>Integration Complexity:</strong> Low</p>
+
+<p><strong>HIPAA Compliance:</strong> <strong>NOT HIPAA-compliant by default</strong></p>
+<li>Must sign Business Associate Agreement (BAA)</li>
+<li>Use Azure OpenAI Service (HIPAA-eligible) instead</li>
+
+<p><strong>Sample Code:</strong></p>
+<pre><code class="language-python">
+import openai
+openai.api_key = OPENAI_API_KEY
+response = openai.ChatCompletion.create(
+    model="gpt-4",
+    messages=[
+        {"role": "system", "content": "You are a medical coding assistant."},
+        {"role": "user", "content": f"Suggest ICD-10 codes for: {clinical_note}"}
+    ]
+)
+suggested_codes = response.choices[0].message.content
+</pre>
+
+<hr>
+
+<h4>**AWS Bedrock (Claude, Llama)**</h4>
+
+<p><strong>Purpose:</strong> HIPAA-compliant alternative to OpenAI</p>
+
+<p><strong>Modules Using It:</strong> Same as OpenAI  </p>
+<p><strong>Cost Model:</strong> Pay-per-token (similar to OpenAI)  </p>
+<p><strong>Enterprise vs Paid:</strong> Paid per-token  </p>
+<p><strong>Integration Complexity:</strong> Low</p>
+
+<p><strong>Why Use:</strong></p>
+<li><strong>HIPAA-eligible</strong> (AWS signs BAA)</li>
+<li>No data retention (data not used for training)</li>
+<li>Multiple models (Claude, Llama, Titan)</li>
+
+<p><strong>Recommended for Healthcare:</strong> Use AWS Bedrock instead of OpenAI for PHI</p>
+
+<hr>
+
+<h4>**AWS Textract**</h4>
+
+<p><strong>Purpose:</strong> OCR for insurance cards, medical forms, prescriptions</p>
+
+<p><strong>Modules Using It:</strong> Patient Registration (insurance card scanning)  </p>
+<p><strong>Cost Model:</strong> $0.0015 per page  </p>
+<p><strong>Enterprise vs Paid:</strong> Paid per-page  </p>
+<p><strong>Integration Complexity:</strong> Low</p>
+
+<p><strong>Sample Code:</strong></p>
+<pre><code class="language-python">
+import boto3
+textract = boto3.client('textract')
+response = textract.detect_document_text(
+    Document={'S3Object': {'Bucket': 'insurance-cards', 'Name': 'card123.jpg'}}
+)
+for item in response['Blocks']:
+    if item['BlockType'] == 'LINE':
+        print(item['Text'])  # Extract text from insurance card
+</pre>
+
+<hr>
+
+<h3>5.7 Integration Summary Table</h3>
+
+<tr>
+<td>API/Service</td>
+<td>Purpose</td>
+<td>Cost</td>
+<td>HIPAA</td>
+<td>Complexity</td>
+<td>Recommendation</td>
+</tr>
+<tr>
+<td><strong>Waystar</strong></td>
+<td>Clearinghouse</td>
+<td>$0.50-$2/claim</td>
+<td>Yes</td>
+<td>Medium</td>
+<td><strong>Must Have</strong></td>
+</tr>
+<tr>
+<td><strong>Availity</strong></td>
+<td>Clearinghouse</td>
+<td>$0.50-$2/claim</td>
+<td>Yes</td>
+<td>Medium</td>
+<td>Alternative</td>
+</tr>
+<tr>
+<td><strong>Eligible API</strong></td>
+<td>Eligibility only</td>
+<td>$0.25-$0.75/check</td>
+<td>Yes</td>
+<td>Low</td>
+<td>Good for MVP</td>
+</tr>
+<tr>
+<td><strong>Epic/Cerner</strong></td>
+<td>EMR integration</td>
+<td>Enterprise</td>
+<td>Yes</td>
+<td>High</td>
+<td>If hospital uses</td>
+</tr>
+<tr>
+<td><strong>Mirth Connect</strong></td>
+<td>HL7 engine</td>
+<td><strong>Free</strong></td>
+<td>Yes</td>
+<td>Medium</td>
+<td><strong>Must Have</strong></td>
+</tr>
+<tr>
+<td><strong>Redox</strong></td>
+<td>HL7 platform</td>
+<td>$10K-$50K/year</td>
+<td>Yes</td>
+<td>Low</td>
+<td>Alternative to Mirth</td>
+</tr>
+<tr>
+<td><strong>Stripe</strong></td>
+<td>Payments</td>
+<td>2.9% + $0.30</td>
+<td>PCI-DSS</td>
+<td>Low</td>
+<td><strong>Must Have</strong></td>
+</tr>
+<tr>
+<td><strong>Cedar</strong></td>
+<td>Patient billing</td>
+<td>3-5% of revenue</td>
+<td>Yes</td>
+<td>Medium</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td><strong>Twilio</strong></td>
+<td>SMS</td>
+<td>$0.0079/SMS</td>
+<td>No</td>
+<td>Low</td>
+<td><strong>Must Have</strong></td>
+</tr>
+<tr>
+<td><strong>SendGrid</strong></td>
+<td>Email</td>
+<td>$0.0006/email</td>
+<td>No</td>
+<td>Low</td>
+<td><strong>Must Have</strong></td>
+</tr>
+<tr>
+<td><strong>OpenAI</strong></td>
+<td>AI/ML</td>
+<td>$0.03/1K tokens</td>
+<td><strong>No</strong>*</td>
+<td>Low</td>
+<td>Use Azure OpenAI</td>
+</tr>
+<tr>
+<td><strong>AWS Bedrock</strong></td>
+<td>AI/ML</td>
+<td>$0.03/1K tokens</td>
+<td><strong>Yes</strong></td>
+<td>Low</td>
+<td><strong>Recommended for AI</strong></td>
+</tr>
+<tr>
+<td><strong>AWS Textract</strong></td>
+<td>OCR</td>
+<td>$0.0015/page</td>
+<td>Yes</td>
+<td>Low</td>
+<td>Recommended</td>
+</tr>
+<tr>
+<td><strong>Auth0</strong></td>
+<td>Authentication</td>
+<td>$200-$2K/month</td>
+<td>Yes</td>
+<td>Low</td>
+<td><strong>Must Have</strong></td>
+</tr>
+
+<p><strong>Must Have (MVP):</strong> Waystar, Mirth Connect, Stripe, Twilio, SendGrid, Auth0  </p>
+<p><strong>Total MVP Cost:</strong> ~$2,000-$5,000/month + per-transaction fees</p>
+
+<hr>
+
+<p><em>[Continue to Part 3 for AI Features, Development Plan, and Execution Strategy]</em></p>
+
+</body>
+</html>

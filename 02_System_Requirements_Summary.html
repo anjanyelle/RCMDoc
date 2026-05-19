@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare RCM Application - System Requirements Summary</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Healthcare RCM Application - System Requirements Summary</h1>
+
+<p><strong>Version:</strong> 1.0  </p>
+
+<p><strong>For:</strong> Development Team (Non-Healthcare Background)</p>
+
+<hr>
+
+<h2>1. What We're Building</h2>
+
+<p>A complete Revenue Cycle Management system that helps hospitals:</p>
+<li>Register patients and verify insurance</li>
+<li>Capture all services provided</li>
+<li>Code services using medical codes</li>
+<li>Submit claims to insurance companies</li>
+<li>Track payments and denials</li>
+<li>Bill patients for remaining balances</li>
+<li>Generate financial reports</li>
+
+<p><strong>Goal:</strong> Reduce claim denials from 10-15% to <5%, collect payments in <40 days</p>
+
+<hr>
+
+<h2>2. Core Modules (20 Main Features)</h2>
+
+<h3>Module 1: User Management</h3>
+<p><strong>Who uses it:</strong> Everyone  </p>
+<p><strong>What it does:</strong> Login, passwords, role-based permissions  </p>
+<p><strong>Key Features:</strong></p>
+<li>10 user roles (Admin, Front Desk, Doctor, Coder, Biller, AR Manager, etc.)</li>
+<li>Multi-factor authentication</li>
+<li>Audit logging (HIPAA requirement)</li>
+<li>Session timeout after 15 minutes</li>
+
+<hr>
+
+<h3>Module 2: Provider Credentialing</h3>
+<p><strong>Who uses it:</strong> Admin staff  </p>
+<p><strong>What it does:</strong> Register doctors with insurance companies  </p>
+<p><strong>Key Features:</strong></p>
+<li>Store provider NPI, licenses, certifications</li>
+<li>Track credentialing status with each payer</li>
+<li>Alert 90 days before credential expiration</li>
+<li>CAQH integration</li>
+
+<p><strong>Why critical:</strong> Without credentialing, ALL claims from that doctor get rejected</p>
+
+<hr>
+
+<h3>Module 3: Fee Schedule Management</h3>
+<p><strong>Who uses it:</strong> Finance team  </p>
+<p><strong>What it does:</strong> Maintain hospital prices and insurance contract rates  </p>
+<p><strong>Key Features:</strong></p>
+<li>Chargemaster (CDM): List of all services with prices</li>
+<li>Contract rates by payer and CPT code</li>
+<li>Automatic rate calculation during billing</li>
+<li>Contract variance analysis (detect underpayments)</li>
+
+<hr>
+
+<h3>Module 4: Patient Registration</h3>
+<p><strong>Who uses it:</strong> Front desk  </p>
+<p><strong>What it does:</strong> Collect patient demographics and insurance info  </p>
+<p><strong>Key Features:</strong></p>
+<li>Capture: Name, DOB, address, phone, insurance card</li>
+<li>Master Patient Index (MPI) prevents duplicate records</li>
+<li>Auto-generate unique Medical Record Number (MRN)</li>
+<li>Store primary, secondary, tertiary insurance</li>
+<li>Digital consent forms</li>
+
+<p><strong>Common mistake:</strong> Wrong insurance ID = claim denial</p>
+
+<hr>
+
+<h3>Module 5: Insurance Verification</h3>
+<p><strong>Who uses it:</strong> Front desk (before appointment)  </p>
+<p><strong>What it does:</strong> Check if insurance is active and what patient owes  </p>
+<p><strong>Key Features:</strong></p>
+<li>Real-time eligibility check (EDI 270/271)</li>
+<li>Shows: Copay, deductible, coinsurance, coverage limits</li>
+<li>Coordination of Benefits (which insurance pays first)</li>
+<li>Network status (in-network vs out-of-network)</li>
+<li>Store verification history</li>
+
+<p><strong>Revenue impact:</strong> Prevents treating patients with inactive insurance</p>
+
+<hr>
+
+<h3>Module 6: Prior Authorization</h3>
+<p><strong>Who uses it:</strong> Authorization team  </p>
+<p><strong>What it does:</strong> Get insurance approval before expensive procedures  </p>
+<p><strong>Key Features:</strong></p>
+<li>Identify services requiring authorization</li>
+<li>Submit authorization requests with clinical justification</li>
+<li>Track authorization number, approved units, expiration date</li>
+<li>Alert when authorization expiring or units exhausted</li>
+<li>Peer-to-peer review for denied authorizations</li>
+
+<p><strong>Why critical:</strong> Services without required authorization = 100% claim denial</p>
+
+<hr>
+
+<h3>Module 7: Appointment Scheduling</h3>
+<p><strong>Who uses it:</strong> Front desk  </p>
+<p><strong>What it does:</strong> Schedule patient visits  </p>
+<p><strong>Key Features:</strong></p>
+<li>Provider calendars with availability templates</li>
+<li>Appointment types with durations</li>
+<li>Automated reminders (SMS, email, phone)</li>
+<li>Waitlist management</li>
+<li>Patient self-scheduling portal</li>
+<li>No-show tracking</li>
+
+<p><strong>Revenue impact:</strong> Reminders reduce no-shows = less lost revenue</p>
+
+<hr>
+
+<h3>Module 8: Encounter Creation</h3>
+<p><strong>Who uses it:</strong> Front desk (at check-in)  </p>
+<p><strong>What it does:</strong> Create visit record that holds all billing data  </p>
+<p><strong>Key Features:</strong></p>
+<li>Auto-populate patient, insurance, provider info</li>
+<li>Encounter types: Office, Emergency, Inpatient, Outpatient, Telehealth</li>
+<li>Track encounter status: Scheduled → Checked In → Completed</li>
+<li>Link all diagnoses, procedures, charges to encounter</li>
+
+<p><strong>Think of it as:</strong> The "shopping cart" for the hospital visit</p>
+
+<hr>
+
+<h3>Module 9: Clinical Documentation (EMR Integration)</h3>
+<p><strong>Who uses it:</strong> Doctors, nurses  </p>
+<p><strong>What it does:</strong> Receive clinical notes from EMR system  </p>
+<p><strong>Key Features:</strong></p>
+<li>HL7/FHIR integration with EMR</li>
+<li>Receive: SOAP notes, diagnoses, procedures, orders, results</li>
+<li>Clinical Documentation Improvement (CDI) alerts for incomplete notes</li>
+<li>Problem lists, medication lists, allergy lists</li>
+
+<p><strong>Why critical:</strong> Insurance only pays for documented services</p>
+
+<hr>
+
+<h3>Module 10: Order Management</h3>
+<p><strong>Who uses it:</strong> Doctors  </p>
+<p><strong>What it does:</strong> Track lab tests, imaging, medications ordered  </p>
+<p><strong>Key Features:</strong></p>
+<li>CPOE (Computerized Physician Order Entry)</li>
+<li>Order types: Lab, imaging, meds, referrals, procedures</li>
+<li>Order sets for common conditions</li>
+<li>Track order status: Ordered → Completed</li>
+<li>Auto-generate charges when orders completed</li>
+
+<p><strong>Revenue impact:</strong> Automatic charge capture prevents missed revenue</p>
+
+<hr>
+
+<h3>Module 11: Charge Capture</h3>
+<p><strong>Who uses it:</strong> Clinical staff, billing team  </p>
+<p><strong>What it does:</strong> Convert every service into a billable charge  </p>
+<p><strong>Key Features:</strong></p>
+<li>Manual charge entry (search CPT code, add to encounter)</li>
+<li>Automatic charge capture from completed orders</li>
+<li>Charge reconciliation (orders vs charges)</li>
+<li>Charge lag monitoring (time between service and charge entry)</li>
+<li>Charge hold/release for pending documentation</li>
+
+<p><strong>Revenue impact:</strong> Missed charges = direct revenue loss (5-10% of revenue typically)</p>
+
+<hr>
+
+<h3>Module 12: Medical Coding</h3>
+<p><strong>Who uses it:</strong> Medical coders  </p>
+<p><strong>What it does:</strong> Assign standardized codes to diagnoses and procedures  </p>
+<p><strong>Key Features:</strong></p>
+<li>Coding worklist (encounters ready to code)</li>
+<li>Search ICD-10 (diagnosis codes) and CPT (procedure codes)</li>
+<li>Link diagnoses to procedures (medical necessity)</li>
+<li>DRG assignment for inpatient stays</li>
+<li>E&M level selection for office visits</li>
+<li>Encoder integration (3M, Optum)</li>
+
+<p><strong>Code types:</strong></p>
+<li>ICD-10: Diagnosis codes (e.g., E11.9 = Type 2 Diabetes)</li>
+<li>CPT: Procedure codes (e.g., 99213 = Office visit level 3)</li>
+<li>HCPCS: Additional services (e.g., J1234 = Drug injection)</li>
+<li>DRG: Inpatient payment groups</li>
+
+<p><strong>Why critical:</strong> Wrong codes = claim denial or underpayment</p>
+
+<hr>
+
+<h3>Module 13: Coding Compliance</h3>
+<p><strong>Who uses it:</strong> Coders, compliance team  </p>
+<p><strong>What it does:</strong> Prevent coding errors and fraud  </p>
+<p><strong>Key Features:</strong></p>
+<li>NCCI edits (prevent billing incompatible codes together)</li>
+<li>LCD/NCD rules (Medicare coverage rules)</li>
+<li>MUE limits (max units per day)</li>
+<li>Upcoding detection</li>
+<li>Unbundling detection</li>
+
+<p><strong>Compliance risk:</strong> Upcoding/unbundling = fraud = fines/jail time</p>
+
+<hr>
+
+<h3>Module 14: Claim Creation</h3>
+<p><strong>Who uses it:</strong> Billing team  </p>
+<p><strong>What it does:</strong> Generate insurance claim from coded encounter  </p>
+<p><strong>Key Features:</strong></p>
+<li>Auto-generate CMS-1500 (professional) or UB-04 (hospital) claim</li>
+<li>Populate all required fields from encounter data</li>
+<li>Include: Patient, insurance, provider NPIs, codes, charges</li>
+<li>Claim splitting (if >6 service lines on CMS-1500)</li>
+
+<hr>
+
+<h3>Module 15: Claim Scrubbing</h3>
+<p><strong>Who uses it:</strong> Billing team  </p>
+<p><strong>What it does:</strong> Check claim for errors before submission  </p>
+<p><strong>Key Features:</strong></p>
+<li>200+ validation checks</li>
+<li>Check: Missing fields, invalid codes, NCCI edits, authorization, duplicates</li>
+<li>Error levels: Fatal (must fix), Warning (recommend fix), Info</li>
+<li>Clean claim indicator</li>
+<li>Bulk scrubbing (1000+ claims in <5 minutes)</li>
+
+<p><strong>Goal:</strong> 95%+ clean claim rate = fewer denials</p>
+
+<hr>
+
+<h3>Module 16: Claim Submission</h3>
+<p><strong>Who uses it:</strong> Billing team  </p>
+<p><strong>What it does:</strong> Send claims to insurance companies  </p>
+<p><strong>Key Features:</strong></p>
+<li>Clearinghouse integration (Waystar, Availity, Change Healthcare)</li>
+<li>EDI 837 format (electronic claims)</li>
+<li>Batch submission (every 2 hours)</li>
+<li>Acknowledgment processing (EDI 999, EDI 277)</li>
+<li>Timely filing tracking (alert before deadline)</li>
+
+<p><strong>Timely filing:</strong> Most payers require claims within 90-365 days of service</p>
+
+<hr>
+
+<h3>Module 17: Claim Tracking</h3>
+<p><strong>Who uses it:</strong> Billing team  </p>
+<p><strong>What it does:</strong> Monitor claim status after submission  </p>
+<p><strong>Key Features:</strong></p>
+<li>Claim status dashboard (Submitted, Pending, Paid, Denied)</li>
+<li>Aging reports (0-30, 31-60, 61-90, 90+ days)</li>
+<li>EDI 276/277 status inquiry</li>
+<li>Payer portal integration</li>
+<li>Worklists (claims pending >30/60/90 days)</li>
+
+<hr>
+
+<h3>Module 18: Payment Posting (ERA)</h3>
+<p><strong>Who uses it:</strong> AR team  </p>
+<p><strong>What it does:</strong> Record insurance payments  </p>
+<p><strong>Key Features:</strong></p>
+<li>Import EDI 835 (Electronic Remittance Advice)</li>
+<li>Auto-posting (match payment to claim automatically)</li>
+<li>Manual posting (when auto-match fails)</li>
+<li>Adjustment reason codes (CARC/RARC)</li>
+<li>Underpayment/overpayment detection</li>
+<li>EFT reconciliation (match payment to bank deposit)</li>
+
+<p><strong>Adjustment types:</strong></p>
+<li>Contractual: Difference between billed and allowed amount</li>
+<li>Deductible: Patient's annual deductible</li>
+<li>Copay: Fixed patient payment</li>
+<li>Coinsurance: Patient's % share</li>
+
+<hr>
+
+<h3>Module 19: Denial Management</h3>
+<p><strong>Who uses it:</strong> Denial team  </p>
+<p><strong>What it does:</strong> Handle rejected claims  </p>
+<p><strong>Key Features:</strong></p>
+<li>Denial tracking with reason codes</li>
+<li>Denial worklist (prioritize high $ denials)</li>
+<li>Root cause analysis (top denial reasons)</li>
+<li>Appeal creation and tracking (Level 1, 2, 3)</li>
+<li>Corrected claim resubmission</li>
+<li>Appeal overturn rate tracking</li>
+
+<p><strong>Common denial reasons:</strong></p>
+<li>Missing authorization (30%)</li>
+<li>Incorrect coding (25%)</li>
+<li>Eligibility issues (20%)</li>
+<li>Timely filing (10%)</li>
+
+<p><strong>Revenue impact:</strong> 10-15% of claims denied, 60% recoverable through appeals</p>
+
+<hr>
+
+<h3>Module 20: Secondary Billing</h3>
+<p><strong>Who uses it:</strong> Billing team  </p>
+<p><strong>What it does:</strong> Bill second/third insurance after primary pays  </p>
+<p><strong>Key Features:</strong></p>
+<li>Auto-generate secondary claim after primary payment</li>
+<li>Include primary payment info on secondary claim</li>
+<li>Medicare crossover (auto-forward to Medicaid)</li>
+<li>Medicare Secondary Payer (MSP) rules</li>
+<li>Tertiary billing</li>
+
+<hr>
+
+<h3>Module 21: Patient Billing</h3>
+<p><strong>Who uses it:</strong> Patient accounts team  </p>
+<p><strong>What it does:</strong> Bill patients for their portion  </p>
+<p><strong>Key Features:</strong></p>
+<li>Generate patient statements (monthly)</li>
+<li>Show: Total charges, insurance payments, patient responsibility</li>
+<li>Multiple delivery: Mail, email, patient portal</li>
+<li>Payment processing (credit card, ACH, check, cash)</li>
+<li>Payment plans (installments)</li>
+<li>Point-of-service collections (collect copay at check-in)</li>
+<li>Price transparency (cost estimates before service)</li>
+
+<p><strong>Patient responsibility = Deductible + Copay + Coinsurance</strong></p>
+
+<hr>
+
+<h3>Module 22: Collections</h3>
+<p><strong>Who uses it:</strong> Collections team  </p>
+<p><strong>What it does:</strong> Collect overdue patient balances  </p>
+<p><strong>Key Features:</strong></p>
+<li>Automated collection notices (30, 60, 90, 120 days)</li>
+<li>Internal collections (phone calls)</li>
+<li>External collections (transfer to agency after 120 days)</li>
+<li>Bad debt write-off</li>
+<li>Charity care screening (before collections)</li>
+
+<p><strong>Compliance:</strong> No Surprises Act limits collection practices</p>
+
+<hr>
+
+<h3>Module 23: Reporting & Analytics</h3>
+<p><strong>Who uses it:</strong> Management, finance team  </p>
+<p><strong>What it does:</strong> Track RCM performance  </p>
+<p><strong>Key Metrics (KPIs):</strong></p>
+<li>Clean claim rate (Target: >95%)</li>
+<li>Denial rate (Target: <5%)</li>
+<li>Days in AR (Target: <40 days)</li>
+<li>Net collection rate (Target: >95%)</li>
+<li>AR over 90 days (Target: <15%)</li>
+<li>Cost to collect (Target: <$0.05 per $1)</li>
+
+<p><strong>Reports:</strong></p>
+<li>Daily: Charges, payments, denials</li>
+<li>Weekly: Clean claim rate, denial rate</li>
+<li>Monthly: Revenue by department/provider/payer, AR aging</li>
+<li>Ad-hoc: Custom reports, dashboards</li>
+
+<hr>
+
+<h3>Module 24: Audit & Compliance</h3>
+<p><strong>Who uses it:</strong> Compliance team  </p>
+<p><strong>What it does:</strong> Track all activities for audits  </p>
+<p><strong>Key Features:</strong></p>
+<li>Audit log (all user actions for 7 years)</li>
+<li>HIPAA compliance (encryption, access controls)</li>
+<li>Internal audit tools (coding audits, billing audits)</li>
+<li>External audit support (RAC, MAC, OIG)</li>
+<li>Compliance alerts (upcoding, unbundling, overpayments)</li>
+
+<hr>
+
+<h3>Module 25: Interoperability</h3>
+<p><strong>Who uses it:</strong> IT team  </p>
+<p><strong>What it does:</strong> Connect with other systems  </p>
+<p><strong>Integrations:</strong></p>
+<li>EMR/EHR (HL7, FHIR)</li>
+<li>Lab systems (HL7 ORM/ORU)</li>
+<li>Radiology/PACS (HL7 ORM/ORU)</li>
+<li>Pharmacy systems</li>
+<li>Clearinghouses (EDI 837, 835, 270/271, 276/277)</li>
+<li>Payer portals</li>
+<li>Patient portal</li>
+<li>Health Information Exchange (HIE)</li>
+
+<hr>
+
+<h2>3. Technology Requirements</h2>
+
+<h3>Performance</h3>
+<li>Page load: <2 seconds</li>
+<li>Support 500+ concurrent users</li>
+<li>Process 1000 claims in <5 minutes</li>
+
+<h3>Security</h3>
+<li>AES-256 encryption (data at rest)</li>
+<li>TLS 1.2+ (data in transit)</li>
+<li>Multi-factor authentication</li>
+<li>HIPAA compliant</li>
+<li>PCI-DSS compliant (for payments)</li>
+
+<h3>Availability</h3>
+<li>99.9% uptime</li>
+<li>Disaster recovery: <4 hour recovery time</li>
+
+<hr>
+
+<h2>4. User Roles & Permissions</h2>
+
+<tr>
+<td>Role</td>
+<td>Can Do</td>
+</tr>
+<tr>
+<td><strong>Front Desk</strong></td>
+<td>Register patients, verify insurance, schedule appointments, collect copays</td>
+</tr>
+<tr>
+<td><strong>Doctor</strong></td>
+<td>Document visits, write orders, sign encounters</td>
+</tr>
+<tr>
+<td><strong>Medical Coder</strong></td>
+<td>Assign ICD/CPT codes, review documentation</td>
+</tr>
+<tr>
+<td><strong>Billing Specialist</strong></td>
+<td>Create claims, scrub claims, submit claims</td>
+</tr>
+<tr>
+<td><strong>AR Manager</strong></td>
+<td>Post payments, manage denials, follow up on aging claims</td>
+</tr>
+<tr>
+<td><strong>Collections</strong></td>
+<td>Bill patients, set up payment plans, send to collections</td>
+</tr>
+<tr>
+<td><strong>Finance Manager</strong></td>
+<td>View reports, dashboards, financial analytics</td>
+</tr>
+<tr>
+<td><strong>Compliance Officer</strong></td>
+<td>Audit logs, compliance reports, internal audits</td>
+</tr>
+<tr>
+<td><strong>System Admin</strong></td>
+<td>User management, system configuration</td>
+</tr>
+
+<hr>
+
+<h2>5. Critical Business Rules</h2>
+
+<h3>Rule 1: Provider Credentialing</h3>
+<li>Doctor MUST be credentialed with payer before billing</li>
+<li>If not credentialed → 100% claim rejection</li>
+
+<h3>Rule 2: Insurance Verification</h3>
+<li>MUST verify eligibility before service</li>
+<li>If insurance inactive → Patient becomes self-pay</li>
+
+<h3>Rule 3: Prior Authorization</h3>
+<li>MUST obtain authorization for services requiring it</li>
+<li>If no authorization → 100% claim denial</li>
+
+<h3>Rule 4: Medical Necessity</h3>
+<li>Diagnosis MUST support procedure (per LCD/NCD)</li>
+<li>If not supported → Claim denial</li>
+
+<h3>Rule 5: Timely Filing</h3>
+<li>Claims MUST be submitted within payer deadline (90-365 days)</li>
+<li>If late → Permanent denial, no appeal</li>
+
+<h3>Rule 6: Clean Claims</h3>
+<li>Claims MUST pass all scrubbing checks</li>
+<li>Clean claims pay 3x faster than dirty claims</li>
+
+<h3>Rule 7: Contractual Adjustment</h3>
+<li>CANNOT bill patient for contractual write-off (in-network)</li>
+<li>Balance billing = contract violation</li>
+
+<h3>Rule 8: Refunds</h3>
+<li>Overpayments MUST be refunded within 60 days</li>
+<li>Keeping overpayments = fraud</li>
+
+<hr>
+
+<h2>6. Revenue Cycle Flow (Simple)</h2>
+
+<pre><code>
+1. Doctor credentialed with insurance ✓
+2. Patient registers → Verify insurance ✓
+3. Get prior authorization (if needed) ✓
+4. Patient visits → Encounter created
+5. Doctor documents visit → Diagnoses + procedures
+6. Services performed → Charges captured
+7. Coder assigns ICD/CPT codes
+8. Claim created and scrubbed
+9. Claim submitted to insurance
+10. Insurance reviews and pays
+11. Payment posted to account
+12. If denied → Appeal
+13. Bill patient for remaining balance
+14. Patient pays or goes to collections
+</pre>
+
+<hr>
+
+<h2>7. Common Mistakes & How to Prevent</h2>
+
+<tr>
+<td>Mistake</td>
+<td>Impact</td>
+<td>Prevention</td>
+</tr>
+<tr>
+<td>Wrong insurance ID at registration</td>
+<td>Claim denial</td>
+<td>Real-time eligibility check</td>
+</tr>
+<tr>
+<td>Missing prior authorization</td>
+<td>100% denial</td>
+<td>Authorization tracking system</td>
+</tr>
+<tr>
+<td>Incomplete documentation</td>
+<td>Coding errors, denials</td>
+<td>CDI alerts for providers</td>
+</tr>
+<tr>
+<td>Missed charges</td>
+<td>Revenue loss</td>
+<td>Charge reconciliation reports</td>
+</tr>
+<tr>
+<td>Wrong CPT code</td>
+<td>Denial or underpayment</td>
+<td>Encoder integration, coding audits</td>
+</tr>
+<tr>
+<td>NCCI edit violation</td>
+<td>Claim rejection</td>
+<td>Claim scrubbing with NCCI checks</td>
+</tr>
+<tr>
+<td>Late claim submission</td>
+<td>Timely filing denial</td>
+<td>Timely filing alerts</td>
+</tr>
+<tr>
+<td>Not appealing denials</td>
+<td>Lost revenue</td>
+<td>Denial worklists, appeal tracking</td>
+</tr>
+
+<hr>
+
+<h2>8. Success Metrics</h2>
+
+<p><strong>Before RCM System:</strong></p>
+<li>Denial rate: 10-15%</li>
+<li>Days in AR: 50-60 days</li>
+<li>Clean claim rate: 75-80%</li>
+<li>Revenue leakage: 5-10%</li>
+
+<p><strong>After RCM System (Goals):</strong></p>
+<li>Denial rate: <5%</li>
+<li>Days in AR: <40 days</li>
+<li>Clean claim rate: >95%</li>
+<li>Revenue leakage: <2%</li>
+
+<p><strong>Financial Impact Example:</strong></p>
+<li>Hospital with $50M annual revenue</li>
+<li>5% revenue leakage = $2.5M lost</li>
+<li>RCM system reduces leakage to 2% = $1.5M recovered</li>
+<li>ROI: System pays for itself in 6-12 months</li>
+
+<hr>
+
+<h2>9. Next Documents Needed</h2>
+
+<li><strong>Database Design</strong> - Tables, relationships, fields for all modules</li>
+<li><strong>API Specifications</strong> - Integration with EMR, clearinghouse, payers</li>
+<li><strong>UI/UX Wireframes</strong> - Screen designs for each module</li>
+<li><strong>User Stories</strong> - Detailed requirements for each feature</li>
+<li><strong>Test Cases</strong> - How to verify each feature works correctly</li>
+
+<hr>
+
+<p><strong>Questions for Development Team?</strong></p>
+<li>Which module should we build first? (Recommendation: Start with Patient Registration → Encounter → Charge Capture → Claim Creation)</li>
+<li>What technology stack? (Recommendation: React frontend, Node.js/Python backend, PostgreSQL database)</li>
+<li>Cloud or on-premise? (Recommendation: Cloud for scalability)</li>
+
+</body>
+</html>

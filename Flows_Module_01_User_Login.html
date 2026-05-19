@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 1: User Login & Authentication - Complete Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module 1: User Login & Authentication - Complete Flow Documentation</h1>
+
+<p><strong>Version:</strong> 1.0  </p>
+<p><strong>Module ID:</strong> MOD-001  </p>
+<p><strong>Category:</strong> Authentication & Security</p>
+
+<hr>
+
+<h2>1. Module Overview</h2>
+
+<h3>Purpose</h3>
+<p>Secure user authentication system that verifies user credentials and provides role-based access to the RCM application.</p>
+
+<h3>Why Hospitals Use It</h3>
+<li><strong>Security:</strong> Protects sensitive patient data (HIPAA compliance)</li>
+<li><strong>Access Control:</strong> Different users see different features based on roles</li>
+<li><strong>Audit Trail:</strong> Track who accessed what and when</li>
+<li><strong>Compliance:</strong> Required for healthcare regulations</li>
+
+<h3>Main Users Involved</h3>
+<li>All system users (Front Desk, Doctors, Billing Staff, Admin, etc.)</li>
+
+<hr>
+
+<h2>2. Actors Involved</h2>
+
+<pre><code>
+┌─────────────────────────────────────────────────┐
+│ ACTORS IN LOGIN MODULE                          │
+├─────────────────────────────────────────────────┤
+│                                                  │
+│ 1. User (Any Role)                              │
+│    - Front Desk Staff                           │
+│    - Doctor                                      │
+│    - Medical Coder                               │
+│    - Billing Manager                             │
+│    - AR Team                                     │
+│    - Admin                                       │
+│                                                  │
+│ 2. System                                        │
+│    - Authentication Service                      │
+│    - Database                                    │
+│    - Session Manager                             │
+│                                                  │
+│ 3. External Systems                              │
+│    - Active Directory (Optional)                 │
+│    - SSO Provider (Optional)                     │
+│    - 2FA Service (Twilio for SMS)               │
+│                                                  │
+└─────────────────────────────────────────────────┘
+</pre>
+
+<hr>
+
+<h2>3. Step-by-Step Workflow</h2>
+
+<h3>Flow Diagram</h3>
+
+<pre><code>
+┌─────────────────────┐
+│   User Opens App    │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│  Login Page Loads   │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Enter Username &amp;    │
+│ Password            │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Click Login Button  │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Frontend Validates  │
+│ (Not Empty)         │
+└──────────┬──────────┘
+           ↓
+    ┌──────┴──────┐
+    │ Valid?      │
+    └──┬──────┬───┘
+  No   │      │ Yes
+       ↓      ↓
+┌──────────┐ ┌──────────────────┐
+│Show Error│ │Send to Backend   │
+└──────────┘ │POST /auth/login  │
+             └────────┬─────────┘
+                      ↓
+             ┌──────────────────┐
+             │Backend Validates │
+             │Credentials       │
+             └────────┬─────────┘
+                      ↓
+               ┌──────┴──────┐
+               │ Valid?      │
+               └──┬──────┬───┘
+             No   │      │ Yes
+                  ↓      ↓
+          ┌──────────┐ ┌──────────────────┐
+          │Return 401│ │Check 2FA Enabled?│
+          └──────────┘ └────────┬─────────┘
+                                ↓
+                         ┌──────┴──────┐
+                         │ 2FA?        │
+                         └──┬──────┬───┘
+                       No   │      │ Yes
+                            ↓      ↓
+                    ┌──────────┐ ┌──────────────────┐
+                    │Generate  │ │Send OTP via SMS  │
+                    │JWT Token │ └────────┬─────────┘
+                    └────┬─────┘          ↓
+                         │       ┌──────────────────┐
+                         │       │User Enters OTP   │
+                         │       └────────┬─────────┘
+                         │                ↓
+                         │       ┌──────────────────┐
+                         │       │Verify OTP        │
+                         │       └────────┬─────────┘
+                         │                ↓
+                         │         ┌──────┴──────┐
+                         │         │ Valid?      │
+                         │         └──┬──────┬───┘
+                         │       No   │      │ Yes
+                         │            ↓      ↓
+                         │    ┌──────────┐ ┌──────────┐
+                         │    │Show Error│ │Generate  │
+                         │    └──────────┘ │JWT Token │
+                         │                 └────┬─────┘
+                         └──────────────────────┘
+                                  ↓
+                         ┌──────────────────┐
+                         │Create Session    │
+                         └────────┬─────────┘
+                                  ↓
+                         ┌──────────────────┐
+                         │Log Audit Entry   │
+                         └────────┬─────────┘
+                                  ↓
+                         ┌──────────────────┐
+                         │Return User Data  │
+                         │&amp; Token           │
+                         └────────┬─────────┘
+                                  ↓
+                         ┌──────────────────┐
+                         │Frontend Stores   │
+                         │Token in Cookie   │
+                         └────────┬─────────┘
+                                  ↓
+                         ┌──────────────────┐
+                         │Redirect to       │
+                         │Dashboard         │
+                         └──────────────────┘
+</pre>
+
+<hr>
+
+<h2>4. Action Plan</h2>
+
+<h3>Frontend Actions</h3>
+
+<p><strong>Technology:</strong> React.js + TypeScript</p>
+
+<p><strong>File:</strong> <code>src/pages/Login.tsx</code></p>
+
+<pre><code class="language-typescript">
+// What Frontend Does:
+1. Display login form
+   - Username/Email field
+   - Password field
+   - Remember Me checkbox
+   - Login button
+   - Forgot Password link
+2. Validate inputs
+   - Check if fields are not empty
+   - Check email format (if using email)
+   - Check password minimum length
+3. Submit credentials
+   - POST request to /api/auth/login
+   - Send { username, password }
+4. Handle response
+   - Success: Store JWT token in localStorage/cookie
+   - Success: Redirect to dashboard
+   - Failure: Show error message
+   - 2FA Required: Show OTP input screen
+5. Handle 2FA
+   - Display OTP input field
+   - Submit OTP to /api/auth/verify-otp
+   - Verify and complete login
+6. Store user session
+   - Save JWT token
+   - Save user info (name, role, permissions)
+   - Set session timeout (15 minutes)
+</pre>
+
+<p><strong>Code Example:</strong></p>
+<pre><code class="language-typescript">
+const handleLogin = async (e: FormEvent) =&gt; {
+  e.preventDefault();
+  // Frontend validation
+  if (!username || !password) {
+    setError('Please enter username and password');
+    return;
+  }
+  setLoading(true);
+  try {
+    // API call
+    const response = await api.post('/auth/login', {
+      username,
+      password
+    });
+    if (response.data.requires2FA) {
+      // Show OTP screen
+      setShow2FA(true);
+    } else {
+      // Store token and redirect
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      navigate('/dashboard');
+    }
+  } catch (err) {
+    setError(err.response?.data?.message || 'Login failed');
+  } finally {
+    setLoading(false);
+  }
+};
+</pre>
+
+<hr>
+
+<h3>Backend Actions</h3>
+
+<p><strong>Technology:</strong> Python FastAPI</p>
+
+<p><strong>File:</strong> <code>app/api/v1/auth.py</code></p>
+
+<pre><code class="language-python">
+# What Backend Does:
+1. Receive login request
+   - Extract username and password from request body
+   - Validate request format
+2. Find user in database
+   - Query users table by username/email
+   - Check if user exists
+3. Verify password
+   - Hash submitted password
+   - Compare with stored hash
+   - Use bcrypt for hashing
+4. Check account status
+   - Is account active?
+   - Is account locked?
+   - Is password expired?
+5. Check 2FA requirement
+   - If enabled, generate OTP
+   - Send OTP via Twilio SMS
+   - Store OTP in Redis (5 min expiry)
+6. Generate JWT token
+   - Create token with user_id, role, permissions
+   - Set expiration (24 hours)
+   - Sign with secret key
+7. Create session
+   - Store session in Redis
+   - Set session timeout (15 minutes)
+8. Log audit entry
+   - Record login attempt
+   - Store IP address, timestamp
+   - Store user agent
+9. Return response
+   - Send token, user data, permissions
+</pre>
+
+<p><strong>Code Example:</strong></p>
+<pre><code class="language-python">
+@router.post("/login")
+async def login(
+    credentials: LoginRequest,
+    db: Session = Depends(get_db),
+    request: Request = None
+):
+    # Find user
+    user = db.query(User).filter(
+        User.username == credentials.username
+    ).first()
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    # Verify password
+    if not verify_password(credentials.password, user.password_hash):
+        # Log failed attempt
+        log_failed_login(user.user_id, request.client.host)
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    # Check if account is active
+    if not user.is_active:
+        raise HTTPException(status_code=403, detail="Account is disabled")
+    # Check 2FA
+    if user.two_factor_enabled:
+        # Generate and send OTP
+        otp = generate_otp()
+        send_sms(user.phone, f"Your OTP: {otp}")
+        redis_client.setex(f"otp:{user.user_id}", 300, otp)
+        return {
+            "requires2FA": True,
+            "userId": user.user_id
+        }
+    # Generate JWT token
+    token = create_access_token(
+        data={
+            "user_id": user.user_id,
+            "role": user.role,
+            "permissions": user.permissions
+        }
+    )
+    # Create session
+    create_session(user.user_id, token)
+    # Log successful login
+    log_audit(
+        user_id=user.user_id,
+        action="LOGIN",
+        ip_address=request.client.host
+    )
+    return {
+        "token": token,
+        "user": {
+            "userId": user.user_id,
+            "name": user.full_name,
+            "role": user.role,
+            "permissions": user.permissions
+        }
+    }
+</pre>
+
+<hr>
+
+<h3>Database Actions</h3>
+
+<p><strong>Tables Updated:</strong></p>
+
+<li><strong>users</strong> - Read user record</li>
+<li><strong>user_sessions</strong> - Create new session</li>
+<li><strong>audit_logs</strong> - Insert login audit entry</li>
+<li><strong>failed<em>login</em>attempts</strong> - Track failed attempts (if failed)</li>
+
+<p><strong>SQL Operations:</strong></p>
+
+<pre><code class="language-sql">
+-- 1. Find user
+SELECT user_id, username, password_hash, role, is_active, two_factor_enabled
+FROM users
+WHERE username = 'john.doe';
+-- 2. Create session
+INSERT INTO user_sessions (user_id, token, ip_address, created_at, expires_at)
+VALUES ('USR-001', 'jwt_token_here', '192.168.1.1', NOW(), NOW() + INTERVAL '15 minutes');
+-- 3. Log audit entry
+INSERT INTO audit_logs (user_id, action, ip_address, timestamp)
+VALUES ('USR-001', 'LOGIN', '192.168.1.1', NOW());
+-- 4. Track failed attempt (if password wrong)
+INSERT INTO failed_login_attempts (username, ip_address, attempted_at)
+VALUES ('john.doe', '192.168.1.1', NOW());
+</pre>
+
+<hr>
+
+<h3>API Calls</h3>
+
+<p><strong>Internal APIs:</strong></p>
+<li><code>POST /api/auth/login</code> - Main login endpoint</li>
+<li><code>POST /api/auth/verify-otp</code> - Verify 2FA code</li>
+<li><code>POST /api/auth/refresh-token</code> - Refresh expired token</li>
+<li><code>POST /api/auth/logout</code> - End session</li>
+
+<p><strong>External APIs:</strong></p>
+<li><strong>Twilio SMS API</strong> (if 2FA enabled)</li>
+<li>Endpoint: <code>https://api.twilio.com/2010-04-01/Accounts/{AccountSid}/Messages.json</code></li>
+<li>Purpose: Send OTP via SMS</li>
+<li>Cost: $0.0079 per SMS</li>
+
+<p><strong>Example Twilio Call:</strong></p>
+<pre><code class="language-python">
+from twilio.rest import Client
+def send_otp_sms(phone: str, otp: str):
+    client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+    message = client.messages.create(
+        body=f"Your RCM login code is: {otp}. Valid for 5 minutes.",
+        from_=TWILIO_PHONE_NUMBER,
+        to=phone
+    )
+    return message.sid
+</pre>
+
+<hr>
+
+<h3>Validations</h3>
+
+<p><strong>Frontend Validations:</strong></p>
+<pre><code>
+1. Username/Email:
+   - Not empty
+   - Valid email format (if using email)
+   - Min 3 characters
+2. Password:
+   - Not empty
+   - Min 8 characters
+   - Contains uppercase, lowercase, number, special char
+3. OTP (if 2FA):
+   - Exactly 6 digits
+   - Only numbers
+</pre>
+
+<p><strong>Backend Validations:</strong></p>
+<pre><code>
+1. Request Format:
+   - Valid JSON
+   - Required fields present
+2. User Existence:
+   - User exists in database
+   - Account is active
+   - Account not locked
+3. Password:
+   - Matches stored hash
+   - Not expired (if policy enabled)
+4. Rate Limiting:
+   - Max 5 attempts per 15 minutes
+   - Lock account after 10 failed attempts
+5. IP Whitelisting (Optional):
+   - Check if IP is allowed
+</pre>
+
+<hr>
+
+<h3>Notifications</h3>
+
+<p><strong>Success Notifications:</strong></p>
+<pre><code>
+1. Email (Optional):
+   - "New login detected from [IP] at [Time]"
+   - Sent to user's email
+   - Include "Not you?" link
+2. SMS (if 2FA):
+   - "Your OTP: 123456"
+   - Valid for 5 minutes
+3. In-App:
+   - "Welcome back, [Name]!"
+   - Show last login time
+</pre>
+
+<p><strong>Failure Notifications:</strong></p>
+<pre><code>
+1. Failed Login Alert:
+   - After 3 failed attempts
+   - Email to user: "Multiple failed login attempts detected"
+2. Account Locked:
+   - After 10 failed attempts
+   - Email to user and admin
+   - "Your account has been locked. Contact support."
+3. Suspicious Activity:
+   - Login from new location
+   - Login from new device
+   - Email: "New login from [Location]. Was this you?"
+</pre>
+
+<hr>
+
+<h2>5. Use Case Diagram</h2>
+
+<pre><code>
+                    ┌─────────────────────────────────────┐
+                    │   LOGIN &amp; AUTHENTICATION SYSTEM     │
+                    └─────────────────────────────────────┘
+┌──────────┐                                        ┌──────────────┐
+│          │                                        │              │
+│   User   │───────────────────────────────────────│ Enter Login  │
+│          │                                        │ Credentials  │
+└────┬─────┘                                        └──────────────┘
+     │                                                      │
+     │                                              ┌───────┴───────┐
+     │                                              │               │
+     │                                         ┌────▼────┐    ┌────▼────┐
+     │                                         │ Username│    │Password │
+     │                                         │Validation│    │Validation│
+     │                                         └─────────┘    └─────────┘
+     │                                                      
+     │                                              ┌──────────────┐
+     ├──────────────────────────────────────────────│ Authenticate │
+     │                                              │ User         │
+     │                                              └──────┬───────┘
+     │                                                     │
+     │                                              ┌──────┴───────┐
+     │                                              │              │
+     │                                         ┌────▼────┐    ┌────▼────┐
+     │                                         │ Verify  │    │ Check   │
+     │                                         │Password │    │Account  │
+     │                                         └─────────┘    │Status   │
+     │                                                        └─────────┘
+     │                                                      
+     │                                              ┌──────────────┐
+     ├──────────────────────────────────────────────│ Handle 2FA   │
+     │                                              │ (Optional)   │
+     │                                              └──────┬───────┘
+     │                                                     │
+     │                                              ┌──────┴───────┐
+     │                                              │              │
+     │                                         ┌────▼────┐    ┌────▼────┐
+     │                                         │Generate │    │ Verify  │
+     │                                         │  OTP    │    │  OTP    │
+     │                                         └─────────┘    └─────────┘
+     │                                                      
+     │                                              ┌──────────────┐
+     ├──────────────────────────────────────────────│ Create       │
+     │                                              │ Session      │
+     │                                              └──────┬───────┘
+     │                                                     │
+     │                                              ┌──────┴───────┐
+     │                                              │              │
+     │                                         ┌────▼────┐    ┌────▼────┐
+     │                                         │Generate │    │  Store  │
+     │                                         │JWT Token│    │ Session │
+     │                                         └─────────┘    └─────────┘
+     │                                                      
+     │                                              ┌──────────────┐
+     └──────────────────────────────────────────────│ Access       │
+                                                    │ Dashboard    │
+                                                    └──────────────┘
+┌──────────┐                                        ┌──────────────┐
+│          │                                        │              │
+│  System  │───────────────────────────────────────│ Log Audit    │
+│          │                                        │ Entry        │
+└──────────┘                                        └──────────────┘
+┌──────────┐                                        ┌──────────────┐
+│          │                                        │              │
+│ Twilio   │───────────────────────────────────────│ Send OTP SMS │
+│   API    │                                        │              │
+└──────────┘                                        └──────────────┘
+</pre>
+
+<hr>
+
+<h2>6. Activity Flow Diagram</h2>
+
+<pre><code>
+┌─────────┐
+│  START  │
+└────┬────┘
+     │
+     ▼
+┌─────────────────────┐
+│ User Opens Login    │
+│ Page                │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Display Login Form  │
+│ - Username field    │
+│ - Password field    │
+│ - Login button      │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ User Enters         │
+│ Credentials         │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ User Clicks Login   │
+└────┬────────────────┘
+     │
+     ▼
+    ╱ ╲
+   ╱   ╲
+  ╱Valid?╲────No────┐
+  ╲     ╱           │
+   ╲   ╱            │
+    ╲ ╱             │
+     │Yes           │
+     │              ▼
+     │         ┌─────────────────────┐
+     │         │ Show Error Message  │
+     │         │ "Please fill all    │
+     │         │  fields"            │
+     │         └────┬────────────────┘
+     │              │
+     │              │
+     ▼              │
+┌─────────────────────┐
+│ Send POST Request   │
+│ to Backend          │
+│ /api/auth/login     │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Backend Queries     │
+│ Database for User   │
+└────┬────────────────┘
+     │
+     ▼
+    ╱ ╲
+   ╱   ╲
+  ╱User  ╲────No────┐
+  ╲Exists?╱         │
+   ╲   ╱            │
+    ╲ ╱             │
+     │Yes           │
+     │              ▼
+     │         ┌─────────────────────┐
+     │         │ Return 401 Error    │
+     │         │ "Invalid credentials"│
+     │         └────┬────────────────┘
+     │              │
+     ▼              │
+┌─────────────────────┐
+│ Verify Password     │
+│ (bcrypt compare)    │
+└────┬────────────────┘
+     │
+     ▼
+    ╱ ╲
+   ╱   ╲
+  ╱Pass  ╲────No────┐
+  ╲Valid? ╱         │
+   ╲   ╱            │
+    ╲ ╱             │
+     │Yes           │
+     │              ▼
+     │         ┌─────────────────────┐
+     │         │ Log Failed Attempt  │
+     │         │ Return 401 Error    │
+     │         └────┬────────────────┘
+     │              │
+     ▼              │
+┌─────────────────────┐
+│ Check Account       │
+│ Status              │
+└────┬────────────────┘
+     │
+     ▼
+    ╱ ╲
+   ╱   ╲
+  ╱Active?╲────No────┐
+  ╲     ╱            │
+   ╲   ╱             │
+    ╲ ╱              │
+     │Yes            │
+     │               ▼
+     │         ┌─────────────────────┐
+     │         │ Return 403 Error    │
+     │         │ "Account disabled"  │
+     │         └─────────────────────┘
+     │
+     ▼
+    ╱ ╲
+   ╱   ╲
+  ╱ 2FA  ╲────No─────┐
+  ╲Enabled?╱         │
+   ╲   ╱             │
+    ╲ ╱              │
+     │Yes            │
+     │               │
+     ▼               │
+┌─────────────────────┐
+│ Generate 6-digit    │
+│ OTP                 │
+└────┬────────────────┘
+     │                │
+     ▼                │
+┌─────────────────────┐
+│ Send OTP via        │
+│ Twilio SMS          │
+└────┬────────────────┘
+     │                │
+     ▼                │
+┌─────────────────────┐
+│ Store OTP in Redis  │
+│ (5 min expiry)      │
+└────┬────────────────┘
+     │                │
+     ▼                │
+┌─────────────────────┐
+│ Return Response:    │
+│ requires2FA: true   │
+└────┬────────────────┘
+     │                │
+     ▼                │
+┌─────────────────────┐
+│ User Enters OTP     │
+└────┬────────────────┘
+     │                │
+     ▼                │
+┌─────────────────────┐
+│ Verify OTP from     │
+│ Redis               │
+└────┬────────────────┘
+     │                │
+     ▼                │
+    ╱ ╲               │
+   ╱   ╲              │
+  ╱ OTP  ╲────No──────┤
+  ╲Valid? ╱           │
+   ╲   ╱              │
+    ╲ ╱               │
+     │Yes             │
+     │                │
+     ▼◄───────────────┘
+┌─────────────────────┐
+│ Generate JWT Token  │
+│ - user_id           │
+│ - role              │
+│ - permissions       │
+│ - expires: 24h      │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Create Session in   │
+│ Redis               │
+│ - timeout: 15 min   │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Insert Audit Log    │
+│ - action: LOGIN     │
+│ - timestamp         │
+│ - IP address        │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Return Response:    │
+│ - token             │
+│ - user data         │
+│ - permissions       │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Frontend Stores     │
+│ Token in localStorage│
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Redirect to         │
+│ Dashboard           │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────┐
+│   END   │
+└─────────┘
+</pre>
+
+<hr>
+
+<h2>7. Sequence Diagram</h2>
+
+<pre><code>
+User          Frontend         Backend API      Database       Redis        Twilio
+ │                │                │               │             │            │
+ │  Open App      │                │               │             │            │
+ ├───────────────&gt;│                │               │             │            │
+ │                │                │               │             │            │
+ │                │ Load Login Page│               │             │            │
+ │                │                │               │             │            │
+ │  Enter         │                │               │             │            │
+ │  Credentials   │                │               │             │            │
+ ├───────────────&gt;│                │               │             │            │
+ │                │                │               │             │            │
+ │  Click Login   │                │               │             │            │
+ ├───────────────&gt;│                │               │             │            │
+ │                │                │               │             │            │
+ │                │ Validate Form  │               │             │            │
+ │                │                │               │             │            │
+ │                │ POST /auth/login               │             │            │
+ │                ├───────────────&gt;│               │             │            │
+ │                │                │               │             │            │
+ │                │                │ SELECT user   │             │            │
+ │                │                ├──────────────&gt;│             │            │
+ │                │                │               │             │            │
+ │                │                │ User Record   │             │            │
+ │                │                │&lt;──────────────┤             │            │
+ │                │                │               │             │            │
+ │                │                │ Verify Password             │            │
+ │                │                │ (bcrypt)      │             │            │
+ │                │                │               │             │            │
+ │                │                │ Check 2FA     │             │            │
+ │                │                │               │             │            │
+ │                │                │ Generate OTP  │             │            │
+ │                │                │               │             │            │
+ │                │                │               │ Store OTP   │            │
+ │                │                │               ├────────────&gt;│            │
+ │                │                │               │             │            │
+ │                │                │               │             │ Send SMS   │
+ │                │                │               │             ├───────────&gt;│
+ │                │                │               │             │            │
+ │                │                │               │             │ SMS Sent   │
+ │                │                │               │             │&lt;───────────┤
+ │                │                │               │             │            │
+ │                │ Response:      │               │             │            │
+ │                │ requires2FA    │               │             │            │
+ │                │&lt;───────────────┤               │             │            │
+ │                │                │               │             │            │
+ │  Show OTP      │                │               │             │            │
+ │  Input         │                │               │             │            │
+ │&lt;───────────────┤                │               │             │            │
+ │                │                │               │             │            │
+ │  Enter OTP     │                │               │             │            │
+ ├───────────────&gt;│                │               │             │            │
+ │                │                │               │             │            │
+ │                │ POST /auth/verify-otp          │             │            │
+ │                ├───────────────&gt;│               │             │            │
+ │                │                │               │             │            │
+ │                │                │               │ Get OTP     │            │
+ │                │                │               ├────────────&gt;│            │
+ │                │                │               │             │            │
+ │                │                │               │ OTP Value   │            │
+ │                │                │               │&lt;────────────┤            │
+ │                │                │               │             │            │
+ │                │                │ Verify OTP    │             │            │
+ │                │                │               │             │            │
+ │                │                │ Generate JWT  │             │            │
+ │                │                │               │             │            │
+ │                │                │               │ Store Session            │
+ │                │                │               ├────────────&gt;│            │
+ │                │                │               │             │            │
+ │                │                │ INSERT audit_log            │            │
+ │                │                ├──────────────&gt;│             │            │
+ │                │                │               │             │            │
+ │                │ Response:      │               │             │            │
+ │                │ token, user    │               │             │            │
+ │                │&lt;───────────────┤               │             │            │
+ │                │                │               │             │            │
+ │                │ Store Token    │               │             │            │
+ │                │                │               │             │            │
+ │  Redirect to   │                │               │             │            │
+ │  Dashboard     │                │               │             │            │
+ │&lt;───────────────┤                │               │             │            │
+ │                │                │               │             │            │
+</pre>
+
+<hr>
+
+<h2>8. API Flow</h2>
+
+<h3>API Endpoint 1: Login</h3>
+
+<p><strong>Request:</strong></p>
+<pre><code class="language-http">
+POST /api/auth/login
+Content-Type: application/json
+{
+  "username": "john.doe",
+  "password": "SecurePass123!"
+}
+</pre>
+
+<p><strong>Response (Success - No 2FA):</strong></p>
+<pre><code class="language-http">
+HTTP/1.1 200 OK
+Content-Type: application/json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "userId": "USR-001",
+    "username": "john.doe",
+    "fullName": "John Doe",
+    "role": "front_desk",
+    "permissions": ["patient.create", "patient.read", "appointment.create"]
+  },
+  "expiresAt": "2026-05-19T19:13:00Z"
+}
+</pre>
+
+<p><strong>Response (Success - 2FA Required):</strong></p>
+<pre><code class="language-http">
+HTTP/1.1 200 OK
+Content-Type: application/json
+{
+  "requires2FA": true,
+  "userId": "USR-001",
+  "message": "OTP sent to your phone ending in ****1234"
+}
+</pre>
+
+<p><strong>Response (Error - Invalid Credentials):</strong></p>
+<pre><code class="language-http">
+HTTP/1.1 401 Unauthorized
+Content-Type: application/json
+{
+  "error": "Invalid credentials",
+  "message": "Username or password is incorrect"
+}
+</pre>
+
+<p><strong>Response (Error - Account Locked):</strong></p>
+<pre><code class="language-http">
+HTTP/1.1 403 Forbidden
+Content-Type: application/json
+{
+  "error": "Account locked",
+  "message": "Your account has been locked due to multiple failed login attempts. Contact support."
+}
+</pre>
+
+<hr>
+
+<h3>API Endpoint 2: Verify OTP</h3>
+
+<p><strong>Request:</strong></p>
+<pre><code class="language-http">
+POST /api/auth/verify-otp
+Content-Type: application/json
+{
+  "userId": "USR-001",
+  "otp": "123456"
+}
+</pre>
+
+<p><strong>Response (Success):</strong></p>
+<pre><code class="language-http">
+HTTP/1.1 200 OK
+Content-Type: application/json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "userId": "USR-001",
+    "username": "john.doe",
+    "fullName": "John Doe",
+    "role": "front_desk",
+    "permissions": ["patient.create", "patient.read"]
+  }
+}
+</pre>
+
+<p><strong>Response (Error - Invalid OTP):</strong></p>
+<pre><code class="language-http">
+HTTP/1.1 401 Unauthorized
+Content-Type: application/json
+{
+  "error": "Invalid OTP",
+  "message": "The OTP you entered is incorrect or has expired"
+}
+</pre>
+
+<hr>
+
+<h3>API Endpoint 3: Logout</h3>
+
+<p><strong>Request:</strong></p>
+<pre><code class="language-http">
+POST /api/auth/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+</pre>
+
+<p><strong>Response:</strong></p>
+<pre><code class="language-http">
+HTTP/1.1 200 OK
+Content-Type: application/json
+{
+  "message": "Logged out successfully"
+}
+</pre>
+
+<hr>
+
+<h2>9. Database Flow</h2>
+
+<h3>Tables Involved</h3>
+
+<p><strong>1. users</strong></p>
+<pre><code class="language-sql">
+CREATE TABLE users (
+    user_id VARCHAR(50) PRIMARY KEY,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    full_name VARCHAR(200) NOT NULL,
+    role VARCHAR(50) NOT NULL,
+    permissions TEXT[],
+    is_active BOOLEAN DEFAULT TRUE,
+    two_factor_enabled BOOLEAN DEFAULT FALSE,
+    phone VARCHAR(20),
+    last_login TIMESTAMP,
+    password_expires_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+</pre>
+
+<p><strong>2. user_sessions</strong></p>
+<pre><code class="language-sql">
+CREATE TABLE user_sessions (
+    session_id SERIAL PRIMARY KEY,
+    user_id VARCHAR(50) REFERENCES users(user_id),
+    token TEXT NOT NULL,
+    ip_address VARCHAR(50),
+    user_agent TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE
+);
+</pre>
+
+<p><strong>3. audit_logs</strong></p>
+<pre><code class="language-sql">
+CREATE TABLE audit_logs (
+    log_id BIGSERIAL PRIMARY KEY,
+    user_id VARCHAR(50),
+    action VARCHAR(100) NOT NULL,
+    ip_address VARCHAR(50),
+    user_agent TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    details JSONB
+);
+</pre>
+
+<p><strong>4. failed<em>login</em>attempts</strong></p>
+<pre><code class="language-sql">
+CREATE TABLE failed_login_attempts (
+    attempt_id SERIAL PRIMARY KEY,
+    username VARCHAR(100),
+    ip_address VARCHAR(50),
+    attempted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    reason VARCHAR(100)
+);
+</pre>
+
+<h3>Database Operations Flow</h3>
+
+<pre><code>
+┌─────────────────────┐
+│ 1. SELECT from      │
+│    users table      │
+│    WHERE username   │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ 2. If password      │
+│    wrong:           │
+│    INSERT into      │
+│    failed_login_    │
+│    attempts         │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ 3. If success:      │
+│    INSERT into      │
+│    user_sessions    │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ 4. INSERT into      │
+│    audit_logs       │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ 5. UPDATE users     │
+│    SET last_login   │
+└─────────────────────┘
+</pre>
+
+<hr>
+
+<h2>10. Error Scenarios</h2>
+
+<h3>Scenario 1: Invalid Credentials</h3>
+
+<p><strong>Trigger:</strong> User enters wrong password</p>
+
+<p><strong>Flow:</strong></p>
+<pre><code>
+User enters wrong password
+   ↓
+Backend verifies password → Fails
+   ↓
+INSERT into failed_login_attempts
+   ↓
+Check attempt count (last 15 min)
+   ↓
+If &lt; 5 attempts:
+   Return 401 "Invalid credentials"
+If &gt;= 5 attempts:
+   Lock account (UPDATE users SET is_active = FALSE)
+   Send email notification
+   Return 403 "Account locked"
+</pre>
+
+<p><strong>Error Response:</strong></p>
+<pre><code class="language-json">
+{
+  "error": "Invalid credentials",
+  "message": "Username or password is incorrect",
+  "attemptsRemaining": 2
+}
+</pre>
+
+<hr>
+
+<h3>Scenario 2: Account Locked</h3>
+
+<p><strong>Trigger:</strong> Too many failed login attempts</p>
+
+<p><strong>Flow:</strong></p>
+<pre><code>
+Failed attempt count &gt;= 5
+   ↓
+UPDATE users SET is_active = FALSE
+   ↓
+Send email to user
+   ↓
+Send email to admin
+   ↓
+Return 403 error
+</pre>
+
+<p><strong>Error Response:</strong></p>
+<pre><code class="language-json">
+{
+  "error": "Account locked",
+  "message": "Your account has been locked due to multiple failed login attempts. Please contact support at support@hospital.com"
+}
+</pre>
+
+<p><strong>Unlock Process:</strong></p>
+<pre><code>
+Admin receives notification
+   ↓
+Admin verifies user identity
+   ↓
+Admin runs: UPDATE users SET is_active = TRUE WHERE user_id = 'USR-001'
+   ↓
+DELETE FROM failed_login_attempts WHERE username = 'john.doe'
+   ↓
+Send email to user: "Your account has been unlocked"
+</pre>
+
+<hr>
+
+<h3>Scenario 3: OTP Expired</h3>
+
+<p><strong>Trigger:</strong> User enters OTP after 5 minutes</p>
+
+<p><strong>Flow:</strong></p>
+<pre><code>
+User enters OTP
+   ↓
+Backend checks Redis for OTP
+   ↓
+OTP not found (expired after 5 min)
+   ↓
+Return 401 error
+</pre>
+
+<p><strong>Error Response:</strong></p>
+<pre><code class="language-json">
+{
+  "error": "OTP expired",
+  "message": "Your OTP has expired. Please request a new one."
+}
+</pre>
+
+<p><strong>Retry Process:</strong></p>
+<pre><code>
+User clicks "Resend OTP"
+   ↓
+Generate new OTP
+   ↓
+Send new SMS
+   ↓
+Store in Redis (5 min expiry)
+</pre>
+
+<hr>
+
+<h3>Scenario 4: Session Expired</h3>
+
+<p><strong>Trigger:</strong> User inactive for 15 minutes</p>
+
+<p><strong>Flow:</strong></p>
+<pre><code>
+User makes API request
+   ↓
+Backend checks session in Redis
+   ↓
+Session expired (&gt; 15 min)
+   ↓
+Return 401 "Session expired"
+   ↓
+Frontend redirects to login
+</pre>
+
+<p><strong>Error Response:</strong></p>
+<pre><code class="language-json">
+{
+  "error": "Session expired",
+  "message": "Your session has expired. Please login again."
+}
+</pre>
+
+<hr>
+
+<h3>Scenario 5: Twilio API Failure</h3>
+
+<p><strong>Trigger:</strong> SMS service is down</p>
+
+<p><strong>Flow:</strong></p>
+<pre><code>
+Generate OTP
+   ↓
+Call Twilio API to send SMS
+   ↓
+Twilio returns error (500)
+   ↓
+Log error
+   ↓
+Fallback: Send OTP via email instead
+   ↓
+If email also fails:
+   Return error to user
+</pre>
+
+<p><strong>Error Response:</strong></p>
+<pre><code class="language-json">
+{
+  "error": "SMS service unavailable",
+  "message": "Unable to send OTP via SMS. We've sent it to your email instead."
+}
+</pre>
+
+<hr>
+
+<h2>11. Dashboard & Status Flow</h2>
+
+<h3>User Status States</h3>
+
+<pre><code>
+┌─────────────────────┐
+│   User Created      │
+│   (is_active: true) │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│   First Login       │
+│   (force password   │
+│    change)          │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│   Active User       │
+│   (normal login)    │
+└──────────┬──────────┘
+           ↓
+    ┌──────┴──────┐
+    │             │
+    ▼             ▼
+┌─────────┐  ┌─────────────────┐
+│ Locked  │  │ Password Expired│
+│ (failed │  │ (90 days)       │
+│ attempts)│  └──────┬──────────┘
+└────┬────┘         │
+     │              ▼
+     │     ┌─────────────────┐
+     │     │ Force Password  │
+     │     │ Change          │
+     │     └──────┬──────────┘
+     │            │
+     ▼            ▼
+┌─────────────────────┐
+│   Admin Unlocks     │
+│   or                │
+│   Password Reset    │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│   Active Again      │
+└─────────────────────┘
+</pre>
+
+<h3>Session Status Flow</h3>
+
+<pre><code>
+┌─────────────────────┐
+│  Login Successful   │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│  Session Created    │
+│  (expires: 15 min)  │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│  User Active        │
+│  (making requests)  │
+└──────────┬──────────┘
+           ↓
+    ┌──────┴──────┐
+    │             │
+    ▼             ▼
+┌─────────┐  ┌─────────────────┐
+│Activity │  │ No Activity     │
+│Detected │  │ (15 min)        │
+└────┬────┘  └──────┬──────────┘
+     │              │
+     ▼              ▼
+┌─────────┐  ┌─────────────────┐
+│ Extend  │  │ Session Expired │
+│Session  │  └──────┬──────────┘
+└────┬────┘         │
+     │              ▼
+     │     ┌─────────────────┐
+     │     │ Redirect to     │
+     │     │ Login           │
+     │     └─────────────────┘
+     │
+     └──────────────┐
+                    ▼
+           ┌─────────────────┐
+           │ User Logs Out   │
+           └──────┬──────────┘
+                  ↓
+           ┌─────────────────┐
+           │ Session Deleted │
+           └─────────────────┘
+</pre>
+
+<hr>
+
+<h2>12. Security & Compliance</h2>
+
+<h3>HIPAA Compliance</h3>
+
+<pre><code>
+✅ Audit Logging
+   - All login attempts logged
+   - IP address recorded
+   - Timestamp recorded
+   - User agent recorded
+✅ Session Management
+   - 15-minute timeout
+   - Automatic logout
+   - Secure token storage
+✅ Password Security
+   - Bcrypt hashing (cost factor: 12)
+   - Min 8 characters
+   - Complexity requirements
+   - 90-day expiration
+✅ Account Lockout
+   - 5 failed attempts = lock
+   - Admin unlock required
+   - Email notifications
+✅ 2FA Support
+   - Optional SMS-based OTP
+   - 6-digit code
+   - 5-minute expiry
+</pre>
+
+<h3>Role-Based Access Control</h3>
+
+<pre><code>
+After Login → Check user.role → Load permissions
+Roles:
+- admin → Full access
+- front_desk → Patient registration, appointments
+- doctor → Clinical documentation, orders
+- medical_coder → Coding, charge capture
+- billing_manager → Claims, payments
+- ar_team → AR management, collections
+</pre>
+
+<hr>
+
+<h2>13. Third-Party APIs Used</h2>
+
+<h3>Twilio SMS API</h3>
+
+<p><strong>Purpose:</strong> Send OTP for 2FA</p>
+
+<p><strong>Endpoint:</strong> <code>https://api.twilio.com/2010-04-01/Accounts/{AccountSid}/Messages.json</code></p>
+
+<p><strong>Request:</strong></p>
+<pre><code class="language-http">
+POST /Accounts/AC1234.../Messages.json
+Authorization: Basic {base64(AccountSid:AuthToken)}
+Content-Type: application/x-www-form-urlencoded
+Body=Your%20RCM%20login%20code%20is%3A%20123456&amp;From=%2B15551234567&amp;To=%2B15559876543
+</pre>
+
+<p><strong>Response:</strong></p>
+<pre><code class="language-json">
+{
+  "sid": "SM1234567890abcdef",
+  "status": "queued",
+  "to": "+15559876543",
+  "from": "+15551234567"
+}
+</pre>
+
+<p><strong>Cost:</strong> $0.0079 per SMS</p>
+
+<p><strong>Error Handling:</strong></p>
+<li>If Twilio fails → Fallback to email</li>
+<li>If both fail → Show error, allow manual OTP entry</li>
+
+<hr>
+
+<h2>14. Performance Metrics</h2>
+
+<h3>Target Metrics</h3>
+
+<pre><code>
+Login Response Time: &lt; 500ms
+OTP Delivery Time: &lt; 10 seconds
+Session Creation: &lt; 100ms
+Database Query Time: &lt; 50ms
+JWT Generation: &lt; 10ms
+Success Rate: &gt; 99.9%
+</pre>
+
+<h3>Monitoring</h3>
+
+<pre><code>
+CloudWatch Metrics:
+- Login attempts per minute
+- Failed login rate
+- Average response time
+- OTP delivery success rate
+- Session creation rate
+Alerts:
+- Failed login rate &gt; 10%
+- Response time &gt; 1 second
+- OTP delivery failure &gt; 5%
+</pre>
+
+<hr>
+
+<h2>Summary</h2>
+
+<p><strong>Module:</strong> User Login & Authentication  </p>
+<p><strong>Complexity:</strong> Medium  </p>
+<p><strong>Development Time:</strong> 1 week  </p>
+<p><strong>Dependencies:</strong> Database, Redis, Twilio (optional)  </p>
+<p><strong>Critical:</strong> Yes (required for all other modules)  </p>
+
+<p><strong>Key Features:</strong></p>
+<p>✅ Secure password authentication  </p>
+<p>✅ JWT token-based sessions  </p>
+<p>✅ Optional 2FA via SMS  </p>
+<p>✅ Account lockout protection  </p>
+<p>✅ Audit logging  </p>
+<p>✅ Role-based access control  </p>
+<p>✅ Session management  </p>
+<p>✅ HIPAA compliant  </p>
+
+<hr>
+
+<p><strong>Next Module:</strong> <a href="Flows<em>Module</em>02<em>Patient</em>Registration.md">Module 2: Patient Registration</a></p>
+
+</body>
+</html>

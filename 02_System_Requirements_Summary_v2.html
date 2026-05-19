@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare RCM Application - System Requirements Summary (v2.0)</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Healthcare RCM Application - System Requirements Summary (v2.0)</h1>
+
+<p><strong>Version:</strong> 2.0  </p>
+<p><strong>Updated:</strong> May 18, 2026  </p>
+<p><strong>For:</strong> Development Team (Non-Healthcare Background)</p>
+
+<hr>
+
+<h2>1. What We're Building</h2>
+
+<p>A complete <strong>AI-powered</strong> Revenue Cycle Management system that helps hospitals:</p>
+<li>Register patients and verify insurance in real-time</li>
+<li>Capture all services provided automatically</li>
+<li>Code services using AI-assisted medical coding</li>
+<li>Submit claims electronically with error prediction</li>
+<li>Track payments and denials with predictive analytics</li>
+<li>Bill patients for remaining balances</li>
+<li>Generate financial reports and dashboards</li>
+
+<p><strong>Goal:</strong> Reduce claim denials from 10-15% to <5%, collect payments in <35 days (vs industry 50+ days)</p>
+
+<p><strong>Key Differentiators:</strong></p>
+<li>✅ AI-powered coding and error prediction</li>
+<li>✅ Real-time insurance verification (<30 seconds)</li>
+<li>✅ 99.5% clean claim rate</li>
+<li>✅ Modern, intuitive UI</li>
+<li>✅ Cloud-based, mobile-responsive</li>
+
+<hr>
+
+<h2>2. Core Modules (30 Main Features)</h2>
+
+<h3>Module 1: User Management & Security</h3>
+<p><strong>Who uses it:</strong> Everyone  </p>
+<p><strong>What it does:</strong> Secure login, role-based permissions, audit logging  </p>
+<p><strong>Key Features:</strong></p>
+<li>10 user roles (Admin, Front Desk, Doctor, Coder, Biller, AR Manager, etc.)</li>
+<li>Multi-factor authentication (MFA)</li>
+<li>Single Sign-On (SSO) integration</li>
+<li>JWT token-based authentication</li>
+<li>Session timeout after 15 minutes (configurable)</li>
+<li>Password complexity requirements</li>
+<li>Audit logging (HIPAA requirement - 7 years retention)</li>
+<li>Role-based access control (RBAC)</li>
+<li>IP whitelisting for admin access</li>
+
+<p><strong>Tech Stack:</strong></p>
+<li>FastAPI authentication endpoints</li>
+<li>JWT tokens (8-hour expiration)</li>
+<li>bcrypt password hashing</li>
+<li>PostgreSQL user tables</li>
+
+<hr>
+
+<h3>Module 2: Provider Credentialing</h3>
+<p><strong>Who uses it:</strong> Admin staff  </p>
+<p><strong>What it does:</strong> Register doctors with insurance companies  </p>
+<p><strong>Key Features:</strong></p>
+<li>Store provider NPI, licenses, certifications</li>
+<li>Track credentialing status with each payer</li>
+<li>Alert 90 days before credential expiration</li>
+<li>CAQH integration</li>
+<li>Document management (upload licenses, certificates)</li>
+<li>Credentialing workflow (pending → approved → active)</li>
+
+<p><strong>Why critical:</strong> Without credentialing, ALL claims from that doctor get rejected</p>
+
+<hr>
+
+<h3>Module 3: Fee Schedule Management</h3>
+<p><strong>Who uses it:</strong> Finance team  </p>
+<p><strong>What it does:</strong> Maintain hospital prices and insurance contract rates  </p>
+<p><strong>Key Features:</strong></p>
+<li>Chargemaster (CDM): List of all services with prices</li>
+<li>Contract rates by payer and CPT code</li>
+<li>Automatic rate calculation during billing</li>
+<li>Contract variance analysis (detect underpayments)</li>
+<li>Fee schedule versioning (effective dates)</li>
+<li>Bulk import/export of fee schedules</li>
+
+<hr>
+
+<h3>Module 4: Patient Registration</h3>
+<p><strong>Who uses it:</strong> Front desk  </p>
+<p><strong>What it does:</strong> Capture patient demographics and insurance info  </p>
+<p><strong>Key Features:</strong></p>
+<li>Capture: Name, DOB, address, phone, insurance card</li>
+<li>Master Patient Index (MPI) prevents duplicate records</li>
+<li>Auto-generate unique Medical Record Number (MRN)</li>
+<li>Store primary, secondary, tertiary insurance</li>
+<li>Digital consent forms with e-signature</li>
+<li><strong>OCR for insurance card scanning</strong> (AI-powered)</li>
+<li><strong>Duplicate patient detection</strong> (fuzzy matching)</li>
+<li>Emergency contact management</li>
+<li>Patient photo upload</li>
+
+<p><strong>AI Feature:</strong></p>
+<li>Scan insurance card with phone camera</li>
+<li>AI extracts: Insurance company, policy number, group number, member name</li>
+<li>Auto-fills registration form</li>
+<li><strong>Saves 2-3 minutes per registration</strong></li>
+
+<p><strong>Tech Stack:</strong></p>
+<li>AWS Textract or OpenAI Vision API for OCR</li>
+<li>PostgreSQL tables: <code>patients</code>, <code>patient<em>insurance</code>, <code>patient</em>contacts</code></li>
+
+<p><strong>Common mistake:</strong> Wrong insurance ID = claim denial</p>
+
+<hr>
+
+<h3>Module 5: Insurance Verification (Real-Time)</h3>
+<p><strong>Who uses it:</strong> Front desk (before appointment)  </p>
+<p><strong>What it does:</strong> Check if insurance is active and what patient owes  </p>
+<p><strong>Key Features:</strong></p>
+<li><strong>Real-time eligibility check</strong> (EDI 270/271 via Waystar/Availity)</li>
+<li>Response time: <30 seconds</li>
+<li>Shows: Copay, deductible, coinsurance, coverage limits</li>
+<li>Coordination of Benefits (which insurance pays first)</li>
+<li>Network status (in-network vs out-of-network)</li>
+<li>Prior authorization requirements</li>
+<li>Store verification history</li>
+<li><strong>Cache results for 24 hours</strong> (Redis)</li>
+<li>Batch verification for scheduled appointments</li>
+
+<p><strong>API Integration:</strong></p>
+<li><strong>Waystar Eligibility API</strong> (primary)</li>
+<li><strong>Availity API</strong> (backup)</li>
+<li>EDI 270 (inquiry) → EDI 271 (response)</li>
+
+<p><strong>Example API Call:</strong></p>
+<pre><code class="language-python">
+POST https://api.waystar.com/eligibility/v1/inquiries
+{
+  "patient": {"firstName": "John", "lastName": "Doe", "dob": "1980-05-15"},
+  "payer": {"payerId": "00431"},
+  "provider": {"npi": "1234567890"},
+  "serviceDate": "2026-05-20"
+}
+</pre>
+
+<p><strong>Revenue impact:</strong> Prevents treating patients with inactive insurance</p>
+
+<hr>
+
+<h3>Module 6: Prior Authorization</h3>
+<p><strong>Who uses it:</strong> Authorization team  </p>
+<p><strong>What it does:</strong> Get insurance approval before expensive procedures  </p>
+<p><strong>Key Features:</strong></p>
+<li>Identify services requiring authorization (by CPT code and payer)</li>
+<li>Submit authorization requests with clinical justification</li>
+<li>Track authorization number, approved units, expiration date</li>
+<li>Alert when authorization expiring or units exhausted</li>
+<li>Peer-to-peer review for denied authorizations</li>
+<li><strong>Automated authorization status checks</strong> (EDI 278)</li>
+<li>Authorization worklist (pending, approved, denied)</li>
+
+<p><strong>Why critical:</strong> Services without required authorization = 100% claim denial</p>
+
+<hr>
+
+<h3>Module 7: Appointment Scheduling</h3>
+<p><strong>Who uses it:</strong> Front desk  </p>
+<p><strong>What it does:</strong> Schedule patient visits  </p>
+<p><strong>Key Features:</strong></p>
+<li>Provider calendars with availability templates</li>
+<li>Appointment types with durations</li>
+<li><strong>Automated reminders</strong> (SMS via Twilio, email, phone)</li>
+<li>Waitlist management</li>
+<li><strong>Patient self-scheduling portal</strong></li>
+<li>No-show tracking</li>
+<li>Drag-and-drop rescheduling</li>
+<li>Calendar views: Day, week, month</li>
+<li>Color-coded by appointment type</li>
+<li>Recurring appointments</li>
+
+<p><strong>API Integration:</strong></p>
+<li><strong>Twilio API</strong> for SMS reminders</li>
+<li>Example: "Hi John, your appointment with Dr. Smith is tomorrow at 10:00 AM. Reply CONFIRM to confirm."</li>
+
+<p><strong>Revenue impact:</strong> Reminders reduce no-shows by 30% = less lost revenue</p>
+
+<hr>
+
+<h3>Module 8: Encounter Creation</h3>
+<p><strong>Who uses it:</strong> Front desk (at check-in)  </p>
+<p><strong>What it does:</strong> Create visit record that holds all billing data  </p>
+<p><strong>Key Features:</strong></p>
+<li>Auto-populate patient, insurance, provider info</li>
+<li>Encounter types: Office, Emergency, Inpatient, Outpatient, Telehealth</li>
+<li>Track encounter status: Scheduled → Checked In → In Progress → Completed</li>
+<li>Link all diagnoses, procedures, charges to encounter</li>
+<li>Encounter lock after billing (prevent changes)</li>
+
+<p><strong>Think of it as:</strong> The "shopping cart" for the hospital visit</p>
+
+<hr>
+
+<h3>Module 9: Clinical Documentation (EMR Integration)</h3>
+<p><strong>Who uses it:</strong> Doctors, nurses  </p>
+<p><strong>What it does:</strong> Receive clinical notes from EMR system  </p>
+<p><strong>Key Features:</strong></p>
+<li><strong>HL7/FHIR integration</strong> with EMR (Epic, Cerner, Allscripts)</li>
+<li>Receive: SOAP notes, diagnoses, procedures, orders, results</li>
+<li>Clinical Documentation Improvement (CDI) alerts for incomplete notes</li>
+<li>Problem lists, medication lists, allergy lists</li>
+<li><strong>Real-time data sync</strong> (not batch)</li>
+
+<p><strong>FHIR Resources:</strong></p>
+<li>Patient (demographics)</li>
+<li>Encounter (visits)</li>
+<li>Condition (diagnoses)</li>
+<li>Procedure (procedures)</li>
+<li>Observation (vitals, labs)</li>
+<li>MedicationRequest (prescriptions)</li>
+
+<p><strong>Why critical:</strong> Insurance only pays for documented services</p>
+
+<hr>
+
+<h3>Module 10: Order Management</h3>
+<p><strong>Who uses it:</strong> Doctors  </p>
+<p><strong>What it does:</strong> Track lab tests, imaging, medications ordered  </p>
+<p><strong>Key Features:</strong></p>
+<li>CPOE (Computerized Physician Order Entry)</li>
+<li>Order types: Lab, imaging, meds, referrals, procedures</li>
+<li>Order sets for common conditions</li>
+<li>Track order status: Ordered → In Progress → Completed</li>
+<li><strong>Auto-generate charges when orders completed</strong></li>
+<li>Order results integration (HL7 ORU messages)</li>
+
+<p><strong>Revenue impact:</strong> Automatic charge capture prevents missed revenue (5-10% typically)</p>
+
+<hr>
+
+<h3>Module 11: Charge Capture (Automated)</h3>
+<p><strong>Who uses it:</strong> Clinical staff, billing team  </p>
+<p><strong>What it does:</strong> Convert every service into a billable charge  </p>
+<p><strong>Key Features:</strong></p>
+<li>Manual charge entry (search CPT code, add to encounter)</li>
+<li><strong>Automatic charge capture from completed orders</strong></li>
+<li>Charge reconciliation (orders vs charges)</li>
+<li>Charge lag monitoring (time between service and charge entry)</li>
+<li>Charge hold/release for pending documentation</li>
+<li><strong>Missed charge detection</strong> (AI-powered)</li>
+<li>Charge validation (valid CPT codes, units, modifiers)</li>
+
+<p><strong>Revenue impact:</strong> Missed charges = direct revenue loss (5-10% of revenue typically)</p>
+
+<hr>
+
+<h3>Module 12: Medical Coding (AI-Assisted)</h3>
+<p><strong>Who uses it:</strong> Medical coders  </p>
+<p><strong>What it does:</strong> Assign standardized codes to diagnoses and procedures  </p>
+<p><strong>Key Features:</strong></p>
+<li>Coding worklist (encounters ready to code)</li>
+<li>Search ICD-10 (diagnosis codes) and CPT (procedure codes)</li>
+<li>Link diagnoses to procedures (medical necessity)</li>
+<li>DRG assignment for inpatient stays</li>
+<li>E&M level selection for office visits</li>
+<li>Encoder integration (3M, Optum)</li>
+<li><strong>AI-assisted coding suggestions</strong> (OpenAI GPT-4)</li>
+<li>Code validation and compliance checks</li>
+
+<p><strong>AI Feature: AI Medical Coding Assistant</strong></p>
+<pre><code class="language-python">
+# AI analyzes clinical notes and suggests codes
+Input: "Patient presents with acute bronchitis, productive cough for 5 days. Prescribed antibiotics."
+AI Output:
+{
+  "icd10_codes": [
+    {"code": "J20.9", "description": "Acute bronchitis, unspecified", "confidence": 0.95},
+    {"code": "R05", "description": "Cough", "confidence": 0.88}
+  ],
+  "cpt_codes": [
+    {"code": "99213", "description": "Office visit, established patient", "confidence": 0.92}
+  ],
+  "reasoning": "Acute bronchitis is primary diagnosis. Office visit level 3 based on moderate complexity."
+}
+</pre>
+
+<p><strong>Benefits:</strong></p>
+<li>⚡ Reduces coding time from 10 minutes to 2 minutes</li>
+<li>✅ 85-90% accuracy (always requires human review)</li>
+<li>📚 Helps train new coders</li>
+
+<p><strong>API Integration:</strong></p>
+<li><strong>OpenAI GPT-4 API</strong> or <strong>AWS Bedrock (Claude)</strong></li>
+
+<p><strong>Code types:</strong></p>
+<li>ICD-10: Diagnosis codes (e.g., E11.9 = Type 2 Diabetes)</li>
+<li>CPT: Procedure codes (e.g., 99213 = Office visit level 3)</li>
+<li>HCPCS: Additional services (e.g., J1234 = Drug injection)</li>
+<li>DRG: Inpatient payment groups</li>
+
+<p><strong>Why critical:</strong> Wrong codes = claim denial or underpayment</p>
+
+<hr>
+
+<h3>Module 13: Coding Compliance</h3>
+<p><strong>Who uses it:</strong> Coders, compliance team  </p>
+<p><strong>What it does:</strong> Prevent coding errors and fraud  </p>
+<p><strong>Key Features:</strong></p>
+<li>NCCI edits (prevent billing incompatible codes together)</li>
+<li>LCD/NCD rules (Medicare coverage rules)</li>
+<li>MUE limits (max units per day)</li>
+<li>Upcoding detection</li>
+<li>Unbundling detection</li>
+<li>Medical necessity validation</li>
+<li>Modifier validation</li>
+
+<p><strong>Compliance risk:</strong> Upcoding/unbundling = fraud = fines/jail time</p>
+
+<hr>
+
+<h3>Module 14: Claim Creation (Automated)</h3>
+<p><strong>Who uses it:</strong> Billing team  </p>
+<p><strong>What it does:</strong> Generate insurance claim from coded encounter  </p>
+<p><strong>Key Features:</strong></p>
+<li><strong>Auto-generate CMS-1500</strong> (professional) or <strong>UB-04</strong> (hospital) claim</li>
+<li>Populate all required fields from encounter data</li>
+<li>Include: Patient, insurance, provider NPIs, codes, charges</li>
+<li>Claim splitting (if >6 service lines on CMS-1500)</li>
+<li><strong>Generate EDI 837P/837I</strong> format</li>
+<li>Claim preview (visual CMS-1500/UB-04 form)</li>
+<li>Bulk claim generation (1000+ claims in minutes)</li>
+
+<p><strong>Tech Stack:</strong></p>
+<li>Python libraries for EDI 837 generation</li>
+<li>PostgreSQL tables: <code>claims</code>, <code>claim<em>lines</code>, <code>claim</em>diagnoses</code></li>
+
+<hr>
+
+<h3>Module 15: Claim Scrubbing & Error Prediction (AI-Powered)</h3>
+<p><strong>Who uses it:</strong> Billing team  </p>
+<p><strong>What it does:</strong> Check claim for errors before submission  </p>
+<p><strong>Key Features:</strong></p>
+<li>200+ validation checks</li>
+<li>Check: Missing fields, invalid codes, NCCI edits, authorization, duplicates</li>
+<li>Error levels: Fatal (must fix), Warning (recommend fix), Info</li>
+<li>Clean claim indicator</li>
+<li>Bulk scrubbing (1000+ claims in <5 minutes)</li>
+<li><strong>AI Claim Error Prediction</strong> (predict denial risk)</li>
+
+<p><strong>AI Feature: Claim Error Prediction</strong></p>
+<pre><code class="language-python">
+# AI analyzes claim and predicts denial risk
+Input: Claim with diagnosis J20.9, procedure 99215, no prior auth
+AI Output:
+{
+  "risk_level": "High",
+  "risk_score": 0.85,
+  "issues": [
+    {
+      "issue": "CPT 99215 may not be supported by diagnosis J20.9",
+      "severity": "High",
+      "recommendation": "Consider CPT 99213 instead"
+    },
+    {
+      "issue": "No prior authorization on file",
+      "severity": "Medium",
+      "recommendation": "Verify if prior auth required"
+    }
+  ]
+}
+</pre>
+
+<p><strong>Benefits:</strong></p>
+<li>🎯 Catch errors before submission</li>
+<li>💰 Reduce denial rate from 10% to 5%</li>
+<li>⚡ Faster claim resolution</li>
+
+<p><strong>API Integration:</strong></p>
+<li><strong>Waystar Claim Scrubbing API</strong></li>
+<li><strong>OpenAI GPT-4</strong> for AI prediction</li>
+
+<p><strong>Goal:</strong> 95%+ clean claim rate = fewer denials</p>
+
+<hr>
+
+<h3>Module 16: Claim Submission (Electronic)</h3>
+<p><strong>Who uses it:</strong> Billing team  </p>
+<p><strong>What it does:</strong> Send claims to insurance companies  </p>
+<p><strong>Key Features:</strong></p>
+<li><strong>Clearinghouse integration</strong> (Waystar, Availity, Change Healthcare)</li>
+<li><strong>EDI 837P</strong> (professional claims) and <strong>EDI 837I</strong> (institutional claims)</li>
+<li>Batch submission (every 2 hours, configurable)</li>
+<li><strong>Real-time submission</strong> (for urgent claims)</li>
+<li>Acknowledgment processing (EDI 999, EDI 277)</li>
+<li>Timely filing tracking (alert before deadline)</li>
+<li>Submission history and audit trail</li>
+<li>Failed submission retry logic</li>
+
+<p><strong>API Integration:</strong></p>
+<li><strong>Waystar Claims API</strong> (primary)</li>
+<li><strong>Availity API</strong> (backup)</li>
+
+<p><strong>Example API Call:</strong></p>
+<pre><code class="language-python">
+POST https://api.waystar.com/claims/v1/submit
+{
+  "claims": [{
+    "claimId": "CLM-2026-001234",
+    "ediContent": "ISA*00*...",  # Full EDI 837 content
+    "payerId": "00431",
+    "submissionDate": "2026-05-18"
+  }]
+}
+</pre>
+
+<p><strong>Timely filing:</strong> Most payers require claims within 90-365 days of service</p>
+
+<hr>
+
+<h3>Module 17: Claim Tracking (Real-Time)</h3>
+<p><strong>Who uses it:</strong> Billing team  </p>
+<p><strong>What it does:</strong> Monitor claim status after submission  </p>
+<p><strong>Key Features:</strong></p>
+<li><strong>Real-time claim status dashboard</strong> (Submitted, Pending, Paid, Denied)</li>
+<li>Aging reports (0-30, 31-60, 61-90, 90+ days)</li>
+<li><strong>EDI 276/277 status inquiry</strong> (automated daily checks)</li>
+<li>Payer portal integration</li>
+<li>Worklists (claims pending >30/60/90 days)</li>
+<li><strong>Automated status updates</strong> (WebSocket for real-time UI updates)</li>
+<li>Claim status alerts (email, SMS)</li>
+
+<p><strong>API Integration:</strong></p>
+<li><strong>Waystar Status API</strong> (EDI 276/277)</li>
+
+<hr>
+
+<h3>Module 18: Payment Posting (ERA - Automated)</h3>
+<p><strong>Who uses it:</strong> AR team  </p>
+<p><strong>What it does:</strong> Record insurance payments  </p>
+<p><strong>Key Features:</strong></p>
+<li>Import <strong>EDI 835</strong> (Electronic Remittance Advice)</li>
+<li><strong>Auto-posting</strong> (match payment to claim automatically - 95% success rate)</li>
+<li>Manual posting (when auto-match fails)</li>
+<li>Adjustment reason codes (CARC/RARC)</li>
+<li>Underpayment/overpayment detection</li>
+<li>EFT reconciliation (match payment to bank deposit)</li>
+<li><strong>Batch ERA processing</strong> (1000+ payments in <5 minutes)</li>
+<li>Payment variance analysis</li>
+
+<p><strong>API Integration:</strong></p>
+<li><strong>Waystar Remittance API</strong> (download ERA files)</li>
+
+<p><strong>Adjustment types:</strong></p>
+<li>Contractual: Difference between billed and allowed amount</li>
+<li>Deductible: Patient's annual deductible</li>
+<li>Copay: Fixed patient payment</li>
+<li>Coinsurance: Patient's % share</li>
+
+<p><strong>Tech Stack:</strong></p>
+<li>Python EDI 835 parser</li>
+<li>PostgreSQL tables: <code>claim<em>payments</code>, <code>payment</em>adjustments</code></li>
+
+<hr>
+
+<h3>Module 19: Denial Management (Advanced)</h3>
+<p><strong>Who uses it:</strong> Denial team  </p>
+<p><strong>What it does:</strong> Handle rejected claims and automate appeals  </p>
+<p><strong>Key Features:</strong></p>
+<li>Denial tracking with reason codes</li>
+<li>Denial worklist (prioritize high $ denials)</li>
+<li>Root cause analysis (top denial reasons)</li>
+<li><strong>Appeal creation and tracking</strong> (Level 1, 2, 3)</li>
+<li><strong>Automated appeal letter generation</strong> (AI-powered)</li>
+<li>Corrected claim resubmission</li>
+<li>Appeal overturn rate tracking</li>
+<li><strong>Denial pattern analysis</strong> (ML-based)</li>
+<li><strong>Predictive denial prevention</strong> (flag before submission)</li>
+<li>Appeal template library</li>
+
+<p><strong>AI Feature: Automated Appeal Generation</strong></p>
+<pre><code class="language-python">
+# AI generates appeal letter based on denial reason
+Input: Claim denied for "Medical necessity not established"
+AI Output:
+"Dear [Payer],
+We are writing to appeal the denial of claim [CLM-123] for patient [Name].
+The claim was denied due to 'Medical necessity not established.' However, 
+the patient's diagnosis of acute bronchitis (J20.9) clearly supports the 
+medical necessity for an office visit (99213).
+[Clinical justification with supporting documentation]
+We respectfully request reconsideration of this claim.
+Sincerely,
+[Provider Name]"
+</pre>
+
+<p><strong>Common denial reasons:</strong></p>
+<li>Missing authorization (30%)</li>
+<li>Incorrect coding (25%)</li>
+<li>Eligibility issues (20%)</li>
+<li>Timely filing (10%)</li>
+<li>Medical necessity (15%)</li>
+
+<p><strong>Revenue impact:</strong> 10-15% of claims denied, 60% recoverable through appeals</p>
+
+<hr>
+
+<h3>Module 20: Secondary Billing</h3>
+<p><strong>Who uses it:</strong> Billing team  </p>
+<p><strong>What it does:</strong> Bill second/third insurance after primary pays  </p>
+<p><strong>Key Features:</strong></p>
+<li>Auto-generate secondary claim after primary payment</li>
+<li>Include primary payment info on secondary claim</li>
+<li>Medicare crossover (auto-forward to Medicaid)</li>
+<li>Medicare Secondary Payer (MSP) rules</li>
+<li>Tertiary billing</li>
+<li>Coordination of Benefits (COB)</li>
+
+<hr>
+
+<h3>Module 21: Patient Billing & Payment Collection</h3>
+<p><strong>Who uses it:</strong> Patient accounts team  </p>
+<p><strong>What it does:</strong> Bill patients for their portion  </p>
+<p><strong>Key Features:</strong></p>
+<li>Generate patient statements (monthly)</li>
+<li>Show: Total charges, insurance payments, patient responsibility</li>
+<li>Multiple delivery: Mail, email, patient portal</li>
+<li><strong>Payment processing</strong> (credit card via Stripe, ACH, check, cash)</li>
+<li>Payment plans (installments)</li>
+<li>Point-of-service collections (collect copay at check-in)</li>
+<li><strong>Price transparency</strong> (cost estimates before service)</li>
+<li><strong>Online payment portal</strong> (patient self-service)</li>
+<li>Payment confirmation (email, SMS)</li>
+
+<p><strong>API Integration:</strong></p>
+<li><strong>Stripe API</strong> for credit card payments</li>
+<li>PCI-DSS compliant (Stripe handles card data)</li>
+
+<p><strong>Example Stripe Integration:</strong></p>
+<pre><code class="language-python">
+import stripe
+# Collect patient copay
+payment_intent = stripe.PaymentIntent.create(
+    amount=2500,  # $25.00 in cents
+    currency="usd",
+    payment_method_types=["card"],
+    description="Copay for John Doe"
+)
+</pre>
+
+<p><strong>Stripe Pricing:</strong></p>
+<li>2.9% + $0.30 per transaction</li>
+<li>Example: $25 copay = $1.03 fee</li>
+
+<p><strong>Patient responsibility = Deductible + Copay + Coinsurance</strong></p>
+
+<hr>
+
+<h3>Module 22: Collections</h3>
+<p><strong>Who uses it:</strong> Collections team  </p>
+<p><strong>What it does:</strong> Collect overdue patient balances  </p>
+<p><strong>Key Features:</strong></p>
+<li>Automated collection notices (30, 60, 90, 120 days)</li>
+<li>Internal collections (phone calls)</li>
+<li>External collections (transfer to agency after 120 days)</li>
+<li>Bad debt write-off</li>
+<li>Charity care screening (before collections)</li>
+<li>Payment negotiation tracking</li>
+<li>Settlement offers</li>
+
+<p><strong>Compliance:</strong> No Surprises Act limits collection practices</p>
+
+<hr>
+
+<h3>Module 23: Reporting & Analytics (Advanced)</h3>
+<p><strong>Who uses it:</strong> Management, finance team  </p>
+<p><strong>What it does:</strong> Track RCM performance with advanced analytics  </p>
+
+<p><strong>Key Metrics (KPIs):</strong></p>
+<li>Clean claim rate (Target: >95%)</li>
+<li>Denial rate (Target: <5%)</li>
+<li>Days in AR (Target: <35 days)</li>
+<li>Net collection rate (Target: >95%)</li>
+<li>AR over 90 days (Target: <15%)</li>
+<li>Cost to collect (Target: <$0.05 per $1)</li>
+
+<p><strong>Standard Reports:</strong></p>
+<li>Daily: Charges, payments, denials</li>
+<li>Weekly: Clean claim rate, denial rate</li>
+<li>Monthly: Revenue by department/provider/payer, AR aging</li>
+<li>Quarterly: Payer performance, denial trends</li>
+<li>Annual: Financial summary, compliance reports</li>
+
+<p><strong>Advanced Analytics:</strong></p>
+<li><strong>Predictive analytics</strong> (forecast revenue, denials)</li>
+<li><strong>Benchmarking</strong> (compare to industry standards)</li>
+<li><strong>Custom report builder</strong> (drag-and-drop)</li>
+<li><strong>Data visualization dashboards</strong> (Chart.js, D3.js)</li>
+<li><strong>Executive dashboards</strong> (C-suite metrics)</li>
+<li><strong>Trend analysis</strong> (identify patterns over time)</li>
+<li><strong>Payer performance scorecards</strong></li>
+
+<p><strong>Tech Stack:</strong></p>
+<li>PostgreSQL for data storage</li>
+<li>Python pandas for data analysis</li>
+<li>Chart.js for visualizations</li>
+<li>PDF export (ReportLab)</li>
+<li>Excel export (openpyxl)</li>
+
+<hr>
+
+<h3>Module 24: Audit & Compliance</h3>
+<p><strong>Who uses it:</strong> Compliance team  </p>
+<p><strong>What it does:</strong> Track all activities for audits  </p>
+<p><strong>Key Features:</strong></p>
+<li>Audit log (all user actions for 7 years)</li>
+<li>HIPAA compliance (encryption, access controls)</li>
+<li>Internal audit tools (coding audits, billing audits)</li>
+<li>External audit support (RAC, MAC, OIG)</li>
+<li>Compliance alerts (upcoding, unbundling, overpayments)</li>
+<li><strong>No Surprises Act compliance</strong> (price transparency)</li>
+<li><strong>Price Transparency Rule</strong> (cost estimates)</li>
+<li><strong>21st Century Cures Act</strong> (data blocking prevention)</li>
+<li><strong>SOC 2 Type II compliance</strong></li>
+
+<p><strong>Audit Trail Includes:</strong></p>
+<li>User ID, action, timestamp, IP address</li>
+<li>Before/after values for data changes</li>
+<li>Failed login attempts</li>
+<li>Data exports and access</li>
+
+<hr>
+
+<h3>Module 25: Interoperability</h3>
+<p><strong>Who uses it:</strong> IT team  </p>
+<p><strong>What it does:</strong> Connect with other systems  </p>
+<p><strong>Integrations:</strong></p>
+<li><strong>EMR/EHR</strong> (HL7 v2, FHIR R4)</li>
+<li><strong>Lab systems</strong> (HL7 ORM/ORU)</li>
+<li><strong>Radiology/PACS</strong> (HL7 ORM/ORU, DICOM)</li>
+<li><strong>Pharmacy systems</strong> (NCPDP)</li>
+<li><strong>Clearinghouses</strong> (EDI 837, 835, 270/271, 276/277)</li>
+<li><strong>Payer portals</strong> (API integration)</li>
+<li><strong>Patient portal</strong> (FHIR API)</li>
+<li><strong>Health Information Exchange (HIE)</strong></li>
+<li><strong>CAQH</strong> (provider credentialing)</li>
+
+<p><strong>FHIR API Endpoints:</strong></p>
+<li>GET /Patient/{id}</li>
+<li>GET /Encounter/{id}</li>
+<li>GET /Condition/{id}</li>
+<li>GET /Procedure/{id}</li>
+<li>POST /Claim</li>
+
+<hr>
+
+<h3>Module 26: AI & Machine Learning Features (NEW)</h3>
+<p><strong>Who uses it:</strong> All users (behind the scenes)  </p>
+<p><strong>What it does:</strong> Leverage AI to improve efficiency and accuracy  </p>
+
+<p><strong>AI Features:</strong></p>
+
+<li><strong>AI-Assisted Medical Coding</strong></li>
+<li>Analyzes clinical notes</li>
+<li>Suggests ICD-10 and CPT codes</li>
+<li>85-90% accuracy</li>
+<li>Saves 8 minutes per encounter</li>
+
+<li><strong>Claim Error Prediction</strong></li>
+<li>Predicts denial risk before submission</li>
+<li>Identifies specific issues</li>
+<li>Suggests corrections</li>
+<li>Reduces denials by 50%</li>
+
+<li><strong>OCR for Document Reading</strong></li>
+<li>Scan insurance cards</li>
+<li>Extract policy information</li>
+<li>Auto-fill registration forms</li>
+<li>Saves 2-3 minutes per patient</li>
+
+<li><strong>AI Chatbot Support</strong></li>
+<li>24/7 user assistance</li>
+<li>Answers billing questions</li>
+<li>Guides users through workflows</li>
+<li>Reduces support tickets by 30%</li>
+
+<li><strong>Denial Pattern Analysis</strong></li>
+<li>ML-based root cause analysis</li>
+<li>Identifies trends and patterns</li>
+<li>Recommends process improvements</li>
+
+<li><strong>Predictive Analytics</strong></li>
+<li>Forecast revenue</li>
+<li>Predict denial rates</li>
+<li>Identify at-risk claims</li>
+
+<p><strong>API Integration:</strong></p>
+<li><strong>OpenAI GPT-4 API</strong> (primary)</li>
+<li><strong>AWS Bedrock</strong> (Claude, Llama) (alternative)</li>
+<li><strong>AWS Textract</strong> (OCR)</li>
+
+<p><strong>Cost Estimate:</strong></p>
+<li>OpenAI: $100-$200/month for 10,000 requests</li>
+<li>AWS Textract: $10/month for 500 documents</li>
+
+<hr>
+
+<h3>Module 27: Revenue Integrity (NEW)</h3>
+<p><strong>Who uses it:</strong> Revenue integrity team  </p>
+<p><strong>What it does:</strong> Prevent revenue leakage and ensure proper coding  </p>
+<p><strong>Key Features:</strong></p>
+<li><strong>Charge capture validation</strong> (ensure all services billed)</li>
+<li><strong>Undercoding detection</strong> (identify missed revenue)</li>
+<li><strong>Charge master management</strong> (maintain pricing)</li>
+<li><strong>Revenue leakage analysis</strong> (identify gaps)</li>
+<li><strong>Compliance checks</strong> (proper coding levels)</li>
+<li><strong>DRG validation</strong> (inpatient coding accuracy)</li>
+<li><strong>Modifier usage analysis</strong></li>
+<li><strong>Charge reconciliation</strong> (orders vs charges)</li>
+
+<p><strong>Revenue Impact:</strong></p>
+<li>Typical revenue leakage: 5-10%</li>
+<li>Revenue integrity reduces to <2%</li>
+<li>For $50M hospital: $1.5M - $4M recovered annually</li>
+
+<hr>
+
+<h3>Module 28: Patient Portal (NEW)</h3>
+<p><strong>Who uses it:</strong> Patients  </p>
+<p><strong>What it does:</strong> Patient self-service portal  </p>
+<p><strong>Key Features:</strong></p>
+<li><strong>Online appointment booking</strong></li>
+<li><strong>View bills and statements</strong></li>
+<li><strong>Make payments online</strong> (credit card, ACH)</li>
+<li><strong>Upload insurance cards</strong> via mobile</li>
+<li><strong>Secure messaging</strong> with staff</li>
+<li><strong>View medical records</strong> (FHIR integration)</li>
+<li><strong>Payment plan management</strong></li>
+<li><strong>Cost estimates</strong> before service</li>
+<li><strong>Appointment reminders</strong></li>
+<li><strong>Download receipts and statements</strong></li>
+
+<p><strong>Tech Stack:</strong></p>
+<li>React.js frontend</li>
+<li>FHIR API for data access</li>
+<li>Stripe for payments</li>
+<li>Mobile-responsive design</li>
+
+<hr>
+
+<h3>Module 29: Mobile Application (NEW)</h3>
+<p><strong>Who uses it:</strong> Staff and patients  </p>
+<p><strong>What it does:</strong> Mobile access to RCM system  </p>
+<p><strong>Key Features:</strong></p>
+<li><strong>iOS and Android apps</strong></li>
+<li><strong>Mobile claim submission</strong> (for staff)</li>
+<li><strong>Mobile payment posting</strong> (for staff)</li>
+<li><strong>Patient mobile app</strong> (view bills, pay, book appointments)</li>
+<li><strong>Push notifications</strong></li>
+<li><strong>Offline mode</strong> (sync when online)</li>
+<li><strong>Mobile-optimized workflows</strong></li>
+<li><strong>Barcode scanning</strong> (insurance cards, patient wristbands)</li>
+
+<p><strong>Tech Stack:</strong></p>
+<li>React Native (cross-platform)</li>
+<li>Or: Native iOS (Swift) and Android (Kotlin)</li>
+
+<hr>
+
+<h3>Module 30: Real-Time Dashboard & Notifications (NEW)</h3>
+<p><strong>Who uses it:</strong> All users  </p>
+<p><strong>What it does:</strong> Real-time updates and alerts  </p>
+<p><strong>Key Features:</strong></p>
+<li><strong>Real-time claim status updates</strong> (WebSocket)</li>
+<li><strong>Live dashboard metrics</strong> (auto-refresh every 30 seconds)</li>
+<li><strong>Push notifications</strong> (browser, mobile)</li>
+<li><strong>Email alerts</strong> (denials, payments, errors)</li>
+<li><strong>SMS alerts</strong> (via Twilio)</li>
+<li><strong>Customizable alerts</strong> (set thresholds)</li>
+<li><strong>Alert history and tracking</strong></li>
+
+<p><strong>Tech Stack:</strong></p>
+<li>WebSocket for real-time updates</li>
+<li>Redis for pub/sub messaging</li>
+<li>Twilio for SMS</li>
+<li>SendGrid for email</li>
+
+<hr>
+
+<h2>3. Technology Stack (Detailed)</h2>
+
+<h3>Frontend</h3>
+<li><strong>Framework:</strong> React.js 18+ with TypeScript</li>
+<li><strong>Styling:</strong> Tailwind CSS 3+</li>
+<li><strong>State Management:</strong> React Query (for API calls), Context API</li>
+<li><strong>Routing:</strong> React Router v6</li>
+<li><strong>Forms:</strong> React Hook Form</li>
+<li><strong>Charts:</strong> Chart.js or Recharts</li>
+<li><strong>UI Components:</strong> shadcn/ui or Material-UI</li>
+<li><strong>Icons:</strong> Lucide React</li>
+<li><strong>Build Tool:</strong> Vite</li>
+<li><strong>Testing:</strong> Jest, React Testing Library, Playwright</li>
+
+<h3>Backend</h3>
+<li><strong>Framework:</strong> Python FastAPI 0.100+</li>
+<li><strong>ORM:</strong> SQLAlchemy 2.0</li>
+<li><strong>Database Migrations:</strong> Alembic</li>
+<li><strong>Authentication:</strong> JWT (python-jose)</li>
+<li><strong>Password Hashing:</strong> bcrypt</li>
+<li><strong>API Documentation:</strong> Swagger UI (built-in)</li>
+<li><strong>Background Tasks:</strong> Celery with Redis</li>
+<li><strong>Testing:</strong> Pytest, pytest-asyncio</li>
+
+<h3>Database</h3>
+<li><strong>Primary:</strong> PostgreSQL 15+</li>
+<li><strong>Caching:</strong> Redis 7+</li>
+<li><strong>Search:</strong> PostgreSQL full-text search (or Elasticsearch for advanced)</li>
+<li><strong>Backup:</strong> Automated daily backups to S3</li>
+
+<h3>Cloud Infrastructure (AWS)</h3>
+<li><strong>Compute:</strong> EC2 (t3.medium for MVP, scale to m5.large+)</li>
+<li><strong>Database:</strong> RDS PostgreSQL (Multi-AZ for production)</li>
+<li><strong>Cache:</strong> ElastiCache Redis</li>
+<li><strong>Storage:</strong> S3 (documents, images, backups)</li>
+<li><strong>CDN:</strong> CloudFront</li>
+<li><strong>Load Balancer:</strong> Application Load Balancer (ALB)</li>
+<li><strong>Monitoring:</strong> CloudWatch</li>
+<li><strong>Logging:</strong> CloudWatch Logs</li>
+<li><strong>Secrets:</strong> AWS Secrets Manager</li>
+<li><strong>Email:</strong> SES (Simple Email Service)</li>
+
+<h3>Third-Party APIs</h3>
+<li><strong>Clearinghouse:</strong> Waystar API (primary), Availity API (backup)</li>
+<li><strong>Payments:</strong> Stripe API</li>
+<li><strong>SMS:</strong> Twilio API</li>
+<li><strong>AI:</strong> OpenAI GPT-4 API or AWS Bedrock</li>
+<li><strong>OCR:</strong> AWS Textract or OpenAI Vision API</li>
+<li><strong>EHR:</strong> FHIR APIs (Epic, Cerner, Allscripts)</li>
+
+<h3>DevOps</h3>
+<li><strong>Version Control:</strong> Git (GitHub or GitLab)</li>
+<li><strong>CI/CD:</strong> GitHub Actions or GitLab CI</li>
+<li><strong>Containerization:</strong> Docker</li>
+<li><strong>Orchestration:</strong> Docker Compose (MVP), Kubernetes (scale)</li>
+<li><strong>Infrastructure as Code:</strong> Terraform or AWS CloudFormation</li>
+<li><strong>Monitoring:</strong> Datadog or New Relic</li>
+<li><strong>Error Tracking:</strong> Sentry</li>
+
+<hr>
+
+<h2>4. Performance Requirements</h2>
+
+<h3>Response Times</h3>
+<li><strong>Page load:</strong> <2 seconds (first contentful paint)</li>
+<li><strong>API response:</strong> <500ms (95th percentile)</li>
+<li><strong>Insurance verification:</strong> <30 seconds</li>
+<li><strong>Claim scrubbing:</strong> 1000 claims in <5 minutes</li>
+<li><strong>ERA processing:</strong> <1 minute per file</li>
+<li><strong>Database queries:</strong> <100ms (simple), <500ms (complex)</li>
+
+<h3>Scalability</h3>
+<li><strong>Concurrent users:</strong> 500+ (MVP), 5000+ (scale)</li>
+<li><strong>Claims per day:</strong> 10,000+ (MVP), 100,000+ (scale)</li>
+<li><strong>Database size:</strong> 1TB+ (5 years of data)</li>
+<li><strong>API rate limits:</strong> 1000 requests/minute per user</li>
+
+<h3>Availability</h3>
+<li><strong>Uptime:</strong> 99.9% (8.76 hours downtime per year)</li>
+<li><strong>Disaster recovery:</strong> <4 hour RTO (Recovery Time Objective)</li>
+<li><strong>Backup frequency:</strong> Daily automated backups</li>
+<li><strong>Backup retention:</strong> 7 years (HIPAA requirement)</li>
+
+<hr>
+
+<h2>5. Security Requirements</h2>
+
+<h3>Data Encryption</h3>
+<li><strong>At rest:</strong> AES-256 encryption (AWS RDS, S3)</li>
+<li><strong>In transit:</strong> TLS 1.2+ (HTTPS only)</li>
+<li><strong>Database:</strong> Encrypted columns for PHI (SSN, DOB, etc.)</li>
+<li><strong>Backups:</strong> Encrypted backups</li>
+
+<h3>Authentication & Authorization</h3>
+<li><strong>Multi-factor authentication (MFA):</strong> Required for admin users</li>
+<li><strong>Single Sign-On (SSO):</strong> SAML 2.0 support</li>
+<li><strong>JWT tokens:</strong> 8-hour expiration, refresh tokens</li>
+<li><strong>Role-based access control (RBAC):</strong> 10+ roles</li>
+<li><strong>IP whitelisting:</strong> For admin access</li>
+<li><strong>Session management:</strong> 15-minute timeout (configurable)</li>
+
+<h3>Compliance</h3>
+<li><strong>HIPAA:</strong> Business Associate Agreement (BAA), encryption, audit logs</li>
+<li><strong>PCI-DSS:</strong> For payment processing (Stripe handles card data)</li>
+<li><strong>SOC 2 Type II:</strong> Annual audit</li>
+<li><strong>GDPR:</strong> For international patients (if applicable)</li>
+<li><strong>No Surprises Act:</strong> Price transparency</li>
+<li><strong>21st Century Cures Act:</strong> Data blocking prevention</li>
+
+<h3>Audit Logging</h3>
+<li><strong>Log all user actions:</strong> Create, read, update, delete</li>
+<li><strong>Retention:</strong> 7 years (HIPAA requirement)</li>
+<li><strong>Log contents:</strong> User ID, action, timestamp, IP address, before/after values</li>
+<li><strong>Tamper-proof:</strong> Logs cannot be modified or deleted</li>
+
+<h3>Penetration Testing</h3>
+<li><strong>Frequency:</strong> Annual (minimum)</li>
+<li><strong>Scope:</strong> Full application, APIs, infrastructure</li>
+<li><strong>Remediation:</strong> All critical/high vulnerabilities fixed within 30 days</li>
+
+<hr>
+
+<h2>6. User Roles & Permissions</h2>
+
+<tr>
+<td>Role</td>
+<td>Can Do</td>
+</tr>
+<tr>
+<td><strong>Front Desk</strong></td>
+<td>Register patients, verify insurance, schedule appointments, collect copays, check-in patients</td>
+</tr>
+<tr>
+<td><strong>Doctor</strong></td>
+<td>Document visits, write orders, sign encounters, view patient records</td>
+</tr>
+<tr>
+<td><strong>Nurse</strong></td>
+<td>Document vitals, administer medications, view patient records</td>
+</tr>
+<tr>
+<td><strong>Medical Coder</strong></td>
+<td>Assign ICD/CPT codes, review documentation, use AI coding assistant</td>
+</tr>
+<tr>
+<td><strong>Billing Specialist</strong></td>
+<td>Create claims, scrub claims, submit claims, view claim status</td>
+</tr>
+<tr>
+<td><strong>AR Manager</strong></td>
+<td>Post payments, manage denials, follow up on aging claims, view AR reports</td>
+</tr>
+<tr>
+<td><strong>Collections</strong></td>
+<td>Bill patients, set up payment plans, send to collections, negotiate settlements</td>
+</tr>
+<tr>
+<td><strong>Authorization Specialist</strong></td>
+<td>Submit prior authorization requests, track authorization status</td>
+</tr>
+<tr>
+<td><strong>Finance Manager</strong></td>
+<td>View all reports, dashboards, financial analytics, export data</td>
+</tr>
+<tr>
+<td><strong>Compliance Officer</strong></td>
+<td>Audit logs, compliance reports, internal audits, coding audits</td>
+</tr>
+<tr>
+<td><strong>System Admin</strong></td>
+<td>User management, system configuration, role management, API keys</td>
+</tr>
+
+<hr>
+
+<h2>7. Critical Business Rules</h2>
+
+<h3>Rule 1: Provider Credentialing</h3>
+<li>Doctor MUST be credentialed with payer before billing</li>
+<li>If not credentialed → 100% claim rejection</li>
+
+<h3>Rule 2: Insurance Verification</h3>
+<li>MUST verify eligibility before service (within 24 hours)</li>
+<li>If insurance inactive → Patient becomes self-pay</li>
+
+<h3>Rule 3: Prior Authorization</h3>
+<li>MUST obtain authorization for services requiring it</li>
+<li>If no authorization → 100% claim denial</li>
+
+<h3>Rule 4: Medical Necessity</h3>
+<li>Diagnosis MUST support procedure (per LCD/NCD)</li>
+<li>If not supported → Claim denial</li>
+
+<h3>Rule 5: Timely Filing</h3>
+<li>Claims MUST be submitted within payer deadline (90-365 days)</li>
+<li>If late → Permanent denial, no appeal</li>
+
+<h3>Rule 6: Clean Claims</h3>
+<li>Claims MUST pass all scrubbing checks</li>
+<li>Clean claims pay 3x faster than dirty claims</li>
+
+<h3>Rule 7: Contractual Adjustment</h3>
+<li>CANNOT bill patient for contractual write-off (in-network)</li>
+<li>Balance billing = contract violation</li>
+
+<h3>Rule 8: Refunds</h3>
+<li>Overpayments MUST be refunded within 60 days</li>
+<li>Keeping overpayments = fraud</li>
+
+<h3>Rule 9: Coordination of Benefits (COB)</h3>
+<li>Primary insurance MUST be billed first</li>
+<li>Secondary billed only after primary payment</li>
+
+<h3>Rule 10: Price Transparency</h3>
+<li>MUST provide cost estimates upon request (No Surprises Act)</li>
+<li>Good faith estimates for uninsured/self-pay patients</li>
+
+<hr>
+
+<h2>8. Revenue Cycle Flow (Detailed)</h2>
+
+<pre><code>
+Pre-Service (Days -7 to 0)
+1. Provider credentialed with insurance ✓
+2. Patient schedules appointment
+3. Automated appointment reminder sent (SMS/email)
+4. Insurance verified 24-48 hours before appointment
+5. Prior authorization obtained (if needed)
+6. Cost estimate provided to patient
+Day of Service (Day 0)
+7. Patient checks in → Encounter created
+8. Copay collected (Stripe payment)
+9. Patient sees doctor → Clinical documentation
+10. Services performed → Orders completed
+11. Charges captured automatically
+Post-Service (Days 1-5)
+12. Medical coder assigns ICD/CPT codes (AI-assisted)
+13. Claim created and auto-populated
+14. Claim scrubbed for errors (AI error prediction)
+15. Claim submitted to insurance (EDI 837)
+16. Acknowledgment received (EDI 999)
+Adjudication (Days 5-30)
+17. Insurance reviews claim
+18. Claim status checked automatically (EDI 276/277)
+19. Insurance adjudicates and pays
+20. ERA received (EDI 835)
+21. Payment auto-posted to claim
+Denial Management (If Denied)
+22. Denial identified and categorized
+23. Root cause analysis
+24. Corrected claim or appeal submitted
+25. Appeal tracking
+Patient Billing (Days 30-60)
+26. Patient statement generated
+27. Statement sent (mail/email/portal)
+28. Patient makes payment online (Stripe)
+29. If overdue → Collection notices
+Collections (Days 60-120)
+30. Internal collections (phone calls)
+31. Payment plan offered
+32. If still unpaid → External collections
+33. Bad debt write-off (last resort)
+</pre>
+
+<p><strong>Timeline Goal:</strong> Service to payment in 30-35 days (vs industry 50+ days)</p>
+
+<hr>
+
+<h2>9. EDI Transaction Specifications</h2>
+
+<tr>
+<td>EDI Code</td>
+<td>Name</td>
+<td>Purpose</td>
+<td>Direction</td>
+</tr>
+<tr>
+<td><strong>270</strong></td>
+<td>Eligibility Inquiry</td>
+<td>Check patient insurance eligibility</td>
+<td>Outbound</td>
+</tr>
+<tr>
+<td><strong>271</strong></td>
+<td>Eligibility Response</td>
+<td>Insurance eligibility results</td>
+<td>Inbound</td>
+</tr>
+<tr>
+<td><strong>276</strong></td>
+<td>Claim Status Inquiry</td>
+<td>Check status of submitted claim</td>
+<td>Outbound</td>
+</tr>
+<tr>
+<td><strong>277</strong></td>
+<td>Claim Status Response</td>
+<td>Claim status results</td>
+<td>Inbound</td>
+</tr>
+<tr>
+<td><strong>278</strong></td>
+<td>Prior Authorization Request</td>
+<td>Request authorization for service</td>
+<td>Outbound</td>
+</tr>
+<tr>
+<td><strong>278</strong></td>
+<td>Prior Authorization Response</td>
+<td>Authorization approval/denial</td>
+<td>Inbound</td>
+</tr>
+<tr>
+<td><strong>837P</strong></td>
+<td>Professional Claim</td>
+<td>Submit professional claim (CMS-1500)</td>
+<td>Outbound</td>
+</tr>
+<tr>
+<td><strong>837I</strong></td>
+<td>Institutional Claim</td>
+<td>Submit institutional claim (UB-04)</td>
+<td>Outbound</td>
+</tr>
+<tr>
+<td><strong>835</strong></td>
+<td>ERA (Remittance Advice)</td>
+<td>Payment information from insurance</td>
+<td>Inbound</td>
+</tr>
+<tr>
+<td><strong>999</strong></td>
+<td>Acknowledgment</td>
+<td>Confirm receipt of EDI transaction</td>
+<td>Inbound</td>
+</tr>
+
+<p><strong>Clearinghouse:</strong> Waystar or Availity handles EDI translation and routing</p>
+
+<hr>
+
+<h2>10. Common Mistakes & Prevention</h2>
+
+<tr>
+<td>Mistake</td>
+<td>Impact</td>
+<td>Prevention</td>
+<td>Module</td>
+</tr>
+<tr>
+<td>Wrong insurance ID at registration</td>
+<td>Claim denial</td>
+<td>Real-time eligibility check, OCR scanning</td>
+<td>Module 4, 5</td>
+</tr>
+<tr>
+<td>Missing prior authorization</td>
+<td>100% denial</td>
+<td>Authorization tracking, alerts</td>
+<td>Module 6</td>
+</tr>
+<tr>
+<td>Incomplete documentation</td>
+<td>Coding errors, denials</td>
+<td>CDI alerts for providers</td>
+<td>Module 9</td>
+</tr>
+<tr>
+<td>Missed charges</td>
+<td>Revenue loss (5-10%)</td>
+<td>Charge reconciliation, AI detection</td>
+<td>Module 11</td>
+</tr>
+<tr>
+<td>Wrong CPT code</td>
+<td>Denial or underpayment</td>
+<td>AI coding assistant, encoder</td>
+<td>Module 12</td>
+</tr>
+<tr>
+<td>NCCI edit violation</td>
+<td>Claim rejection</td>
+<td>Claim scrubbing with NCCI checks</td>
+<td>Module 15</td>
+</tr>
+<tr>
+<td>Late claim submission</td>
+<td>Timely filing denial</td>
+<td>Timely filing alerts, automated submission</td>
+<td>Module 16</td>
+</tr>
+<tr>
+<td>Not appealing denials</td>
+<td>Lost revenue (60% recoverable)</td>
+<td>Denial worklists, appeal tracking</td>
+<td>Module 19</td>
+</tr>
+<tr>
+<td>Undercoding</td>
+<td>Revenue loss</td>
+<td>Revenue integrity module, AI detection</td>
+<td>Module 27</td>
+</tr>
+<tr>
+<td>Poor patient communication</td>
+<td>Low collections</td>
+<td>Patient portal, cost estimates</td>
+<td>Module 28</td>
+</tr>
+
+<hr>
+
+<h2>11. Success Metrics & KPIs</h2>
+
+<h3>Before RCM System (Industry Average)</h3>
+<li>Denial rate: 10-15%</li>
+<li>Days in AR: 50-60 days</li>
+<li>Clean claim rate: 75-80%</li>
+<li>Revenue leakage: 5-10%</li>
+<li>Net collection rate: 85-90%</li>
+<li>Cost to collect: $0.10-$0.15 per $1</li>
+
+<h3>After RCM System (Target Goals)</h3>
+<li>Denial rate: <5% ⚡</li>
+<li>Days in AR: <35 days ⚡</li>
+<li>Clean claim rate: >95% ⚡</li>
+<li>Revenue leakage: <2% ⚡</li>
+<li>Net collection rate: >95% ⚡</li>
+<li>Cost to collect: <$0.05 per $1 ⚡</li>
+
+<h3>Financial Impact Example</h3>
+<p><strong>Hospital with $50M annual revenue:</strong></p>
+<li>Revenue leakage before: 5% = $2.5M lost</li>
+<li>Revenue leakage after: 2% = $1.0M lost</li>
+<li><strong>Annual recovery: $1.5M</strong> 💰</li>
+<li>System cost: $500K (one-time) + $200K/year (maintenance)</li>
+<li><strong>ROI: System pays for itself in 6-12 months</strong></li>
+
+<h3>AI Impact Metrics</h3>
+<li>AI coding saves 8 min/encounter × 100 encounters/day = 13.3 hours/day</li>
+<li>AI error prediction reduces denials by 50% = $750K recovered annually</li>
+<li>OCR saves 2 min/patient × 100 patients/day = 3.3 hours/day</li>
+<li><strong>Total AI value: $1M+ annually</strong></li>
+
+<hr>
+
+<h2>12. Testing & Quality Assurance</h2>
+
+<h3>Testing Strategy</h3>
+<li><strong>Unit Testing</strong></li>
+<li>Backend: Pytest (95%+ coverage)</li>
+<li>Frontend: Jest, React Testing Library (90%+ coverage)</li>
+
+<li><strong>Integration Testing</strong></li>
+<li>API integration tests</li>
+<li>Database integration tests</li>
+<li>Third-party API mocks</li>
+
+<li><strong>End-to-End Testing</strong></li>
+<li>Playwright or Cypress</li>
+<li>Complete workflow tests (patient → payment)</li>
+
+<li><strong>Performance Testing</strong></li>
+<li>Load testing (JMeter, Locust)</li>
+<li>500+ concurrent users</li>
+<li>10,000+ claims per day</li>
+
+<li><strong>Security Testing</strong></li>
+<li>Penetration testing (annual)</li>
+<li>OWASP Top 10 vulnerabilities</li>
+<li>SQL injection, XSS testing</li>
+
+<li><strong>User Acceptance Testing (UAT)</strong></li>
+<li>Real users test in staging</li>
+<li>2-week UAT period before launch</li>
+<li>Feedback collection and bug fixes</li>
+
+<h3>Test Environments</h3>
+<li><strong>Development:</strong> Local development</li>
+<li><strong>Staging:</strong> Mirror of production (for testing)</li>
+<li><strong>Production:</strong> Live system</li>
+
+<hr>
+
+<h2>13. Disaster Recovery & Backup</h2>
+
+<h3>Backup Strategy</h3>
+<li><strong>Frequency:</strong> Automated daily backups (3 AM)</li>
+<li><strong>Retention:</strong> 7 years (HIPAA requirement)</li>
+<li><strong>Storage:</strong> AWS S3 with versioning</li>
+<li><strong>Encryption:</strong> AES-256 encrypted backups</li>
+<li><strong>Testing:</strong> Monthly backup restore tests</li>
+
+<h3>Disaster Recovery</h3>
+<li><strong>RTO (Recovery Time Objective):</strong> <4 hours</li>
+<li><strong>RPO (Recovery Point Objective):</strong> <1 hour (last backup)</li>
+<li><strong>Multi-region:</strong> Primary (us-east-1), DR (us-west-2)</li>
+<li><strong>Failover:</strong> Automated DNS failover</li>
+<li><strong>Annual DR drill:</strong> Full failover test</li>
+
+<hr>
+
+<h2>14. Cost Estimates</h2>
+
+<h3>Development Cost (MVP - 16 weeks)</h3>
+<li>Frontend Developer (1): $128K</li>
+<li>Backend Developer (2): $256K</li>
+<li>AI Engineer (1): $128K</li>
+<li>QA Engineer (1): $96K</li>
+<li>DevOps Engineer (0.5): $64K</li>
+<li>Technical Lead (1): $160K</li>
+<li><strong>Total Team Cost:</strong> $832K</li>
+
+<h3>Infrastructure Cost (Monthly)</h3>
+<li>AWS EC2 (t3.medium): $30</li>
+<li>AWS RDS PostgreSQL: $25</li>
+<li>AWS ElastiCache Redis: $15</li>
+<li>AWS S3 Storage: $5</li>
+<li>AWS CloudFront: $10</li>
+<li><strong>Total AWS:</strong> ~$85/month</li>
+
+<h3>Third-Party APIs (Monthly)</h3>
+<li>Waystar: $500</li>
+<li>Stripe: Transaction-based (2.9% + $0.30)</li>
+<li>Twilio: $50</li>
+<li>OpenAI: $200</li>
+<li>AWS Textract: $10</li>
+<li><strong>Total APIs:</strong> ~$760/month</li>
+
+<h3>Total First Year Cost</h3>
+<li>Development: $832K (one-time)</li>
+<li>Infrastructure: $1K/year</li>
+<li>APIs: $9K/year</li>
+<li><strong>Total Year 1:</strong> ~$842K</li>
+
+<h3>Ongoing Cost (Annual)</h3>
+<li>Infrastructure: $1K</li>
+<li>APIs: $9K</li>
+<li>Maintenance: $200K (team)</li>
+<li><strong>Total Ongoing:</strong> ~$210K/year</li>
+
+<hr>
+
+<h2>15. Implementation Roadmap</h2>
+
+<h3>Phase 1: MVP (Months 1-4)</h3>
+<li>Modules 1-10, 12, 14-18, 23</li>
+<li>Core workflow: Patient → Claim → Payment</li>
+<li>Basic AI features (coding assistant)</li>
+<li><strong>Goal:</strong> Launch with 3-5 pilot clinics</li>
+
+<h3>Phase 2: Enhancement (Months 5-8)</h3>
+<li>Modules 11, 19-22, 26</li>
+<li>Advanced AI features (error prediction, OCR)</li>
+<li>Denial management</li>
+<li>Patient billing</li>
+<li><strong>Goal:</strong> 20-30 clinics</li>
+
+<h3>Phase 3: Scale (Months 9-12)</h3>
+<li>Modules 24, 25, 27-30</li>
+<li>Revenue integrity</li>
+<li>Patient portal</li>
+<li>Mobile app</li>
+<li>Advanced analytics</li>
+<li><strong>Goal:</strong> 100+ clinics</li>
+
+<h3>Phase 4: Enterprise (Year 2)</h3>
+<li>Multi-location support</li>
+<li>Deep EHR integration</li>
+<li>International billing</li>
+<li>Advanced compliance</li>
+<li><strong>Goal:</strong> Enterprise customers</li>
+
+<hr>
+
+<h2>16. Next Steps</h2>
+
+<li>✅ <strong>Review this requirements document</strong> with stakeholders</li>
+<li>✅ <strong>Finalize MVP scope</strong> (which modules to include)</li>
+<li>✅ <strong>Assemble development team</strong> (6-7 people)</li>
+<li>✅ <strong>Start Waystar API approval</strong> (takes 2-4 weeks)</li>
+<li>✅ <strong>Design database schema</strong> (35+ tables)</li>
+<li>✅ <strong>Create UI/UX wireframes</strong> (all screens)</li>
+<li>✅ <strong>Set up development environment</strong> (AWS, Git, CI/CD)</li>
+<li>✅ <strong>Begin Phase 1 development</strong> (Week 1)</li>
+
+<hr>
+
+<h2>17. Questions for Discussion</h2>
+
+<li><strong>MVP Scope:</strong> Should we include AI features in MVP or add later?</li>
+<li><strong>Clearinghouse:</strong> Waystar (broader coverage) or Availity (cheaper)?</li>
+<li><strong>EHR Integration:</strong> MVP or post-MVP?</li>
+<li><strong>Mobile App:</strong> MVP or post-MVP?</li>
+<li><strong>Team:</strong> In-house, contractors, or offshore?</li>
+<li><strong>Budget:</strong> Full team ($832K) or lean team ($400-500K)?</li>
+<li><strong>Timeline:</strong> 16 weeks realistic or need more time?</li>
+<li><strong>Pilot Clinics:</strong> Do we have 3-5 clinics ready to test?</li>
+
+<hr>
+
+<p><strong>Document Prepared By:</strong> AI Assistant  </p>
+<p><strong>Version:</strong> 2.0  </p>
+<p><strong>Date:</strong> May 18, 2026  </p>
+<p><strong>Status:</strong> Ready for Team Review</p>
+
+<p><strong>Changes from v1.0:</strong></p>
+<li>✅ Added 5 new modules (26-30)</li>
+<li>✅ Added AI/ML features throughout</li>
+<li>✅ Added specific API integrations (Waystar, Stripe, OpenAI, Twilio)</li>
+<li>✅ Added detailed tech stack specifications</li>
+<li>✅ Added performance requirements</li>
+<li>✅ Added testing & QA section</li>
+<li>✅ Added disaster recovery & backup</li>
+<li>✅ Added cost estimates</li>
+<li>✅ Added implementation roadmap</li>
+<li>✅ Expanded all existing modules with more detail</li>
+
+</body>
+</html>

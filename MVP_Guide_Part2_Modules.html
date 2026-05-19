@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare RCM Application - MVP Guide (Part 2: Modules & Features)</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Healthcare RCM Application - MVP Guide (Part 2: Modules & Features)</h1>
+
+<p><strong>Version:</strong> 1.0  </p>
+<p><strong>For:</strong> Development Team & Technical Lead</p>
+
+<hr>
+
+<h2>3. Modules Included in MVP</h2>
+
+<h3>Module 1: User Login & Security</h3>
+
+<p><strong>Purpose:</strong>  </p>
+<p>Secure access control so only authorized staff can access patient data and billing information.</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens application</li>
+<li>Enters username and password</li>
+<li>System shows dashboard based on their role</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Validates credentials against database</li>
+<li>Generates JWT token (expires in 8 hours)</li>
+<li>Checks user role and permissions</li>
+<li>Returns allowed menu items and features</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Internal:</strong> FastAPI authentication endpoints</li>
+<li><strong>External:</strong> None (built in-house)</li>
+
+<p><strong>Tech Details:</strong></p>
+<pre><code class="language-python">
+# Authentication flow
+POST /api/v1/auth/login
+{
+  "username": "biller01",
+  "password": "encrypted_password"
+}
+Response:
+{
+  "access_token": "jwt_token_here",
+  "token_type": "bearer",
+  "user_role": "medical_biller",
+  "permissions": ["view_claims", "submit_claims", "post_payments"]
+}
+</pre>
+
+<p><strong>Security Features:</strong></p>
+<li>Password encryption (bcrypt)</li>
+<li>JWT token-based authentication</li>
+<li>Role-based access control (RBAC)</li>
+<li>Session timeout after 8 hours</li>
+<li>Audit logging for all actions</li>
+
+<hr>
+
+<h3>Module 2: Patient Registration</h3>
+
+<p><strong>Purpose:</strong>  </p>
+<p>Capture and store patient demographic and insurance information accurately.</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Clicks "New Patient" button</li>
+<li>Fills in patient form:</li>
+<li>Name, DOB, Gender, SSN</li>
+<li>Address, Phone, Email</li>
+<li>Emergency contact</li>
+<li>Insurance information (primary & secondary)</li>
+<li>Clicks "Save"</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Validates all required fields</li>
+<li>Checks for duplicate patients (by name + DOB)</li>
+<li>Generates unique patient ID</li>
+<li>Stores data in PostgreSQL database</li>
+<li>Returns success message</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Internal:</strong> Patient CRUD endpoints</li>
+<li><strong>External:</strong> None for basic registration</li>
+
+<p><strong>Database Tables:</strong></p>
+<li><code>patients</code> (demographics)</li>
+<li><code>patient_insurance</code> (insurance details)</li>
+<li><code>patient_contacts</code> (emergency contacts)</li>
+
+<p><strong>Validation Rules:</strong></p>
+<li>SSN format: XXX-XX-XXXX</li>
+<li>Phone: (XXX) XXX-XXXX</li>
+<li>Email: valid email format</li>
+<li>DOB: Cannot be future date</li>
+<li>Insurance policy number: Required if insurance selected</li>
+
+<hr>
+
+<h3>Module 3: Insurance Verification</h3>
+
+<p><strong>Purpose:</strong>  </p>
+<p>Verify patient insurance eligibility and benefits before appointment to avoid claim denials.</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens patient record</li>
+<li>Clicks "Verify Insurance" button</li>
+<li>System shows verification results in 10-30 seconds:</li>
+<li>Coverage status (Active/Inactive)</li>
+<li>Copay amount</li>
+<li>Deductible (met/remaining)</li>
+<li>Out-of-pocket max</li>
+<li>Prior authorization requirements</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Extracts patient insurance data</li>
+<li>Creates EDI 270 transaction (eligibility inquiry)</li>
+<li>Sends to <strong>Waystar API</strong> or <strong>Availity API</strong></li>
+<li>Receives EDI 271 response (eligibility response)</li>
+<li>Parses response and stores in database</li>
+<li>Caches result for 24 hours</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Waystar API</strong> (preferred for multi-payer support)</li>
+<li><strong>Availity API</strong> (alternative, free for some payers)</li>
+
+<p><strong>API Integration Example:</strong></p>
+<pre><code class="language-python">
+# Waystar eligibility check
+POST https://api.waystar.com/eligibility/v1/inquiries
+Headers:
+  Authorization: Bearer {api_key}
+  Content-Type: application/json
+Body:
+{
+  "patient": {
+    "firstName": "John",
+    "lastName": "Doe",
+    "dateOfBirth": "1980-05-15",
+    "memberId": "ABC123456789"
+  },
+  "payer": {
+    "payerId": "00431",  # Aetna
+    "payerName": "Aetna"
+  },
+  "provider": {
+    "npi": "1234567890",
+    "taxId": "12-3456789"
+  },
+  "serviceDate": "2026-05-20"
+}
+Response:
+{
+  "eligibilityStatus": "Active",
+  "copay": 25.00,
+  "deductible": {
+    "annual": 1500.00,
+    "met": 800.00,
+    "remaining": 700.00
+  },
+  "outOfPocketMax": {
+    "annual": 5000.00,
+    "met": 1200.00,
+    "remaining": 3800.00
+  },
+  "priorAuthRequired": false
+}
+</pre>
+
+<p><strong>Business Rules:</strong></p>
+<li>Verify before every appointment</li>
+<li>Cache results for 24 hours</li>
+<li>If inactive → patient becomes self-pay</li>
+<li>Alert user if prior auth required</li>
+
+<hr>
+
+<h3>Module 4: Appointment Scheduling</h3>
+
+<p><strong>Purpose:</strong>  </p>
+<p>Schedule patient appointments and link them to encounters for billing.</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens calendar view</li>
+<li>Selects date and time slot</li>
+<li>Selects patient and provider</li>
+<li>Selects appointment type (New Patient, Follow-up, etc.)</li>
+<li>Adds notes if needed</li>
+<li>Clicks "Schedule"</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Checks provider availability</li>
+<li>Checks for scheduling conflicts</li>
+<li>Creates appointment record</li>
+<li>Sends confirmation (optional: via Twilio SMS)</li>
+<li>Creates placeholder encounter</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Internal:</strong> Appointment CRUD endpoints</li>
+<li><strong>Twilio API</strong> (optional for SMS reminders)</li>
+
+<p><strong>Database Tables:</strong></p>
+<li><code>appointments</code></li>
+<li><code>provider_schedules</code></li>
+<li><code>appointment_types</code></li>
+
+<p><strong>Features:</strong></p>
+<li>Calendar view (day/week/month)</li>
+<li>Color-coded by appointment type</li>
+<li>Drag-and-drop rescheduling</li>
+<li>Automated reminders (24 hours before)</li>
+
+<hr>
+
+<h3>Module 5: Medical Coding</h3>
+
+<p><strong>Purpose:</strong>  </p>
+<p>Assign correct ICD-10 diagnosis codes and CPT procedure codes to encounters for accurate billing.</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens encounter after patient visit</li>
+<li>Reviews doctor's notes</li>
+<li>Searches and selects ICD-10 codes (diagnoses)</li>
+<li>Searches and selects CPT codes (procedures)</li>
+<li>Adds modifiers if needed</li>
+<li>Links codes to encounter</li>
+<li>Clicks "Save"</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Validates code formats</li>
+<li>Checks code validity (active codes only)</li>
+<li>Validates code combinations (some codes can't be billed together)</li>
+<li>Stores codes linked to encounter</li>
+<li>Calculates expected reimbursement</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Internal:</strong> ICD-10 and CPT code database</li>
+<li><strong>OpenAI API</strong> (optional for AI-assisted coding suggestions)</li>
+<li><strong>FHIR APIs</strong> (optional to pull codes from EHR)</li>
+
+<p><strong>AI-Assisted Coding (Optional MVP Feature):</strong></p>
+<pre><code class="language-python">
+# AI suggests codes based on doctor's notes
+POST /api/v1/ai/suggest-codes
+{
+  "encounter_notes": "Patient presents with acute bronchitis, productive cough for 5 days. Prescribed antibiotics.",
+  "patient_age": 45,
+  "patient_gender": "M"
+}
+Response (using OpenAI API):
+{
+  "suggested_icd10": [
+    {"code": "J20.9", "description": "Acute bronchitis, unspecified", "confidence": 0.95},
+    {"code": "R05", "description": "Cough", "confidence": 0.88}
+  ],
+  "suggested_cpt": [
+    {"code": "99213", "description": "Office visit, established patient, moderate complexity", "confidence": 0.92}
+  ]
+}
+</pre>
+
+<p><strong>Database Tables:</strong></p>
+<li><code>icd10_codes</code> (100,000+ diagnosis codes)</li>
+<li><code>cpt_codes</code> (10,000+ procedure codes)</li>
+<li><code>encounter_diagnoses</code></li>
+<li><code>encounter_procedures</code></li>
+
+<hr>
+
+<h3>Module 6: Claim Creation</h3>
+
+<p><strong>Purpose:</strong>  </p>
+<p>Generate clean, accurate claims from encounter data ready for submission.</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens "Claims" module</li>
+<li>Selects encounters ready for billing</li>
+<li>Clicks "Create Claim"</li>
+<li>System auto-fills claim form (CMS-1500 or UB-04)</li>
+<li>Reviews claim for errors</li>
+<li>Edits if needed</li>
+<li>Marks claim as "Ready to Submit"</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Pulls data from multiple tables:</li>
+<li>Patient demographics</li>
+<li>Insurance information</li>
+<li>Provider information</li>
+<li>Encounter details (date, place of service)</li>
+<li>Diagnosis codes (ICD-10)</li>
+<li>Procedure codes (CPT)</li>
+<li>Charges</li>
+<li>Validates claim against payer rules</li>
+<li>Runs claim scrubbing (error checking)</li>
+<li>Generates claim in EDI 837 format</li>
+<li>Stores claim in database with status "Ready"</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Internal:</strong> Claim generation logic</li>
+<li><strong>Waystar API</strong> (for claim scrubbing/validation)</li>
+
+<p><strong>Claim Validation Rules:</strong></p>
+<li>All required fields present</li>
+<li>Valid NPI numbers</li>
+<li>Valid diagnosis and procedure codes</li>
+<li>Diagnosis supports medical necessity for procedures</li>
+<li>Charges match fee schedule</li>
+<li>No duplicate claims</li>
+
+<p><strong>Claim Formats:</strong></p>
+<li><strong>CMS-1500:</strong> Professional claims (doctor's office)</li>
+<li><strong>UB-04:</strong> Institutional claims (hospital)</li>
+<li><strong>EDI 837P:</strong> Electronic professional claims</li>
+<li><strong>EDI 837I:</strong> Electronic institutional claims</li>
+
+<hr>
+
+<h3>Module 7: Claim Submission</h3>
+
+<p><strong>Purpose:</strong>  </p>
+<p>Submit claims electronically to insurance payers and track submission status.</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens "Claims" module</li>
+<li>Filters claims by status "Ready to Submit"</li>
+<li>Selects claims (single or batch)</li>
+<li>Clicks "Submit Claims"</li>
+<li>System shows submission confirmation</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Converts claims to EDI 837 format</li>
+<li>Sends to clearinghouse via <strong>Waystar API</strong> or <strong>Availity API</strong></li>
+<li>Receives submission acknowledgment (EDI 999)</li>
+<li>Updates claim status to "Submitted"</li>
+<li>Stores submission tracking number</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Waystar API</strong> (primary clearinghouse)</li>
+<li><strong>Availity API</strong> (alternative clearinghouse)</li>
+
+<p><strong>API Integration Example:</strong></p>
+<pre><code class="language-python">
+# Submit claim via Waystar
+POST https://api.waystar.com/claims/v1/submit
+Headers:
+  Authorization: Bearer {api_key}
+  Content-Type: application/json
+Body:
+{
+  "claims": [
+    {
+      "claimId": "CLM-2026-001234",
+      "ediContent": "ISA*00*...",  # Full EDI 837 content
+      "payerId": "00431",
+      "submissionDate": "2026-05-18"
+    }
+  ]
+}
+Response:
+{
+  "batchId": "BATCH-20260518-001",
+  "submittedClaims": 1,
+  "status": "Accepted",
+  "trackingNumber": "TRK-987654321"
+}
+</pre>
+
+<p><strong>Submission Workflow:</strong></p>
+<li>Claim created → Status: "Ready"</li>
+<li>Claim submitted → Status: "Submitted"</li>
+<li>Acknowledgment received → Status: "Accepted" or "Rejected"</li>
+<li>If rejected → Fix errors and resubmit</li>
+<li>If accepted → Wait for adjudication</li>
+
+<p><strong>Tracking:</strong></p>
+<li>Submission date/time</li>
+<li>Batch number</li>
+<li>Tracking number</li>
+<li>Acknowledgment status</li>
+<li>Error messages (if rejected)</li>
+
+<hr>
+
+<h3>Module 8: Denial Dashboard</h3>
+
+<p><strong>Purpose:</strong>  </p>
+<p>Track denied claims and manage denial workflow to recover lost revenue.</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens "Denials" dashboard</li>
+<li>Sees list of denied claims with:</li>
+<li>Claim number</li>
+<li>Patient name</li>
+<li>Denial reason</li>
+<li>Denial date</li>
+<li>Amount</li>
+<li>Days since denial</li>
+<li>Clicks on claim to see details</li>
+<li>Takes action:</li>
+<li>Correct and resubmit</li>
+<li>Appeal denial</li>
+<li>Write off (if not recoverable)</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Receives denial information from ERA (EDI 835)</li>
+<li>Parses denial reason codes</li>
+<li>Categorizes denials:</li>
+<li>Eligibility issues</li>
+<li>Coding errors</li>
+<li>Missing information</li>
+<li>Timely filing</li>
+<li>Medical necessity</li>
+<li>Calculates denial rate and trends</li>
+<li>Sends alerts for high-priority denials</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Internal:</strong> Denial tracking logic</li>
+<li><strong>Waystar API</strong> (to receive ERA files)</li>
+
+<p><strong>Denial Reason Codes (Common):</strong></p>
+<li>CO-16: Claim lacks information</li>
+<li>CO-18: Duplicate claim</li>
+<li>CO-22: Payment adjusted (coordination of benefits)</li>
+<li>CO-27: Expenses incurred after coverage terminated</li>
+<li>CO-50: Non-covered service</li>
+<li>CO-97: Payment adjusted (timely filing)</li>
+
+<p><strong>Dashboard Metrics:</strong></p>
+<li>Total denied claims</li>
+<li>Total denied amount</li>
+<li>Denial rate (% of submitted claims)</li>
+<li>Top denial reasons</li>
+<li>Average days to resolve denial</li>
+
+<hr>
+
+<h3>Module 9: Payment Posting</h3>
+
+<p><strong>Purpose:</strong>  </p>
+<p>Record payments from insurance companies and patients, and reconcile with claims.</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens "Payment Posting" module</li>
+<li>Uploads ERA file (EDI 835) or enters manual payment</li>
+<li>System auto-matches payments to claims</li>
+<li>Reviews matches</li>
+<li>Posts payments</li>
+<li>Handles adjustments and denials</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Parses ERA file (EDI 835)</li>
+<li>Extracts payment information:</li>
+<li>Claim number</li>
+<li>Paid amount</li>
+<li>Adjustment codes</li>
+<li>Patient responsibility</li>
+<li>Matches payments to claims automatically</li>
+<li>Updates claim status:</li>
+<li>Fully paid</li>
+<li>Partially paid</li>
+<li>Denied</li>
+<li>Calculates patient balance</li>
+<li>Updates accounts receivable</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Waystar API</strong> (to download ERA files)</li>
+<li><strong>Stripe API</strong> (for patient credit card payments)</li>
+
+<p><strong>ERA Processing Example:</strong></p>
+<pre><code class="language-python">
+# ERA (EDI 835) structure
+Claim: CLM-2026-001234
+Billed Amount: $150.00
+Allowed Amount: $120.00
+Paid Amount: $96.00
+Patient Responsibility: $24.00 (copay)
+Adjustment Codes:
+  - CO-45: Charge exceeds fee schedule ($30.00)
+  - PR-1: Deductible ($0.00)
+  - PR-2: Coinsurance ($0.00)
+  - PR-3: Copay ($24.00)
+</pre>
+
+<p><strong>Payment Types:</strong></p>
+<li>Insurance payments (from ERA)</li>
+<li>Patient payments (cash, check, credit card)</li>
+<li>Adjustments (contractual, write-offs)</li>
+
+<p><strong>Database Updates:</strong></p>
+<li><code>claim_payments</code> table</li>
+<li><code>patient_ledger</code> table</li>
+<li><code>accounts_receivable</code> table</li>
+
+<hr>
+
+<h3>Module 10: Basic Reports</h3>
+
+<p><strong>Purpose:</strong>  </p>
+<p>Provide essential financial and operational reports for practice management.</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens "Reports" module</li>
+<li>Selects report type</li>
+<li>Selects date range</li>
+<li>Clicks "Generate Report"</li>
+<li>Views report on screen</li>
+<li>Exports to PDF or Excel if needed</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Queries database based on report parameters</li>
+<li>Aggregates data</li>
+<li>Calculates metrics</li>
+<li>Formats report</li>
+<li>Returns report data</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Internal:</strong> Reporting queries</li>
+
+<p><strong>MVP Reports:</strong></p>
+
+<li><strong>Daily Charges Report</strong></li>
+<li>Total charges posted today</li>
+<li>By provider</li>
+<li>By service type</li>
+
+<li><strong>Claims Status Report</strong></li>
+<li>Claims submitted</li>
+<li>Claims paid</li>
+<li>Claims denied</li>
+<li>Claims pending</li>
+
+<li><strong>Payment Summary Report</strong></li>
+<li>Total payments received</li>
+<li>By payer</li>
+<li>By payment type</li>
+
+<li><strong>Aging Report (A/R)</strong></li>
+<li>Outstanding balances by age:</li>
+<li>0-30 days</li>
+<li>31-60 days</li>
+<li>61-90 days</li>
+<li>90+ days</li>
+
+<li><strong>Denial Report</strong></li>
+<li>Denial rate</li>
+<li>Top denial reasons</li>
+<li>Denied amount</li>
+
+<li><strong>Provider Productivity Report</strong></li>
+<li>Encounters per provider</li>
+<li>Charges per provider</li>
+<li>Collections per provider</li>
+
+<p><strong>Report Features:</strong></p>
+<li>Date range filters</li>
+<li>Export to PDF/Excel</li>
+<li>Email scheduling (optional)</li>
+<li>Dashboard widgets for key metrics</li>
+
+<hr>
+
+<p><strong>Next:</strong> Part 3 will cover the complete MVP workflow and recommended tech stack.</p>
+
+<hr>
+
+<p><strong>Document Navigation:</strong></p>
+<li><strong>Part 1:</strong> Introduction & Goals</li>
+<li><strong>Part 2:</strong> Modules & Features (This document)</li>
+<li><strong>Part 3:</strong> Workflow & Tech Stack</li>
+<li><strong>Part 4:</strong> APIs & AI Integration</li>
+<li><strong>Part 5:</strong> Development Plan & Timeline</li>
+
+</body>
+</html>

@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare RCM Application - Development Phase Guide</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Healthcare RCM Application - Development Phase Guide</h1>
+<h2>Part 4: Phase 3 - Payment & Denial Management</h2>
+
+<p><strong>Version:</strong> 1.0  </p>
+<p><strong>For:</strong> Technical Lead & Development Team</p>
+
+<hr>
+
+<h2>5. Phase 3 — Payment & Denial Management (Weeks 13-16)</h2>
+
+<p><strong>Goal:</strong> Handle insurance payments and denied claims</p>
+
+<p><strong>What we'll build:</strong></p>
+<li>Payment posting (ERA/835 processing)</li>
+<li>Denial management</li>
+<li>Appeals workflow</li>
+<li>AR (Accounts Receivable) management</li>
+<li>Patient billing</li>
+<li>Payment collection</li>
+
+<p><strong>Why this phase?</strong></p>
+<p>This is where we actually collect money. Without payment posting and denial management, revenue sits uncollected.</p>
+
+<hr>
+
+<h3>Module 9: Payment Posting (ERA/835 Processing) (Week 13-14)</h3>
+
+<h4>What This Module Does</h4>
+<p>Records insurance payments and adjustments when they arrive.</p>
+
+<p><strong>Payment Flow:</strong></p>
+<pre><code>
+Insurance Company → Sends payment (check or EFT)
+                 → Sends ERA file (EDI 835)
+                 → We download ERA
+                 → Parse ERA
+                 → Auto-post payment to claims
+</pre>
+
+<p><strong>What's in an ERA (EDI 835)?</strong></p>
+<li>Claim ID</li>
+<li>Amount paid</li>
+<li>Amount adjusted (contractual write-off)</li>
+<li>Patient responsibility (copay, deductible)</li>
+<li>Adjustment reason codes (CARC/RARC)</li>
+<li>Check number and date</li>
+
+<p><strong>Example ERA Data:</strong></p>
+<pre><code>
+Claim: CLM-2026-001234
+Billed: $150.00
+Allowed: $120.00
+Paid: $95.00
+Adjustments:
+  - Contractual: -$30.00 (difference between billed and allowed)
+  - Deductible: -$25.00 (patient owes)
+Patient Responsibility: $25.00
+</pre>
+
+<hr>
+
+<h4>Frontend Screen</h4>
+
+<p><strong>Screen: Payment Posting</strong></p>
+<pre><code>
+┌─────────────────────────────────────────────────┐
+│  Payment Posting                                │
+├─────────────────────────────────────────────────┤
+│                                                  │
+│  [📥 Import ERA File] [Manual Posting]          │
+│                                                  │
+│  Recent ERA Files:                              │
+│  ┌──────────────────────────────────────────┐  │
+│  │ ERA_20260520_001.835                     │  │
+│  │ Date: 05/20/2026                         │  │
+│  │ Payer: Blue Cross                        │  │
+│  │ Claims: 45                               │  │
+│  │ Total: $12,450.00                        │  │
+│  │ Status: ✅ Posted (43) ⚠️ Review (2)    │  │
+│  │ [View Details]                           │  │
+│  └──────────────────────────────────────────┘  │
+│                                                  │
+│  ┌──────────────────────────────────────────┐  │
+│  │ ERA_20260519_002.835                     │  │
+│  │ Date: 05/19/2026                         │  │
+│  │ Payer: Aetna                             │  │
+│  │ Claims: 32                               │  │
+│  │ Total: $8,900.00                         │  │
+│  │ Status: ✅ Posted (32)                   │  │
+│  │ [View Details]                           │  │
+│  └──────────────────────────────────────────┘  │
+│                                                  │
+└─────────────────────────────────────────────────┘
+When viewing ERA details:
+┌─────────────────────────────────────────────────┐
+│  ERA Details - ERA_20260520_001.835             │
+├─────────────────────────────────────────────────┤
+│                                                  │
+│  Payer: Blue Cross Blue Shield                  │
+│  Check #: 123456789                             │
+│  Check Date: 05/20/2026                         │
+│  Total Amount: $12,450.00                       │
+│                                                  │
+│  Claims (45):                                   │
+│  ┌──────────────────────────────────────────┐  │
+│  │ CLM-001 | John Doe | $150 → $120 ✅      │  │
+│  │ CLM-002 | Jane Smith | $200 → $180 ✅    │  │
+│  │ CLM-003 | Bob Johnson | $0 → DENIED ❌   │  │
+│  │ ...                                      │  │
+│  └──────────────────────────────────────────┘  │
+│                                                  │
+│  [Auto-Post All] [Review Denials]               │
+│                                                  │
+└─────────────────────────────────────────────────┘
+</pre>
+
+<hr>
+
+<h4>Backend Implementation</h4>
+
+<p><strong>Step 1: Download ERA from Waystar</strong></p>
+<pre><code class="language-python">
+# app/services/era_service.py
+import httpx
+import os
+from datetime import datetime, timedelta
+class ERAService:
+    def __init__(self):
+        self.waystar_api_key = os.getenv("WAYSTAR_API_KEY")
+        self.base_url = "https://api.waystar.com/remittance/v1"
+    async def download_eras(self, start_date: str, end_date: str):
+        """
+        Download ERA files from Waystar
+        """
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{self.base_url}/files",
+                params={
+                    "startDate": start_date,
+                    "endDate": end_date
+                },
+                headers={
+                    "Authorization": f"Bearer {self.waystar_api_key}"
+                },
+                timeout=60.0
+            )
+        if response.status_code == 200:
+            return response.json()["files"]
+        else:
+            raise Exception(f"Failed to download ERAs: {response.text}")
+    async def get_era_content(self, file_id: str):
+        """
+        Get ERA file content
+        """
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{self.base_url}/files/{file_id}",
+                headers={
+                    "Authorization": f"Bearer {self.waystar_api_key}"
+                }
+            )
+        return response.text  # EDI 835 content
+</pre>
+
+<p><strong>Step 2: Parse EDI 835</strong></p>
+<pre><code class="language-python">
+# app/services/edi835_parser.py
+import re
+class EDI835Parser:
+    def parse(self, edi_content: str):
+        """
+        Parse EDI 835 file
+        In production, use a library like 'edi-835-parser' or 'pyx12'
+        This is a simplified version
+        """
+        payments = []
+        # Split into segments
+        segments = edi_content.split('~')
+        current_payment = {}
+        for segment in segments:
+            fields = segment.split('*')
+            segment_id = fields[0]
+            if segment_id == 'BPR':
+                # Payment header
+                current_payment = {
+                    'total_amount': float(fields[2]),
+                    'payment_method': fields[3],
+                    'check_number': fields[7],
+                    'check_date': fields[16],
+                    'claims': []
+                }
+            elif segment_id == 'CLP':
+                # Claim payment info
+                claim = {
+                    'claim_id': fields[1],
+                    'status_code': fields[2],
+                    'billed_amount': float(fields[3]),
+                    'paid_amount': float(fields[4]),
+                    'patient_responsibility': float(fields[5]),
+                    'adjustments': []
+                }
+                current_payment['claims'].append(claim)
+            elif segment_id == 'CAS':
+                # Claim adjustment
+                adjustment = {
+                    'group_code': fields[1],
+                    'reason_code': fields[2],
+                    'amount': float(fields[3])
+                }
+                current_payment['claims'][-1]['adjustments'].append(adjustment)
+        payments.append(current_payment)
+        return payments
+</pre>
+
+<p><strong>Step 3: Auto-Post Payments</strong></p>
+<pre><code class="language-python">
+# app/services/payment_posting_service.py
+from sqlalchemy.orm import Session
+from app.models.claim import Claim
+from app.models.payment import ClaimPayment, PaymentAdjustment
+from datetime import datetime
+class PaymentPostingService:
+    def __init__(self, db: Session):
+        self.db = db
+    def auto_post_era(self, era_data: dict):
+        """
+        Automatically post payments from ERA
+        """
+        posted_count = 0
+        review_count = 0
+        for claim_payment in era_data['claims']:
+            # Find claim
+            claim = self.db.query(Claim).filter(
+                Claim.claim_id == claim_payment['claim_id']
+            ).first()
+            if not claim:
+                review_count += 1
+                continue
+            # Check if payment matches expected amount
+            if self.validate_payment(claim, claim_payment):
+                # Auto-post
+                self.post_payment(claim, claim_payment, era_data)
+                posted_count += 1
+            else:
+                # Flag for manual review
+                claim.payment_status = 'review_required'
+                self.db.commit()
+                review_count += 1
+        return {
+            'posted': posted_count,
+            'review': review_count
+        }
+    def validate_payment(self, claim, payment_data):
+        """
+        Validate payment matches expected amount
+        """
+        # Check if paid amount is reasonable
+        paid_amount = payment_data['paid_amount']
+        billed_amount = claim.total_charge
+        # Payment should be between 50% and 100% of billed
+        if paid_amount &lt; (billed_amount * 0.5) or paid_amount &gt; billed_amount:
+            return False
+        return True
+    def post_payment(self, claim, payment_data, era_data):
+        """
+        Post payment to claim
+        """
+        # Create payment record
+        payment = ClaimPayment(
+            claim_id=claim.claim_id,
+            payment_date=datetime.strptime(era_data['check_date'], '%Y%m%d'),
+            check_number=era_data['check_number'],
+            paid_amount=payment_data['paid_amount'],
+            patient_responsibility=payment_data['patient_responsibility'],
+            payment_method='ERA',
+            posted_by='SYSTEM'
+        )
+        self.db.add(payment)
+        self.db.flush()
+        # Create adjustment records
+        for adj in payment_data['adjustments']:
+            adjustment = PaymentAdjustment(
+                payment_id=payment.payment_id,
+                adjustment_group=adj['group_code'],
+                adjustment_reason=adj['reason_code'],
+                adjustment_amount=adj['amount']
+            )
+            self.db.add(adjustment)
+        # Update claim status
+        claim.payment_status = 'paid'
+        claim.paid_amount = payment_data['paid_amount']
+        claim.patient_balance = payment_data['patient_responsibility']
+        self.db.commit()
+</pre>
+
+<hr>
+
+<h4>Database Tables</h4>
+
+<p><strong>Table: claim_payments</strong></p>
+<pre><code class="language-sql">
+CREATE TABLE claim_payments (
+    payment_id SERIAL PRIMARY KEY,
+    claim_id VARCHAR(50) NOT NULL REFERENCES claims(claim_id),
+    payment_date DATE NOT NULL,
+    check_number VARCHAR(50),
+    paid_amount DECIMAL(10,2) NOT NULL,
+    patient_responsibility DECIMAL(10,2) DEFAULT 0,
+    payment_method VARCHAR(20) NOT NULL,  -- ERA, CHECK, CASH, CARD
+    posted_by VARCHAR(50) NOT NULL,
+    posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    notes TEXT
+);
+CREATE INDEX idx_claim_payments_claim ON claim_payments(claim_id);
+CREATE INDEX idx_claim_payments_date ON claim_payments(payment_date);
+</pre>
+
+<p><strong>Table: payment_adjustments</strong></p>
+<pre><code class="language-sql">
+CREATE TABLE payment_adjustments (
+    adjustment_id SERIAL PRIMARY KEY,
+    payment_id INTEGER NOT NULL REFERENCES claim_payments(payment_id),
+    adjustment_group VARCHAR(10) NOT NULL,  -- CO, PR, OA, PI
+    adjustment_reason VARCHAR(10) NOT NULL,  -- CARC code
+    adjustment_amount DECIMAL(10,2) NOT NULL,
+    adjustment_description TEXT
+);
+-- Common adjustment codes:
+-- CO = Contractual Obligation (insurance write-off)
+-- PR = Patient Responsibility (deductible, copay)
+-- OA = Other Adjustment
+-- PI = Payer Initiated
+</pre>
+
+<hr>
+
+<h3>Module 10: Denial Management (Week 14-15)</h3>
+
+<h4>What This Module Does</h4>
+<p>Tracks denied claims and manages the appeal process.</p>
+
+<p><strong>Common Denial Reasons:</strong></p>
+<li><strong>Missing information</strong> (30%) - Easy to fix</li>
+<li><strong>Incorrect coding</strong> (25%) - Need to correct codes</li>
+<li><strong>Eligibility issues</strong> (20%) - Patient not covered</li>
+<li><strong>Timely filing</strong> (10%) - Submitted too late (permanent)</li>
+<li><strong>Medical necessity</strong> (15%) - Diagnosis doesn't support procedure</li>
+
+<p><strong>Denial Workflow:</strong></p>
+<pre><code>
+Claim Denied
+   ↓
+Identify Reason
+   ↓
+Can it be fixed?
+   ↓ Yes          ↓ No
+Correct &amp; Resubmit  Write Off
+   ↓
+Or Appeal
+   ↓
+Level 1 Appeal
+   ↓ Denied
+Level 2 Appeal
+   ↓ Denied
+Level 3 Appeal (External Review)
+</pre>
+
+<hr>
+
+<h4>Frontend Screen</h4>
+
+<p><strong>Screen: Denial Worklist</strong></p>
+<pre><code>
+┌─────────────────────────────────────────────────┐
+│  Denial Management                              │
+├─────────────────────────────────────────────────┤
+│                                                  │
+│  Filter: [All Denials ▼] [High Value First ▼]  │
+│                                                  │
+│  Denied Claims (23):                            │
+│  ┌──────────────────────────────────────────┐  │
+│  │ CLM-001 | $1,250 | Missing Auth | Work   │  │
+│  │ CLM-005 | $890 | Wrong Code | Work       │  │
+│  │ CLM-012 | $650 | Timely Filing | Write Off│ │
+│  │ CLM-018 | $450 | Eligibility | Appeal     │  │
+│  └──────────────────────────────────────────┘  │
+│                                                  │
+│  Denial Analytics:                              │
+│  ┌──────────────────────────────────────────┐  │
+│  │ Total Denied: $45,000                    │  │
+│  │ Recoverable: $35,000 (78%)               │  │
+│  │ Write-off: $10,000 (22%)                 │  │
+│  │                                          │  │
+│  │ Top Denial Reasons:                      │  │
+│  │ 1. Missing Authorization (35%)           │  │
+│  │ 2. Incorrect Coding (28%)                │  │
+│  │ 3. Eligibility (20%)                     │  │
+│  └──────────────────────────────────────────┘  │
+│                                                  │
+└─────────────────────────────────────────────────┘
+When clicking "Work" on a denial:
+┌─────────────────────────────────────────────────┐
+│  Denial Details - CLM-001                       │
+├─────────────────────────────────────────────────┤
+│                                                  │
+│  Claim: CLM-2026-001234                         │
+│  Patient: John Doe                              │
+│  Billed: $1,250.00                              │
+│  Paid: $0.00                                    │
+│                                                  │
+│  Denial Information:                            │
+│  ┌──────────────────────────────────────────┐  │
+│  │ Reason Code: 197                         │  │
+│  │ Description: Precertification/authorization│ │
+│  │              absent                       │  │
+│  │                                          │  │
+│  │ Denial Date: 05/18/2026                  │  │
+│  │ Days Since Denial: 2                     │  │
+│  └──────────────────────────────────────────┘  │
+│                                                  │
+│  [🤖 Get AI Recommendation]                     │
+│                                                  │
+│  ┌──────────────────────────────────────────┐  │
+│  │ AI Recommendation:                       │  │
+│  │                                          │  │
+│  │ Action: Obtain Retroactive Authorization│  │
+│  │ Success Rate: 75%                        │  │
+│  │ Estimated Recovery: $1,250               │  │
+│  │                                          │  │
+│  │ Steps:                                   │  │
+│  │ 1. Contact payer for retro auth          │  │
+│  │ 2. Submit clinical documentation         │  │
+│  │ 3. Resubmit claim with auth number       │  │
+│  │                                          │  │
+│  │ Alternative: Appeal (Success: 40%)       │  │
+│  └──────────────────────────────────────────┘  │
+│                                                  │
+│  Actions:                                       │
+│  [Request Retro Auth] [Appeal] [Write Off]      │
+│                                                  │
+└─────────────────────────────────────────────────┘
+</pre>
+
+<hr>
+
+<h4>Backend Implementation</h4>
+
+<p><strong>Denial Service:</strong></p>
+<pre><code class="language-python">
+# app/services/denial_service.py
+from sqlalchemy.orm import Session
+from app.models.claim import Claim
+from app.models.denial import Denial, DenialAppeal
+import openai
+class DenialService:
+    def __init__(self, db: Session):
+        self.db = db
+    def process_denial(self, claim_id: str, denial_code: str, denial_reason: str):
+        """
+        Process a denied claim
+        """
+        claim = self.db.query(Claim).filter(Claim.claim_id == claim_id).first()
+        if not claim:
+            raise Exception("Claim not found")
+        # Create denial record
+        denial = Denial(
+            claim_id=claim_id,
+            denial_code=denial_code,
+            denial_reason=denial_reason,
+            denial_date=datetime.utcnow(),
+            denied_amount=claim.total_charge,
+            status='pending'
+        )
+        self.db.add(denial)
+        # Update claim status
+        claim.status = 'denied'
+        claim.denial_reason = denial_reason
+        self.db.commit()
+        return denial
+    async def get_ai_recommendation(self, denial_id: int):
+        """
+        Get AI recommendation for handling denial
+        """
+        denial = self.db.query(Denial).filter(Denial.denial_id == denial_id).first()
+        claim = denial.claim
+        prompt = f"""
+Analyze this denied insurance claim and recommend the best action:
+Claim Information:
+- Claim ID: {claim.claim_id}
+- Billed Amount: ${claim.total_charge}
+- Denial Code: {denial.denial_code}
+- Denial Reason: {denial.denial_reason}
+- Diagnosis Codes: {claim.diagnosis_codes}
+- Procedure Codes: {claim.procedure_codes}
+- Payer: {claim.insurance.payer_name}
+Provide:
+1. Recommended action (Correct &amp; Resubmit, Appeal, Request Retro Auth, Write Off)
+2. Success rate (%)
+3. Estimated recovery amount
+4. Step-by-step instructions
+5. Alternative actions
+Format as JSON.
+"""
+        try:
+            response = openai.ChatCompletion.create(
+                model="gpt-4",
+                messages=[
+                    {"role": "system", "content": "You are an expert in medical billing denials and appeals."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.3
+            )
+            recommendation = json.loads(response.choices[0].message.content)
+            return recommendation
+        except Exception as e:
+            return {
+                "action": "Manual Review",
+                "successRate": 50,
+                "estimatedRecovery": float(claim.total_charge),
+                "steps": ["Review denial reason", "Consult with billing manager"],
+                "alternatives": []
+            }
+    def create_appeal(self, denial_id: int, appeal_level: int, appeal_text: str):
+        """
+        Create an appeal for denied claim
+        """
+        denial = self.db.query(Denial).filter(Denial.denial_id == denial_id).first()
+        appeal = DenialAppeal(
+            denial_id=denial_id,
+            appeal_level=appeal_level,
+            appeal_date=datetime.utcnow(),
+            appeal_text=appeal_text,
+            status='submitted'
+        )
+        self.db.add(appeal)
+        denial.status = f'appeal_level_{appeal_level}'
+        self.db.commit()
+        return appeal
+    async def generate_appeal_letter(self, denial_id: int):
+        """
+        AI-generated appeal letter
+        """
+        denial = self.db.query(Denial).filter(Denial.denial_id == denial_id).first()
+        claim = denial.claim
+        prompt = f"""
+Write a professional appeal letter for this denied insurance claim:
+Claim Information:
+- Patient: {claim.patient.first_name} {claim.patient.last_name}
+- Claim ID: {claim.claim_id}
+- Service Date: {claim.service_date}
+- Denial Reason: {denial.denial_reason}
+- Diagnosis: {claim.diagnosis_codes}
+- Procedure: {claim.procedure_codes}
+Write a formal appeal letter that:
+1. States the claim details
+2. Explains why the denial is incorrect
+3. Provides clinical justification
+4. Requests reconsideration
+5. Is professional and persuasive
+Format as a business letter.
+"""
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are an expert medical billing appeal writer."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7
+        )
+        return response.choices[0].message.content
+</pre>
+
+<hr>
+
+<h3>Module 11: AR Management (Week 15)</h3>
+
+<h4>What This Module Does</h4>
+<p>Tracks outstanding accounts receivable and follows up on unpaid claims.</p>
+
+<p><strong>AR Aging Categories:</strong></p>
+<li><strong>0-30 days:</strong> New claims, normal processing time</li>
+<li><strong>31-60 days:</strong> Follow up with payer</li>
+<li><strong>61-90 days:</strong> Escalate, may need appeal</li>
+<li><strong>90+ days:</strong> High risk, may be uncollectible</li>
+
+<p><strong>Goal:</strong> Keep AR over 90 days below 15% of total AR</p>
+
+<hr>
+
+<h4>Frontend Screen</h4>
+
+<p><strong>Screen: AR Dashboard</strong></p>
+<pre><code>
+┌─────────────────────────────────────────────────┐
+│  Accounts Receivable Dashboard                  │
+├─────────────────────────────────────────────────┤
+│                                                  │
+│  Total AR: $1,250,000                           │
+│                                                  │
+│  AR Aging:                                      │
+│  ┌──────────────────────────────────────────┐  │
+│  │ 0-30 days:   $650,000 (52%) ✅          │  │
+│  │ 31-60 days:  $350,000 (28%) ⚠️          │  │
+│  │ 61-90 days:  $150,000 (12%) ⚠️          │  │
+│  │ 90+ days:    $100,000 (8%)  ❌          │  │
+│  └──────────────────────────────────────────┘  │
+│                                                  │
+│  [View 90+ Days Claims]                         │
+│                                                  │
+│  Key Metrics:                                   │
+│  ┌──────────────────────────────────────────┐  │
+│  │ Days in AR: 38 days (Target: &lt;35)       │  │
+│  │ Collection Rate: 94% (Target: &gt;95%)      │  │
+│  │ Denial Rate: 6% (Target: &lt;5%)           │  │
+│  └──────────────────────────────────────────┘  │
+│                                                  │
+└─────────────────────────────────────────────────┘
+</pre>
+
+<hr>
+
+<h3>Module 12: Patient Billing (Week 16)</h3>
+
+<h4>What This Module Does</h4>
+<p>Bills patients for their portion (copay, deductible, coinsurance) and collects payments.</p>
+
+<p><strong>Patient Responsibility:</strong></p>
+<pre><code>
+Total Charge: $150
+Insurance Paid: $95
+Contractual Adjustment: -$30
+Patient Owes: $25 (copay)
+</pre>
+
+<p><strong>Billing Process:</strong></p>
+<li>Insurance pays their portion</li>
+<li>System calculates patient balance</li>
+<li>Generate patient statement</li>
+<li>Send statement (mail, email, portal)</li>
+<li>Patient pays online or by mail</li>
+<li>Post payment to account</li>
+
+<hr>
+
+<h4>Frontend Screen</h4>
+
+<p><strong>Screen: Patient Statement</strong></p>
+<pre><code>
+┌─────────────────────────────────────────────────┐
+│  Patient Statement                              │
+├─────────────────────────────────────────────────┤
+│                                                  │
+│  Patient: John Doe                              │
+│  Account #: PAT-2026-001                        │
+│  Statement Date: 05/20/2026                     │
+│                                                  │
+│  Previous Balance: $0.00                        │
+│                                                  │
+│  New Charges:                                   │
+│  ┌──────────────────────────────────────────┐  │
+│  │ 05/15/26 | Office Visit | $150.00        │  │
+│  │ 05/15/26 | Insurance Payment | -$95.00   │  │
+│  │ 05/15/26 | Adjustment | -$30.00          │  │
+│  └──────────────────────────────────────────┘  │
+│                                                  │
+│  Amount Due: $25.00                             │
+│  Due Date: 06/20/2026                           │
+│                                                  │
+│  [Pay Online] [Set Up Payment Plan]             │
+│                                                  │
+└─────────────────────────────────────────────────┘
+</pre>
+
+<p><strong>Online Payment (Stripe Integration):</strong></p>
+<pre><code class="language-typescript">
+// src/pages/PatientPayment.tsx
+import { useState } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import api from '../services/api';
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY!);
+function PaymentForm({ amount, patientId }: { amount: number, patientId: string }) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const handleSubmit = async (e: React.FormEvent) =&gt; {
+    e.preventDefault();
+    if (!stripe || !elements) return;
+    setLoading(true);
+    setError('');
+    try {
+      // Create payment intent on backend
+      const { data } = await api.post('/payments/create-intent', {
+        amount: amount * 100, // Convert to cents
+        patientId
+      });
+      // Confirm payment with Stripe
+      const result = await stripe.confirmCardPayment(data.clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement)!,
+        }
+      });
+      if (result.error) {
+        setError(result.error.message || 'Payment failed');
+      } else {
+        // Payment successful
+        alert('Payment successful!');
+        window.location.href = '/payment-confirmation';
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Payment failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+  return (
+    &lt;form onSubmit={handleSubmit} className="max-w-md mx-auto p-6 bg-white rounded-lg shadow"&gt;
+      &lt;h2 className="text-2xl font-bold mb-4"&gt;Pay Your Bill&lt;/h2&gt;
+      &lt;div className="mb-4"&gt;
+        &lt;p className="text-lg"&gt;Amount Due: &lt;strong&gt;${amount.toFixed(2)}&lt;/strong&gt;&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div className="mb-4"&gt;
+        &lt;label className="block text-sm font-medium mb-2"&gt;Card Information&lt;/label&gt;
+        &lt;div className="border border-gray-300 rounded-lg p-3"&gt;
+          &lt;CardElement options={{
+            style: {
+              base: {
+                fontSize: '16px',
+                color: '#424770',
+                '::placeholder': {
+                  color: '#aab7c4',
+                },
+              },
+            },
+          }} /&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      {error &amp;&amp; (
+        &lt;div className="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded"&gt;
+          {error}
+        &lt;/div&gt;
+      )}
+      &lt;button
+        type="submit"
+        disabled={!stripe || loading}
+        className="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+      &gt;
+        {loading ? 'Processing...' : `Pay $${amount.toFixed(2)}`}
+      &lt;/button&gt;
+      &lt;p className="mt-4 text-sm text-gray-600 text-center"&gt;
+        Secure payment powered by Stripe
+      &lt;/p&gt;
+    &lt;/form&gt;
+  );
+}
+function PatientPayment() {
+  return (
+    &lt;Elements stripe={stripePromise}&gt;
+      &lt;PaymentForm amount={25.00} patientId="PAT-2026-001" /&gt;
+    &lt;/Elements&gt;
+  );
+}
+export default PatientPayment;
+</pre>
+
+<p><strong>Backend (Stripe Integration):</strong></p>
+<pre><code class="language-python">
+# app/api/v1/payments.py
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from app.core.database import get_db
+import stripe
+import os
+router = APIRouter()
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+@router.post("/create-intent")
+def create_payment_intent(
+    amount: int,  # Amount in cents
+    patient_id: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Create Stripe payment intent
+    """
+    try:
+        intent = stripe.PaymentIntent.create(
+            amount=amount,
+            currency="usd",
+            metadata={
+                "patient_id": patient_id
+            }
+        )
+        return {
+            "clientSecret": intent.client_secret
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+@router.post("/webhook")
+async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
+    """
+    Handle Stripe webhook events
+    """
+    payload = await request.body()
+    sig_header = request.headers.get("stripe-signature")
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, os.getenv("STRIPE_WEBHOOK_SECRET")
+        )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Invalid signature")
+    # Handle successful payment
+    if event["type"] == "payment_intent.succeeded":
+        payment_intent = event["data"]["object"]
+        patient_id = payment_intent["metadata"]["patient_id"]
+        amount = payment_intent["amount"] / 100  # Convert from cents
+        # Record payment in database
+        payment = PatientPayment(
+            patient_id=patient_id,
+            amount=amount,
+            payment_method="card",
+            payment_date=datetime.utcnow(),
+            stripe_payment_id=payment_intent["id"]
+        )
+        db.add(payment)
+        db.commit()
+    return {"status": "success"}
+</pre>
+
+<hr>
+
+<h2>Summary of Phase 3</h2>
+
+<p><strong>What we built:</strong></p>
+<p>✅ Payment posting with ERA/835 processing  </p>
+<p>✅ Auto-posting (95% success rate)  </p>
+<p>✅ Denial management with AI recommendations  </p>
+<p>✅ Appeal workflow and letter generation  </p>
+<p>✅ AR management and aging reports  </p>
+<p>✅ Patient billing and statements  </p>
+<p>✅ Online payment collection (Stripe)  </p>
+
+<p><strong>Time:</strong> 4 weeks  </p>
+<p><strong>Team:</strong> 5-7 people  </p>
+<p><strong>Cost:</strong> ~$150K (team) + $500/month (APIs)  </p>
+
+<p><strong>Next:</strong> Phase 4 - Reports, Analytics & Deployment</p>
+
+<hr>
+
+<p><strong>Continue to Part 5 for Phase 4...</strong></p>
+
+<hr>
+
+<p><strong>Document Navigation:</strong></p>
+<li><strong>Part 1:</strong> Introduction & Phase 1 Foundation</li>
+<li><strong>Part 2:</strong> Phase 1 Core Modules</li>
+<li><strong>Part 3:</strong> Phase 2 Clinical & Billing</li>
+<li><strong>Part 4:</strong> Phase 3 Payment & Denials (This document)</li>
+<li><strong>Part 5:</strong> Phase 4 Reports & Deployment</li>
+
+</body>
+</html>
