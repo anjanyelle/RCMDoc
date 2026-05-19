@@ -13,7 +13,7 @@ This guide shows you **exactly how to build** a fast, secure, and scalable RCM a
 **Goals:**
 - ⚡ **Speed:** Page loads <2 seconds, handle 1000+ concurrent users
 - 🔒 **Security:** HIPAA-compliant, encrypted, audit-ready
-- 📈 **Scale:** Start with 1 hospital, grow to 100+ hospitals
+- 📈 **Scale:** Start with 1 hospital, grow to 100+ hospitals.
 
 ---
 

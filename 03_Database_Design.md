@@ -21,7 +21,6 @@
 - Encounters: 500,000+ per year  
 - Claims: 500,000+ per year  
 - Payments: 1,000,000+ per year  
-
 ---
 
 ## 2. Core Database Tables
