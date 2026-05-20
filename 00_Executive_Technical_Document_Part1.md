@@ -2,64 +2,60 @@
 
 **Project Name:** Healthcare Revenue Cycle Management (RCM) Platform  
 **Version:** 1.0  
-
 **Prepared For:** Technical Lead & Development Team  
-**Document Type:** Complete Project Blueprint
+**Document Type:** Complete Project Blueprint  
 
 ---
 
 ## Table of Contents
-
-1. [Project Overview](#1-project-overview)
-2. [Complete Application Flow](#2-complete-application-flow)
-3. [System Architecture](#3-system-architecture)
-4. [Recommended Technology Stack](#4-recommended-technology-stack)
-5. [Third-Party APIs & Integrations](#5-third-party-apis--integrations)
-6. [AI Features & Implementation](#6-ai-features--implementation)
-7. [Development Plan](#7-development-plan)
-8. [Recommended Team Structure](#8-recommended-team-structure)
-9. [Challenges & Risks](#9-challenges--risks)
-10. [Final Project Execution Strategy](#10-final-project-execution-strategy)
+- [Project Overview](#1-project-overview)
+- [Complete Application Flow](#2-complete-application-flow)
+- [System Architecture](#3-system-architecture)
+- [Recommended Technology Stack](#4-recommended-technology-stack)
+- [Third-Party APIs & Integrations](#5-third-party-apis--integrations)
+- [AI Features & Implementation](#6-ai-features--implementation)
+- [Development Plan](#7-development-plan)
+- [Recommended Team Structure](#8-recommended-team-structure)
+- [Challenges & Risks](#9-challenges--risks)
+- [Final Project Execution Strategy](#10-final-project-execution-strategy)
 
 ---
 
 ## 1. Project Overview
 
 ### 1.1 What is This Project?
-
-We are building a **comprehensive Healthcare Revenue Cycle Management (RCM) platform** that automates the complete financial workflow of hospitals and clinics—from patient registration to final payment collection.
+We are building a comprehensive Healthcare Revenue Cycle Management (RCM) platform that automates the complete financial workflow of hospitals and clinics—from patient registration to final payment collection.
 
 **In Simple Terms:**  
 When a patient visits a hospital, the hospital must:
-1. Register the patient
-2. Verify their insurance coverage
-3. Provide medical treatment
-4. Document the treatment
-5. Convert treatment into billing codes
-6. Create and submit insurance claims
-7. Track claim status and handle denials
-8. Collect payments from insurance and patients
-9. Generate financial reports
+- Register the patient
+- Verify their insurance coverage
+- Provide medical treatment
+- Document the treatment
+- Convert treatment into billing codes
+- Create and submit insurance claims
+- Track claim status and handle denials
+- Collect payments from insurance and patients
+- Generate financial reports
 
 Our application automates all these steps, reducing manual work, preventing billing errors, and accelerating payment collection.
 
 ### 1.2 Why Hospitals Need This
-
 **Current Problems Hospitals Face:**
 
 | Problem | Impact | Our Solution |
-|---------|--------|--------------|
-| **Manual claim creation** | Slow, error-prone (10-15% denial rate) | Automated claim generation with validation |
-| **Insurance verification delays** | Patients arrive with inactive insurance | Real-time eligibility checks via API |
-| **Coding errors** | Claims denied, revenue lost | AI-assisted medical coding |
-| **Slow payment collection** | 50-60 days to collect payment | Automated workflows reduce to <40 days |
-| **Revenue leakage** | 5-10% of revenue lost to errors | Charge capture automation prevents loss |
-| **Compliance risks** | HIPAA violations, audit failures | Built-in audit logging and compliance |
-| **Missed authorization** | 100% claim denial | Automated auth check & tracking |
-| **Missed charge capture** | Lost revenue | Orders-to-charges reconciliation |
-| **Wrong patient balance** | Patient complaints, lost trust | Accurate ERA posting & calculation |
-| **Duplicate patient** | Split records, billing errors | Duplicate detection on registration |
-| **Payer downtime** | Submission delays | Queue system & offline retry |
+| :--- | :--- | :--- |
+| Manual claim creation | Slow, error-prone (10-15% denial rate) | Automated claim generation with validation |
+| Insurance verification delays | Patients arrive with inactive insurance | Real-time eligibility checks via API |
+| Coding errors | Claims denied, revenue lost | AI-assisted medical coding |
+| Slow payment collection | 50-60 days to collect payment | Automated workflows reduce to <40 days |
+| Revenue leakage | 5-10% of revenue lost to errors | Charge capture automation prevents loss |
+| Compliance risks | HIPAA violations, audit failures | Built-in audit logging and compliance |
+| Missed authorization | 100% claim denial | Automated auth check & tracking |
+| Missed charge capture | Lost revenue | Orders-to-charges reconciliation |
+| Wrong patient balance | Patient complaints, lost trust | Accurate ERA posting & calculation |
+| Duplicate patient | Split records, billing errors | Duplicate detection on registration |
+| Payer downtime | Submission delays | Queue system & offline retry |
 
 **Financial Impact:**
 - Hospital with $50M annual revenue loses $2.5M-$5M to inefficiencies
@@ -67,28 +63,27 @@ Our application automates all these steps, reducing manual work, preventing bill
 - ROI: System pays for itself in 6-12 months
 
 ### 1.3 Main Business Goals
-
-1. **Reduce Claim Denial Rate:** From 10-15% to <5%
-2. **Accelerate Payment Collection:** From 50-60 days to <40 days in AR
-3. **Increase Clean Claim Rate:** From 75-80% to >95%
-4. **Eliminate Revenue Leakage:** From 5-10% to <2%
-5. **Ensure HIPAA Compliance:** 100% audit-ready with complete logging
-6. **Improve Patient Experience:** Transparent billing, easy payment options
+- Reduce Claim Denial Rate: From 10-15% to <5%
+- Accelerate Payment Collection: From 50-60 days to <40 days in AR
+- Increase Clean Claim Rate: From 75-80% to >95%
+- Eliminate Revenue Leakage: From 5-10% to <2%
+- Ensure HIPAA Compliance: 100% audit-ready with complete logging
+- Improve Patient Experience: Transparent billing, easy payment options
 
 ### 1.4 End Users
 
 | User Role | Count (Medium Hospital) | Primary Responsibilities |
-|-----------|------------------------|--------------------------|
-| **Front Desk Staff** | 10-20 | Patient registration, scheduling, insurance verification |
-| **Clinical Staff** | 50-100 | Order entry, clinical documentation |
-| **Medical Coders** | 5-15 | Assign ICD-10/CPT codes to encounters |
-| **Billing Specialists** | 10-20 | Create, scrub, and submit claims |
-| **AR Managers** | 5-10 | Payment posting, denial management, follow-up |
-| **Collections Staff** | 3-8 | Patient billing, payment plans, collections |
-| **Providers (Doctors)** | 20-100 | Clinical documentation, encounter review |
-| **Finance Managers** | 2-5 | Reporting, analytics, strategic decisions |
-| **Compliance Officers** | 1-3 | Audits, HIPAA compliance monitoring |
-| **System Administrators** | 1-2 | User management, system configuration |
+| :--- | :--- | :--- |
+| Front Desk Staff | 10-20 | Patient registration, scheduling, insurance verification |
+| Clinical Staff | 50-100 | Order entry, clinical documentation |
+| Medical Coders | 5-15 | Assign ICD-10/CPT codes to encounters |
+| Billing Specialists | 10-20 | Create, scrub, and submit claims |
+| AR Managers | 5-10 | Payment posting, denial management, follow-up |
+| Collections Staff | 3-8 | Patient billing, payment plans, collections |
+| Providers (Doctors) | 20-100 | Clinical documentation, encounter review |
+| Finance Managers | 2-5 | Reporting, analytics, strategic decisions |
+| Compliance Officers | 1-3 | Audits, HIPAA compliance monitoring |
+| System Administrators | 1-2 | User management, system configuration |
 
 **Total Users per Hospital:** 100-300 concurrent users
 
@@ -98,33 +93,34 @@ Our application automates all these steps, reducing manual work, preventing bill
 
 ### 2.1 End-to-End Workflow Overview
 
-```
-Patient Arrives → Register → Verify Insurance → Get Authorization → 
-Schedule Appointment → Check-In → Doctor Visit → Document Treatment → 
-Capture Charges → Assign Medical Codes → Create Claim → Scrub Claim → 
-Submit to Insurance → Track Status → Post Payment → Bill Patient → 
-Collect Payment → Generate Reports
-```
+Appointment Scheduling / Walk-In → Pre-Registration → Patient Registration → Insurance Eligibility Verification → Prior Authorization / Referral Management → Patient Check-In → Doctor Consultation / Encounter → Clinical Documentation / EMR → Orders & Ancillary Services → Treatment / Procedure → Medical Coding → Charge Capture → Claim Creation → Claim Scrubbing → Claim Submission (EDI 837) → Clearinghouse Validation (999/277CA) → Insurance Adjudication → Claim Status Tracking (EDI 276/277) → ERA / EOB Processing (EDI 835) → Payment Posting → Denial Management / Appeals → Secondary Insurance Billing (COB) → Patient Billing → Collections / AR Follow-Up → Refunds / Write-Offs → Reporting & Analytics → Compliance & Audit → Backup & Recovery
 
 **Key Process Highlights:**
-- **Prior Authorization:** Must be obtained *before* service when required to prevent automatic denials.
-- **Claim Scrubbing:** Validates claims against rules *before* submission.
-- **Acknowledgment/Rejection:** Handled immediately *after* submission (999/277CA).
-- **ERA/Payment Posting:** Automated matching and posting *after* insurance adjudication.
-- **Patient Billing:** Statements generated *after* insurance processing completes.
+- **Prior Authorization:** Must be obtained before service when required to prevent automatic denials.
+- **Claim Scrubbing:** Validates claims against payer rules, coding edits, and missing information before submission.
+- **Clearinghouse Validation:** Claims are validated through 999 and 277CA acknowledgment workflows immediately after submission.
+- **Insurance Adjudication:** Insurance payers review claims for coverage, coding accuracy, medical necessity, and contract compliance.
+- **ERA / Payment Posting:** Automated ERA/EOB matching and payment posting occur after insurance adjudication completes.
+- **Denial Management:** Denied claims are corrected, appealed, and resubmitted through denial workflows.
+- **Secondary Insurance Billing:** Remaining balances are automatically forwarded to secondary payers when applicable.
+- **Patient Billing:** Patient statements are generated only after insurance processing and payment posting complete.
+- **AR Follow-Up:** Outstanding balances and unpaid claims are tracked through Accounts Receivable workflows.
+- **Reporting & Analytics:** Financial, operational, denial, and KPI reports provide enterprise revenue visibility.
+- **Compliance & Audit:** HIPAA audit logging, security monitoring, and compliance reporting ensure regulatory compliance.
 
 ### 2.2 Detailed Module Flow
 
-#### **Module 1: Provider Credentialing (Pre-requisite)**
+#### CATEGORY 1 — PRE-RCM / FOUNDATIONAL FLOW
 
+##### Module 1: Provider Credentialing (Pre-requisite)
 **What Happens:**  
 Before any billing can occur, every doctor must be registered and approved by insurance companies.
 
 **Process:**
-1. Hospital submits doctor's credentials (NPI, license, certifications) to CAQH
-2. Insurance companies verify credentials
-3. Doctor gets approved and assigned a provider ID
-4. System tracks credential expiration dates
+- Hospital submits doctor's credentials (NPI, license, certifications) to CAQH
+- Insurance companies verify credentials
+- Doctor gets approved and assigned a provider ID
+- System tracks credential expiration dates
 
 **Data Flow:**
 - **Input:** Doctor NPI, license, specialty, education
@@ -136,18 +132,123 @@ If doctor is not credentialed, ALL claims from that doctor are automatically rej
 
 ---
 
-#### **Module 2: Patient Registration**
+##### Module 2: Provider Management
+**What Happens:**  
+Hospital adds and manages provider information such as specialties, departments, licenses, and contact details inside the system.
 
+**Process:**
+- Hospital creates provider profile
+- Provider specialty and department are assigned
+- License and NPI details are added
+- Provider documents are uploaded
+- Provider record becomes available for credentialing and billing workflows
+
+**Data Flow:**
+- **Input:** Provider name, specialty, department, NPI, license details
+- **Output:** Provider profile and provider master record
+- **Integration:** Workday API, SAP ERP API, Active Directory API
+
+**Why Critical:**  
+Accurate provider information is required for credentialing, scheduling, claim submission, and insurance billing.
+
+---
+
+##### Module 3: Provider Enrollment
+**What Happens:**  
+Hospital enrolls providers with insurance companies so they can submit insurance claims and receive payments.
+
+**Process:**
+- Hospital submits provider enrollment request to insurance payer
+- Insurance company reviews provider details
+- Enrollment approval or rejection is received
+- Effective dates and payer mappings are updated
+- Provider becomes eligible for insurance billing
+
+**Data Flow:**
+- **Input:** Provider details, payer information, enrollment documents
+- **Output:** Enrollment status, payer approval, effective dates
+- **Integration:** Availity API, Waystar API, PECOS API
+
+**Why Critical:**  
+If a provider is not enrolled with insurance companies, claims cannot be submitted or reimbursed.
+
+---
+
+##### Module 4: Contract Management
+**What Happens:**  
+Hospital manages insurance payer contracts, reimbursement rates, and fee schedules for medical services.
+
+**Process:**
+- Hospital creates payer contract records
+- Reimbursement rules and fee schedules are configured
+- Contract effective and renewal dates are tracked
+- Underpayment and contract compliance are monitored
+- Contract updates are applied to billing workflows
+
+**Data Flow:**
+- **Input:** Payer contracts, reimbursement rates, fee schedules
+- **Output:** Active contract rules, payment configurations, reimbursement tracking
+- **Integration:** DocuSign API, SAP ERP API, Contract Management Systems
+
+**Why Critical:**  
+Incorrect contract setup can lead to underpayments, claim disputes, and revenue loss.
+
+---
+
+##### Provider Becomes Billable
+**What Happens:**  
+After credentialing, provider enrollment, and contract approvals are completed, the provider becomes eligible for insurance billing.
+
+**Process:**
+- Provider credentials are approved
+- Insurance enrollment becomes active
+- Payer contracts are activated
+- Provider status changes to "Billable"
+- Provider can now submit insurance claims
+
+**Result:**  
+Provider Status = Billable
+
+**Why Critical:**  
+Only billable providers can generate valid insurance claims and receive reimbursements from insurance companies.
+
+#### CATEGORY 2 — PATIENT ACCESS MANAGEMENT
+
+##### Module 5: Appointment Scheduling
+**What Happens:**  
+Patients schedule appointments with providers.
+
+**Process:**
+- Staff or patient selects provider and date/time
+- System checks provider availability
+- Appointment created and linked to patient
+- Automated reminders sent via SMS/email (7 days, 1 day, 2 hours before)
+- Patient can confirm, reschedule, or cancel
+
+**Data Flow:**
+- **Input:** Patient, provider, date/time, appointment type
+- **Output:** Confirmed appointment, reminder notifications
+- **Integration:** Twilio (SMS), SendGrid (Email), Zoom (telehealth)
+- **Database Tables:** `appointments`
+
+**Business Rules:**
+- No double-booking same provider/time
+- Track no-shows (block after 3 no-shows)
+- Waitlist management for full slots
+
+---
+
+##### Module 6: Patient Registration
 **What Happens:**  
 Front desk staff registers new patients or updates existing patient information.
 
 **Process:**
-1. Staff searches for existing patient (prevent duplicates)
-2. If new, system generates unique Medical Record Number (MRN)
-3. Collect demographics: Name, DOB, address, phone, email
-4. Collect insurance information: Primary, secondary, tertiary
-5. Scan insurance cards (front and back)
-6. Capture digital consent forms
+- Staff searches for existing patient (prevent duplicates)
+- If new, system generates unique Medical Record Number (MRN)
+- Collect demographics: Name, DOB, address, phone, email
+- Collect insurance information: Primary, secondary, tertiary
+- Scan insurance cards (front and back)
+- Capture digital consent forms
 
 **Data Flow:**
 - **Input:** Patient demographics, insurance card images
@@ -166,21 +267,20 @@ Front desk staff registers new patients or updates existing patient information.
 
 ---
 
-#### **Module 3: Insurance Verification**
-
+##### Module 7: Insurance Verification
 **What Happens:**  
 System checks in real-time whether patient's insurance is active and what they owe.
 
 **Process:**
-1. Staff clicks "Verify Insurance" button
-2. System sends EDI 270 transaction to payer via Waystar/Availity
-3. Payer responds with EDI 271 containing:
-   - Coverage status (Active/Inactive)
-   - Copay amount
-   - Deductible (annual amount, amount met, remaining)
-   - Out-of-pocket maximum
-   - Network status (in-network/out-of-network)
-   - Prior authorization requirements
+- Staff clicks "Verify Insurance" button
+- System sends EDI 270 transaction to payer via Waystar/Availity
+- Payer responds with EDI 271 containing:
+  - Coverage status (Active/Inactive)
+  - Copay amount
+  - Deductible (annual amount, amount met, remaining)
+  - Out-of-pocket maximum
+  - Network status (in-network/out-of-network)
+  - Prior authorization requirements
 
 **Data Flow:**
 - **Input:** Patient demographics, insurance policy number, service date
@@ -198,22 +298,21 @@ Prevents treating patients with inactive insurance (saves $50K-$200K/year in bad
 
 ---
 
-#### **Module 4: Prior Authorization**
-
+##### Module 8: Prior Authorization
 **What Happens:**  
 For expensive procedures, hospital must get insurance approval before treatment.
 
 **Process:**
-1. Doctor orders procedure (e.g., MRI, surgery)
-2. System checks if authorization required (based on CPT code + payer rules)
-3. If required, staff submits authorization request with:
-   - Diagnosis codes (ICD-10)
-   - Procedure codes (CPT)
-   - Clinical justification
-   - Medical necessity documentation
-4. Insurance reviews and approves/denies
-5. If approved, authorization number is issued
-6. System tracks authorization validity dates and units used
+- Doctor orders procedure (e.g., MRI, surgery)
+- System checks if authorization required (based on CPT code + payer rules)
+- If required, staff submits authorization request with:
+  - Diagnosis codes (ICD-10)
+  - Procedure codes (CPT)
+  - Clinical justification
+  - Medical necessity documentation
+- Insurance reviews and approves/denies
+- If approved, authorization number is issued
+- System tracks authorization validity dates and units used
 
 **Data Flow:**
 - **Input:** Diagnosis, procedure, clinical notes
@@ -228,71 +327,50 @@ For expensive procedures, hospital must get insurance approval before treatment.
 
 ---
 
-#### **Module 5: Appointment Scheduling**
-
+##### Module 9: Patient Check-In
 **What Happens:**  
-Patients schedule appointments with providers.
+Front desk staff checks in the patient when they arrive for the appointment and creates an encounter record for the visit.
 
 **Process:**
-1. Staff or patient selects provider and date/time
-2. System checks provider availability
-3. Appointment created and linked to patient
-4. Automated reminders sent via SMS/email (7 days, 1 day, 2 hours before)
-5. Patient can confirm, reschedule, or cancel
+- Patient arrives at hospital or clinic
+- Staff verifies patient demographics and insurance information
+- Copay or outstanding balance collected
+- Patient signs consent forms
+- System creates encounter/visit record
+- Patient assigned to provider or exam room
+- Doctor notified that patient is ready
 
 **Data Flow:**
-- **Input:** Patient, provider, date/time, appointment type
-- **Output:** Confirmed appointment, reminder notifications
-- **Integration:** Twilio (SMS), SendGrid (Email), Zoom (telehealth)
-- **Database Tables:** `appointments`
+- **Input:** Appointment details, patient information, insurance details
+- **Output:** Encounter record, updated visit status, payment details
+- **Database Tables:** `encounters`, `patient_checkin`, `payments`
 
 **Business Rules:**
-- No double-booking same provider/time
-- Track no-shows (block after 3 no-shows)
-- Waitlist management for full slots
+- Insurance must be verified before check-in
+- Copay collected before provider visit
+- One encounter created per visit
+- Check-in time tracked for audit and reporting
 
----
+**Common Mistakes:**
+- Incorrect insurance verification → Claim denial
+- Missing copay collection → Revenue loss
+- Wrong provider assignment → Billing errors
+- Duplicate encounter creation → Duplicate claims
 
-#### **Module 6: Encounter Creation (Check-In)**
+#### CATEGORY 3 — CLINICAL & MID-CYCLE MANAGEMENT
 
-**What Happens:**  
-When patient arrives, front desk checks them in and creates encounter record.
-
-**Process:**
-1. Patient arrives for appointment
-2. Staff verifies demographics (address, phone still correct?)
-3. Re-verify insurance (coverage may have changed)
-4. Collect copay at point of service
-5. Create encounter record (container for all visit data)
-6. Patient moves to exam room
-
-**Data Flow:**
-- **Input:** Appointment details, updated demographics
-- **Output:** Encounter record with unique ID
-- **Database Tables:** `encounters`
-
-**Encounter Types:**
-- Office Visit
-- Emergency Visit
-- Inpatient Admission
-- Outpatient Procedure
-- Telehealth Visit
-
----
-
-#### **Module 7: Clinical Documentation**
-
+##### Module 10: Clinical Documentation / EMR
 **What Happens:**  
 Doctor examines patient and documents visit in EMR.
 
 **Process:**
-1. Doctor reviews patient history
-2. Examines patient and documents findings
-3. Records diagnoses (what's wrong with patient)
-4. Records procedures performed (what doctor did)
-5. Orders tests (labs, imaging, medications)
-6. Creates treatment plan
-7. Signs encounter (locks documentation)
+- Doctor reviews patient history
+- Examines patient and documents findings
+- Records diagnoses (what's wrong with patient)
+- Records procedures performed (what doctor did)
+- Orders tests (labs, imaging, medications)
+- Creates treatment plan
+- Signs encounter (locks documentation)
 
 **Data Flow:**
 - **Input:** Clinical observations, test results
@@ -301,27 +379,26 @@ Doctor examines patient and documents visit in EMR.
 - **Database Tables:** `encounter_diagnoses`, `encounter_procedures`, `orders`
 
 **SOAP Note Structure:**
-- **S**ubjective: Patient's complaints
-- **O**bjective: Doctor's observations, vital signs
-- **A**ssessment: Diagnoses
-- **P**lan: Treatment plan
+- **Subjective:** Patient's complaints
+- **Objective:** Doctor's observations, vital signs
+- **Assessment:** Diagnoses
+- **Plan:** Treatment plan
 
 **Why Critical:**  
 Insurance only pays for documented services. Poor documentation = claim denial.
 
 ---
 
-#### **Module 8: Order Management**
-
+##### Module 11: Order Management
 **What Happens:**  
 Doctor's orders (labs, imaging, meds) are tracked and executed.
 
 **Process:**
-1. Doctor places order in EMR
-2. Order sent to appropriate department (lab, radiology, pharmacy)
-3. Department performs service
-4. Results returned to EMR
-5. **Charge automatically captured** when order completed
+- Doctor places order in EMR
+- Order sent to appropriate department (lab, radiology, pharmacy)
+- Department performs service
+- Results returned to EMR
+- Charge automatically captured when order completed
 
 **Data Flow:**
 - **Input:** Order details (CPT code, quantity, instructions)
@@ -339,53 +416,23 @@ Prevents missed charges (5-10% of revenue typically lost to missed charges)
 
 ---
 
-#### **Module 9: Charge Capture**
-
-**What Happens:**  
-Every service provided is converted into a billable charge.
-
-**Process:**
-1. Services performed during encounter
-2. System captures charges from:
-   - Automatic: Completed orders (labs, imaging, meds)
-   - Manual: Procedures documented by doctor
-   - Manual: Supplies used during visit
-3. Each charge linked to:
-   - CPT/HCPCS code
-   - Quantity/units
-   - Standard charge amount (from chargemaster)
-   - Revenue code (for hospital billing)
-
-**Data Flow:**
-- **Input:** Completed orders, documented procedures
-- **Output:** Charge line items ready for billing
-- **Database Tables:** `charges`, `chargemaster`
-
-**Business Rules:**
-- Charge must be entered within 3 days of service
-- Charge reconciliation: Compare orders vs charges daily
-- Hold charges if documentation incomplete
-
----
-
-#### **Module 10: Medical Coding**
-
+##### Module 12: Medical Coding
 **What Happens:**  
 Medical coders review clinical documentation and assign standardized codes.
 
 **Process:**
-1. Coder opens encounter from coding worklist
-2. Reviews doctor's SOAP notes
-3. Assigns diagnosis codes (ICD-10):
-   - E11.9 = Type 2 Diabetes
-   - I10 = Essential Hypertension
-4. Assigns procedure codes (CPT):
-   - 99214 = Office visit, level 4
-   - 80053 = Comprehensive metabolic panel (lab)
-5. Links diagnoses to procedures (medical necessity)
-6. Assigns modifiers if needed (e.g., modifier 25 for separate E&M)
-7. For inpatient: Assigns DRG code
-8. Marks encounter as "Coded - Ready to Bill"
+- Coder opens encounter from coding worklist
+- Reviews doctor's SOAP notes
+- Assigns diagnosis codes (ICD-10):
+  - E11.9 = Type 2 Diabetes
+  - I10 = Essential Hypertension
+- Assigns procedure codes (CPT):
+  - 99214 = Office visit, level 4
+  - 80053 = Comprehensive metabolic panel (lab)
+- Links diagnoses to procedures (medical necessity)
+- Assigns modifiers if needed (e.g., modifier 25 for separate E&M)
+- For inpatient: Assigns DRG code
+- Marks encounter as "Coded - Ready to Bill"
 
 **Data Flow:**
 - **Input:** Clinical documentation
@@ -414,23 +461,54 @@ Medical coders review clinical documentation and assign standardized codes.
 
 ---
 
-#### **Module 11: Coding Compliance**
+##### Module 13: Charge Entry / Charge Capture
+**What Happens:**  
+Every medical service, procedure, medication, or supply used during the patient visit is converted into a billable charge for insurance and patient billing.
 
+**Process:**
+- Services performed during patient encounter
+- System captures charges automatically from completed orders
+- Doctor-documented procedures added manually
+- Medications and supplies linked to charges
+- Each charge mapped with CPT/HCPCS codes
+- Charge amounts pulled from chargemaster
+- Charges prepared for claim generation
+
+**Data Flow:**
+- **Input:** Completed orders, procedures, medications, supplies
+- **Output:** Charge line items ready for billing and claim creation
+- **Database Tables:** `charges`, `chargemaster`
+
+**Business Rules:**
+- Charges must be entered within service timeline
+- Charges validated against documentation
+- Missing charges flagged for review
+- Duplicate charges prevented
+
+**Common Mistakes:**
+- Missing procedure charges → Revenue loss
+- Incorrect CPT code mapping → Claim denial
+- Duplicate charge entry → Overbilling issues
+- Incomplete documentation → Billing hold
+
+---
+
+##### Module 14: Coding Compliance
 **What Happens:**  
 System validates codes against compliance rules before billing.
 
 **Process:**
-1. System checks NCCI edits (National Correct Coding Initiative)
-   - Prevents billing incompatible code combinations
-   - Example: Cannot bill CPT 99213 and 99214 together
-2. Checks LCD/NCD rules (Coverage Determinations)
-   - Verifies diagnosis supports procedure per Medicare rules
-   - Example: Diagnosis E11.9 supports HbA1c test
-3. Checks MUE limits (Medically Unlikely Edits)
-   - Prevents billing excessive units
-   - Example: Maximum 2 units of CPT 99213 per day
-4. Flags potential upcoding/downcoding
-5. Alerts coder to fix errors before claim creation
+- System checks NCCI edits (National Correct Coding Initiative)
+  - Prevents billing incompatible code combinations
+  - Example: Cannot bill CPT 99213 and 99214 together
+- Checks LCD/NCD rules (Coverage Determinations)
+  - Verifies diagnosis supports procedure per Medicare rules
+  - Example: Diagnosis E11.9 supports HbA1c test
+- Checks MUE limits (Medically Unlikely Edits)
+  - Prevents billing excessive units
+  - Example: Maximum 2 units of CPT 99213 per day
+- Flags potential upcoding/downcoding
+- Alerts coder to fix errors before claim creation
 
 **Data Flow:**
 - **Input:** Coded encounter
@@ -440,61 +518,28 @@ System validates codes against compliance rules before billing.
 **Why Critical:**  
 Prevents fraud, reduces denials, avoids audits and penalties.
 
----
+#### CATEGORY 4 — CLAIMS MANAGEMENT
 
-#### **Module 12: Claim Creation**
-
-**What Happens:**  
-System generates insurance claim from coded encounter.
-
-**Process:**
-1. System pulls all data for encounter:
-   - Patient demographics
-   - Insurance information
-   - Provider NPI
-   - Diagnosis codes
-   - Procedure codes with modifiers
-   - Charges
-   - Authorization number (if applicable)
-2. Generates claim in appropriate format:
-   - **CMS-1500:** Professional claims (doctor services)
-   - **UB-04:** Institutional claims (hospital facility)
-3. Assigns unique claim number
-4. Applies contractual rates (if available)
-5. Claim status set to "Draft"
-
-**Data Flow:**
-- **Input:** Coded encounter, patient, insurance, provider data
-- **Output:** Claim record ready for scrubbing
-- **Database Tables:** `claims`, `claim_lines`
-
-**Claim Formats:**
-- **CMS-1500:** Used for physician office visits, outpatient procedures
-- **UB-04:** Used for hospital inpatient stays, emergency visits, outpatient hospital services
-
----
-
-#### **Module 13: Claim Scrubbing**
-
+##### Module 15: Claim Scrubbing
 **What Happens:**  
 System validates claim against 200+ rules before submission.
 
 **Process:**
-1. System runs automated validation checks:
-   - **Demographic Checks:** Patient name, DOB, address complete?
-   - **Insurance Checks:** Valid policy number? Coverage active on service date?
-   - **Provider Checks:** Valid NPI? Provider credentialed with payer?
-   - **Coding Checks:** Valid ICD-10/CPT codes? NCCI edits passed?
-   - **Authorization Checks:** Authorization number present if required?
-   - **Financial Checks:** Charge amount >$0? Units >0?
-   - **Date Checks:** Service date not in future? Within timely filing limit?
-   - **Duplicate Checks:** Not duplicate of previously submitted claim?
-2. Errors categorized:
-   - **Fatal (Red):** Claim cannot be submitted, must fix
-   - **Warning (Yellow):** Claim can submit but may deny
-   - **Info (Blue):** Informational only
-3. Clean claims marked with green checkmark
-4. Error claims returned to biller for correction
+- System runs automated validation checks:
+  - **Demographic Checks:** Patient name, DOB, address complete?
+  - **Insurance Checks:** Valid policy number? Coverage active on service date?
+  - **Provider Checks:** Valid NPI? Provider credentialed with payer?
+  - **Coding Checks:** Valid ICD-10/CPT codes? NCCI edits passed?
+  - **Authorization Checks:** Authorization number present if required?
+  - **Financial Checks:** Charge amount >$0? Units >0?
+  - **Date Checks:** Service date not in future? Within timely filing limit?
+  - **Duplicate Checks:** Not duplicate of previously submitted claim?
+- Errors categorized:
+  - **Fatal (Red):** Claim cannot be submitted, must fix
+  - **Warning (Yellow):** Claim can submit but may deny
+  - **Info (Blue):** Informational only
+- Clean claims marked with green checkmark
+- Error claims returned to biller for correction
 
 **Data Flow:**
 - **Input:** Draft claim
@@ -505,23 +550,22 @@ System validates claim against 200+ rules before submission.
 
 ---
 
-#### **Module 14: Claim Submission**
-
+##### Module 16: Claim Submission
 **What Happens:**  
 Clean claims submitted electronically to insurance companies.
 
 **Process:**
-1. Biller selects clean claims for submission
-2. System converts claims to EDI 837 format:
-   - **EDI 837P:** Professional claims
-   - **EDI 837I:** Institutional claims
-3. Claims batched (e.g., 100 claims per batch)
-4. Batch transmitted to clearinghouse via SFTP or API
-5. Clearinghouse validates and forwards to payers
-6. System receives acknowledgments:
-   - **EDI 999:** File received confirmation
-   - **EDI 277:** Claim accepted/rejected by payer
-7. Claim status updated to "Submitted" or "Rejected"
+- Biller selects clean claims for submission
+- System converts claims to EDI 837 format:
+  - **EDI 837P:** Professional claims
+  - **EDI 837I:** Institutional claims
+- Claims batched (e.g., 100 claims per batch)
+- Batch transmitted to clearinghouse via SFTP or API
+- Clearinghouse validates and forwards to payers
+- System receives acknowledgments:
+  - **EDI 999:** File received confirmation
+  - **EDI 277:** Claim accepted/rejected by payer
+- Claim status updated to "Submitted" or "Rejected"
 
 **Data Flow:**
 - **Input:** Clean claims
@@ -535,29 +579,62 @@ Most payers require claims within 90-365 days of service. System alerts before d
 
 ---
 
-#### **Module 15: Claim Tracking**
+##### Module 17: Clearinghouse Validation
+**What Happens:**  
+After claim submission, the clearinghouse validates insurance claims for formatting errors, missing information, and payer requirements before sending claims to insurance companies.
 
+**Process:**
+- Claim received from billing system
+- Clearinghouse validates EDI 837 claim format
+- Syntax and payer rule checks performed
+- Missing or invalid data identified
+- Accepted claims forwarded to insurance payer
+- Rejected claims returned for correction
+- Acknowledgment responses generated (999/277CA)
+
+**Data Flow:**
+- **Input:** EDI 837 insurance claims
+- **Output:** Accepted claims, rejected claims, validation responses
+- **Database Tables:** `clearinghouse_responses`, `claim_validation_logs`
+
+**Business Rules:**
+- Claims must pass validation before payer submission
+- Invalid claims moved to rejection queue
+- Required payer fields cannot be empty
+- Duplicate claim submissions prevented
+
+**Common Mistakes:**
+- Invalid insurance ID → Claim rejection
+- Missing provider NPI → Submission failure
+- Incorrect EDI format → Clearinghouse rejection
+- Missing authorization number → Claim denial
+
+**Integrations:** Waystar API, Availity API, Change Healthcare API, EDI 999 / 277CA Transactions
+
+---
+
+##### Module 18: Claim Status Tracking
 **What Happens:**  
 System monitors claim status after submission.
 
 **Process:**
-1. Claims tracked in real-time via:
-   - EDI 276/277 status inquiries
-   - Payer portal checks
-   - Clearinghouse status updates
-2. Status categories:
-   - **Submitted:** Sent to payer
-   - **Accepted:** Payer received claim
-   - **Pending:** Under payer review
-   - **Paid:** Payment received
-   - **Denied:** Claim rejected
-   - **Rejected:** Claim bounced back (technical error)
-3. Aging buckets:
-   - 0-30 days
-   - 31-60 days
-   - 61-90 days
-   - 90+ days (high priority follow-up)
-4. Automated follow-up for claims pending >30 days
+- Claims tracked in real-time via:
+  - EDI 276/277 status inquiries
+  - Payer portal checks
+  - Clearinghouse status updates
+- Status categories:
+  - **Submitted:** Sent to payer
+  - **Accepted:** Payer received claim
+  - **Pending:** Under payer review
+  - **Paid:** Payment received
+  - **Denied:** Claim rejected
+  - **Rejected:** Claim bounced back (technical error)
+- Aging buckets:
+  - 0-30 days
+  - 31-60 days
+  - 61-90 days
+  - 90+ days (high priority follow-up)
+- Automated follow-up for claims pending >30 days
 
 **Data Flow:**
 - **Input:** Submitted claims
@@ -571,34 +648,108 @@ System monitors claim status after submission.
 
 ---
 
-#### **Module 16: Payment Posting (ERA)**
+##### Module 19: Insurance Adjudication Tracking
+**What Happens:**  
+This module tracks how insurance companies review, approve, deny, or partially pay submitted claims based on coverage rules, medical necessity, and payer contracts.
 
+**Process:**
+- Insurance payer receives submitted claim
+- Payer reviews patient coverage and eligibility
+- Diagnosis and procedure codes validated
+- Medical necessity checks performed
+- Payer contract rules applied
+- Claim approved, denied, or partially paid
+- Adjudication decision returned to billing system
+- Claim status updated for payment or denial workflows
+
+**Data Flow:**
+- **Input:** Submitted insurance claims, payer rules, patient coverage details
+- **Output:** Claim approval status, denial details, payment decisions
+- **Database Tables:** `adjudication_status`, `payer_responses`, `claim_status_history`
+
+**Business Rules:**
+- Claims must meet payer medical necessity requirements
+- Invalid or non-covered services may be denied
+- Contract reimbursement rules applied during adjudication
+- Authorization-required services validated before payment
+
+**Common Mistakes:**
+- Missing authorization → Claim denial
+- Non-covered procedure → Partial payment
+- Incorrect coding → Adjudication rejection
+- Invalid insurance coverage → Claim denial
+
+**Integration:** Waystar API, Availity API, Change Healthcare API, EDI 276/277 Transactions
+
+**Why Critical:**  
+Insurance adjudication directly impacts claim payments, denial rates, reimbursement accuracy, and hospital revenue collection.
+
+#### CATEGORY 5 — PAYMENT & REVENUE MANAGEMENT
+
+##### Module 20: ERA Processing
+**What Happens:**  
+This module processes Electronic Remittance Advice (EDI 835) files received from insurance companies after claim adjudication.
+
+**Process:**
+- Insurance company sends ERA (EDI 835) file
+- System imports and reads ERA payment data
+- Claim payment details extracted
+- Adjustment and denial codes identified
+- Paid, allowed, deductible, and copay amounts processed
+- Payment information prepared for posting
+- Claim payment status updated
+
+**Data Flow:**
+- **Input:** EDI 835 ERA files, insurance payment data
+- **Output:** Processed payment details, adjustment records, payment posting data
+- **Database Tables:** `era_files`, `era_payments`, `payment_adjustments`
+
+**Business Rules:**
+- ERA files must match submitted claims
+- Duplicate ERA processing prevented
+- Invalid payment records moved for manual review
+- Adjustment codes validated before posting
+
+**Common Mistakes:**
+- Unmatched claim numbers → Posting failure
+- Incorrect adjustment codes → Balance mismatch
+- Duplicate ERA file upload → Duplicate payments
+- Missing payer information → Processing errors
+
+**Integration:** EDI 835 Transactions, Waystar API, Availity API, Change Healthcare API
+
+**Why Critical:**  
+ERA processing automates insurance payment handling, improves payment accuracy, and reduces manual payment posting effort.
+
+---
+
+##### Module 21: Payment Posting
 **What Happens:**  
 When insurance pays, payment details are posted to patient accounts.
 
 **Process:**
-1. Insurance sends payment via:
-   - **EFT:** Electronic funds transfer to hospital bank account
-   - **ERA:** Electronic Remittance Advice (EDI 835) with payment details
-2. System imports ERA file
-3. ERA parser extracts payment data:
-   - Check number and date
-   - Total payment amount
-   - Claim-level details:
-     - Claim number
-     - Billed amount
-     - Allowed amount
-     - Paid amount
-     - Deductible applied
-     - Copay applied
-     - Coinsurance applied
-     - Adjustment codes (CARC/RARC)
-4. Auto-posting engine matches ERA to claims:
-   - If unique match found → Auto-post
-   - If multiple matches or no match → Manual review queue
-5. Payment posted to patient account
-6. Claim status updated to "Paid" or "Partially Paid"
-7. Patient balance calculated
+- Insurance sends payment via:
+  - **EFT:** Electronic funds transfer to hospital bank account
+  - **ERA:** Electronic Remittance Advice (EDI 835) with payment details
+- System imports ERA file
+- ERA parser extracts payment data:
+  - Check number and date
+  - Total payment amount
+  - Claim-level details:
+    - Claim number
+    - Billed amount
+    - Allowed amount
+    - Paid amount
+    - Deductible applied
+    - Copay applied
+    - Coinsurance applied
+    - Adjustment codes (CARC/RARC)
+- Auto-posting engine matches ERA to claims:
+  - If unique match found → Auto-post
+  - If multiple matches or no match → Manual review queue
+- Payment posted to patient account
+- Claim status updated to "Paid" or "Partially Paid"
+- Patient balance calculated
 
 **Data Flow:**
 - **Input:** EDI 835 (ERA) file
@@ -617,30 +768,29 @@ When insurance pays, payment details are posted to patient accounts.
 
 ---
 
-#### **Module 17: Denial Management**
-
+##### Module 22: Denial Management
 **What Happens:**  
 Denied claims are reviewed, corrected, and appealed.
 
 **Process:**
-1. Denied claim identified from ERA
-2. Denial reason captured (CARC code)
-3. Denial categorized:
-   - **Clinical:** Medical necessity not supported
-   - **Technical:** Missing/incorrect information
-   - **Authorization:** No prior authorization
-   - **Eligibility:** Coverage inactive
-   - **Timely Filing:** Claim submitted too late
-4. Denial assigned to specialist based on category
-5. Specialist reviews and determines action:
-   - **Correct and resubmit:** Fix error, submit corrected claim
-   - **Appeal:** Submit appeal letter with supporting documentation
-   - **Write-off:** Accept denial if not appealable
-6. Appeals tracked through multiple levels:
-   - Level 1: Reconsideration
-   - Level 2: Internal review
-   - Level 3: External independent review
-7. Appeal outcomes recorded
+- Denied claim identified from ERA
+- Denial reason captured (CARC code)
+- Denial categorized:
+  - **Clinical:** Medical necessity not supported
+  - **Technical:** Missing/incorrect information
+  - **Authorization:** No prior authorization
+  - **Eligibility:** Coverage inactive
+  - **Timely Filing:** Claim submitted too late
+- Denial assigned to specialist based on category
+- Specialist reviews and determines action:
+  - **Correct and resubmit:** Fix error, submit corrected claim
+  - **Appeal:** Submit appeal letter with supporting documentation
+  - **Write-off:** Accept denial if not appealable
+- Appeals tracked through multiple levels:
+  - Level 1: Reconsideration
+  - Level 2: Internal review
+  - Level 3: External independent review
+- Appeal outcomes recorded
 
 **Data Flow:**
 - **Input:** Denied claims with reason codes
@@ -662,22 +812,21 @@ Recovering $500K-$2M annually in denied claims
 
 ---
 
-#### **Module 18: Secondary/Tertiary Billing**
-
+##### Module 23: Secondary Insurance Billing/Tertiary Billing
 **What Happens:**  
 After primary insurance pays, remaining balance billed to secondary insurance.
 
 **Process:**
-1. Primary insurance payment posted
-2. System checks if patient has secondary insurance
-3. If yes, automatically generates secondary claim with:
-   - All original claim data
-   - Primary payer name and payment amount
-   - Remaining patient responsibility
-4. Submit to secondary payer
-5. Secondary payment posted
-6. If tertiary insurance exists, repeat process
-7. Final patient balance calculated after all insurance pays
+- Primary insurance payment posted
+- System checks if patient has secondary insurance
+- If yes, automatically generates secondary claim with:
+  - All original claim data
+  - Primary payer name and payment amount
+  - Remaining patient responsibility
+- Submit to secondary payer
+- Secondary payment posted
+- If tertiary insurance exists, repeat process
+- Final patient balance calculated after all insurance pays
 
 **Data Flow:**
 - **Input:** Primary payment details, secondary insurance info
@@ -690,32 +839,31 @@ After primary insurance pays, remaining balance billed to secondary insurance.
 
 ---
 
-#### **Module 19: Patient Billing**
-
+##### Module 24: Patient Billing
 **What Happens:**  
 Patient receives bill for their portion after insurance pays.
 
 **Process:**
-1. All insurance payments completed
-2. System generates patient statement showing:
-   - Service date and description
-   - Total charges
-   - Insurance payments (by payer)
-   - Adjustments
-   - Patient responsibility (deductible + copay + coinsurance)
-   - Previous balance
-   - Current balance due
-   - Payment due date
-3. Statement delivered via:
-   - Paper mail
-   - Email (PDF)
-   - Patient portal
-4. Patient payment options:
-   - Online payment (credit card, ACH)
-   - Payment plan (installments)
-   - Phone payment
-   - Mail check
-   - In-person payment
+- All insurance payments completed
+- System generates patient statement showing:
+  - Service date and description
+  - Total charges
+  - Insurance payments (by payer)
+  - Adjustments
+  - Patient responsibility (deductible + copay + coinsurance)
+  - Previous balance
+  - Current balance due
+  - Payment due date
+- Statement delivered via:
+  - Paper mail
+  - Email (PDF)
+  - Patient portal
+- Patient payment options:
+  - Online payment (credit card, ACH)
+  - Payment plan (installments)
+  - Phone payment
+  - Mail check
+  - In-person payment
 
 **Data Flow:**
 - **Input:** Final account balance after insurance
@@ -728,25 +876,61 @@ Collect copay/deductible at check-in (before visit) = 3x higher collection rate
 
 ---
 
-#### **Module 20: Collections**
+##### Module 25: Accounts Receivable (AR) Follow-Up
+**What Happens:**  
+This module tracks unpaid insurance and patient balances and manages follow-up activities to improve payment collection and reduce outstanding receivables.
 
+**Process:**
+- System identifies unpaid or partially paid claims
+- Claims grouped by aging categories (30, 60, 90+ days)
+- AR staff reviews pending balances
+- Follow-up actions performed with insurance companies or patients
+- Denied or delayed claims escalated for resolution
+- Payment promises and follow-up notes recorded
+- Account status updated after follow-up activity
+
+**Data Flow:**
+- **Input:** Unpaid claims, patient balances, insurance payment status
+- **Output:** AR follow-up records, collection status, updated account balances
+- **Database Tables:** `accounts_receivable`, `ar_followup`, `followup_notes`
+
+**Business Rules:**
+- High-value accounts prioritized first
+- Claims approaching timely filing limits flagged
+- Follow-up activities logged for audit tracking
+- Outstanding balances monitored continuously
+
+**Common Mistakes:**
+- Missed follow-up deadlines → Revenue loss
+- Incorrect payer communication → Payment delays
+- Unresolved denied claims → Increased AR aging
+- Missing follow-up documentation → Audit issues
+
+**Integration:** Waystar API, Availity API, EDI 276/277 Transactions, Collection Systems
+
+**Why Critical:**  
+AR Follow-Up helps hospitals recover outstanding payments faster, reduce aging balances, and improve overall cash flow and revenue collection.
+
+---
+
+##### Module 26: Collections
 **What Happens:**  
 Unpaid patient balances moved through collection process.
 
 **Process:**
-1. **Statement 1 (Day 0):** Friendly reminder
-2. **Statement 2 (Day 30):** Payment due notice
-3. **Statement 3 (Day 60):** Urgent notice
-4. **Statement 4 (Day 90):** Final notice before collections
-5. **Internal Collections (Day 90-120):**
-   - Collection calls by hospital staff
-   - Payment plan negotiations
-6. **External Collections (Day 120+):**
-   - Account transferred to collection agency
-   - Agency keeps 25-40% of collected amount
-7. **Bad Debt Write-Off (Day 180+):**
-   - Uncollectable accounts written off
-   - Reported to credit bureaus
+- **Statement 1 (Day 0):** Friendly reminder
+- **Statement 2 (Day 30):** Payment due notice
+- **Statement 3 (Day 60):** Urgent notice
+- **Statement 4 (Day 90):** Final notice before collections
+- **Internal Collections (Day 90-120):**
+  - Collection calls by hospital staff
+  - Payment plan negotiations
+- **External Collections (Day 120+):**
+  - Account transferred to collection agency
+  - Agency keeps 25-40% of collected amount
+- **Bad Debt Write-Off (Day 180+):**
+  - Uncollectable accounts written off
+  - Reported to credit bureaus
 
 **Data Flow:**
 - **Input:** Unpaid patient balances
@@ -758,17 +942,16 @@ Unpaid patient balances moved through collection process.
 - Follow No Surprises Act regulations
 - Comply with Fair Debt Collection Practices Act
 
----
+#### CATEGORY 6 — REPORTING, COMPLIANCE & GOVERNANCE
 
-#### **Module 21: Reporting & Analytics**
-
+##### Module 27: Reporting & Analytics
 **What Happens:**  
 Management monitors RCM performance through dashboards and reports.
 
 **Key Performance Indicators (KPIs):**
 
 | KPI | Target | Current Industry Avg |
-|-----|--------|---------------------|
+| :--- | :--- | :--- |
 | Clean Claim Rate | >95% | 75-80% |
 | Denial Rate | <5% | 10-15% |
 | Days in AR | <40 days | 50-60 days |
@@ -794,8 +977,7 @@ Management monitors RCM performance through dashboards and reports.
 
 ---
 
-#### **Module 22: Audit & Compliance**
-
+##### Module 28: Compliance & Audit
 **What Happens:**  
 System maintains complete audit trail for HIPAA compliance and fraud prevention.
 
@@ -828,24 +1010,21 @@ System maintains complete audit trail for HIPAA compliance and fraud prevention.
 
 ---
 
-### 2.3 Data Flow Summary
+### 2.3 Patient Data Flow Summary
 
-```
-Patient → Registration → Insurance Verification → Authorization → 
-Appointment → Check-In → Encounter → Clinical Documentation → 
-Orders → Charge Capture → Medical Coding → Compliance Check → 
-Claim Creation → Claim Scrubbing → Claim Submission → 
-Claim Tracking → Payment Posting → Denial Management → 
-Secondary Billing → Patient Billing → Collections → 
-Reporting → Audit
-```
+Patient walk-in/Appointment Scheduling → Patient Registration → Insurance Verification → Prior Authorization → Patient Check-In / Encounter Creation → Clinical Documentation / EMR → Order Management → Medical Coding → Charge Entry / Charge Capture → Coding Compliance → Claim Scrubbing → Claim Submission → Clearinghouse Validation → Claim Status Tracking → Insurance Adjudication Tracking → ERA Processing → Payment Posting → Denial Management → Secondary / Tertiary Insurance Billing → Patient Billing → Accounts Receivable (AR) Follow-Up → Collections → Reporting & Analytics → Compliance & Audit
 
 **Key Integration Points:**
-1. **EMR ↔ RCM:** HL7/FHIR for clinical data
-2. **RCM ↔ Clearinghouse:** EDI 837/835/270/271/276/277
-3. **RCM ↔ Payers:** Direct APIs for eligibility and authorization
-4. **RCM ↔ Payment Gateway:** Stripe API for patient payments
-5. **RCM ↔ Notification Services:** Twilio/SendGrid for SMS/email
+- **Patient Access ↔ Insurance Payers:** EDI 270/271 transactions, Availity API, Waystar API for insurance eligibility and authorization verification
+- **EMR ↔ RCM:** HL7 / FHIR integrations for clinical documentation, encounters, orders, and diagnoses
+- **RCM ↔ Coding Systems:** ICD-10, CPT, HCPCS coding systems, 3M CodeFinder, Optum CAC integrations
+- **RCM ↔ Clearinghouse:** EDI 837, 999, 277CA transactions for claim submission and clearinghouse validation
+- **RCM ↔ Insurance Payers:** EDI 276/277 transactions and payer APIs for claim status tracking and adjudication
+- **RCM ↔ Payment Systems:** EDI 835 ERA processing, EFT banking integrations, Stripe API for patient payments
+- **RCM ↔ Notification Services:** Twilio API, SendGrid API for appointment reminders, billing alerts, and notifications
+- **RCM ↔ Document Management:** AWS S3 storage, OCR integrations, AWS Textract for insurance card and document scanning
+- **RCM ↔ Reporting & Analytics:** Power BI, Tableau, Looker integrations for dashboards and financial reporting
+- **RCM ↔ Security & Compliance:** HIPAA audit logging, SIEM monitoring, access control, and compliance tracking systems
 
 ---
 
