@@ -16,7 +16,44 @@
 
 <h2>3. Modules Included in MVP</h2>
 
-<h3>Module 1: User Login & Security</h3>
+<h3>Module 1: Appointment Scheduling</h3>
+
+<p><strong>Purpose:</strong>  </p>
+<p>Schedule patient appointments and link them to encounters for billing.</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens calendar view</li>
+<li>Selects date and time slot</li>
+<li>Selects patient and provider</li>
+<li>Selects appointment type (New Patient, Follow-up, etc.)</li>
+<li>Adds notes if needed</li>
+<li>Clicks "Schedule"</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Checks provider availability</li>
+<li>Checks for scheduling conflicts</li>
+<li>Creates appointment record</li>
+<li>Sends confirmation (optional: via Twilio SMS)</li>
+<li>Creates placeholder encounter</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Internal:</strong> Appointment CRUD endpoints</li>
+<li><strong>Twilio API</strong> (optional for SMS reminders)</li>
+
+<p><strong>Database Tables:</strong></p>
+<li><code>appointments</code></li>
+<li><code>provider_schedules</code></li>
+<li><code>appointment_types</code></li>
+
+<p><strong>Features:</strong></p>
+<li>Calendar view (day/week/month)</li>
+<li>Color-coded by appointment type</li>
+<li>Drag-and-drop rescheduling</li>
+<li>Automated reminders (24 hours before)</li>
+
+<hr>
+
+<h3>Module 2: User Login & Security</h3>
 
 <p><strong>Purpose:</strong>  </p>
 <p>Secure access control so only authorized staff can access patient data and billing information.</p>
@@ -62,7 +99,7 @@ Response:
 
 <hr>
 
-<h3>Module 2: Patient Registration</h3>
+<h3>Module 3: Patient Registration</h3>
 
 <p><strong>Purpose:</strong>  </p>
 <p>Capture and store patient demographic and insurance information accurately.</p>
@@ -101,7 +138,7 @@ Response:
 
 <hr>
 
-<h3>Module 3: Insurance Verification</h3>
+<h3>Module 4: Insurance Verification</h3>
 
 <p><strong>Purpose:</strong>  </p>
 <p>Verify patient insurance eligibility and benefits before appointment to avoid claim denials.</p>
@@ -179,44 +216,161 @@ Response:
 
 <hr>
 
-<h3>Module 4: Appointment Scheduling</h3>
+<h3>Module 5: Prior Authorization / Referral Management</h3>
 
-<p><strong>Purpose:</strong>  </p>
-<p>Schedule patient appointments and link them to encounters for billing.</p>
+<p><strong>Purpose:</strong></p>
+<p>
+Obtain insurance company approval before expensive procedures, specialist consultations, surgeries, diagnostic tests, or inpatient admissions.
+</p>
 
 <p><strong>What User Does:</strong></p>
-<li>Opens calendar view</li>
-<li>Selects date and time slot</li>
-<li>Selects patient and provider</li>
-<li>Selects appointment type (New Patient, Follow-up, etc.)</li>
-<li>Adds notes if needed</li>
-<li>Clicks "Schedule"</li>
+<li>Opens "Prior Authorization" module</li>
+<li>Clicks "Create Authorization Request"</li>
+<li>Selects patient and scheduled service/procedure</li>
+<li>Enters authorization details (CPT/Procedure codes, ICD-10 diagnosis codes, ordering physician, requested service date, facility information)</li>
+<li>Uploads supporting clinical documents (doctor notes, lab reports, imaging reports, referral forms)</li>
+<li>Selects insurance payer</li>
+<li>Submits authorization request</li>
+<li>Monitors authorization status (Pending, Approved, Denied, Additional information requested)</li>
+<li>Tracks authorization expiry dates</li>
+<li>Communicates with payer if follow-up is required</li>
 
 <p><strong>What Backend Does:</strong></p>
-<li>Checks provider availability</li>
-<li>Checks for scheduling conflicts</li>
-<li>Creates appointment record</li>
-<li>Sends confirmation (optional: via Twilio SMS)</li>
-<li>Creates placeholder encounter</li>
+<li>Verifies whether authorization is required for selected procedure</li>
+<li>Generates unique authorization request ID</li>
+<li>Stores authorization request in database</li>
+<li>Sends authorization request to payer system/API</li>
 
 <p><strong>APIs Needed:</strong></p>
-<li><strong>Internal:</strong> Appointment CRUD endpoints</li>
-<li><strong>Twilio API</strong> (optional for SMS reminders)</li>
+<li><strong>Internal:</strong> Authorization CRUD APIs, Referral management APIs, Document upload APIs, Notification APIs, Status tracking APIs</li>
+<li><strong>External:</strong> Insurance payer authorization APIs, Clearinghouse APIs, EHR/EMR integration APIs, Fax/secure messaging APIs (for non-digital payers)</li>
 
 <p><strong>Database Tables:</strong></p>
-<li><code>appointments</code></li>
-<li><code>provider_schedules</code></li>
-<li><code>appointment_types</code></li>
+<li><code>prior_authorizations</code></li>
+<li><code>authorization_status_history</code></li>
+<li><code>authorization_documents</code></li>
+<li><code>referrals</code></li>
+<li><code>payer_communications</code></li>
+<li><code>authorization_expiry_tracking</code></li>
 
-<p><strong>Features:</strong></p>
-<li>Calendar view (day/week/month)</li>
-<li>Color-coded by appointment type</li>
-<li>Drag-and-drop rescheduling</li>
-<li>Automated reminders (24 hours before)</li>
+<p><strong>Business Rules:</strong></p>
+<li>Authorization Requirement Rules</li>
+<li>Referral Management Rules</li>
+<li>Clinical Documentation Rules</li>
+<li>Authorization Submission Rules</li>
+<li>Authorization Expiry Rules</li>
 
 <hr>
 
-<h3>Module 5: Medical Coding</h3>
+<h3>Module 6: Patient Check-In</h3>
+
+<p><strong>Purpose:</strong></p>
+<p>
+Confirm patient arrival, verify demographic and insurance information, collect copays, obtain consent forms, and manage patient queue flow before the medical visit.
+</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens "Patient Check-In" module</li>
+<li>Searches patient by Appointment ID, Patient name, Phone number, or Patient ID</li>
+<li>Verifies patient details (address, phone number, insurance information, emergency contact)</li>
+<li>Updates any changed information</li>
+<li>Reviews appointment details</li>
+<li>Collects required digital consent forms (HIPAA consent, treatment consent, financial responsibility form)</li>
+<li>Collects copay/payment from patient</li>
+<li>Generates payment receipt</li>
+<li>Marks patient as "Checked-In"</li>
+<li>Updates patient queue/waiting status</li>
+<li>Notifies medical staff about patient arrival</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Retrieves scheduled appointment details</li>
+<li>Validates appointment date and time</li>
+<li>Verifies patient insurance eligibility</li>
+<li>Checks outstanding balances or copay requirements</li>
+<li>Stores updated demographic information</li>
+<li>Saves signed digital consent forms securely</li>
+<li>Processes payment transaction</li>
+<li>Generates receipt and payment confirmation</li>
+<li>Updates appointment status to Checked-In, Waiting, or Ready for Provider</li>
+<li>Updates real-time patient queue</li>
+<li>Sends notifications to nurse station, provider dashboard, and billing department</li>
+<li>Logs complete audit trail of check-in activity</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Internal:</strong> Appointment management APIs, Patient verification APIs, Check-in status APIs, Queue management APIs, Consent form APIs, Payment processing APIs, Notification APIs</li>
+
+<li><strong>External:</strong> Insurance eligibility verification APIs, Payment gateway APIs (Availity / Waystar), SMS/Email notification APIs (Twilio / SendGrid), Digital signature APIs</li>
+
+<p><strong>Database Tables:</strong></p>
+<li><code>patient_checkins</code></li>
+<li><code>appointment_queue</code></li>
+<li><code>patient_consent_forms</code></li>
+<li><code>copay_transactions</code></li>
+<li><code>checkin_audit_logs</code></li>
+<li><code>appointment_status_history</code></li>
+
+<p><strong>Validation Rules:</strong></p>
+<li>Required consent forms must be signed before completion</li>
+<li>Copay amount must match payer configuration</li>
+<li>Payment transaction must succeed before finalizing check-in</li>
+<li>Duplicate check-ins for same appointment are not allowed</li>
+
+<hr>
+
+<h3>Module 7: Clinical Documentation / EMR</h3>
+
+<p><strong>Purpose:</strong></p>
+<p>
+Maintain a complete and structured Electronic Medical Record (EMR) containing all clinical information such as doctor notes, diagnoses, prescriptions, lab orders, and treatment plans for each patient encounter.
+</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens "EMR / Clinical Documentation" module</li>
+<li>Selects patient from search or active encounter list</li>
+<li>Creates or updates clinical notes (Chief complaint, History of present illness, Physical examination findings)</li>
+<li>Adds diagnosis information (Primary diagnosis, Secondary diagnoses, ICD-10 codes)</li>
+<li>Prescribes medications (Drug name, Dosage, Frequency, Duration)</li>
+<li>Orders lab or radiology tests (Lab tests, Imaging like X-ray, CT, MRI)</li>
+<li>Creates treatment plan (Procedures, Follow-up schedule, Care instructions)</li>
+<li>Saves and signs the clinical documentation</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Retrieves patient EMR history and active encounter data</li>
+<li>Creates or updates encounter record in EMR system</li>
+<li>Stores structured clinical data (Notes, Diagnoses, Prescriptions, Orders, Treatment plans)</li>
+<li>Validates medical codes (ICD-10 for diagnoses, RxNorm/drug database for prescriptions)</li>
+<li>Links clinical documentation to billing/RCM module</li>
+<li>Triggers downstream workflows (Charge capture generation, Lab/radiology order processing)</li>
+<li>Maintains version history of all clinical updates</li>
+<li>Ensures compliance with HIPAA and audit logging</li>
+<li>Locks signed notes from further edits (only addendum allowed)</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>EHR/EMR API (Epic / Cerner / FHIR APIs)</strong> – clinical data storage & retrieval</li>
+<li><strong>FHIR API Layer</strong> – standardized clinical data exchange</li>
+<li><strong>Internal Encounter API</strong> – visit/clinical note management</li>
+
+<p><strong>Clinical Validation Rules:</strong></p>
+<li>Encounter must be active before documentation</li>
+<li>Diagnosis must use valid ICD-10 codes</li>
+<li>Prescription must be validated against drug database</li>
+<li>Controlled substances require additional verification</li>
+<li>Lab/radiology orders must match clinical indication</li>
+<li>Documentation must be signed before finalization</li>
+<li>Signed notes cannot be edited (only amended via addendum)</li>
+
+<p><strong>Data Stored:</strong></p>
+<li><code>encounters</code></li>
+<li><code>clinical_notes</code></li>
+<li><code>diagnoses</code></li>
+<li><code>prescriptions</code></li>
+<li><code>lab_orders</code></li>
+<li><code>radiology_orders</code></li>
+<li><code>treatment_plans</code></li>
+
+<hr>
+
+<h3>Module 8: Medical Coding</h3>
 
 <p><strong>Purpose:</strong>  </p>
 <p>Assign correct ICD-10 diagnosis codes and CPT procedure codes to encounters for accurate billing.</p>
@@ -271,7 +425,7 @@ Response (using OpenAI API):
 
 <hr>
 
-<h3>Module 6: Claim Creation</h3>
+<h3>Module 9: Claim Creation</h3>
 
 <p><strong>Purpose:</strong>  </p>
 <p>Generate clean, accurate claims from encounter data ready for submission.</p>
@@ -319,7 +473,61 @@ Response (using OpenAI API):
 
 <hr>
 
-<h3>Module 7: Claim Submission</h3>
+<h3>Module 10: Claim Scrubbing</h3>
+
+<p><strong>Purpose:</strong></p>
+<p>
+Perform pre-submission validation of healthcare claims to detect errors, missing data, and coding issues in order to reduce rejections and denials from payers.
+</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens "Claim Scrubbing" module</li>
+<li>Selects claims in draft or ready status</li>
+<li>Runs "Scrub Claims" process</li>
+<li>Reviews scrubbing results (Errors, Warnings, Passed claims)</li>
+<li>Opens each flagged claim</li>
+<li>Fixes issues such as missing diagnosis or procedure codes, invalid CPT/ICD-10 codes, incorrect modifiers, missing provider or patient details</li>
+<li>Re-runs scrubbing after corrections</li>
+<li>Moves clean claims to "Ready for Submission"</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Fetches claim data from billing database</li>
+<li>Applies validation rules engine (required field checks, code format validation for ICD-10, CPT, NPI, medical necessity validation)</li>
+<li>Cross-checks diagnosis vs procedure compatibility</li>
+<li>Applies payer-specific rules and fee schedule consistency checks</li>
+<li>Detects duplicate claims, missing modifiers, invalid or inactive codes</li>
+<li>Generates scrubbing report (errors, warnings, suggested fixes)</li>
+<li>Updates claim status (Scrubbed, Failed Scrub, Ready for Submission)</li>
+<li>Stores scrubbing history for audit and analytics</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Internal Claim Scrubbing Engine API</strong></li>
+<li><strong>Waystar API (Claim Validation Rules Engine)</strong></li>
+<li><strong>Availity API (Payer Rule Validation)</strong></li>
+<li><strong>Coding Reference API (ICD-10 / CPT Lookup)</strong></li>
+<li><strong>Fee Schedule API (Payer Contract Validation)</strong></li>
+
+<p><strong>Validation Rules:</strong></p>
+<li>All claims must have valid ICD-10 diagnosis codes</li>
+<li>CPT codes must match approved procedures</li>
+<li>NPI numbers must be active and valid</li>
+<li>Required modifiers must be present where applicable</li>
+<li>No duplicate claims for same encounter</li>
+<li>Diagnosis must support medical necessity for procedures</li>
+<li>Charges must align with payer fee schedules</li>
+<li>All required demographic and insurance data must be complete</li>
+
+<p><strong>Data Stored:</strong></p>
+<li><code>claims</code></li>
+<li><code>claim_scrub_results</code></li>
+<li><code>claim_errors</code></li>
+<li><code>claim_warnings</code></li>
+<li><code>scrubbing_rules_log</code></li>
+<li><code>claim_correction_history</code></li>
+
+<hr>
+
+<h3>Module 11: Claim Submission</h3>
 
 <p><strong>Purpose:</strong>  </p>
 <p>Submit claims electronically to insurance payers and track submission status.</p>
@@ -385,60 +593,249 @@ Response:
 
 <hr>
 
-<h3>Module 8: Denial Dashboard</h3>
+<h3>Module 12: Clearinghouse Validation</h3>
 
-<p><strong>Purpose:</strong>  </p>
-<p>Track denied claims and manage denial workflow to recover lost revenue.</p>
+<p><strong>Purpose:</strong></p>
+<p>
+Validate, scrub, and route claims through a clearinghouse to ensure they meet payer requirements before submission to insurance companies.
+</p>
 
 <p><strong>What User Does:</strong></p>
-<li>Opens "Denials" dashboard</li>
-<li>Sees list of denied claims with:</li>
-<li>Claim number</li>
-<li>Patient name</li>
-<li>Denial reason</li>
-<li>Denial date</li>
-<li>Amount</li>
-<li>Days since denial</li>
-<li>Clicks on claim to see details</li>
-<li>Takes action:</li>
-<li>Correct and resubmit</li>
-<li>Appeal denial</li>
-<li>Write off (if not recoverable)</li>
+<li>Opens "Clearinghouse Validation" module</li>
+<li>Selects claims in "Ready to Submit" status</li>
+<li>Initiates validation process</li>
+<li>Reviews validation results (Accepted, Rejected, Accepted with warnings)</li>
+<li>Opens rejected claims for correction</li>
+<li>Fixes issues such as missing fields, invalid codes, and demographic mismatches</li>
+<li>Resubmits corrected claims for validation</li>
+<li>Tracks submission acknowledgment status</li>
 
 <p><strong>What Backend Does:</strong></p>
-<li>Receives denial information from ERA (EDI 835)</li>
-<li>Parses denial reason codes</li>
-<li>Categorizes denials:</li>
-<li>Eligibility issues</li>
-<li>Coding errors</li>
-<li>Missing information</li>
-<li>Timely filing</li>
-<li>Medical necessity</li>
-<li>Calculates denial rate and trends</li>
-<li>Sends alerts for high-priority denials</li>
+<li>Sends claims to clearinghouse for validation</li>
+<li>Performs pre-validation checks (required fields, ICD-10/CPT/NPI format validation)</li>
+<li>Receives clearinghouse response (Accepted for payer submission or Rejected with error codes)</li>
+<li>Stores validation results and error logs</li>
+<li>Routes rejected claims to correction workflow</li>
+<li>Updates claim status (Validated, Rejected, Pending Correction)</li>
+<li>Generates submission acknowledgment tracking ID</li>
+<li>Maintains full audit history of validation attempts</li>
+<li>Triggers alerts for high rejection rates</li>
 
 <p><strong>APIs Needed:</strong></p>
-<li><strong>Internal:</strong> Denial tracking logic</li>
-<li><strong>Waystar API</strong> (to receive ERA files)</li>
+<li><strong>Waystar API</strong> (primary clearinghouse validation)</li>
+<li><strong>Availity API</strong> (secondary clearinghouse integration)</li>
+<li><strong>Change Healthcare API</strong> (claims validation & routing)</li>
+<li><strong>Internal Claim Validation API</strong> (pre-scrubbing logic)</li>
+<li><strong>EDI 837/835 Processing API</strong> (claim format validation & responses)</li>
 
-<p><strong>Denial Reason Codes (Common):</strong></p>
-<li>CO-16: Claim lacks information</li>
-<li>CO-18: Duplicate claim</li>
-<li>CO-22: Payment adjusted (coordination of benefits)</li>
-<li>CO-27: Expenses incurred after coverage terminated</li>
-<li>CO-50: Non-covered service</li>
-<li>CO-97: Payment adjusted (timely filing)</li>
+<p><strong>Validation Rules:</strong></p>
+<li>Claim must have valid ICD-10 and CPT codes</li>
+<li>Patient and provider information must be complete</li>
+<li>NPI numbers must be valid and active</li>
+<li>Duplicate claims are not allowed</li>
+<li>Payer-specific formatting rules must be satisfied</li>
+<li>Charges must match fee schedule rules</li>
+<li>All required modifiers must be present where applicable</li>
 
-<p><strong>Dashboard Metrics:</strong></p>
-<li>Total denied claims</li>
-<li>Total denied amount</li>
-<li>Denial rate (% of submitted claims)</li>
-<li>Top denial reasons</li>
-<li>Average days to resolve denial</li>
+<p><strong>Data Stored:</strong></p>
+<li><code>clearinghouse_requests</code></li>
+<li><code>clearinghouse_responses</code></li>
+<li><code>claim_validation_errors</code></li>
+<li><code>claim_correction_queue</code></li>
+<li><code>submission_acknowledgments</code></li>
+<li><code>edi_transactions</code></li>
 
 <hr>
 
-<h3>Module 9: Payment Posting</h3>
+<h3>Module 13: Claim Status Tracking</h3>
+
+<p><strong>Purpose:</strong></p>
+<p>
+Track and monitor the real-time status of insurance claims throughout the payer processing lifecycle using EDI 276/277 transactions, ensuring visibility into claim progress, delays, and outcomes.
+</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens "Claim Status Tracking" module</li>
+<li>Searches claims using Claim ID, Patient name, Date of service, or Payer name</li>
+<li>Views current claim status (Received, In Review, Pending, Approved, Denied, Paid)</li>
+<li>Requests status refresh (manual inquiry)</li>
+<li>Reviews claim history timeline</li>
+<li>Identifies delayed or aging claims</li>
+<li>Creates follow-up tasks for denied or pending claims</li>
+<li>Receives automated alerts for status changes</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Sends EDI 276 claim status inquiry requests to payer systems</li>
+<li>Receives EDI 277 claim status responses from payers</li>
+<li>Maps payer responses to internal claim status codes</li>
+<li>Updates claim lifecycle status in database</li>
+<li>Maintains full claim status history with timestamps</li>
+<li>Triggers alerts for SLA breaches and long-pending claims</li>
+<li>Generates aging analysis reports</li>
+<li>Supports batch and real-time status updates</li>
+<li>Logs all payer communication for audit purposes</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Waystar API</strong> (primary clearinghouse for 276/277 transactions)</li>
+<li><strong>Availity API</strong> (secondary payer status tracking)</li>
+<li><strong>Change Healthcare API</strong> (claims status & EDI exchange)</li>
+<li><strong>EDI Gateway API (276/277 processing engine)</strong></li>
+<li><strong>Internal Claim Tracking API</strong> (status mapping & history storage)</li>
+
+<p><strong>Tracking Rules:</strong></p>
+<li>Every claim must have a unique tracking ID</li>
+<li>Status updates must be timestamped</li>
+<li>Payer responses must be mapped to standardized statuses</li>
+<li>Claims without updates beyond SLA threshold must trigger alerts</li>
+<li>Denied claims must be routed to denial management workflow</li>
+<li>Paid claims must be updated with payment details when available</li>
+
+<p><strong>Data Stored:</strong></p>
+<li><code>claim_status_tracking</code></li>
+<li><code>claim_status_history</code></li>
+<li><code>edi_276_requests</code></li>
+<li><code>edi_277_responses</code></li>
+<li><code>claim_aging_reports</code></li>
+<li><code>claim_followups</code></li>
+
+<p><strong>Reports Generated:</strong></p>
+<li>Aging Report (0–30, 31–60, 61–90, 90+ days)</li>
+<li>Pending Claims Report</li>
+<li>Denied Claims Report</li>
+<li>SLA Breach Report</li>
+<li>Payer Performance Report</li>
+
+<hr>
+
+<h3>Module 14: Insurance Adjudication Tracking</h3>
+
+<p><strong>Purpose:</strong></p>
+<p>
+Track and analyze the insurance payer adjudication process, including claim approvals, denials, partial payments, and medical necessity decisions to ensure transparency in claim processing and reimbursement outcomes.
+</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens "Adjudication Tracking" module</li>
+<li>Searches claims by Claim ID, Patient name, Payer name, or Date of service</li>
+<li>Views adjudication status (Approved, Denied, Partially Paid, Under Review, Pending Medical Necessity Review)</li>
+<li>Opens detailed adjudication breakdown (Allowed amount, Paid amount, Patient responsibility, Denial reasons)</li>
+<li>Reviews contract compliance information</li>
+<li>Identifies underpaid or denied claims</li>
+<li>Initiates appeal workflow if required</li>
+<li>Monitors payer response timelines and delays</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Receives adjudication data from payer systems via EDI 835 / payer APIs</li>
+<li>Parses and stores adjudication results (Allowed amounts, Adjustments, Denial codes)</li>
+<li>Maps adjudication outcomes to internal claim records</li>
+<li>Tracks medical necessity review decisions</li>
+<li>Validates claim payments against contract fee schedules</li>
+<li>Detects underpayments and discrepancies</li>
+<li>Updates claim financial status (Fully Paid, Partially Paid, Denied)</li>
+<li>Maintains adjudication history and audit logs</li>
+<li>Triggers alerts for denials, underpayments, and high-value claim rejections</li>
+<li>Generates payer performance and turnaround analytics</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Waystar API</strong> (primary adjudication & EDI 835 processing)</li>
+<li><strong>Availity API</strong> (payer response & adjudication data)</li>
+<li><strong>Change Healthcare API</strong> (claims payment & adjudication feed)</li>
+<li><strong>EDI 835 Processing API</strong> (remittance & adjudication details)</li>
+<li><strong>Contract Management API</strong> (fee schedule validation)</li>
+
+<p><strong>Tracking Rules:</strong></p>
+<li>Every claim must have linked adjudication record</li>
+<li>All payer responses must be stored in normalized format</li>
+<li>Denial codes (CARC/RARC) must be recorded</li>
+<li>Payment must match allowed amount unless adjustment is applied</li>
+<li>Medical necessity denials must be flagged separately</li>
+<li>Contract variance must be calculated for every claim</li>
+<li>Partial payments must be broken into components (Allowed amount, Paid amount, Patient responsibility)</li>
+
+<p><strong>Data Stored:</strong></p>
+<li><code>adjudication_records</code></li>
+<li><code>payment_details</code></li>
+<li><code>denial_codes</code></li>
+<li><code>contract_variance_logs</code></li>
+<li><code>medical_necessity_reviews</code></li>
+<li><code>payer_processing_metrics</code></li>
+
+<p><strong>Reports Generated:</strong></p>
+<li>Adjudication Summary Report</li>
+<li>Denial Reason Analysis Report</li>
+<li>Underpayment Detection Report</li>
+<li>Payer Turnaround Time Report</li>
+<li>Contract Variance Report</li>
+<li>Medical Necessity Denial Report</li>
+
+<hr>
+
+<h3>Module 15: ERA Processing</h3>
+
+<p><strong>Purpose:</strong></p>
+<p>
+Process Electronic Remittance Advice (ERA) files (EDI 835) received from insurance payers to reconcile payments, extract denials, and automate posting of financial transactions.
+</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens "ERA Processing" module</li>
+<li>Uploads or imports ERA files (EDI 835)</li>
+<li>Selects payer or batch for processing</li>
+<li>Initiates ERA processing workflow</li>
+<li>Reviews processed results (Payments posted, Denials extracted, Adjustments applied)</li>
+<li>Validates reconciliation reports</li>
+<li>Manually corrects unmatched payments if needed</li>
+<li>Confirms auto-posting to accounts receivable</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Receives ERA (EDI 835) file from payer or clearinghouse</li>
+<li>Parses 835 transaction segments (Payment details, Claim adjustments, Denial codes CARC/RARC)</li>
+<li>Matches ERA data with existing claims</li>
+<li>Performs payment reconciliation (claim level and line item level matching)</li>
+<li>Posts payments automatically to patient accounts (if auto-post enabled)</li>
+<li>Updates claim status (Paid, Partially Paid, Denied)</li>
+<li>Extracts and categorizes denial reasons</li>
+<li>Applies contractual adjustments based on payer rules</li>
+<li>Flags unmatched or missing claims for review</li>
+<li>Generates audit trail for all financial postings</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Waystar API</strong> (ERA/EDI 835 ingestion & processing)</li>
+<li><strong>Availity API</strong> (ERA file exchange)</li>
+<li><strong>Change Healthcare API</strong> (remittance data processing)</li>
+<li><strong>EDI 835 Parsing Engine API</strong></li>
+<li><strong>Accounting/AR System API</strong> (payment posting & reconciliation)</li>
+<li><strong>Internal Claim Matching API</strong> (claim-to-payment reconciliation logic)</li>
+
+<p><strong>Processing Rules:</strong></p>
+<li>Each ERA must be linked to a valid payer and claim batch</li>
+<li>Payments must be matched using Claim number, Patient ID, and Service date</li>
+<li>Denial codes (CARC/RARC) must be extracted and stored</li>
+<li>Contractual adjustments must be applied automatically</li>
+<li>Overpayments must be flagged for refund workflow</li>
+<li>Unmatched payments must go to exception queue</li>
+<li>Duplicate ERA files must be detected and ignored</li>
+
+<p><strong>Data Stored:</strong></p>
+<li><code>era_files</code></li>
+<li><code>era_transactions</code></li>
+<li><code>payment_postings</code></li>
+<li><code>denial_records</code></li>
+<li><code>adjustment_records</code></li>
+<li><code>unmatched_payments</code></li>
+<li><code>reconciliation_logs</code></li>
+
+<p><strong>Reports Generated:</strong></p>
+<li>ERA Processing Summary Report</li>
+<li>Payment Reconciliation Report</li>
+<li>Denial Summary Report</li>
+<li>Unmatched Payments Report</li>
+<li>Adjustment Analysis Report</li>
+<li>AR Posting Audit Report</li>
+
+<hr>
+
+<h3>Module 16: Payment Posting</h3>
 
 <p><strong>Purpose:</strong>  </p>
 <p>Record payments from insurance companies and patients, and reconcile with claims.</p>
@@ -497,7 +894,314 @@ Adjustment Codes:
 
 <hr>
 
-<h3>Module 10: Basic Reports</h3>
+<h3>Module 17: Denial Dashboard</h3>
+
+<p><strong>Purpose:</strong>  </p>
+<p>Track denied claims and manage denial workflow to recover lost revenue.</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens "Denials" dashboard</li>
+<li>Sees list of denied claims with:</li>
+<li>Claim number</li>
+<li>Patient name</li>
+<li>Denial reason</li>
+<li>Denial date</li>
+<li>Amount</li>
+<li>Days since denial</li>
+<li>Clicks on claim to see details</li>
+<li>Takes action:</li>
+<li>Correct and resubmit</li>
+<li>Appeal denial</li>
+<li>Write off (if not recoverable)</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Receives denial information from ERA (EDI 835)</li>
+<li>Parses denial reason codes</li>
+<li>Categorizes denials:</li>
+<li>Eligibility issues</li>
+<li>Coding errors</li>
+<li>Missing information</li>
+<li>Timely filing</li>
+<li>Medical necessity</li>
+<li>Calculates denial rate and trends</li>
+<li>Sends alerts for high-priority denials</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Internal:</strong> Denial tracking logic</li>
+<li><strong>Waystar API</strong> (to receive ERA files)</li>
+
+<p><strong>Denial Reason Codes (Common):</strong></p>
+<li>CO-16: Claim lacks information</li>
+<li>CO-18: Duplicate claim</li>
+<li>CO-22: Payment adjusted (coordination of benefits)</li>
+<li>CO-27: Expenses incurred after coverage terminated</li>
+<li>CO-50: Non-covered service</li>
+<li>CO-97: Payment adjusted (timely filing)</li>
+
+<p><strong>Dashboard Metrics:</strong></p>
+<li>Total denied claims</li>
+<li>Total denied amount</li>
+<li>Denial rate (% of submitted claims)</li>
+<li>Top denial reasons</li>
+<li>Average days to resolve denial</li>
+
+<hr>
+
+<h3>Module 18: Secondary Insurance Billing</h3>
+
+<p><strong>Purpose:</strong></p>
+<p>
+Handle Coordination of Benefits (COB) by billing secondary and tertiary insurance payers for remaining patient balances after primary insurance has processed the claim.
+</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens "Secondary Insurance Billing" module</li>
+<li>Selects claims with primary insurance payment posted</li>
+<li>Reviews remaining patient balance after primary adjudication</li>
+<li>Confirms eligibility for secondary billing</li>
+<li>Generates secondary claim automatically or manually</li>
+<li>Submits claim to secondary payer</li>
+<li>Tracks submission and response status (Submitted, Accepted, Rejected, Paid)</li>
+<li>Reviews secondary ERA results</li>
+<li>Reconciles final patient responsibility</li>
+<li>Closes claim after full settlement</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Retrieves primary insurance adjudication data (ERA/835)</li>
+<li>Calculates remaining balance after primary payment</li>
+<li>Applies Coordination of Benefits (COB) rules</li>
+<li>Determines secondary/tertiary payer hierarchy</li>
+<li>Auto-generates secondary claim with adjusted charges and primary payer details</li>
+<li>Submits secondary claim via clearinghouse</li>
+<li>Tracks claim status using EDI 276/277 or payer APIs</li>
+<li>Processes secondary ERA (EDI 835) responses</li>
+<li>Updates claim lifecycle (Primary Paid, Secondary Submitted, Fully Paid / Partially Paid)</li>
+<li>Handles rejection corrections and resubmissions</li>
+<li>Maintains audit trail for multi-payer transactions</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Waystar API</strong> (COB processing & secondary claim submission)</li>
+<li><strong>Availity API</strong> (secondary payer claim routing)</li>
+<li><strong>Change Healthcare API</strong> (multi-payer claim handling)</li>
+<li><strong>EDI 837/835 Processing API</strong> (claim submission & payment reconciliation)</li>
+<li><strong>Eligibility & COB Verification API</strong> (payer hierarchy validation)</li>
+<li><strong>Internal Claim Management API</strong> (secondary claim generation)</li>
+
+<p><strong>COB Processing Rules:</strong></p>
+<li>Primary insurance must be fully processed before secondary billing</li>
+<li>COB rules must define payer priority order</li>
+<li>Secondary claims must include primary payer EOB/ERA details</li>
+<li>Patient responsibility is recalculated after each payer response</li>
+<li>Duplicate secondary submissions are not allowed</li>
+<li>Tertiary billing is triggered only after secondary adjudication</li>
+<li>All payer payments must reconcile to total allowed amount</li>
+
+<p><strong>Data Stored:</strong></p>
+<li><code>cob_records</code></li>
+<li><code>secondary_claims</code></li>
+<li><code>primary_payment_details</code></li>
+<li><code>secondary_era_responses</code></li>
+<li><code>balance_transfers</code></li>
+<li><code>multi_payer_history</code></li>
+
+<p><strong>Reports Generated:</strong></p>
+<li>COB Summary Report</li>
+<li>Secondary Billing Performance Report</li>
+<li>Multi-Payer Reconciliation Report</li>
+<li>Outstanding Secondary Balance Report</li>
+<li>Denial Analysis for Secondary Claims</li>
+
+<hr>
+
+<h3>Module 19: Patient Billing</h3>
+
+<p><strong>Purpose:</strong></p>
+<p>
+Generate patient statements and manage collection of remaining balances after insurance payments, including payment plans and digital payment options.
+</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens "Patient Billing" module</li>
+<li>Searches patient account or encounter</li>
+<li>Views outstanding patient balance</li>
+<li>Generates patient statement (Single statement or Batch statement run)</li>
+<li>Sends statement via Email, SMS, or Physical mail (print option)</li>
+<li>Configures payment options (Full payment or Installment plan)</li>
+<li>Monitors payment status (Paid, Partial, Overdue)</li>
+<li>Reviews payment history and receipts</li>
+<li>Follows up on overdue accounts</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Aggregates patient financial data (Insurance payments, Adjustments, Remaining balances)</li>
+<li>Generates itemized patient statements</li>
+<li>Applies billing rules (Copay calculation, Deductible balance, Coinsurance)</li>
+<li>Creates payment links for online portal</li>
+<li>Tracks payment plan schedules and due dates</li>
+<li>Sends automated reminders (SMS, Email, In-app notifications)</li>
+<li>Updates patient ledger in real time after payments</li>
+<li>Flags overdue accounts for AR follow-up</li>
+<li>Maintains billing history and audit logs</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Internal Billing/AR API</strong> – patient account & statement generation</li>
+<li><strong>Payment Gateway API (Stripe / PayPal / Razorpay)</strong> – online payments</li>
+<li><strong>SMS API (Twilio / MSG91)</strong> – payment reminders</li>
+<li><strong>Email API (SendGrid / Amazon SES)</strong> – statement delivery</li>
+<li><strong>Payment Plan Management API</strong> – installment tracking</li>
+<li><strong>Document Generation API (PDF service)</strong> – statement creation</li>
+
+<p><strong>Billing Rules:</strong></p>
+<li>Patient balance is calculated after all insurance adjustments</li>
+<li>Statements must include Date of service, Procedure details, Insurance payments, Patient responsibility</li>
+<li>Payment plans require minimum down payment and fixed installment schedule</li>
+<li>Overdue accounts must trigger reminders automatically</li>
+<li>Partial payments must update remaining balance immediately</li>
+<li>Refunds must be processed through AR system</li>
+
+<p><strong>Data Stored:</strong></p>
+<li><code>patient_statements</code></li>
+<li><code>patient_balances</code></li>
+<li><code>payment_plans</code></li>
+<li><code>patient_payments</code></li>
+<li><code>billing_notifications</code></li>
+<li><code>patient_ledger</code></li>
+
+<p><strong>Reports Generated:</strong></p>
+<li>Patient Billing Summary Report</li>
+<li>Outstanding Balance Report</li>
+<li>Payment Plan Performance Report</li>
+<li>Overdue Accounts Report</li>
+<li>Revenue Collection Report</li>
+
+<hr>
+
+<h3>Module 20: Accounts Receivable (AR) Follow-Up</h3>
+
+<p><strong>Purpose:</strong></p>
+<p>
+Track and manage unpaid insurance and patient balances by prioritizing collections, managing follow-up workflows, and identifying bad debt for write-off decisions.
+</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens "AR Follow-Up" module</li>
+<li>Views AR aging dashboard (0–30 days, 31–60 days, 61–90 days, 90+ days)</li>
+<li>Filters accounts by Payer, Patient, Balance amount, or Aging category</li>
+<li>Assigns follow-up tasks to AR staff</li>
+<li>Reviews collection work queues</li>
+<li>Contacts payers/patients for payment status</li>
+<li>Logs follow-up actions (Calls, Emails, Appeals)</li>
+<li>Identifies accounts for write-off or escalation</li>
+<li>Updates account status after resolution</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Calculates AR aging based on invoice/claim due dates</li>
+<li>Segregates accounts into aging buckets</li>
+<li>Generates prioritized work queues (High-value claims first, Older accounts prioritized, High denial probability flagged)</li>
+<li>Assigns follow-up tasks automatically or manually</li>
+<li>Tracks all follow-up activities (communication logs and response status)</li>
+<li>Updates account status after payments or adjustments</li>
+<li>Identifies potential bad debt accounts</li>
+<li>Supports write-off processing workflows</li>
+<li>Maintains audit trail of AR actions</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Internal AR Management API</strong> – account tracking & aging logic</li>
+<li><strong>Billing/Claims API</strong> – balance and claim data</li>
+<li><strong>Payment Posting API</strong> – real-time updates</li>
+<li><strong>Notification API (Twilio / SendGrid)</strong> – follow-up reminders</li>
+<li><strong>CRM/Task Management API</strong> – work queue assignment</li>
+<li><strong>Analytics/Reporting API</strong> – aging and collection insights</li>
+
+<p><strong>AR Rules:</strong></p>
+<li>All unpaid balances must be categorized by aging bucket</li>
+<li>Older balances must be prioritized for follow-up</li>
+<li>High-value claims require immediate escalation</li>
+<li>Accounts with no response after defined period move to bad debt review</li>
+<li>Write-offs require supervisor approval</li>
+<li>Payment or adjustment updates must immediately reflect in AR ledger</li>
+<li>Duplicate follow-up tasks are not allowed</li>
+
+<p><strong>Data Stored:</strong></p>
+<li><code>ar_accounts</code></li>
+<li><code>ar_aging_summary</code></li>
+<li><code>followup_tasks</code></li>
+<li><code>collection_logs</code></li>
+<li><code>bad_debt_records</code></li>
+<li><code>writeoff_transactions</code></li>
+
+<p><strong>Reports Generated:</strong></p>
+<li>AR Aging Report</li>
+<li>Collection Performance Report</li>
+<li>Follow-Up Productivity Report</li>
+<li>Bad Debt Analysis Report</li>
+<li>Write-Off Summary Report</li>
+
+<hr>
+
+<h3>Module 21: Collections / Refund / Write-Off Management</h3>
+
+<p><strong>Purpose:</strong></p>
+<p>
+Manage overdue collections, process patient refunds, handle credit balances, and execute approved write-offs for uncollectible or adjusted accounts.
+</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens "Collections / Refunds" module</li>
+<li>Views accounts categorized as Overdue collections, Credit balances, Refund eligible accounts, or Write-off candidates</li>
+<li>Initiates collection workflow (assigns internal collector, sends patient/payer reminders)</li>
+<li>Processes refunds by selecting eligible credit balance and initiating refund request</li>
+<li>Chooses refund method (bank transfer, card reversal, check)</li>
+<li>Reviews and approves write-off requests</li>
+<li>Sends accounts to external collection agencies if needed</li>
+<li>Tracks recovery status of collections</li>
+<li>Monitors refund and write-off history</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Identifies overdue accounts from AR system</li>
+<li>Segregates financial statuses (Active receivables, Credit balances, Refund eligible accounts, Bad debt candidates)</li>
+<li>Automates collection workflow assignment</li>
+<li>Processes refund transactions securely (validates credit balance, initiates reversal or payout)</li>
+<li>Applies write-off rules (small balance thresholds, aging-based write-offs, supervisor approval enforcement)</li>
+<li>Integrates with external collection agencies</li>
+<li>Updates patient and insurance ledgers in real time</li>
+<li>Maintains full audit logs of financial adjustments</li>
+<li>Tracks recovery performance from collections</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Internal AR Management API</strong> – balance tracking & updates</li>
+<li><strong>Payment Gateway API (Stripe / PayPal / Razorpay)</strong> – refunds & reversals</li>
+<li><strong>Banking/EFT API</strong> – direct deposit refunds</li>
+<li><strong>Collection Agency API</strong> – external recovery workflows</li>
+<li><strong>Notification API (Twilio / SendGrid)</strong> – reminders & alerts</li>
+<li><strong>Accounting/ERP API</strong> – financial reconciliation</li>
+
+<p><strong>Financial Rules:</strong></p>
+<li>Refunds can only be processed for validated credit balances</li>
+<li>Write-offs require defined approval hierarchy</li>
+<li>Small balance write-offs must follow configured threshold rules</li>
+<li>Collection workflow must follow escalation path (Internal → Supervisor → External agency)</li>
+<li>All financial adjustments must be auditable</li>
+<li>Duplicate refunds are strictly prevented</li>
+<li>Transferred accounts must be marked when sent to agencies</li>
+
+<p><strong>Data Stored:</strong></p>
+<li><code>collection_accounts</code></li>
+<li><code>refund_requests</code></li>
+<li><code>credit_balances</code></li>
+<li><code>writeoff_records</code></li>
+<li><code>collection_agency_assignments</code></li>
+<li><code>financial_adjustments_log</code></li>
+
+<p><strong>Reports Generated:</strong></p>
+<li>Collection Performance Report</li>
+<li>Refund Summary Report</li>
+<li>Write-Off Analysis Report</li>
+<li>Credit Balance Report</li>
+<li>Recovery Rate Report</li>
+
+<hr>
+
+<h3>Module 22: Basic Reports</h3>
 
 <p><strong>Purpose:</strong>  </p>
 <p>Provide essential financial and operational reports for practice management.</p>
@@ -560,6 +1264,67 @@ Adjustment Codes:
 <li>Export to PDF/Excel</li>
 <li>Email scheduling (optional)</li>
 <li>Dashboard widgets for key metrics</li>
+
+<hr>
+
+<h3>Module 23: Compliance & Audit</h3>
+
+<p><strong>Purpose:</strong></p>
+<p>
+Ensure system-wide regulatory compliance (HIPAA and healthcare standards) by tracking all user activities, maintaining audit logs, monitoring access, and generating compliance reports across the RCM system.
+</p>
+
+<p><strong>What User Does:</strong></p>
+<li>Opens "Compliance & Audit" module</li>
+<li>Views audit dashboards (User activity logs, System access logs, Data modification history)</li>
+<li>Filters logs by User, Date range, or Module (Billing, Claims, EMR, etc.)</li>
+<li>Reviews security alerts (Unauthorized access attempts, Suspicious activity, Failed login attempts)</li>
+<li>Generates compliance reports (HIPAA audit reports, User activity summaries)</li>
+<li>Investigates flagged events</li>
+<li>Exports audit logs for regulatory review</li>
+
+<p><strong>What Backend Does:</strong></p>
+<li>Captures every system action in real-time audit logs</li>
+<li>Tracks user login/logout events, CRUD operations, financial transactions, and PHI access</li>
+<li>Monitors abnormal behavior patterns (failed logins, unauthorized access, bulk exports)</li>
+<li>Generates immutable append-only audit trails</li>
+<li>Encrypts and secures all sensitive logs</li>
+<li>Triggers security alerts for role violations and suspicious activity</li>
+<li>Applies compliance mapping for HIPAA and internal policies</li>
+<li>Supports long-term log retention (6–10 years or as per policy)</li>
+<li>Provides audit data for internal and external reviews</li>
+
+<p><strong>APIs Needed:</strong></p>
+<li><strong>Internal Audit Logging API</strong> – system-wide event tracking</li>
+<li><strong>Security Monitoring API (SIEM tools like Splunk / Datadog)</strong></li>
+<li><strong>Identity & Access Management API (Okta / Keycloak)</strong></li>
+<li><strong>Notification API (Twilio / SendGrid / Email/SMS alerts)</strong></li>
+<li><strong>Encryption/KMS API (AWS KMS / Azure Key Vault)</strong></li>
+
+<p><strong>Compliance Rules:</strong></p>
+<li>All PHI access must be logged</li>
+<li>Logs must be immutable (no deletion allowed)</li>
+<li>Every user action must be traceable to a unique user ID</li>
+<li>Failed login attempts must trigger security alerts</li>
+<li>Sensitive data exports must be monitored and logged</li>
+<li>Role-based access control (RBAC) must be enforced</li>
+<li>Audit logs must be retained as per regulatory policy (6–10 years)</li>
+<li>Unauthorized access attempts must trigger immediate alerts</li>
+
+<p><strong>Data Stored:</strong></p>
+<li><code>audit_logs</code></li>
+<li><code>access_logs</code></li>
+<li><code>security_events</code></li>
+<li><code>user_activity_history</code></li>
+<li><code>compliance_reports</code></li>
+<li><code>data_access_tracking</code></li>
+
+<p><strong>Reports Generated:</strong></p>
+<li>HIPAA Compliance Report</li>
+<li>User Activity Report</li>
+<li>Security Incident Report</li>
+<li>Access Violation Report</li>
+<li>System Audit Summary Report</li>
 
 <hr>
 
