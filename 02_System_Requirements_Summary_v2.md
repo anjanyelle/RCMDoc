@@ -31,9 +31,9 @@ A complete **AI-powered** Revenue Cycle Management system that helps hospitals:
 
 ## 2. Core Modules (30 Main Features)
 
-### Module 1: User Management & Security
-**Who uses it:** Everyone  
-**What it does:** Secure login, role-based permissions, audit logging  
+### Module 1: User Management, Security & Multi-Tenancy
+**Who uses it:** Everyone / System Admin / Enterprise Hospitals  
+**What it does:** Secure login, role-based permissions, audit logging, and managing multiple hospitals in one RCM system with separate data and configurations.  
 **Key Features:**
 - 10 user roles (Admin, Front Desk, Doctor, Coder, Biller, AR Manager, etc.)
 - Multi-factor authentication (MFA)
@@ -42,35 +42,69 @@ A complete **AI-powered** Revenue Cycle Management system that helps hospitals:
 - Session timeout after 15 minutes (configurable)
 - Password complexity requirements
 - Audit logging (HIPAA requirement - 7 years retention)
-- Role-based access control (RBAC)
+- Role-based access control (RBAC) per tenant
 - IP whitelisting for admin access
+- Hospital/Tenant creation
+- Tenant-wise data isolation
+- Hospital-specific branding & configuration
+- Tenant-wise billing setup
+- Separate reports & dashboards per tenant
+- Tenant-level security & access control
+- Separate database/schema per hospital (or tenant_id isolation model)
+- Tenant subscription & plan management
+- Hospital-specific payer contracts
+
+**AI Feature:**
+- AI-based tenant onboarding assistant
+- Auto-configure default hospital settings based on hospital type
 
 **Tech Stack:**
 - FastAPI authentication endpoints
-- JWT tokens (8-hour expiration)
+- JWT tokens (8-hour expiration) with tenant claim
 - bcrypt password hashing
-- PostgreSQL user tables
+- PostgreSQL user tables and multi-tenant isolation schema (or tenant_id model)
+- AWS Cognito (Tenant-wise auth)
+- AWS API Gateway + JWT tenant isolation
+
+**Common mistake:**
+- Tenant data mixing = HIPAA violation.
 
 ---
 
-### Module 2: Provider Credentialing
-**Who uses it:** Admin staff  
-**What it does:** Register doctors with insurance companies  
+### Module 2: Provider Credentialing & Management
+**Who uses it:** Admin staff / Scheduling Team  
+**What it does:** Register doctors with insurance companies and manage doctor/provider details before scheduling and billing.  
 **Key Features:**
 - Store provider NPI, licenses, certifications
 - Track credentialing status with each payer
-- Alert 90 days before credential expiration
+- Alert 90 days before credential expiration (auto-alert for license expiration)
 - CAQH integration
 - Document management (upload licenses, certificates)
 - Credentialing workflow (pending → approved → active)
+- Provider profile management
+- Provider availability & schedule mapping
+- Department and specialty mapping assignment
+- Provider status tracking
+- Hospital affiliation mapping
+- Taxonomy code management
+- Provider workload tracking
 
-**Why critical:** Without credentialing, ALL claims from that doctor get rejected
+**AI Feature:**
+- AI recommends provider schedule optimization
+- Auto-alert for license and credential expiration
+
+**Tech Stack:**
+- PostgreSQL tables: `providers`, `provider_specialties`, `provider_schedule`, `provider_licenses`
+- NPI Registry API integration
+
+**Common mistake:**
+- Wrong provider NPI/license setup = claim rejection.
 
 ---
 
-### Module 3: Fee Schedule Management
-**Who uses it:** Finance team  
-**What it does:** Maintain hospital prices and insurance contract rates  
+### Module 3: Fee Schedule & Master Data Management
+**Who uses it:** Finance team / Admin Team  
+**What it does:** Maintain hospital prices, insurance contract rates, and common healthcare master data used across all RCM modules.  
 **Key Features:**
 - Chargemaster (CDM): List of all services with prices
 - Contract rates by payer and CPT code
@@ -78,6 +112,26 @@ A complete **AI-powered** Revenue Cycle Management system that helps hospitals:
 - Contract variance analysis (detect underpayments)
 - Fee schedule versioning (effective dates)
 - Bulk import/export of fee schedules
+- Payer master setup
+- CPT / ICD / HCPCS code master setup
+- Department & specialty setup
+- Facility master
+- Insurance plan setup
+- Provider specialty mapping
+- Revenue code setup
+- Modifier master setup
+- POS (Place of Service) code setup
+
+**AI Feature:**
+- AI suggests CPT/ICD updates based on CMS changes
+- Smart search for medical codes
+
+**Tech Stack:**
+- PostgreSQL tables: `payer_master`, `cpt_codes`, `icd_codes`, `hcpcs_codes`, `facilities`, `departments`, `fee_schedules`
+- Redis cache for fast code lookup
+
+**Common mistake:**
+- Wrong CPT/ICD master setup = claim denial.
 
 ---
 
@@ -419,20 +473,35 @@ POST https://api.waystar.com/claims/v1/submit
 
 ---
 
-### Module 17: Claim Tracking (Real-Time)
-**Who uses it:** Billing team  
-**What it does:** Monitor claim status after submission  
+### Module 17: Claim Tracking & AR Follow-Up
+**Who uses it:** Billing team / AR Team / Insurance Follow-Up Team  
+**What it does:** Monitor claim status after submission and follow up on unpaid or pending insurance claims.  
 **Key Features:**
 - **Real-time claim status dashboard** (Submitted, Pending, Paid, Denied)
 - Aging reports (0-30, 31-60, 61-90, 90+ days)
 - **EDI 276/277 status inquiry** (automated daily checks)
-- Payer portal integration
-- Worklists (claims pending >30/60/90 days)
+- Payer portal integration and notes tracking
+- AR worklists (claims pending >30/60/90 days)
 - **Automated status updates** (WebSocket for real-time UI updates)
 - Claim status alerts (email, SMS)
+- Insurance follow-up tracking (calls, portal checks)
+- Escalation management for unresolved claims
+- Follow-up reminders and task assignment
+- Resolution tracking (Paid / Reprocessed / Denied)
+- Timely filing deadline monitoring
+- Claim reprocessing tracking
 
-**API Integration:**
+**AI Feature:**
+- AI predicts denial risk before aging increases
+- Smart priority for high-value unpaid claims
+
+**Tech Stack:**
+- PostgreSQL tables: `ar_followup`, `claim_aging`, `followup_notes`
+- Scheduler for reminder automation
 - **Waystar Status API** (EDI 276/277)
+
+**Common mistake:**
+- No AR follow-up = delayed payment & increased Days in AR.
 
 ---
 
@@ -465,9 +534,9 @@ POST https://api.waystar.com/claims/v1/submit
 
 ---
 
-### Module 19: Denial Management (Advanced)
+### Module 19: Denial & Appeals Management
 **Who uses it:** Denial team  
-**What it does:** Handle rejected claims and automate appeals  
+**What it does:** Handle rejected claims and automate/manage appeals to insurance companies  
 **SLA/TAT:** Appeals filed within 5 days of denial.  
 **Key Features:**
 - Denial tracking with reason codes
@@ -480,8 +549,15 @@ POST https://api.waystar.com/claims/v1/submit
 - **Denial pattern analysis** (ML-based)
 - **Predictive denial prevention** (flag before submission)
 - Appeal template library
+- Supporting document upload
+- Appeal status tracking
+- Appeal success analytics
+- Denial reason categorization
+- Appeal deadline tracking
 
-**AI Feature: Automated Appeal Generation**
+**AI Feature: Automated Appeal Generation & Success Suggestion**
+- AI suggests likely successful appeal reasons based on historical overturn rates
+- Auto-generate appeal letter drafts:
 ```python
 # AI generates appeal letter based on denial reason
 Input: Claim denied for "Medical necessity not established"
@@ -503,6 +579,10 @@ Sincerely,
 [Provider Name]"
 ```
 
+**Tech Stack:**
+- PostgreSQL tables: `appeals`, `appeal_documents`, `denials`
+- OCR for denial letter reading (AWS Textract or OpenAI Vision API)
+
 **Common denial reasons:**
 - Missing authorization (30%)
 - Incorrect coding (25%)
@@ -510,7 +590,9 @@ Sincerely,
 - Timely filing (10%)
 - Medical necessity (15%)
 
-**Revenue impact:** 10-15% of claims denied, 60% recoverable through appeals
+**Revenue impact & Common Mistake:**
+- *Revenue impact:* 10-15% of claims denied, 60% recoverable through appeals
+- *Common mistake:* Missing appeal deadline = permanent revenue loss.
 
 ---
 

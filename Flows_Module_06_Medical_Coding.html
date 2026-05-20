@@ -32,29 +32,46 @@
 │ ACTORS IN MEDICAL CODING MODULE                 │
 ├─────────────────────────────────────────────────┤
 │                                                  │
-│ 1. Medical Coder                                │
-│    - Reviews clinical notes                     │
+│ 1. Medical Coder                                 │
+│    - Reviews clinical notes                      │
 │    - Validates AI-suggested codes                │
-│    - Adds/removes codes                          │
+│    - Adds/removes ICD, CPT, HCPCS codes          │
+│    - Assigns modifiers                           │
 │                                                  │
-│ 2. Doctor                                        │
+│ 2. Doctor / Provider                             │
 │    - Provides clinical documentation             │
 │    - Adds diagnosis and procedures               │
+│    - Clarifies missing documentation             │
 │                                                  │
-│ 3. AI System (OpenAI GPT-4)                     │
+│ 3. Coding Auditor / Compliance Team              │
+│    - Reviews coding accuracy                     │
+│    - Checks compliance rules                     │
+│    - Approves high-risk codes                    │
+│                                                  │
+│ 4. Billing Team                                  │
+│    - Uses approved codes for claim creation      │
+│    - Reviews charge-code mapping                 │
+│                                                  │
+│ 5. AI System                                     │
 │    - Analyzes clinical notes                     │
 │    - Suggests ICD-10 codes                       │
-│    - Suggests CPT codes                          │
+│    - Suggests CPT / HCPCS codes                  │
+│    - Suggests modifiers                          │
 │                                                  │
-│ 4. System                                        │
+│ 6. System                                        │
 │    - Coding Engine                               │
 │    - Code Validation Service                     │
-│    - Database                                    │
+│    - Modifier Validation                         │
+│    - NCCI Edit Checker                           │
+│    - Coding Database                             │
+│    - Audit Log Service                           │
 │                                                  │
-│ 5. External APIs                                 │
-│    - OpenAI API (AI coding suggestions)          │
+│ 7. External APIs                                 │
+│    - OpenAI API                                  │
 │    - CMS Code Lookup API                         │
-│    - ICD-10 Database                             │
+│    - ICD-10 / CPT / HCPCS Database               │
+│    - NCCI Edits API / Rules Engine               │
+│    - EHR / EMR Integration API                   │
 │                                                  │
 └─────────────────────────────────────────────────┘
 </pre>
@@ -70,6 +87,29 @@
 │ Documentation       │
 └──────────┬──────────┘
            ↓
+┌─────────────────────┐
+│ Encounter           │
+│ Completeness Check  │
+│ - Notes complete?   │
+│ - Signed?           │
+│ - Missing info?     │
+└──────────┬──────────┘
+           ↓
+    ╱ ╲
+   ╱   ╲
+  ╱Valid?╲───No──────────┐
+  ╲      ╱               │
+   ╲    ╱                │
+    ╲  ╱                 │
+     │Yes                ▼
+     │            ┌─────────────────┐
+     │            │ Query Doctor    │
+     │            │ for Missing     │
+     │            │ Documentation   │
+     │            └────────┬────────┘
+     │                     │
+     └───────────┬─────────┘
+                 ↓
 ┌─────────────────────┐
 │ Encounter Marked    │
 │ "Ready for Coding"  │
@@ -113,9 +153,8 @@
 └──────────┬──────────┘
            ↓
 ┌─────────────────────┐
-│ Show Loading:       │
-│ "AI analyzing       │
-│  notes..."          │
+│ AI Analyzing Notes  │
+│ (OpenAI API)        │
 └──────────┬──────────┘
            ↓
 ┌─────────────────────┐
@@ -170,27 +209,14 @@
     │             │
     ▼             ▼
 ┌─────────┐  ┌─────────────────┐
-│ Accept  │  │ Reject/Modify   │
+│ Accept  │  │ Reject / Modify │
 │ Code    │  └────────┬────────┘
 └────┬────┘           │
      │                ▼
      │       ┌─────────────────┐
-     │       │ Search for      │
-     │       │ Correct Code    │
-     │       └────────┬────────┘
-     │                │
-     │                ▼
-     │       ┌─────────────────┐
-     │       │ Code Lookup:    │
-     │       │ Type: "myocard" │
-     │       └────────┬────────┘
-     │                │
-     │                ▼
-     │       ┌─────────────────┐
-     │       │ Show Results:   │
-     │       │ - I21.0         │
-     │       │ - I21.1         │
-     │       │ - I21.9         │
+     │       │ Search Correct  │
+     │       │ ICD/CPT/HCPCS   │
+     │       │ Code            │
      │       └────────┬────────┘
      │                │
      │                ▼
@@ -201,88 +227,106 @@
      │                │
      └────────┬───────┘
               ↓
-     ┌─────────────────┐
-     │ Add Additional  │
-     │ Codes if Needed │
-     └────┬────────────┘
-          ↓
-     ┌─────────────────┐
-     │ Validate Codes: │
-     │ - Valid ICD-10? │
-     │ - Valid CPT?    │
-     │ - Billable?     │
-     │ - Age/Gender    │
-     │   appropriate?  │
-     └────┬────────────┘
-          ↓
-    ╱ ╲
-   ╱   ╲
-  ╱Valid?╲───No──────┐
-  ╲     ╱            │
-   ╲   ╱             │
-    ╲ ╱              │
-     │Yes            │
-     │               ▼
-     │         ┌─────────────────┐
-     │         │ Show Validation │
-     │         │ Errors:         │
-     │         │ "I21.9 requires │
-     │         │  4th digit"     │
-     │         └────┬────────────┘
-     │              │
-     │              └─────────────┐
-     │                            │
-     ▼                            │
-┌─────────────────────┐          │
-│ Link Codes to       │          │
-│ Charges:            │          │
-│ - 93000 → $150      │          │
-│ - 85025 → $75       │          │
-│ - 99213 → $200      │          │
-└──────────┬──────────┘          │
-           │                     │
-           ▼                     │
-┌─────────────────────┐          │
-│ Add Modifiers       │          │
-│ (if needed)         │          │
-│ - 25 (Significant   │          │
-│   E/M)              │          │
-└──────────┬──────────┘          │
-           │                     │
-           ▼                     │
-┌─────────────────────┐          │
-│ Review Final Codes: │          │
-│                     │          │
-│ Diagnosis:          │          │
-│ - I21.9 (Primary)   │          │
-│ - R07.9             │          │
-│ - R06.02            │          │
-│                     │          │
-│ Procedures:         │          │
-│ - 99213             │          │
-│ - 93000             │          │
-│ - 85025             │          │
-│                     │          │
-│ Total Charges: $425 │          │
-└──────────┬──────────┘          │
-           │                     │
-           ▼                     │
-┌─────────────────────┐          │
-│ Click "Submit"      │          │
-└──────────┬──────────┘          │
-           │                     │
-           ▼◄────────────────────┘
 ┌─────────────────────┐
-│ Save Codes to       │
-│ Database            │
+│ Add Additional      │
+│ Codes if Needed     │
 └──────────┬──────────┘
            ↓
 ┌─────────────────────┐
-│ Log AI Usage:       │
-│ - Codes suggested: 6│
-│ - Codes accepted: 5 │
-│ - Codes modified: 1 │
-│ - Accuracy: 83%     │
+│ Duplicate Code      │
+│ Check               │
+│ - Same CPT?         │
+│ - Duplicate DX?     │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Validate Codes      │
+│ - Valid ICD-10?     │
+│ - Valid CPT?        │
+│ - Billable?         │
+│ - Age/Gender Match? │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ NCCI / Compliance   │
+│ Validation          │
+│ - Bundling Issues?  │
+│ - Medical Necessity │
+│ - Compliance Rules  │
+└──────────┬──────────┘
+           ↓
+    ╱ ╲
+   ╱   ╲
+  ╱Valid?╲───No──────────┐
+  ╲      ╱               │
+   ╲    ╱                │
+    ╲  ╱                 │
+     │Yes                ▼
+     │            ┌─────────────────┐
+     │            │ Show Validation │
+     │            │ Errors          │
+     │            └────────┬────────┘
+     │                     │
+     └───────────┬─────────┘
+                 ↓
+┌─────────────────────┐
+│ Add Modifiers       │
+│ - 25                │
+│ - 59                │
+│ - LT / RT           │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Modifier Validation │
+│ Conflict Check      │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Link Codes to       │
+│ Charges             │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Coding Audit Check  │
+│ High Risk Case?     │
+└──────────┬──────────┘
+           ↓
+    ╱ ╲
+   ╱   ╲
+  ╱Audit?╲───Yes─────────┐
+  ╲ Need?╱               │
+   ╲    ╱                │
+    ╲  ╱                 │
+     │No                 ▼
+     │            ┌─────────────────┐
+     │            │ Senior Coder /  │
+     │            │ QA Review       │
+     │            └────────┬────────┘
+     │                     │
+     └───────────┬─────────┘
+                 ↓
+┌─────────────────────┐
+│ Review Final Codes  │
+│ Diagnosis + CPT     │
+│ Total Charges       │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Click "Submit"      │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Save Codes to DB    │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Log AI Usage        │
+│ Accuracy / Changes  │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Save Audit Log      │
+│ Who / What Changed  │
 └──────────┬──────────┘
            ↓
 ┌─────────────────────┐
@@ -296,9 +340,8 @@
 └──────────┬──────────┘
            ↓
 ┌─────────────────────┐
-│ Show Success:       │
-│ "Coding complete    │
-│  for John Smith"    │
+│ Show Success        │
+│ "Coding Complete"   │
 └─────────────────────┘
 </pre>
 
@@ -313,23 +356,51 @@
 └──────────┬──────────┘
            ↓
 ┌─────────────────────┐
-│ Preprocess Text:    │
+│ Encounter           │
+│ Completeness Check  │
+│ - Notes signed?     │
+│ - Missing details?  │
+└──────────┬──────────┘
+           ↓
+    ╱ ╲
+   ╱   ╲
+  ╱Valid?╲───No──────────┐
+  ╲      ╱               │
+   ╲    ╱                │
+    ╲  ╱                 │
+     │Yes                ▼
+     │            ┌─────────────────┐
+     │            │ Request Missing │
+     │            │ Documentation   │
+     │            └─────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Preprocess Text     │
 │ - Remove PHI        │
-│ - Extract key terms │
+│ - Extract Key Terms │
+│ - Normalize Medical │
+│   Terms             │
 │ - Format for AI     │
 └──────────┬──────────┘
            ↓
 ┌─────────────────────┐
-│ Build OpenAI Prompt:│
-│                     │
-│ "You are a medical  │
-│  coding expert.     │
-│  Extract ICD-10 and │
-│  CPT codes from:    │
-│  [clinical notes]   │
-│  Return JSON with   │
-│  codes and          │
-│  confidence scores" │
+│ Clinical Context    │
+│ Extraction          │
+│ - Symptoms          │
+│ - Diagnosis         │
+│ - Procedure         │
+│ - Lab / Imaging     │
+│ - Medications       │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Build OpenAI Prompt │
+│ "You are medical    │
+│ coding expert..."   │
+│ Return ICD/CPT/     │
+│ HCPCS + Modifiers   │
+│ + Confidence JSON   │
 └──────────┬──────────┘
            ↓
 ┌─────────────────────┐
@@ -338,34 +409,76 @@
 └──────────┬──────────┘
            ↓
 ┌─────────────────────┐
-│ Parse AI Response:  │
-│ {                   │
-│   "icd10": [        │
-│     {               │
-│       "code":"I21.9"│
-│       "conf": 0.95  │
-│     }               │
-│   ],                │
-│   "cpt": [...]      │
-│ }                   │
+│ Parse AI Response   │
+│ ICD / CPT / HCPCS   │
+│ Modifiers           │
+│ Confidence Score    │
 └──────────┬──────────┘
            ↓
 ┌─────────────────────┐
-│ Validate Each Code: │
+│ Validate Each Code  │
 │ - Exists in DB?     │
-│ - Current year?     │
+│ - Current Year?     │
 │ - Billable?         │
+│ - Age/Gender Match? │
 └──────────┬──────────┘
            ↓
 ┌─────────────────────┐
-│ Enrich with Details:│
-│ - Code description  │
-│ - Charge amount     │
-│ - Required modifiers│
+│ NCCI / Compliance   │
+│ Validation          │
+│ - Bundling Issues?  │
+│ - Medical Necessity │
+│ - Payer Rules       │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Duplicate Code      │
+│ Detection           │
+│ - Same CPT?         │
+│ - Duplicate DX?     │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Modifier Validation │
+│ - 25 / 59 / LT / RT │
+│ - Conflict Check    │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Enrich with Details │
+│ - Description       │
+│ - Charge Amount     │
+│ - Required Modifier │
+│ - Payer Rule        │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Calculate AI        │
+│ Confidence Risk     │
+│ Low Confidence?     │
+└──────────┬──────────┘
+           ↓
+    ╱ ╲
+   ╱   ╲
+  ╱Low?  ╲───Yes─────────┐
+  ╲Conf? ╱               │
+   ╲    ╱                │
+    ╲  ╱                 │
+     │No                 ▼
+     │            ┌─────────────────┐
+     │            │ Flag for Manual │
+     │            │ Coder Review    │
+     │            └─────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Save AI Suggestion  │
+│ Audit Logs          │
 └──────────┬──────────┘
            ↓
 ┌─────────────────────┐
 │ Return to Frontend  │
+│ Suggested Codes UI  │
 └─────────────────────┘
 </pre>
 
@@ -375,38 +488,91 @@
 
 <pre><code>
 ┌──────────────┐                          ┌──────────────────┐
-│ Medical Coder│─────────────────────────&gt;│ Review Clinical  │
+│ Medical Coder│─────────────────────────>│ Review Clinical  │
 │              │                          │ Notes            │
 └──────┬───────┘                          └──────────────────┘
        │
        │                                  ┌──────────────────┐
-       ├─────────────────────────────────&gt;│ Request AI       │
+       ├─────────────────────────────────>│ Request AI       │
        │                                  │ Suggestions      │
        │                                  └──────────────────┘
        │
        │                                  ┌──────────────────┐
-       ├─────────────────────────────────&gt;│ Validate Codes   │
+       ├─────────────────────────────────>│ Accept / Reject  │
+       │                                  │ Modify Codes     │
        │                                  └──────────────────┘
        │
        │                                  ┌──────────────────┐
-       └─────────────────────────────────&gt;│ Submit Final     │
+       ├─────────────────────────────────>│ Add Modifiers    │
+       │                                  │ ICD/CPT/HCPCS    │
+       │                                  └──────────────────┘
+       │
+       │                                  ┌──────────────────┐
+       └─────────────────────────────────>│ Submit Final     │
                                           │ Codes            │
                                           └──────────────────┘
+
+
 ┌──────────────┐                          ┌──────────────────┐
-│ AI System    │─────────────────────────&gt;│ Analyze Notes    │
+│ Doctor /     │─────────────────────────>│ Complete Clinical│
+│ Provider     │                          │ Documentation    │
+└──────┬───────┘                          └──────────────────┘
+       │
+       │                                  ┌──────────────────┐
+       └─────────────────────────────────>│ Clarify Missing  │
+                                          │ Documentation    │
+                                          └──────────────────┘
+
+
+┌──────────────┐                          ┌──────────────────┐
+│ AI System    │─────────────────────────>│ Analyze Notes    │
 │ (OpenAI)     │                          └──────────────────┘
 └──────┬───────┘
        │                                  ┌──────────────────┐
-       └─────────────────────────────────&gt;│ Suggest Codes    │
+       └─────────────────────────────────>│ Suggest ICD/CPT/ │
+                                          │ HCPCS/Modifiers  │
                                           └──────────────────┘
+
+
 ┌──────────────┐                          ┌──────────────────┐
-│ System       │─────────────────────────&gt;│ Validate Code    │
+│ System       │─────────────────────────>│ Validate Code    │
 │              │                          │ Format           │
 └──────┬───────┘                          └──────────────────┘
        │
        │                                  ┌──────────────────┐
-       └─────────────────────────────────&gt;│ Calculate Charges│
+       ├─────────────────────────────────>│ NCCI / Bundling  │
+       │                                  │ Validation       │
+       │                                  └──────────────────┘
+       │
+       │                                  ┌──────────────────┐
+       ├─────────────────────────────────>│ Modifier         │
+       │                                  │ Validation       │
+       │                                  └──────────────────┘
+       │
+       │                                  ┌──────────────────┐
+       ├─────────────────────────────────>│ Calculate Charges│
+       │                                  └──────────────────┘
+       │
+       │                                  ┌──────────────────┐
+       └─────────────────────────────────>│ Save Audit Logs  │
                                           └──────────────────┘
+
+
+┌──────────────┐                          ┌──────────────────┐
+│ Coding       │─────────────────────────>│ Review High-Risk │
+│ Auditor / QA │                          │ Codes            │
+└──────┬───────┘                          └──────────────────┘
+       │
+       │                                  ┌──────────────────┐
+       └─────────────────────────────────>│ Approve / Return │
+                                          │ for Correction   │
+                                          └──────────────────┘
+
+
+┌──────────────┐                          ┌──────────────────┐
+│ Billing Team │─────────────────────────>│ Use Approved     │
+│              │                          │ Codes for Claim  │
+└──────────────┘                          └──────────────────┘
 </pre>
 
 <hr>
@@ -425,6 +591,27 @@
      │
      ▼
 ┌─────────────────────┐
+│ Encounter           │
+│ Completeness Check  │
+│ - Signed?           │
+│ - Missing Notes?    │
+└────┬────────────────┘
+     │
+     ▼
+    ╱ ╲
+   ╱   ╲
+  ╱Valid?╲───No─────────┐
+  ╲      ╱              │
+   ╲    ╱               │
+    ╲  ╱                │
+     │Yes               ▼
+     │          ┌─────────────────┐
+     │          │ Request Missing │
+     │          │ Documentation   │
+     │          └─────────────────┘
+     │
+     ▼
+┌─────────────────────┐
 │ Read Clinical Notes │
 └────┬────────────────┘
      │
@@ -435,13 +622,22 @@
      │
      ▼
 ┌─────────────────────┐
+│ Preprocess Notes    │
+│ - Remove PHI        │
+│ - Extract Terms     │
+│ - Normalize Text    │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
 │ Call OpenAI API     │
+│ (ICD/CPT/HCPCS)     │
 └────┬────────────────┘
      │
      ▼
 ┌─────────────────────┐
 │ Wait for Response   │
-│ (3-5 seconds)       │
+│ (3–5 seconds)       │
 └────┬────────────────┘
      │
      ▼
@@ -456,13 +652,14 @@
      │         ┌─────────────────┐
      │         │ Show Error:     │
      │         │ "AI unavailable"│
-     │         │ Manual coding   │
+     │         │ Manual Coding   │
      │         └─────────────────┘
      │
      ▼
 ┌─────────────────────┐
 │ Display Suggested   │
-│ Codes               │
+│ ICD/CPT/HCPCS       │
+│ Modifiers           │
 └────┬────────────────┘
      │
      ▼
@@ -481,56 +678,94 @@
      │                ▼
      │         ┌─────────────────┐
      │         │ Search Correct  │
+     │         │ ICD/CPT/HCPCS   │
      │         │ Code            │
      │         └────┬────────────┘
      │              │
-     │              │
      └──────┬───────┘
             ↓
-     ┌─────────────────┐
-     │ Add to Final    │
-     │ Code List       │
-     └────┬────────────┘
-          ↓
-     ┌─────────────────┐
-     │ More Codes?     │
-     └────┬────────────┘
-          │
-          ▼
+┌─────────────────────┐
+│ Add Additional      │
+│ Codes / Modifiers   │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ More Codes?         │
+└────┬────────────────┘
+     │
+     ▼
     ╱ ╲
    ╱   ╲
-  ╱Done? ╲───No──────┐
-  ╲     ╱            │
-   ╲   ╱             │
-    ╲ ╱              │
-     │Yes            │
-     │               │
-     │               └──────────┐
+  ╱Done? ╲───No────────┐
+  ╲      ╱             │
+   ╲    ╱              │
+    ╲  ╱               │
+     │Yes              │
+     │                 └────────┐
+     ▼                          │
+┌─────────────────────┐         │
+│ Duplicate Code      │         │
+│ Check               │         │
+└────┬────────────────┘         │
      │                          │
      ▼                          │
 ┌─────────────────────┐         │
 │ Validate All Codes  │         │
+│ - Billable?         │         │
+│ - Age/Gender Match? │         │
+│ - Current Year?     │         │
+└────┬────────────────┘         │
+     │                          │
+     ▼                          │
+┌─────────────────────┐         │
+│ NCCI / Compliance   │         │
+│ Validation          │         │
+│ - Bundling Issues?  │         │
+│ - Medical Necessity │         │
 └────┬────────────────┘         │
      │                          │
      ▼                          │
     ╱ ╲                         │
    ╱   ╲                        │
   ╱Valid?╲───No──────┐          │
-  ╲     ╱            │          │
-   ╲   ╱             │          │
-    ╲ ╱              │          │
-     │Yes            │          │
-     │               ▼          │
-     │         ┌─────────────────┐
-     │         │ Fix Errors      │
-     │         └────┬────────────┘
-     │              │            │
-     │              └────────────┘
-     │                          │
-     ▼◄─────────────────────────┘
+  ╲      ╱           │          │
+   ╲    ╱            │          │
+    ╲  ╱             │          │
+     │Yes            ▼          │
+     │        ┌─────────────────┐
+     │        │ Fix Errors      │
+     │        │ Revalidate      │
+     │        └────┬────────────┘
+     │             │
+     └─────────────┘
+     │
+     ▼
 ┌─────────────────────┐
-│ Link to Charges     │
+│ Link Codes to       │
+│ Charges             │
 └────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Coding Audit Check  │
+│ High Risk Case?     │
+└────┬────────────────┘
+     │
+     ▼
+    ╱ ╲
+   ╱   ╲
+  ╱Audit?╲──Yes───────┐
+  ╲ Need?╱            │
+   ╲    ╱             │
+    ╲  ╱              │
+     │No              ▼
+     │         ┌─────────────────┐
+     │         │ Senior Review   │
+     │         │ / QA Approval   │
+     │         └────┬────────────┘
+     │              │
+     └──────────────┘
      │
      ▼
 ┌─────────────────────┐
@@ -540,6 +775,13 @@
      ▼
 ┌─────────────────────┐
 │ Save to Database    │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Save Audit Logs     │
+│ AI Accuracy         │
+│ Accepted / Rejected │
 └────┬────────────────┘
      │
      ▼
@@ -555,55 +797,81 @@
 <pre><code>
 Coder    Frontend    Backend    OpenAI    Database
   │          │          │          │          │
+  │ Open     │          │          │          │
+  │ Encounter│          │          │          │
+  ├─────────>│          │          │          │
+  │          │ GET /encounter      │          │
+  │          ├─────────>│          │          │
+  │          │          │ Load Clinical Notes │
+  │          │          ├──────────────────>│
+  │          │          │ Encounter Data    │
+  │          │          │<──────────────────┤
+  │          │          │ Check Completeness│
+  │          │          │ Signed? Missing?  │
+  │          │          │          │          │
   │ Click AI │          │          │          │
   │ Suggest  │          │          │          │
-  ├─────────&gt;│          │          │          │
-  │          │          │          │          │
+  ├─────────>│          │          │          │
   │          │ POST /ai-code       │          │
-  │          ├─────────&gt;│          │          │
+  │          ├─────────>│          │          │
+  │          │          │ Preprocess Notes   │
+  │          │          │ Remove PHI         │
+  │          │          │ Extract Terms      │
   │          │          │          │          │
-  │          │          │ Load     │          │
-  │          │          │ Notes    │          │
-  │          │          ├──────────────────&gt;│
+  │          │          │ Build Prompt       │
+  │          │          │ ICD/CPT/HCPCS      │
+  │          │          │ Modifiers          │
   │          │          │          │          │
-  │          │          │ Build    │          │
-  │          │          │ Prompt   │          │
-  │          │          │          │          │
-  │          │          │ POST     │          │
-  │          │          ├─────────&gt;│          │
-  │          │          │          │          │
+  │          │          │ POST               │
+  │          │          ├─────────>│          │
   │          │          │          │ AI       │
   │          │          │          │ Process  │
-  │          │          │          │          │
   │          │          │ Response │          │
-  │          │          │&lt;─────────┤          │
+  │          │          │<─────────┤          │
   │          │          │          │          │
-  │          │          │ Validate │          │
-  │          │          │ Codes    │          │
-  │          │          ├──────────────────&gt;│
-  │          │          │          │          │
-  │          │ Suggested│          │          │
-  │          │ Codes    │          │          │
-  │          │&lt;─────────┤          │          │
-  │          │          │          │          │
-  │ Review   │          │          │          │
-  │&lt;─────────┤          │          │          │
-  │          │          │          │          │
-  │ Submit   │          │          │          │
-  ├─────────&gt;│          │          │          │
-  │          │          │          │          │
-  │          │ POST /save-codes    │          │
-  │          ├─────────&gt;│          │          │
-  │          │          │          │          │
-  │          │          │ INSERT   │          │
-  │          │          ├──────────────────&gt;│
-  │          │          │          │          │
-  │          │ Success  │          │          │
-  │          │&lt;─────────┤          │          │
-  │          │          │          │          │
-  │ Done     │          │          │          │
-  │&lt;─────────┤          │          │          │
-  │          │          │          │          │
+  │          │          │ Validate Codes     │
+  │          │          ├──────────────────>│
+  │          │          │ Exists? Billable? │
+  │          │          │ Current Year?     │
+  │          │          │<──────────────────┤
+  │          │          │                  │
+  │          │          │ NCCI Validation  │
+  │          │          │ Modifier Check   │
+  │          │          │ Duplicate Check  │
+  │          │          │                  │
+  │          │ Suggested│                  │
+  │          │ Codes    │                  │
+  │          │<─────────┤                  │
+  │ Review   │          │                  │
+  │ Codes    │          │                  │
+  │<─────────┤          │                  │
+  │          │          │                  │
+  │ Modify / │          │                  │
+  │ Accept   │          │                  │
+  ├─────────>│          │                  │
+  │          │          │ Save Final List  │
+  │          ├─────────>│                  │
+  │          │          │                  │
+  │          │          │ Audit Required?  │
+  │          │          │                  │
+  │          │          │ High Risk Check  │
+  │          │          │                  │
+  │ Submit   │          │                  │
+  ├─────────>│          │                  │
+  │          │ POST /save-codes            │
+  │          ├─────────>│                  │
+  │          │          │ INSERT Codes     │
+  │          │          ├──────────────────>│
+  │          │          │ Save Audit Logs  │
+  │          │          ├──────────────────>│
+  │          │          │ Update Encounter │
+  │          │          │ Status = Coded   │
+  │          │          ├──────────────────>│
+  │          │ Success  │                  │
+  │          │<─────────┤                  │
+  │ Done     │          │                  │
+  │<─────────┤          │                  │
+  │          │          │                  │
 </pre>
 
 <hr>
@@ -721,6 +989,11 @@ Coder selects correct code
 └──────────┬──────────┘
            ↓
 ┌─────────────────────┐
+│ Documentation       │
+│ Completeness Check  │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
 │ Pending Coding      │
 └──────────┬──────────┘
            ↓
@@ -730,7 +1003,27 @@ Coder selects correct code
 └──────────┬──────────┘
            ↓
 ┌─────────────────────┐
+│ AI Suggestions      │
+│ Generated           │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
 │ Coder Review        │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Validation / NCCI   │
+│ Check               │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Doctor Clarification│
+│ Needed?             │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ QA / Audit Review   │
+│ if High Risk        │
 └──────────┬──────────┘
            ↓
 ┌─────────────────────┐

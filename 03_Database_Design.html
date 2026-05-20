@@ -9,18 +9,22 @@
 <body>
 <h1>Healthcare RCM Application - Database Design Document</h1>
 
-<p><strong>Version:</strong> 1.0  </p>
-
+<p><strong>Version:</strong> 1.0</p>
+<p><strong>Date:</strong> May 18, 2026</p>
 <p><strong>For:</strong> Development Team</p>
 
 <hr>
 
 <h2>1. Database Overview</h2>
 
-<p><strong>Database Type:</strong> Relational Database (PostgreSQL recommended)  </p>
+<p><strong>Database Type:</strong> Relational Database (PostgreSQL recommended)</p>
 <p><strong>Why Relational:</strong> Healthcare data is highly structured with complex relationships</p>
 
-<p><strong>Total Tables:</strong> 35 core tables  </p>
+<p><strong>Total Tables:</strong></p>
+<li>35 Core RCM Tables</li>
+<li>15 Enterprise Operational &amp; Integration Tables</li>
+<li>50 Enterprise Healthcare RCM Tables</li>
+
 <p><strong>Estimated Records (Medium Hospital):</strong></p>
 <li>Patients: 100,000+</li>
 <li>Encounters: 500,000+ per year</li>
@@ -34,17 +38,30 @@
 <h3>Table 1: users</h3>
 <p><strong>Purpose:</strong> Store all system users (staff, providers, admins)</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>user_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
 <td>Unique user identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
+</tr>
+<tr>
+<td>employee_id</td>
+<td>VARCHAR(50)</td>
+<td>UNIQUE</td>
+<td>Internal employee identifier</td>
 </tr>
 <tr>
 <td>username</td>
@@ -65,10 +82,28 @@
 <td>Email address</td>
 </tr>
 <tr>
+<td>email_verified</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Email verification status</td>
+</tr>
+<tr>
+<td>phone_verified</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Phone verification status</td>
+</tr>
+<tr>
 <td>first_name</td>
 <td>VARCHAR(50)</td>
 <td>NOT NULL</td>
 <td>First name</td>
+</tr>
+<tr>
+<td>middle_name</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Middle name</td>
 </tr>
 <tr>
 <td>last_name</td>
@@ -77,10 +112,46 @@
 <td>Last name</td>
 </tr>
 <tr>
+<td>phone_number</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Contact number</td>
+</tr>
+<tr>
+<td>profile_image_url</td>
+<td>TEXT</td>
+<td></td>
+<td>User profile image</td>
+</tr>
+<tr>
+<td>department</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Billing, Coding, AR, IT</td>
+</tr>
+<tr>
+<td>designation</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Job designation</td>
+</tr>
+<tr>
 <td>role_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → roles</td>
 <td>User role</td>
+</tr>
+<tr>
+<td>provider_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → providers</td>
+<td>Linked provider account</td>
+</tr>
+<tr>
+<td>supervisor_user_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Reporting manager</td>
 </tr>
 <tr>
 <td>is_active</td>
@@ -89,9 +160,52 @@
 <td>Account status</td>
 </tr>
 <tr>
+<td>account_locked</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Account locked status</td>
+</tr>
+<tr>
+<td>account_locked_until</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Lock expiration timestamp</td>
+</tr>
+<tr>
+<td>failed_login_attempts</td>
+<td>INTEGER</td>
+<td>DEFAULT 0</td>
+<td>Failed login attempts</td>
+</tr>
+<tr>
+<td>last_failed_login</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last failed login timestamp</td>
+</tr>
+<tr>
 <td>last_login</td>
 <td>TIMESTAMP</td>
+<td></td>
 <td>Last login time</td>
+</tr>
+<tr>
+<td>login_status</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Online, Offline</td>
+</tr>
+<tr>
+<td>last_activity_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last user activity</td>
+</tr>
+<tr>
+<td>session_timeout_minutes</td>
+<td>INTEGER</td>
+<td>DEFAULT 30</td>
+<td>Session timeout duration</td>
 </tr>
 <tr>
 <td>mfa_enabled</td>
@@ -102,7 +216,74 @@
 <tr>
 <td>mfa_secret</td>
 <td>VARCHAR(100)</td>
+<td></td>
 <td>MFA secret key</td>
+</tr>
+<tr>
+<td>password_last_changed_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Password last changed date</td>
+</tr>
+<tr>
+<td>password_reset_token</td>
+<td>VARCHAR(255)</td>
+<td></td>
+<td>Password reset token</td>
+</tr>
+<tr>
+<td>password_reset_expiry</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Password reset token expiration</td>
+</tr>
+<tr>
+<td>is_password_change_required</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Force password change</td>
+</tr>
+<tr>
+<td>timezone</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>User timezone</td>
+</tr>
+<tr>
+<td>preferred_language</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Preferred language</td>
+</tr>
+<tr>
+<td>signature_url</td>
+<td>TEXT</td>
+<td></td>
+<td>Digital signature path</td>
+</tr>
+<tr>
+<td>hire_date</td>
+<td>DATE</td>
+<td></td>
+<td>Employee joining date</td>
+</tr>
+<tr>
+<td>termination_date</td>
+<td>DATE</td>
+<td></td>
+<td>Employee termination date</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>User who created record</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>User who updated record</td>
 </tr>
 <tr>
 <td>created_at</td>
@@ -113,21 +294,36 @@
 <tr>
 <td>updated_at</td>
 <td>TIMESTAMP</td>
+<td></td>
 <td>Last update date</td>
 </tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete timestamp</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>User who soft deleted record</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> username, email, role_id</p>
+<p><strong>Indexes:</strong> username, email, role_id, tenant_id, employee_id, provider_id, supervisor_user_id, is_active, account_locked, email_verified, deleted_at</p>
 
 <hr>
 
 <h3>Table 2: roles</h3>
 <p><strong>Purpose:</strong> Define user roles and permissions</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>role_id</td>
@@ -136,38 +332,88 @@
 <td>Unique role identifier</td>
 </tr>
 <tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
+</tr>
+<tr>
 <td>role_name</td>
 <td>VARCHAR(50)</td>
 <td>UNIQUE, NOT NULL</td>
-<td>Role name (e.g., "Front Desk")</td>
+<td>Role name</td>
 </tr>
 <tr>
 <td>description</td>
 <td>TEXT</td>
+<td></td>
 <td>Role description</td>
 </tr>
 <tr>
 <td>permissions</td>
 <td>JSONB</td>
+<td></td>
 <td>Permissions object</td>
+</tr>
+<tr>
+<td>is_active</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+<td>Role active status</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>User who created role</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>User who updated role</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
+</tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete timestamp</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>User who deleted role</td>
+</tr>
+</table>
 
-<p><strong>Sample Roles:</strong></p>
-<li>System Administrator</li>
-<li>Front Desk Staff</li>
-<li>Clinical Staff</li>
-<li>Medical Coder</li>
-<li>Billing Specialist</li>
-<li>AR Manager</li>
-<li>Collections Staff</li>
-<li>Finance Manager</li>
-<li>Compliance Officer</li>
-<li>Provider (Doctor)</li>
+<p>Sample Roles:</p>
+
+<p>System Administrator</p>
+<p>Front Desk Staff</p>
+<p>Clinical Staff</p>
+<p>Medical Coder</p>
+<p>Billing Specialist</p>
+<p>AR Manager</p>
+<p>Collections Staff</p>
+<p>Finance Manager</p>
+<p>Compliance Officer</p>
+<p>Provider (Doctor)</p>
+
+
+<p><strong>Indexes:</strong> role_name, tenant_id, is_active</p>
 
 <p><strong>Permissions Structure (JSONB):</strong></p>
 <pre><code class="language-json">
@@ -178,18 +424,19 @@
   "payments": {"create": true, "read": true, "update": false, "delete": false},
   "reports": {"create": false, "read": true, "update": false, "delete": false}
 }
-</pre>
+</code></pre>
 
 <hr>
 
 <h3>Table 3: providers</h3>
 <p><strong>Purpose:</strong> Store doctor/provider information</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>provider_id</td>
@@ -198,10 +445,22 @@
 <td>Unique provider identifier</td>
 </tr>
 <tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
+</tr>
+<tr>
 <td>npi_type1</td>
 <td>VARCHAR(10)</td>
 <td>UNIQUE, NOT NULL</td>
 <td>Individual NPI number</td>
+</tr>
+<tr>
+<td>npi_type2</td>
+<td>VARCHAR(10)</td>
+<td></td>
+<td>Organization NPI</td>
 </tr>
 <tr>
 <td>first_name</td>
@@ -218,67 +477,140 @@
 <tr>
 <td>middle_name</td>
 <td>VARCHAR(50)</td>
+<td></td>
 <td>Middle name</td>
 </tr>
 <tr>
 <td>suffix</td>
 <td>VARCHAR(10)</td>
-<td>Suffix (MD, DO, etc.)</td>
+<td></td>
+<td>MD, DO, etc.</td>
 </tr>
 <tr>
 <td>dob</td>
 <td>DATE</td>
+<td></td>
 <td>Date of birth</td>
 </tr>
 <tr>
 <td>ssn_encrypted</td>
 <td>VARCHAR(255)</td>
+<td></td>
 <td>Encrypted SSN</td>
 </tr>
 <tr>
 <td>license_number</td>
 <td>VARCHAR(50)</td>
+<td></td>
 <td>Medical license number</td>
 </tr>
 <tr>
 <td>license_state</td>
 <td>VARCHAR(2)</td>
+<td></td>
 <td>License state</td>
 </tr>
 <tr>
 <td>dea_number</td>
 <td>VARCHAR(20)</td>
+<td></td>
 <td>DEA number</td>
+</tr>
+<tr>
+<td>caqh_id</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>CAQH credentialing ID</td>
 </tr>
 <tr>
 <td>taxonomy_code</td>
 <td>VARCHAR(20)</td>
+<td></td>
 <td>Provider taxonomy code</td>
+</tr>
+<tr>
+<td>taxonomy_description</td>
+<td>VARCHAR(255)</td>
+<td></td>
+<td>Taxonomy description</td>
 </tr>
 <tr>
 <td>specialty_primary</td>
 <td>VARCHAR(100)</td>
+<td></td>
 <td>Primary specialty</td>
 </tr>
 <tr>
 <td>specialty_secondary</td>
 <td>VARCHAR(100)</td>
+<td></td>
 <td>Secondary specialty</td>
+</tr>
+<tr>
+<td>credentialing_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Credentialing workflow status</td>
+</tr>
+<tr>
+<td>employment_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Active/Inactive</td>
 </tr>
 <tr>
 <td>email</td>
 <td>VARCHAR(100)</td>
+<td></td>
 <td>Email</td>
 </tr>
 <tr>
 <td>phone</td>
 <td>VARCHAR(20)</td>
+<td></td>
 <td>Phone</td>
+</tr>
+<tr>
+<td>fax_number</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Fax number</td>
+</tr>
+<tr>
+<td>address_line1</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Address</td>
+</tr>
+<tr>
+<td>address_line2</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Address line 2</td>
+</tr>
+<tr>
+<td>city</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>City</td>
+</tr>
+<tr>
+<td>state</td>
+<td>VARCHAR(2)</td>
+<td></td>
+<td>State</td>
+</tr>
+<tr>
+<td>zip_code</td>
+<td>VARCHAR(10)</td>
+<td></td>
+<td>ZIP code</td>
 </tr>
 <tr>
 <td>signature_image</td>
 <td>TEXT</td>
-<td>Digital signature (base64)</td>
+<td></td>
+<td>Digital signature</td>
 </tr>
 <tr>
 <td>is_active</td>
@@ -287,32 +619,68 @@
 <td>Active status</td>
 </tr>
 <tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by</td>
+</tr>
+<tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
 <tr>
 <td>updated_at</td>
 <td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
 </tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete timestamp</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>User who deleted provider</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> npi<em>type1, last</em>name</p>
+<p><strong>Indexes:</strong> npi_type1, last_name, tenant_id, credentialing_status</p>
 
 <hr>
 
 <h3>Table 4: provider_credentials</h3>
 <p><strong>Purpose:</strong> Track provider credentialing with each payer</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>credential_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Credential identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>provider_id</td>
@@ -327,69 +695,116 @@
 <td>Insurance payer</td>
 </tr>
 <tr>
+<td>credentialing_type</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Medicare/Commercial</td>
+</tr>
+<tr>
 <td>status</td>
 <td>VARCHAR(20)</td>
 <td>NOT NULL</td>
-<td>Pending, Approved, Denied, Expired</td>
+<td>Pending, Approved, Denied</td>
 </tr>
 <tr>
 <td>application_date</td>
 <td>DATE</td>
+<td></td>
 <td>Application submitted date</td>
 </tr>
 <tr>
 <td>effective_date</td>
 <td>DATE</td>
+<td></td>
 <td>Credential effective date</td>
 </tr>
 <tr>
 <td>expiration_date</td>
 <td>DATE</td>
+<td></td>
 <td>Credential expiration date</td>
+</tr>
+<tr>
+<td>recredential_due_date</td>
+<td>DATE</td>
+<td></td>
+<td>Recredentialing due date</td>
 </tr>
 <tr>
 <td>credential_number</td>
 <td>VARCHAR(50)</td>
-<td>Payer-assigned credential number</td>
+<td></td>
+<td>Payer credential number</td>
+</tr>
+<tr>
+<td>rejection_reason</td>
+<td>TEXT</td>
+<td></td>
+<td>Denial reason</td>
+</tr>
+<tr>
+<td>document_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → documents</td>
+<td>Credential documents</td>
 </tr>
 <tr>
 <td>notes</td>
 <td>TEXT</td>
+<td></td>
 <td>Notes</td>
+</tr>
+<tr>
+<td>approved_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Approved by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
 <tr>
 <td>updated_at</td>
 <td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
 </tr>
+</table>
 
-<p><strong>Indexes:</strong> provider<em>id, payer</em>id, expiration_date</p>
+<p><strong>Indexes:</strong> provider_id, payer_id, expiration_date</p>
 
 <hr>
 
 <h3>Table 5: payers</h3>
 <p><strong>Purpose:</strong> Store insurance companies/payers</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>payer_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Payer identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>payer_name</td>
 <td>VARCHAR(100)</td>
 <td>NOT NULL</td>
-<td>Payer name (e.g., "Blue Cross Blue Shield")</td>
+<td>Insurance payer name</td>
 </tr>
 <tr>
 <td>payer_code</td>
@@ -400,91 +815,174 @@
 <tr>
 <td>payer_id_external</td>
 <td>VARCHAR(50)</td>
-<td>External payer ID (for clearinghouse)</td>
+<td></td>
+<td>External payer ID</td>
 </tr>
 <tr>
 <td>payer_type</td>
 <td>VARCHAR(20)</td>
-<td>Commercial, Medicare, Medicaid, Other</td>
+<td></td>
+<td>Commercial, Medicare</td>
+</tr>
+<tr>
+<td>payer_category</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Government/Commercial</td>
 </tr>
 <tr>
 <td>address_line1</td>
 <td>VARCHAR(100)</td>
+<td></td>
 <td>Address</td>
 </tr>
 <tr>
 <td>address_line2</td>
 <td>VARCHAR(100)</td>
+<td></td>
+<td>Address line 2</td>
 </tr>
 <tr>
 <td>city</td>
 <td>VARCHAR(50)</td>
+<td></td>
+<td>City</td>
 </tr>
 <tr>
 <td>state</td>
 <td>VARCHAR(2)</td>
+<td></td>
+<td>State</td>
 </tr>
 <tr>
 <td>zip_code</td>
 <td>VARCHAR(10)</td>
+<td></td>
+<td>ZIP code</td>
 </tr>
 <tr>
 <td>phone</td>
 <td>VARCHAR(20)</td>
+<td></td>
+<td>Phone</td>
+</tr>
+<tr>
+<td>support_email</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Support email</td>
+</tr>
+<tr>
+<td>website_url</td>
+<td>TEXT</td>
+<td></td>
+<td>Website URL</td>
+</tr>
+<tr>
+<td>portal_url</td>
+<td>TEXT</td>
+<td></td>
+<td>Claims portal URL</td>
+</tr>
+<tr>
+<td>edi_support_contact</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>EDI support contact</td>
 </tr>
 <tr>
 <td>claims_address</td>
 <td>VARCHAR(200)</td>
+<td></td>
 <td>Claims mailing address</td>
 </tr>
 <tr>
 <td>electronic_payer_id</td>
 <td>VARCHAR(20)</td>
-<td>Electronic payer ID for EDI</td>
+<td></td>
+<td>Electronic payer ID</td>
 </tr>
 <tr>
 <td>timely_filing_days</td>
 <td>INTEGER</td>
-<td>Timely filing limit (days)</td>
+<td></td>
+<td>Timely filing limit</td>
 </tr>
 <tr>
 <td>is_active</td>
 <td>BOOLEAN</td>
 <td>DEFAULT TRUE</td>
+<td>Active status</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> payer<em>name, payer</em>code</p>
+<p><strong>Indexes:</strong> payer_name, payer_code, electronic_payer_id</p>
 
 <hr>
 
 <h3>Table 6: payer_contracts</h3>
-<p><strong>Purpose:</strong> Store contracted rates with each payer</p>
+<p><strong>Purpose:</strong> Store contracted reimbursement agreements with insurance payers</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>contract_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Contract identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>payer_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → payers</td>
+<td>Insurance payer</td>
 </tr>
 <tr>
 <td>contract_name</td>
 <td>VARCHAR(100)</td>
+<td>NOT NULL</td>
 <td>Contract name</td>
+</tr>
+<tr>
+<td>contract_number</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Contract identifier</td>
+</tr>
+<tr>
+<td>contract_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Active, Expired, Pending</td>
 </tr>
 <tr>
 <td>effective_date</td>
@@ -495,54 +993,150 @@
 <tr>
 <td>end_date</td>
 <td>DATE</td>
+<td></td>
 <td>Contract end date</td>
+</tr>
+<tr>
+<td>renewal_date</td>
+<td>DATE</td>
+<td></td>
+<td>Contract renewal date</td>
+</tr>
+<tr>
+<td>signed_date</td>
+<td>DATE</td>
+<td></td>
+<td>Contract signed date</td>
+</tr>
+<tr>
+<td>signed_document_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → documents</td>
+<td>Contract PDF document</td>
 </tr>
 <tr>
 <td>payment_methodology</td>
 <td>VARCHAR(50)</td>
-<td>Fee Schedule, % of Charges, DRG, Capitation</td>
+<td></td>
+<td>Fee Schedule, DRG, APC</td>
 </tr>
 <tr>
 <td>percentage_of_charges</td>
 <td>DECIMAL(5,2)</td>
-<td>If % of charges (e.g., 80.00)</td>
+<td></td>
+<td>Percent reimbursement</td>
+</tr>
+<tr>
+<td>reimbursement_cycle_days</td>
+<td>INTEGER</td>
+<td></td>
+<td>Expected reimbursement days</td>
 </tr>
 <tr>
 <td>contract_terms</td>
 <td>TEXT</td>
+<td></td>
 <td>Contract terms</td>
+</tr>
+<tr>
+<td>escalation_clause</td>
+<td>TEXT</td>
+<td></td>
+<td>Escalation details</td>
+</tr>
+<tr>
+<td>carve_out_services</td>
+<td>TEXT</td>
+<td></td>
+<td>Special carve-out services</td>
+</tr>
+<tr>
+<td>stop_loss_threshold</td>
+<td>DECIMAL(10,2)</td>
+<td></td>
+<td>Stop loss amount</td>
 </tr>
 <tr>
 <td>is_active</td>
 <td>BOOLEAN</td>
 <td>DEFAULT TRUE</td>
+<td>Active status</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
+</tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete timestamp</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Deleted by user</td>
+</tr>
+</table>
+
+<p><strong>Indexes:</strong> payer_id, contract_status, effective_date, tenant_id</p>
 
 <hr>
 
 <h3>Table 7: payer_contract_rates</h3>
-<p><strong>Purpose:</strong> Store allowed amounts by CPT code for each contract</p>
+<p><strong>Purpose:</strong> Store CPT/HCPCS reimbursement rates for payer contracts</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>rate_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Rate identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>contract_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → payer_contracts</td>
+<td>Linked payer contract</td>
+</tr>
+<tr>
+<td>fee_schedule_name</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Fee schedule name</td>
 </tr>
 <tr>
 <td>cpt_code</td>
@@ -553,7 +1147,26 @@
 <tr>
 <td>modifier</td>
 <td>VARCHAR(10)</td>
-<td>Modifier (if applicable)</td>
+<td></td>
+<td>Modifier</td>
+</tr>
+<tr>
+<td>place_of_service</td>
+<td>VARCHAR(2)</td>
+<td></td>
+<td>POS-specific reimbursement</td>
+</tr>
+<tr>
+<td>revenue_code</td>
+<td>VARCHAR(4)</td>
+<td></td>
+<td>Revenue code</td>
+</tr>
+<tr>
+<td>billing_classification</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Professional/Facility</td>
 </tr>
 <tr>
 <td>allowed_amount</td>
@@ -562,38 +1175,98 @@
 <td>Contracted allowed amount</td>
 </tr>
 <tr>
+<td>expected_patient_responsibility</td>
+<td>DECIMAL(10,2)</td>
+<td></td>
+<td>Estimated patient balance</td>
+</tr>
+<tr>
+<td>reimbursement_percentage</td>
+<td>DECIMAL(5,2)</td>
+<td></td>
+<td>Reimbursement percentage</td>
+</tr>
+<tr>
 <td>effective_date</td>
 <td>DATE</td>
+<td></td>
 <td>Rate effective date</td>
 </tr>
 <tr>
 <td>end_date</td>
 <td>DATE</td>
+<td></td>
 <td>Rate end date</td>
+</tr>
+<tr>
+<td>requires_authorization</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Prior auth required</td>
+</tr>
+<tr>
+<td>requires_modifier</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Modifier required</td>
+</tr>
+<tr>
+<td>notes</td>
+<td>TEXT</td>
+<td></td>
+<td>Internal notes</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> contract<em>id, cpt</em>code</p>
+<p><strong>Indexes:</strong> contract_id, cpt_code, place_of_service, effective_date, tenant_id</p>
 
 <hr>
 
 <h3>Table 8: chargemaster (CDM)</h3>
-<p><strong>Purpose:</strong> Hospital fee schedule - all services with standard prices</p>
+<p><strong>Purpose:</strong> Hospital fee schedule and charge master services</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>cdm_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Chargemaster identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>charge_code</td>
@@ -604,7 +1277,14 @@
 <tr>
 <td>cpt_code</td>
 <td>VARCHAR(10)</td>
+<td></td>
 <td>CPT/HCPCS code</td>
+</tr>
+<tr>
+<td>hcpcs_code</td>
+<td>VARCHAR(10)</td>
+<td></td>
+<td>HCPCS code</td>
 </tr>
 <tr>
 <td>description</td>
@@ -615,18 +1295,74 @@
 <tr>
 <td>department</td>
 <td>VARCHAR(50)</td>
+<td></td>
 <td>Department</td>
+</tr>
+<tr>
+<td>billing_category</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Radiology, Lab, Surgery</td>
 </tr>
 <tr>
 <td>revenue_code</td>
 <td>VARCHAR(4)</td>
-<td>Revenue code (for UB-04)</td>
+<td></td>
+<td>UB-04 revenue code</td>
+</tr>
+<tr>
+<td>place_of_service</td>
+<td>VARCHAR(2)</td>
+<td></td>
+<td>POS code</td>
 </tr>
 <tr>
 <td>standard_charge</td>
 <td>DECIMAL(10,2)</td>
 <td>NOT NULL</td>
 <td>Standard charge amount</td>
+</tr>
+<tr>
+<td>minimum_charge</td>
+<td>DECIMAL(10,2)</td>
+<td></td>
+<td>Minimum allowed charge</td>
+</tr>
+<tr>
+<td>maximum_charge</td>
+<td>DECIMAL(10,2)</td>
+<td></td>
+<td>Maximum charge</td>
+</tr>
+<tr>
+<td>cost_to_hospital</td>
+<td>DECIMAL(10,2)</td>
+<td></td>
+<td>Internal hospital cost</td>
+</tr>
+<tr>
+<td>requires_authorization</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Prior auth required</td>
+</tr>
+<tr>
+<td>requires_modifier</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Modifier required</td>
+</tr>
+<tr>
+<td>billable_flag</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+<td>Billable service flag</td>
+</tr>
+<tr>
+<td>active_for_claims</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+<td>Available for billing</td>
 </tr>
 <tr>
 <td>effective_date</td>
@@ -637,60 +1373,108 @@
 <tr>
 <td>end_date</td>
 <td>DATE</td>
+<td></td>
 <td>End date</td>
 </tr>
 <tr>
 <td>is_active</td>
 <td>BOOLEAN</td>
 <td>DEFAULT TRUE</td>
+<td>Active status</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
+</tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete timestamp</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Deleted by user</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> charge<em>code, cpt</em>code, department</p>
+<p><strong>Indexes:</strong> charge_code, cpt_code, department, billing_category, tenant_id</p>
 
 <hr>
 
 <h3>Table 9: patients</h3>
 <p><strong>Purpose:</strong> Store patient demographics</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>patient_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Patient identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>mrn</td>
 <td>VARCHAR(20)</td>
 <td>UNIQUE, NOT NULL</td>
-<td>Medical Record Number</td>
+<td>Medical record number</td>
 </tr>
 <tr>
 <td>first_name</td>
 <td>VARCHAR(50)</td>
 <td>NOT NULL</td>
+<td>First name</td>
 </tr>
 <tr>
 <td>last_name</td>
 <td>VARCHAR(50)</td>
 <td>NOT NULL</td>
+<td>Last name</td>
 </tr>
 <tr>
 <td>middle_name</td>
 <td>VARCHAR(50)</td>
+<td></td>
+<td>Middle name</td>
 </tr>
 <tr>
 <td>suffix</td>
 <td>VARCHAR(10)</td>
+<td></td>
+<td>Suffix</td>
 </tr>
 <tr>
 <td>dob</td>
@@ -702,331 +1486,613 @@
 <td>gender</td>
 <td>VARCHAR(10)</td>
 <td>NOT NULL</td>
-<td>Male, Female, Other</td>
+<td>Gender</td>
+</tr>
+<tr>
+<td>marital_status</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Marital status</td>
+</tr>
+<tr>
+<td>employment_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Employment status</td>
+</tr>
+<tr>
+<td>employer_name</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Employer name</td>
 </tr>
 <tr>
 <td>ssn_encrypted</td>
 <td>VARCHAR(255)</td>
+<td></td>
 <td>Encrypted SSN</td>
 </tr>
 <tr>
 <td>address_line1</td>
 <td>VARCHAR(100)</td>
+<td></td>
+<td>Address</td>
 </tr>
 <tr>
 <td>address_line2</td>
 <td>VARCHAR(100)</td>
+<td></td>
+<td>Address line 2</td>
 </tr>
 <tr>
 <td>city</td>
 <td>VARCHAR(50)</td>
+<td></td>
+<td>City</td>
 </tr>
 <tr>
 <td>state</td>
 <td>VARCHAR(2)</td>
+<td></td>
+<td>State</td>
 </tr>
 <tr>
 <td>zip_code</td>
 <td>VARCHAR(10)</td>
+<td></td>
+<td>ZIP code</td>
 </tr>
 <tr>
 <td>phone_home</td>
 <td>VARCHAR(20)</td>
+<td></td>
+<td>Home phone</td>
 </tr>
 <tr>
 <td>phone_mobile</td>
 <td>VARCHAR(20)</td>
+<td></td>
+<td>Mobile phone</td>
 </tr>
 <tr>
 <td>phone_work</td>
 <td>VARCHAR(20)</td>
+<td></td>
+<td>Work phone</td>
 </tr>
 <tr>
 <td>email</td>
 <td>VARCHAR(100)</td>
+<td></td>
+<td>Email</td>
 </tr>
 <tr>
 <td>preferred_language</td>
 <td>VARCHAR(20)</td>
+<td></td>
+<td>Preferred language</td>
+</tr>
+<tr>
+<td>preferred_contact_method</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Email/SMS/Phone</td>
 </tr>
 <tr>
 <td>race</td>
 <td>VARCHAR(50)</td>
+<td></td>
+<td>Race</td>
 </tr>
 <tr>
 <td>ethnicity</td>
 <td>VARCHAR(50)</td>
+<td></td>
+<td>Ethnicity</td>
 </tr>
 <tr>
 <td>emergency_contact_name</td>
 <td>VARCHAR(100)</td>
+<td></td>
+<td>Emergency contact</td>
 </tr>
 <tr>
 <td>emergency_contact_phone</td>
 <td>VARCHAR(20)</td>
+<td></td>
+<td>Emergency phone</td>
 </tr>
 <tr>
 <td>emergency_contact_relationship</td>
 <td>VARCHAR(50)</td>
+<td></td>
+<td>Relationship</td>
+</tr>
+<tr>
+<td>portal_access_enabled</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Patient portal access</td>
+</tr>
+<tr>
+<td>consent_signed</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>HIPAA consent signed</td>
+</tr>
+<tr>
+<td>consent_signed_date</td>
+<td>DATE</td>
+<td></td>
+<td>Consent date</td>
+</tr>
+<tr>
+<td>deceased_flag</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Deceased patient flag</td>
+</tr>
+<tr>
+<td>deceased_date</td>
+<td>DATE</td>
+<td></td>
+<td>Date of death</td>
 </tr>
 <tr>
 <td>is_active</td>
 <td>BOOLEAN</td>
 <td>DEFAULT TRUE</td>
+<td>Active status</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
 <tr>
 <td>updated_at</td>
 <td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
 </tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete timestamp</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Deleted by user</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> mrn, last<em>name, dob, ssn</em>encrypted</p>
+<p><strong>Indexes:</strong> mrn, last_name, dob, tenant_id, email</p>
 
 <hr>
 
 <h3>Table 10: patient_insurance</h3>
-<p><strong>Purpose:</strong> Store patient insurance information</p>
+<p><strong>Purpose:</strong> Store patient insurance coverage details</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>insurance_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Insurance identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>patient_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → patients</td>
+<td>Patient</td>
 </tr>
 <tr>
 <td>payer_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → payers</td>
+<td>Insurance payer</td>
 </tr>
 <tr>
 <td>priority</td>
 <td>INTEGER</td>
 <td>NOT NULL</td>
-<td>1=Primary, 2=Secondary, 3=Tertiary</td>
+<td>Primary/Secondary/Tertiary</td>
 </tr>
 <tr>
 <td>policy_number</td>
 <td>VARCHAR(50)</td>
 <td>NOT NULL</td>
-<td>Policy/Member ID</td>
+<td>Policy/member ID</td>
 </tr>
 <tr>
 <td>group_number</td>
 <td>VARCHAR(50)</td>
+<td></td>
 <td>Group number</td>
 </tr>
 <tr>
 <td>subscriber_name</td>
 <td>VARCHAR(100)</td>
+<td></td>
 <td>Subscriber name</td>
 </tr>
 <tr>
 <td>subscriber_dob</td>
 <td>DATE</td>
+<td></td>
 <td>Subscriber DOB</td>
+</tr>
+<tr>
+<td>subscriber_ssn_encrypted</td>
+<td>VARCHAR(255)</td>
+<td></td>
+<td>Subscriber SSN</td>
 </tr>
 <tr>
 <td>subscriber_relationship</td>
 <td>VARCHAR(20)</td>
-<td>Self, Spouse, Child, Other</td>
+<td></td>
+<td>Self/Spouse/Child</td>
+</tr>
+<tr>
+<td>employer_name</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Employer name</td>
 </tr>
 <tr>
 <td>effective_date</td>
 <td>DATE</td>
+<td></td>
 <td>Coverage effective date</td>
 </tr>
 <tr>
 <td>termination_date</td>
 <td>DATE</td>
+<td></td>
 <td>Coverage termination date</td>
+</tr>
+<tr>
+<td>insurance_status</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Active/Inactive</td>
+</tr>
+<tr>
+<td>verification_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Verified/Unverified</td>
+</tr>
+<tr>
+<td>verification_date</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last verification</td>
+</tr>
+<tr>
+<td>authorization_required</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Prior auth required</td>
+</tr>
+<tr>
+<td>referral_required</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Referral required</td>
 </tr>
 <tr>
 <td>copay</td>
 <td>DECIMAL(10,2)</td>
+<td></td>
 <td>Copay amount</td>
 </tr>
 <tr>
 <td>deductible_annual</td>
 <td>DECIMAL(10,2)</td>
+<td></td>
 <td>Annual deductible</td>
 </tr>
 <tr>
 <td>deductible_met</td>
 <td>DECIMAL(10,2)</td>
-<td>Deductible met YTD</td>
+<td></td>
+<td>Deductible met</td>
 </tr>
 <tr>
 <td>oop_max_annual</td>
 <td>DECIMAL(10,2)</td>
-<td>Out-of-pocket maximum</td>
+<td></td>
+<td>OOP maximum</td>
 </tr>
 <tr>
 <td>oop_met</td>
 <td>DECIMAL(10,2)</td>
-<td>OOP met YTD</td>
+<td></td>
+<td>OOP met</td>
+</tr>
+<tr>
+<td>coinsurance_percentage</td>
+<td>DECIMAL(5,2)</td>
+<td></td>
+<td>Coinsurance percentage</td>
 </tr>
 <tr>
 <td>card_front_image</td>
 <td>TEXT</td>
-<td>Insurance card front (base64)</td>
+<td></td>
+<td>Insurance card front</td>
 </tr>
 <tr>
 <td>card_back_image</td>
 <td>TEXT</td>
-<td>Insurance card back (base64)</td>
+<td></td>
+<td>Insurance card back</td>
 </tr>
 <tr>
 <td>is_active</td>
 <td>BOOLEAN</td>
 <td>DEFAULT TRUE</td>
+<td>Active status</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
 <tr>
 <td>updated_at</td>
 <td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
 </tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete timestamp</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Deleted by user</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> patient<em>id, payer</em>id, priority</p>
+<p><strong>Indexes:</strong> patient_id, payer_id, priority, verification_status, tenant_id</p>
 
 <hr>
 
 <h3>Table 11: eligibility_checks</h3>
 <p><strong>Purpose:</strong> Store insurance eligibility verification history</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>check_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Eligibility check identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>patient_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → patients</td>
+<td>Patient</td>
 </tr>
 <tr>
 <td>insurance_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → patient_insurance</td>
+<td>Insurance</td>
+</tr>
+<tr>
+<td>appointment_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → appointments</td>
+<td>Related appointment</td>
+</tr>
+<tr>
+<td>transaction_id</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>EDI/API transaction ID</td>
+</tr>
+<tr>
+<td>verification_source</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Clearinghouse/API</td>
+</tr>
+<tr>
+<td>response_code</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Eligibility response code</td>
 </tr>
 <tr>
 <td>check_date</td>
 <td>TIMESTAMP</td>
 <td>NOT NULL</td>
-<td>Verification date/time</td>
+<td>Verification timestamp</td>
 </tr>
 <tr>
 <td>service_date</td>
 <td>DATE</td>
-<td>Date of service being verified</td>
+<td></td>
+<td>Service date</td>
 </tr>
 <tr>
 <td>coverage_status</td>
 <td>VARCHAR(20)</td>
-<td>Active, Inactive, Terminated</td>
+<td></td>
+<td>Active/Inactive</td>
+</tr>
+<tr>
+<td>network_status</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>In/Out-of-network</td>
 </tr>
 <tr>
 <td>copay</td>
 <td>DECIMAL(10,2)</td>
-<td>Copay amount</td>
+<td></td>
+<td>Copay</td>
 </tr>
 <tr>
 <td>deductible_remaining</td>
 <td>DECIMAL(10,2)</td>
-<td>Deductible remaining</td>
+<td></td>
+<td>Remaining deductible</td>
 </tr>
 <tr>
 <td>oop_remaining</td>
 <td>DECIMAL(10,2)</td>
-<td>OOP remaining</td>
+<td></td>
+<td>Remaining OOP</td>
 </tr>
 <tr>
 <td>coinsurance_pct</td>
 <td>DECIMAL(5,2)</td>
-<td>Coinsurance %</td>
+<td></td>
+<td>Coinsurance percentage</td>
 </tr>
 <tr>
 <td>requires_authorization</td>
 <td>BOOLEAN</td>
+<td></td>
 <td>Prior auth required</td>
 </tr>
 <tr>
 <td>requires_referral</td>
 <td>BOOLEAN</td>
+<td></td>
 <td>Referral required</td>
 </tr>
 <tr>
-<td>network_status</td>
-<td>VARCHAR(20)</td>
-<td>In-Network, Out-of-Network</td>
+<td>response_time_ms</td>
+<td>INTEGER</td>
+<td></td>
+<td>API response latency</td>
+</tr>
+<tr>
+<td>retry_attempts</td>
+<td>INTEGER</td>
+<td>DEFAULT 0</td>
+<td>Retry count</td>
 </tr>
 <tr>
 <td>response_raw</td>
 <td>JSONB</td>
+<td></td>
 <td>Full EDI 271 response</td>
 </tr>
 <tr>
 <td>checked_by</td>
 <td>UUID</td>
 <td>FOREIGN KEY → users</td>
-<td>User who ran check</td>
+<td>User who checked eligibility</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
+</table>
 
-<p><strong>Indexes:</strong> patient<em>id, check</em>date</p>
+<p><strong>Indexes:</strong> patient_id, insurance_id, check_date, transaction_id, tenant_id</p>
 
 <hr>
 
 <h3>Table 12: authorizations</h3>
 <p><strong>Purpose:</strong> Track prior authorizations</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>authorization_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Authorization identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>patient_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → patients</td>
+<td>Patient</td>
 </tr>
 <tr>
 <td>insurance_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → patient_insurance</td>
+<td>Insurance</td>
 </tr>
 <tr>
 <td>provider_id</td>
@@ -1035,109 +2101,176 @@
 <td>Requesting provider</td>
 </tr>
 <tr>
+<td>encounter_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → encounters</td>
+<td>Related encounter</td>
+</tr>
+<tr>
+<td>authorization_type</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Inpatient/Outpatient</td>
+</tr>
+<tr>
+<td>urgency_level</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Urgent/Routine</td>
+</tr>
+<tr>
 <td>authorization_number</td>
 <td>VARCHAR(50)</td>
-<td>Payer-assigned auth number</td>
+<td></td>
+<td>Auth number</td>
+</tr>
+<tr>
+<td>payer_case_reference</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Payer reference</td>
 </tr>
 <tr>
 <td>status</td>
 <td>VARCHAR(20)</td>
 <td>NOT NULL</td>
-<td>Submitted, Pending, Approved, Denied, Expired</td>
+<td>Pending/Approved/Denied</td>
+</tr>
+<tr>
+<td>status_reason</td>
+<td>TEXT</td>
+<td></td>
+<td>Status reason</td>
 </tr>
 <tr>
 <td>request_date</td>
 <td>DATE</td>
-<td>Request submitted date</td>
+<td></td>
+<td>Request date</td>
 </tr>
 <tr>
 <td>approved_date</td>
 <td>DATE</td>
+<td></td>
 <td>Approval date</td>
 </tr>
 <tr>
 <td>valid_from</td>
 <td>DATE</td>
-<td>Authorization valid from</td>
+<td></td>
+<td>Valid from</td>
 </tr>
 <tr>
 <td>valid_to</td>
 <td>DATE</td>
-<td>Authorization valid to</td>
+<td></td>
+<td>Valid to</td>
 </tr>
 <tr>
 <td>diagnosis_codes</td>
 <td>TEXT[]</td>
-<td>Array of ICD-10 codes</td>
+<td></td>
+<td>ICD-10 codes</td>
 </tr>
 <tr>
 <td>procedure_codes</td>
 <td>TEXT[]</td>
-<td>Array of CPT codes</td>
+<td></td>
+<td>CPT codes</td>
 </tr>
 <tr>
 <td>units_approved</td>
 <td>INTEGER</td>
-<td>Number of units/visits approved</td>
+<td></td>
+<td>Approved units</td>
 </tr>
 <tr>
 <td>units_used</td>
 <td>INTEGER</td>
 <td>DEFAULT 0</td>
-<td>Number of units used</td>
+<td>Used units</td>
 </tr>
 <tr>
 <td>clinical_notes</td>
 <td>TEXT</td>
+<td></td>
 <td>Clinical justification</td>
 </tr>
 <tr>
 <td>denial_reason</td>
 <td>TEXT</td>
-<td>Denial reason if denied</td>
+<td></td>
+<td>Denial reason</td>
+</tr>
+<tr>
+<td>assigned_to</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Assigned user</td>
 </tr>
 <tr>
 <td>created_by</td>
 <td>UUID</td>
 <td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
 <tr>
 <td>updated_at</td>
 <td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
 </tr>
+</table>
 
-<p><strong>Indexes:</strong> patient<em>id, authorization</em>number, valid_to</p>
+<p><strong>Indexes:</strong> patient_id, authorization_number, valid_to, status, tenant_id</p>
 
 <hr>
 
 <h3>Table 13: appointments</h3>
 <p><strong>Purpose:</strong> Store patient appointments</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>appointment_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Appointment identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>patient_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → patients</td>
+<td>Patient</td>
 </tr>
 <tr>
 <td>provider_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → providers</td>
+<td>Provider</td>
 </tr>
 <tr>
 <td>appointment_date</td>
@@ -1155,77 +2288,155 @@
 <td>duration_minutes</td>
 <td>INTEGER</td>
 <td>NOT NULL</td>
-<td>Duration (e.g., 30, 60)</td>
+<td>Duration</td>
 </tr>
 <tr>
 <td>appointment_type</td>
 <td>VARCHAR(50)</td>
-<td>New Patient, Follow-up, Procedure</td>
+<td></td>
+<td>Appointment type</td>
+</tr>
+<tr>
+<td>appointment_source</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Portal/Phone/API</td>
 </tr>
 <tr>
 <td>reason</td>
 <td>TEXT</td>
-<td>Reason for visit</td>
+<td></td>
+<td>Visit reason</td>
 </tr>
 <tr>
 <td>location</td>
 <td>VARCHAR(100)</td>
-<td>Clinic/room location</td>
+<td></td>
+<td>Clinic/Room</td>
+</tr>
+<tr>
+<td>telehealth_link</td>
+<td>TEXT</td>
+<td></td>
+<td>Virtual visit link</td>
 </tr>
 <tr>
 <td>status</td>
 <td>VARCHAR(20)</td>
 <td>NOT NULL</td>
-<td>Scheduled, Confirmed, Checked In, Completed, Cancelled, No Show</td>
+<td>Appointment status</td>
+</tr>
+<tr>
+<td>status_reason</td>
+<td>TEXT</td>
+<td></td>
+<td>Status reason</td>
+</tr>
+<tr>
+<td>confirmation_date</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Confirmation time</td>
 </tr>
 <tr>
 <td>reminder_sent</td>
 <td>BOOLEAN</td>
 <td>DEFAULT FALSE</td>
-<td>Reminder sent flag</td>
+<td>Reminder sent</td>
+</tr>
+<tr>
+<td>checked_in_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Front desk user</td>
+</tr>
+<tr>
+<td>cancellation_reason</td>
+<td>TEXT</td>
+<td></td>
+<td>Cancellation reason</td>
+</tr>
+<tr>
+<td>no_show_reason</td>
+<td>TEXT</td>
+<td></td>
+<td>No-show reason</td>
 </tr>
 <tr>
 <td>notes</td>
 <td>TEXT</td>
-<td>Appointment notes</td>
+<td></td>
+<td>Notes</td>
 </tr>
 <tr>
 <td>created_by</td>
 <td>UUID</td>
 <td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
 <tr>
 <td>updated_at</td>
 <td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
 </tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete timestamp</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Deleted by user</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> patient<em>id, provider</em>id, appointment_date, status</p>
+<p><strong>Indexes:</strong> patient_id, provider_id, appointment_date, status, tenant_id</p>
 
 <hr>
 
 <h3>Table 14: encounters</h3>
-<p><strong>Purpose:</strong> Store patient visit/encounter records</p>
+<p><strong>Purpose:</strong> Store patient encounter records</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>encounter_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Encounter identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>patient_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → patients</td>
+<td>Patient</td>
 </tr>
 <tr>
 <td>provider_id</td>
@@ -1243,43 +2454,73 @@
 <td>encounter_type</td>
 <td>VARCHAR(50)</td>
 <td>NOT NULL</td>
-<td>Office, Emergency, Inpatient, Outpatient, Telehealth</td>
+<td>Office/Inpatient/ER</td>
 </tr>
 <tr>
 <td>encounter_date</td>
 <td>DATE</td>
 <td>NOT NULL</td>
-<td>Date of service</td>
+<td>Encounter date</td>
 </tr>
 <tr>
 <td>check_in_time</td>
 <td>TIMESTAMP</td>
+<td></td>
 <td>Check-in time</td>
 </tr>
 <tr>
 <td>check_out_time</td>
 <td>TIMESTAMP</td>
+<td></td>
 <td>Check-out time</td>
+</tr>
+<tr>
+<td>total_visit_minutes</td>
+<td>INTEGER</td>
+<td></td>
+<td>Visit duration</td>
 </tr>
 <tr>
 <td>department</td>
 <td>VARCHAR(50)</td>
+<td></td>
 <td>Department</td>
 </tr>
 <tr>
 <td>facility_location</td>
 <td>VARCHAR(100)</td>
-<td>Facility location</td>
+<td></td>
+<td>Facility</td>
 </tr>
 <tr>
 <td>place_of_service</td>
 <td>VARCHAR(2)</td>
-<td>POS code (11=Office, 21=Inpatient, 22=Outpatient, etc.)</td>
+<td></td>
+<td>POS code</td>
 </tr>
 <tr>
 <td>chief_complaint</td>
 <td>TEXT</td>
+<td></td>
 <td>Chief complaint</td>
+</tr>
+<tr>
+<td>attending_provider_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → providers</td>
+<td>Attending provider</td>
+</tr>
+<tr>
+<td>admitting_provider_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → providers</td>
+<td>Admitting provider</td>
+</tr>
+<tr>
+<td>discharge_provider_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → providers</td>
+<td>Discharge provider</td>
 </tr>
 <tr>
 <td>referring_provider_id</td>
@@ -1291,106 +2532,195 @@
 <td>status</td>
 <td>VARCHAR(20)</td>
 <td>NOT NULL</td>
-<td>Scheduled, Checked In, In Progress, Completed, Cancelled</td>
+<td>Encounter status</td>
+</tr>
+<tr>
+<td>medical_record_signed</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Signed documentation</td>
+</tr>
+<tr>
+<td>signed_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Signed by provider</td>
 </tr>
 <tr>
 <td>admission_date</td>
 <td>DATE</td>
-<td>Admission date (inpatient)</td>
+<td></td>
+<td>Admission date</td>
 </tr>
 <tr>
 <td>discharge_date</td>
 <td>DATE</td>
-<td>Discharge date (inpatient)</td>
+<td></td>
+<td>Discharge date</td>
 </tr>
 <tr>
 <td>discharge_disposition</td>
 <td>VARCHAR(50)</td>
-<td>Discharge disposition</td>
+<td></td>
+<td>Disposition</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
 <tr>
 <td>updated_at</td>
 <td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
 </tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete timestamp</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Deleted by user</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> patient<em>id, provider</em>id, encounter_date, status</p>
+<p><strong>Indexes:</strong> patient_id, provider_id, encounter_date, status, tenant_id</p>
 
 <hr>
 
 <h3>Table 15: encounter_diagnoses</h3>
-<p><strong>Purpose:</strong> Store diagnoses for each encounter</p>
+<p><strong>Purpose:</strong> Store encounter diagnoses</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>diagnosis_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Diagnosis identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>encounter_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → encounters</td>
+<td>Encounter</td>
 </tr>
 <tr>
 <td>icd10_code</td>
 <td>VARCHAR(10)</td>
 <td>NOT NULL</td>
-<td>ICD-10 diagnosis code</td>
+<td>ICD-10 code</td>
+</tr>
+<tr>
+<td>diagnosis_version</td>
+<td>VARCHAR(10)</td>
+<td></td>
+<td>ICD version</td>
 </tr>
 <tr>
 <td>description</td>
 <td>VARCHAR(255)</td>
+<td></td>
 <td>Diagnosis description</td>
+</tr>
+<tr>
+<td>diagnosis_type</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Primary/Secondary</td>
+</tr>
+<tr>
+<td>present_on_admission</td>
+<td>BOOLEAN</td>
+<td></td>
+<td>POA indicator</td>
 </tr>
 <tr>
 <td>is_principal</td>
 <td>BOOLEAN</td>
 <td>DEFAULT FALSE</td>
-<td>Principal diagnosis flag</td>
+<td>Principal diagnosis</td>
 </tr>
 <tr>
 <td>sequence</td>
 <td>INTEGER</td>
-<td>Diagnosis sequence (1, 2, 3...)</td>
+<td></td>
+<td>Sequence</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
+</table>
 
-<p><strong>Indexes:</strong> encounter<em>id, icd10</em>code</p>
+<p><strong>Indexes:</strong> encounter_id, icd10_code, tenant_id</p>
 
 <hr>
 
 <h3>Table 16: encounter_procedures</h3>
-<p><strong>Purpose:</strong> Store procedures for each encounter</p>
+<p><strong>Purpose:</strong> Store encounter procedures</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>procedure_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Procedure identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>encounter_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → encounters</td>
+<td>Encounter</td>
 </tr>
 <tr>
 <td>cpt_code</td>
@@ -1399,85 +2729,122 @@
 <td>CPT/HCPCS code</td>
 </tr>
 <tr>
+<td>procedure_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Pending/Completed</td>
+</tr>
+<tr>
 <td>description</td>
 <td>VARCHAR(255)</td>
+<td></td>
 <td>Procedure description</td>
 </tr>
 <tr>
 <td>modifier1</td>
 <td>VARCHAR(2)</td>
+<td></td>
 <td>Modifier 1</td>
 </tr>
 <tr>
 <td>modifier2</td>
 <td>VARCHAR(2)</td>
+<td></td>
 <td>Modifier 2</td>
 </tr>
 <tr>
 <td>modifier3</td>
 <td>VARCHAR(2)</td>
+<td></td>
 <td>Modifier 3</td>
 </tr>
 <tr>
 <td>modifier4</td>
 <td>VARCHAR(2)</td>
+<td></td>
 <td>Modifier 4</td>
+</tr>
+<tr>
+<td>performing_provider_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → providers</td>
+<td>Performing provider</td>
 </tr>
 <tr>
 <td>units</td>
 <td>INTEGER</td>
 <td>DEFAULT 1</td>
-<td>Number of units</td>
+<td>Units</td>
 </tr>
 <tr>
 <td>diagnosis_pointers</td>
 <td>TEXT[]</td>
-<td>Array of linked diagnosis sequence numbers</td>
+<td></td>
+<td>Linked diagnoses</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
+</table>
 
-<p><strong>Indexes:</strong> encounter<em>id, cpt</em>code</p>
+<p><strong>Indexes:</strong> encounter_id, cpt_code, tenant_id</p>
 
 <hr>
 
 <h3>Table 17: charges</h3>
-<p><strong>Purpose:</strong> Store all billable charges</p>
+<p><strong>Purpose:</strong> Store billable charges</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>charge_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Charge identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>encounter_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → encounters</td>
+<td>Encounter</td>
 </tr>
 <tr>
 <td>patient_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → patients</td>
+<td>Patient</td>
 </tr>
 <tr>
 <td>provider_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → providers</td>
+<td>Provider</td>
 </tr>
 <tr>
 <td>service_date</td>
 <td>DATE</td>
 <td>NOT NULL</td>
-<td>Date of service</td>
+<td>Service date</td>
 </tr>
 <tr>
 <td>cdm_id</td>
@@ -1492,25 +2859,40 @@
 <td>CPT/HCPCS code</td>
 </tr>
 <tr>
+<td>charge_source</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Manual/System</td>
+</tr>
+<tr>
 <td>description</td>
 <td>VARCHAR(255)</td>
+<td></td>
 <td>Charge description</td>
 </tr>
 <tr>
 <td>modifier1</td>
 <td>VARCHAR(2)</td>
+<td></td>
+<td>Modifier 1</td>
 </tr>
 <tr>
 <td>modifier2</td>
 <td>VARCHAR(2)</td>
+<td></td>
+<td>Modifier 2</td>
 </tr>
 <tr>
 <td>modifier3</td>
 <td>VARCHAR(2)</td>
+<td></td>
+<td>Modifier 3</td>
 </tr>
 <tr>
 <td>modifier4</td>
 <td>VARCHAR(2)</td>
+<td></td>
+<td>Modifier 4</td>
 </tr>
 <tr>
 <td>units</td>
@@ -1522,84 +2904,143 @@
 <td>charge_amount</td>
 <td>DECIMAL(10,2)</td>
 <td>NOT NULL</td>
-<td>Standard charge</td>
+<td>Charge amount</td>
+</tr>
+<tr>
+<td>expected_allowed_amount</td>
+<td>DECIMAL(10,2)</td>
+<td></td>
+<td>Expected reimbursement</td>
 </tr>
 <tr>
 <td>revenue_code</td>
 <td>VARCHAR(4)</td>
-<td>Revenue code (UB-04)</td>
+<td></td>
+<td>Revenue code</td>
 </tr>
 <tr>
 <td>department</td>
 <td>VARCHAR(50)</td>
+<td></td>
 <td>Department</td>
 </tr>
 <tr>
 <td>status</td>
 <td>VARCHAR(20)</td>
 <td>NOT NULL</td>
-<td>Pending, Hold, Released, Billed</td>
+<td>Charge status</td>
 </tr>
 <tr>
 <td>hold_reason</td>
 <td>TEXT</td>
-<td>Reason for hold</td>
+<td></td>
+<td>Hold reason</td>
+</tr>
+<tr>
+<td>billing_ready</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Billing readiness</td>
 </tr>
 <tr>
 <td>entered_by</td>
 <td>UUID</td>
 <td>FOREIGN KEY → users</td>
-<td>User who entered charge</td>
+<td>Entered by user</td>
 </tr>
 <tr>
 <td>entered_date</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
-<td>Charge entry date</td>
+<td>Entry date</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
+</tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete timestamp</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Deleted by user</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> encounter<em>id, patient</em>id, service_date, status</p>
+<p><strong>Indexes:</strong> encounter_id, patient_id, service_date, status, tenant_id</p>
 
 <hr>
 
 <h3>Table 18: claims</h3>
 <p><strong>Purpose:</strong> Store insurance claims</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>claim_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Claim identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>encounter_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → encounters</td>
+<td>Encounter</td>
 </tr>
 <tr>
 <td>patient_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → patients</td>
+<td>Patient</td>
 </tr>
 <tr>
 <td>insurance_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → patient_insurance</td>
+<td>Insurance</td>
 </tr>
 <tr>
 <td>payer_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → payers</td>
+<td>Payer</td>
 </tr>
 <tr>
 <td>provider_id</td>
@@ -1623,12 +3064,13 @@
 <td>claim_frequency</td>
 <td>VARCHAR(1)</td>
 <td>DEFAULT '1'</td>
-<td>1=Original, 7=Corrected, 8=Void</td>
+<td>Original/Corrected/Void</td>
 </tr>
 <tr>
 <td>original_claim_number</td>
 <td>VARCHAR(50)</td>
-<td>Original claim # (for corrected claims)</td>
+<td></td>
+<td>Original claim number</td>
 </tr>
 <tr>
 <td>billing_provider_npi</td>
@@ -1645,6 +3087,7 @@
 <tr>
 <td>referring_provider_npi</td>
 <td>VARCHAR(10)</td>
+<td></td>
 <td>Referring provider NPI</td>
 </tr>
 <tr>
@@ -1668,13 +3111,26 @@
 <tr>
 <td>authorization_number</td>
 <td>VARCHAR(50)</td>
-<td>Prior auth number</td>
+<td></td>
+<td>Prior authorization</td>
 </tr>
 <tr>
 <td>status</td>
 <td>VARCHAR(20)</td>
 <td>NOT NULL</td>
-<td>Draft, Scrubbing, Ready, Submitted, Accepted, Pending, Paid, Denied, Rejected</td>
+<td>Claim status</td>
+</tr>
+<tr>
+<td>status_reason</td>
+<td>TEXT</td>
+<td></td>
+<td>Status reason</td>
+</tr>
+<tr>
+<td>status_updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Status update timestamp</td>
 </tr>
 <tr>
 <td>is_clean_claim</td>
@@ -1685,76 +3141,114 @@
 <tr>
 <td>submission_date</td>
 <td>DATE</td>
-<td>Date submitted</td>
+<td></td>
+<td>Submission date</td>
 </tr>
 <tr>
 <td>submission_method</td>
 <td>VARCHAR(20)</td>
-<td>Electronic, Paper</td>
+<td></td>
+<td>Electronic/Paper</td>
 </tr>
 <tr>
 <td>clearinghouse_id</td>
 <td>VARCHAR(50)</td>
+<td></td>
 <td>Clearinghouse tracking ID</td>
 </tr>
 <tr>
 <td>payer_claim_number</td>
 <td>VARCHAR(50)</td>
-<td>Payer-assigned claim number (ICN)</td>
+<td></td>
+<td>Payer ICN</td>
 </tr>
 <tr>
 <td>timely_filing_deadline</td>
 <td>DATE</td>
-<td>Timely filing deadline</td>
+<td></td>
+<td>Filing deadline</td>
 </tr>
 <tr>
 <td>created_by</td>
 <td>UUID</td>
 <td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
 <tr>
 <td>updated_at</td>
 <td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
 </tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete timestamp</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Deleted by user</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> claim<em>number, patient</em>id, payer<em>id, status, submission</em>date</p>
+<p><strong>Indexes:</strong> claim_number, patient_id, payer_id, status, submission_date, tenant_id</p>
 
 <hr>
 
 <h3>Table 19: claim_lines</h3>
-<p><strong>Purpose:</strong> Store individual line items on claims</p>
+<p><strong>Purpose:</strong> Store individual claim service line items</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>line_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Claim line identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>claim_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → claims</td>
+<td>Related claim</td>
 </tr>
 <tr>
 <td>charge_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → charges</td>
+<td>Related charge</td>
 </tr>
 <tr>
 <td>line_number</td>
 <td>INTEGER</td>
 <td>NOT NULL</td>
-<td>Line number (1, 2, 3...)</td>
+<td>Claim line sequence number</td>
 </tr>
 <tr>
 <td>service_date</td>
@@ -1765,6 +3259,7 @@
 <tr>
 <td>place_of_service</td>
 <td>VARCHAR(2)</td>
+<td></td>
 <td>POS code</td>
 </tr>
 <tr>
@@ -1774,25 +3269,58 @@
 <td>CPT/HCPCS code</td>
 </tr>
 <tr>
+<td>hcpcs_code</td>
+<td>VARCHAR(10)</td>
+<td></td>
+<td>HCPCS code</td>
+</tr>
+<tr>
+<td>line_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Pending/Billed/Paid/Denied</td>
+</tr>
+<tr>
+<td>line_status_reason</td>
+<td>TEXT</td>
+<td></td>
+<td>Status reason</td>
+</tr>
+<tr>
 <td>modifier1</td>
 <td>VARCHAR(2)</td>
+<td></td>
+<td>Modifier 1</td>
 </tr>
 <tr>
 <td>modifier2</td>
 <td>VARCHAR(2)</td>
+<td></td>
+<td>Modifier 2</td>
 </tr>
 <tr>
 <td>modifier3</td>
 <td>VARCHAR(2)</td>
+<td></td>
+<td>Modifier 3</td>
 </tr>
 <tr>
 <td>modifier4</td>
 <td>VARCHAR(2)</td>
+<td></td>
+<td>Modifier 4</td>
 </tr>
 <tr>
 <td>diagnosis_pointers</td>
 <td>TEXT[]</td>
-<td>Linked diagnosis codes</td>
+<td></td>
+<td>Linked diagnosis pointers</td>
+</tr>
+<tr>
+<td>rendering_provider_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → providers</td>
+<td>Rendering provider</td>
 </tr>
 <tr>
 <td>units</td>
@@ -1801,44 +3329,146 @@
 <td>Units</td>
 </tr>
 <tr>
-<td>charge_amount</td>
+<td>billed_amount</td>
 <td>DECIMAL(10,2)</td>
 <td>NOT NULL</td>
 <td>Billed amount</td>
 </tr>
 <tr>
+<td>expected_allowed_amount</td>
+<td>DECIMAL(10,2)</td>
+<td></td>
+<td>Expected allowed amount</td>
+</tr>
+<tr>
+<td>expected_patient_responsibility</td>
+<td>DECIMAL(10,2)</td>
+<td></td>
+<td>Expected patient responsibility</td>
+</tr>
+<tr>
 <td>revenue_code</td>
 <td>VARCHAR(4)</td>
-<td>Revenue code (UB-04)</td>
+<td></td>
+<td>Revenue code</td>
+</tr>
+<tr>
+<td>authorization_number</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Prior authorization number</td>
+</tr>
+<tr>
+<td>ndc_code</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>National drug code</td>
+</tr>
+<tr>
+<td>drug_quantity</td>
+<td>DECIMAL(10,2)</td>
+<td></td>
+<td>Drug quantity</td>
+</tr>
+<tr>
+<td>drug_unit_measure</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Drug unit measure</td>
+</tr>
+<tr>
+<td>is_emergency_service</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Emergency service indicator</td>
+</tr>
+<tr>
+<td>claim_line_notes</td>
+<td>TEXT</td>
+<td></td>
+<td>Internal claim line notes</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
+</tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete timestamp</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Deleted by user</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> claim<em>id, charge</em>id</p>
+<p><strong>Indexes:</strong> claim_id, charge_id, cpt_code, service_date, line_status, tenant_id</p>
 
 <hr>
 
 <h3>Table 20: claim_scrubbing_errors</h3>
-<p><strong>Purpose:</strong> Store claim scrubbing validation errors</p>
+<p><strong>Purpose:</strong> Store claim scrubbing and validation errors</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>error_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Scrubbing error identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>claim_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → claims</td>
+<td>Related claim</td>
+</tr>
+<tr>
+<td>claim_line_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → claim_lines</td>
+<td>Related claim line</td>
+</tr>
+<tr>
+<td>scrub_rule_id</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Internal scrub rule identifier</td>
 </tr>
 <tr>
 <td>error_level</td>
@@ -1847,9 +3477,22 @@
 <td>Fatal, Warning, Info</td>
 </tr>
 <tr>
+<td>error_category</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Coding, Eligibility, Authorization</td>
+</tr>
+<tr>
 <td>error_code</td>
 <td>VARCHAR(20)</td>
+<td></td>
 <td>Error code</td>
+</tr>
+<tr>
+<td>external_error_code</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Clearinghouse/payer code</td>
 </tr>
 <tr>
 <td>error_message</td>
@@ -1860,37 +3503,120 @@
 <tr>
 <td>field_name</td>
 <td>VARCHAR(50)</td>
-<td>Field with error</td>
+<td></td>
+<td>Field with validation issue</td>
+</tr>
+<tr>
+<td>field_value</td>
+<td>TEXT</td>
+<td></td>
+<td>Invalid field value</td>
+</tr>
+<tr>
+<td>suggested_fix</td>
+<td>TEXT</td>
+<td></td>
+<td>Suggested correction</td>
+</tr>
+<tr>
+<td>auto_corrected</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Auto-corrected indicator</td>
+</tr>
+<tr>
+<td>corrected_value</td>
+<td>TEXT</td>
+<td></td>
+<td>Auto-corrected value</td>
+</tr>
+<tr>
+<td>resolution_notes</td>
+<td>TEXT</td>
+<td></td>
+<td>Resolution notes</td>
 </tr>
 <tr>
 <td>resolved</td>
 <td>BOOLEAN</td>
 <td>DEFAULT FALSE</td>
-<td>Error resolved flag</td>
+<td>Resolved flag</td>
+</tr>
+<tr>
+<td>resolved_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>User who resolved issue</td>
+</tr>
+<tr>
+<td>resolved_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Resolution timestamp</td>
+</tr>
+<tr>
+<td>assigned_to</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Assigned user</td>
+</tr>
+<tr>
+<td>retry_count</td>
+<td>INTEGER</td>
+<td>DEFAULT 0</td>
+<td>Resubmission attempts</td>
+</tr>
+<tr>
+<td>source_system</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Internal/Clearinghouse</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> claim<em>id, error</em>level, resolved</p>
+<p><strong>Indexes:</strong> claim_id, claim_line_id, error_level, error_category, resolved, assigned_to, tenant_id</p>
 
 <hr>
 
 <h3>Table 21: payments</h3>
 <p><strong>Purpose:</strong> Store all payments (insurance and patient)</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>payment_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Payment identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>claim_id</td>
@@ -1902,23 +3628,31 @@
 <td>patient_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → patients</td>
+<td>Patient</td>
 </tr>
 <tr>
 <td>payer_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → payers</td>
-<td>Payer (NULL if patient payment)</td>
+<td>Payer</td>
 </tr>
 <tr>
 <td>payment_type</td>
 <td>VARCHAR(20)</td>
 <td>NOT NULL</td>
-<td>Insurance, Patient</td>
+<td>Insurance/Patient</td>
 </tr>
 <tr>
 <td>payment_method</td>
 <td>VARCHAR(20)</td>
-<td>EFT, Check, Credit Card, Cash, ACH</td>
+<td></td>
+<td>EFT, ACH, Check</td>
+</tr>
+<tr>
+<td>payment_reference_number</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>EFT/check reference</td>
 </tr>
 <tr>
 <td>payment_date</td>
@@ -1929,7 +3663,8 @@
 <tr>
 <td>check_number</td>
 <td>VARCHAR(50)</td>
-<td>Check/EFT number</td>
+<td></td>
+<td>Check number</td>
 </tr>
 <tr>
 <td>payment_amount</td>
@@ -1938,74 +3673,170 @@
 <td>Total payment amount</td>
 </tr>
 <tr>
+<td>deposit_batch_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → bank_deposits</td>
+<td>Bank deposit batch</td>
+</tr>
+<tr>
+<td>reconciliation_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Pending/Matched</td>
+</tr>
+<tr>
 <td>era_file_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → era_files</td>
-<td>ERA file reference</td>
+<td>ERA reference</td>
 </tr>
 <tr>
 <td>posted_by</td>
 <td>UUID</td>
 <td>FOREIGN KEY → users</td>
-<td>User who posted payment</td>
+<td>Posted by user</td>
 </tr>
 <tr>
 <td>posted_date</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
-<td>Payment posting date</td>
+<td>Posting timestamp</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
+</tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete timestamp</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Deleted by user</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> claim<em>id, patient</em>id, payer<em>id, payment</em>date</p>
+<p><strong>Indexes:</strong> claim_id, patient_id, payer_id, payment_date, reconciliation_status</p>
 
 <hr>
 
-<h3>Table 22: payment_line_items</h3>
-<p><strong>Purpose:</strong> Store line-level payment details</p>
+<h3>Table 22: payment_line_items (Final Enterprise Version)</h3>
+<p><strong>Purpose:</strong> Store line-level payment posting and reimbursement details</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>line_item_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Payment line item identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>payment_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → payments</td>
+<td>Related payment</td>
 </tr>
 <tr>
 <td>claim_line_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → claim_lines</td>
+<td>Related claim line</td>
+</tr>
+<tr>
+<td>payer_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → payers</td>
+<td>Insurance payer</td>
+</tr>
+<tr>
+<td>patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+<td>Patient</td>
+</tr>
+<tr>
+<td>payment_posting_batch_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → reconciliation_batches</td>
+<td>Posting batch reference</td>
 </tr>
 <tr>
 <td>billed_amount</td>
 <td>DECIMAL(10,2)</td>
 <td>NOT NULL</td>
-<td>Amount billed</td>
+<td>Billed amount</td>
 </tr>
 <tr>
 <td>allowed_amount</td>
 <td>DECIMAL(10,2)</td>
 <td>NOT NULL</td>
-<td>Allowed amount</td>
+<td>Allowed reimbursement amount</td>
+</tr>
+<tr>
+<td>expected_allowed_amount</td>
+<td>DECIMAL(10,2)</td>
+<td></td>
+<td>Expected reimbursement</td>
 </tr>
 <tr>
 <td>paid_amount</td>
 <td>DECIMAL(10,2)</td>
 <td>NOT NULL</td>
-<td>Amount paid</td>
+<td>Paid amount</td>
+</tr>
+<tr>
+<td>expected_paid_amount</td>
+<td>DECIMAL(10,2)</td>
+<td></td>
+<td>Expected paid amount</td>
+</tr>
+<tr>
+<td>payment_variance_amount</td>
+<td>DECIMAL(10,2)</td>
+<td></td>
+<td>Variance amount</td>
+</tr>
+<tr>
+<td>variance_reason</td>
+<td>TEXT</td>
+<td></td>
+<td>Variance explanation</td>
 </tr>
 <tr>
 <td>deductible</td>
@@ -2023,7 +3854,13 @@
 <td>coinsurance</td>
 <td>DECIMAL(10,2)</td>
 <td>DEFAULT 0</td>
-<td>Coinsurance applied</td>
+<td>Coinsurance amount</td>
+</tr>
+<tr>
+<td>patient_responsibility</td>
+<td>DECIMAL(10,2)</td>
+<td>DEFAULT 0</td>
+<td>Patient balance responsibility</td>
 </tr>
 <tr>
 <td>contractual_adjustment</td>
@@ -2032,136 +3869,330 @@
 <td>Contractual write-off</td>
 </tr>
 <tr>
+<td>non_contractual_adjustment</td>
+<td>DECIMAL(10,2)</td>
+<td>DEFAULT 0</td>
+<td>Non-contractual adjustment</td>
+</tr>
+<tr>
+<td>sequestration_adjustment</td>
+<td>DECIMAL(10,2)</td>
+<td>DEFAULT 0</td>
+<td>Medicare sequestration adjustment</td>
+</tr>
+<tr>
 <td>adjustment_code</td>
 <td>VARCHAR(10)</td>
+<td></td>
 <td>CARC code</td>
+</tr>
+<tr>
+<td>adjustment_group_code</td>
+<td>VARCHAR(5)</td>
+<td></td>
+<td>PR, CO, OA, PI</td>
 </tr>
 <tr>
 <td>adjustment_reason</td>
 <td>TEXT</td>
-<td>Adjustment reason</td>
+<td></td>
+<td>Adjustment explanation</td>
 </tr>
 <tr>
 <td>remark_code</td>
 <td>VARCHAR(10)</td>
+<td></td>
 <td>RARC code</td>
 </tr>
 <tr>
-<td>patient_responsibility</td>
-<td>DECIMAL(10,2)</td>
-<td>DEFAULT 0</td>
-<td>Patient balance</td>
+<td>denial_code</td>
+<td>VARCHAR(10)</td>
+<td></td>
+<td>Denial CARC code</td>
+</tr>
+<tr>
+<td>denial_reason</td>
+<td>TEXT</td>
+<td></td>
+<td>Denial explanation</td>
+</tr>
+<tr>
+<td>underpayment_flag</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Underpayment detected</td>
+</tr>
+<tr>
+<td>overpayment_flag</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Overpayment detected</td>
+</tr>
+<tr>
+<td>reimbursement_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Paid/Partial/Denied</td>
+</tr>
+<tr>
+<td>posting_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Posted/Pending/Reversed</td>
+</tr>
+<tr>
+<td>posting_notes</td>
+<td>TEXT</td>
+<td></td>
+<td>Payment posting notes</td>
+</tr>
+<tr>
+<td>service_date</td>
+<td>DATE</td>
+<td></td>
+<td>Related service date</td>
+</tr>
+<tr>
+<td>payment_effective_date</td>
+<td>DATE</td>
+<td></td>
+<td>Effective payment date</td>
+</tr>
+<tr>
+<td>reversal_flag</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Reversal indicator</td>
+</tr>
+<tr>
+<td>reversal_reason</td>
+<td>TEXT</td>
+<td></td>
+<td>Reversal explanation</td>
+</tr>
+<tr>
+<td>posted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>User who posted payment</td>
+</tr>
+<tr>
+<td>reviewed_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>User who reviewed posting</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
+</tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete timestamp</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Deleted by user</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> payment<em>id, claim</em>line_id</p>
+<p><strong>Indexes:</strong> payment_id, claim_line_id, payer_id, patient_id, reimbursement_status, posting_status, denial_code, adjustment_code, tenant_id</p>
 
 <hr>
 
 <h3>Table 23: era_files</h3>
 <p><strong>Purpose:</strong> Store ERA (EDI 835) files</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>era_file_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>ERA identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>payer_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → payers</td>
+<td>Payer</td>
 </tr>
 <tr>
 <td>file_name</td>
 <td>VARCHAR(255)</td>
+<td></td>
 <td>ERA file name</td>
 </tr>
 <tr>
-<td>file_content</td>
+<td>storage_path</td>
 <td>TEXT</td>
-<td>Raw EDI 835 content</td>
+<td></td>
+<td>S3/blob storage path</td>
+</tr>
+<tr>
+<td>file_size_kb</td>
+<td>INTEGER</td>
+<td></td>
+<td>File size</td>
 </tr>
 <tr>
 <td>check_number</td>
 <td>VARCHAR(50)</td>
-<td>Check/EFT number</td>
+<td></td>
+<td>Check number</td>
 </tr>
 <tr>
 <td>check_date</td>
 <td>DATE</td>
+<td></td>
 <td>Check date</td>
 </tr>
 <tr>
 <td>total_amount</td>
 <td>DECIMAL(10,2)</td>
-<td>Total payment amount</td>
+<td></td>
+<td>Total ERA amount</td>
 </tr>
 <tr>
 <td>claim_count</td>
 <td>INTEGER</td>
-<td>Number of claims in ERA</td>
+<td></td>
+<td>Claim count</td>
 </tr>
 <tr>
 <td>auto_posted_count</td>
 <td>INTEGER</td>
 <td>DEFAULT 0</td>
-<td>Claims auto-posted</td>
+<td>Auto posted claims</td>
 </tr>
 <tr>
 <td>manual_posted_count</td>
 <td>INTEGER</td>
 <td>DEFAULT 0</td>
-<td>Claims manually posted</td>
+<td>Manual posted claims</td>
+</tr>
+<tr>
+<td>processing_start_time</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Processing start</td>
+</tr>
+<tr>
+<td>processing_end_time</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Processing end</td>
+</tr>
+<tr>
+<td>processing_errors</td>
+<td>TEXT</td>
+<td></td>
+<td>Processing errors</td>
 </tr>
 <tr>
 <td>status</td>
 <td>VARCHAR(20)</td>
 <td>NOT NULL</td>
-<td>Received, Processing, Completed</td>
+<td>Processing status</td>
 </tr>
 <tr>
 <td>imported_by</td>
 <td>UUID</td>
 <td>FOREIGN KEY → users</td>
+<td>Imported by user</td>
 </tr>
 <tr>
 <td>imported_date</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Import timestamp</td>
 </tr>
+</table>
 
-<p><strong>Indexes:</strong> payer<em>id, check</em>number, check_date</p>
+<p><strong>Indexes:</strong> payer_id, check_number, check_date, status</p>
 
 <hr>
 
-<h3>Table 24: denials</h3>
-<p><strong>Purpose:</strong> Track denied claims</p>
+<h3>Table 24: Denials</h3>
+<p><strong>Purpose:</strong> Track denied claims and denial management workflow</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>denial_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Denial identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>claim_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → claims</td>
+<td>Related claim</td>
+</tr>
+<tr>
+<td>claim_line_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → claim_lines</td>
+<td>Related claim line</td>
+</tr>
+<tr>
+<td>patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+<td>Patient</td>
+</tr>
+<tr>
+<td>payer_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → payers</td>
+<td>Insurance payer</td>
 </tr>
 <tr>
 <td>denial_date</td>
@@ -2172,18 +4203,38 @@
 <tr>
 <td>denial_code</td>
 <td>VARCHAR(10)</td>
-<td>CARC code</td>
+<td></td>
+<td>CARC denial code</td>
+</tr>
+<tr>
+<td>denial_group_code</td>
+<td>VARCHAR(5)</td>
+<td></td>
+<td>PR, CO, OA, PI</td>
 </tr>
 <tr>
 <td>denial_reason</td>
 <td>TEXT</td>
 <td>NOT NULL</td>
-<td>Denial reason</td>
+<td>Denial explanation</td>
 </tr>
 <tr>
 <td>denial_category</td>
 <td>VARCHAR(50)</td>
-<td>Clinical, Technical, Authorization, Eligibility, Timely Filing</td>
+<td></td>
+<td>Clinical, Authorization</td>
+</tr>
+<tr>
+<td>denial_subcategory</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Detailed denial type</td>
+</tr>
+<tr>
+<td>denial_source</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Clearinghouse/Payer</td>
 </tr>
 <tr>
 <td>denial_amount</td>
@@ -2192,71 +4243,206 @@
 <td>Denied amount</td>
 </tr>
 <tr>
+<td>expected_reimbursement</td>
+<td>DECIMAL(10,2)</td>
+<td></td>
+<td>Expected reimbursement</td>
+</tr>
+<tr>
+<td>root_cause</td>
+<td>TEXT</td>
+<td></td>
+<td>Root cause analysis</td>
+</tr>
+<tr>
+<td>prevention_strategy</td>
+<td>TEXT</td>
+<td></td>
+<td>Future prevention notes</td>
+</tr>
+<tr>
 <td>is_appealable</td>
 <td>BOOLEAN</td>
 <td>DEFAULT TRUE</td>
-<td>Can be appealed</td>
+<td>Appeal eligible</td>
 </tr>
 <tr>
 <td>appeal_deadline</td>
 <td>DATE</td>
-<td>Appeal deadline</td>
+<td></td>
+<td>Appeal due date</td>
+</tr>
+<tr>
+<td>filing_deadline</td>
+<td>DATE</td>
+<td></td>
+<td>Timely filing limit</td>
+</tr>
+<tr>
+<td>denial_priority</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>High/Medium/Low</td>
 </tr>
 <tr>
 <td>status</td>
 <td>VARCHAR(20)</td>
 <td>NOT NULL</td>
-<td>New, Under Review, Appealed, Overturned, Upheld</td>
+<td>New/Appealed/Resolved</td>
+</tr>
+<tr>
+<td>status_reason</td>
+<td>TEXT</td>
+<td></td>
+<td>Status explanation</td>
 </tr>
 <tr>
 <td>assigned_to</td>
 <td>UUID</td>
 <td>FOREIGN KEY → users</td>
-<td>User assigned to work denial</td>
+<td>Assigned AR user</td>
+</tr>
+<tr>
+<td>assigned_date</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Assignment timestamp</td>
+</tr>
+<tr>
+<td>worked_date</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last worked timestamp</td>
+</tr>
+<tr>
+<td>next_followup_date</td>
+<td>DATE</td>
+<td></td>
+<td>Follow-up date</td>
+</tr>
+<tr>
+<td>resolution_notes</td>
+<td>TEXT</td>
+<td></td>
+<td>Resolution notes</td>
+</tr>
+<tr>
+<td>resolved_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Resolved by user</td>
+</tr>
+<tr>
+<td>resolved_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Resolution timestamp</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
 <tr>
 <td>updated_at</td>
 <td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
 </tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete timestamp</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Deleted by user</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> claim<em>id, denial</em>date, status, appeal_deadline</p>
+<p><strong>Indexes:</strong> claim_id, denial_code, denial_category, status, assigned_to, appeal_deadline, tenant_id</p>
 
 <hr>
 
 <h3>Table 25: appeals</h3>
-<p><strong>Purpose:</strong> Track claim appeals</p>
+<p><strong>Purpose:</strong> Track denial appeals and appeal workflow management</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>appeal_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Appeal identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>denial_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → denials</td>
+<td>Related denial</td>
 </tr>
 <tr>
 <td>claim_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → claims</td>
+<td>Related claim</td>
+</tr>
+<tr>
+<td>patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+<td>Patient</td>
+</tr>
+<tr>
+<td>payer_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → payers</td>
+<td>Insurance payer</td>
 </tr>
 <tr>
 <td>appeal_level</td>
 <td>INTEGER</td>
 <td>NOT NULL</td>
-<td>1, 2, 3</td>
+<td>1st, 2nd, 3rd level</td>
+</tr>
+<tr>
+<td>appeal_type</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Clinical/Technical/Billing</td>
+</tr>
+<tr>
+<td>appeal_method</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Portal/Fax/Mail</td>
 </tr>
 <tr>
 <td>appeal_date</td>
@@ -2265,91 +4451,194 @@
 <td>Appeal submission date</td>
 </tr>
 <tr>
-<td>appeal_method</td>
-<td>VARCHAR(20)</td>
-<td>Fax, Mail, Portal</td>
+<td>appeal_deadline</td>
+<td>DATE</td>
+<td></td>
+<td>Appeal due date</td>
 </tr>
 <tr>
 <td>appeal_letter</td>
 <td>TEXT</td>
-<td>Appeal letter content</td>
+<td></td>
+<td>Appeal content</td>
 </tr>
 <tr>
 <td>supporting_documents</td>
 <td>TEXT[]</td>
-<td>Array of document URLs</td>
+<td></td>
+<td>Supporting documents</td>
+</tr>
+<tr>
+<td>medical_records_attached</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Medical records attached</td>
+</tr>
+<tr>
+<td>corrected_claim_submitted</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Corrected claim sent</td>
 </tr>
 <tr>
 <td>status</td>
 <td>VARCHAR(20)</td>
 <td>NOT NULL</td>
-<td>Submitted, Under Review, Approved, Denied, Partially Approved</td>
+<td>Submitted/Approved/Denied</td>
+</tr>
+<tr>
+<td>status_reason</td>
+<td>TEXT</td>
+<td></td>
+<td>Status explanation</td>
+</tr>
+<tr>
+<td>payer_reference_number</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Payer reference</td>
 </tr>
 <tr>
 <td>outcome_date</td>
 <td>DATE</td>
+<td></td>
 <td>Outcome date</td>
 </tr>
 <tr>
 <td>additional_payment</td>
 <td>DECIMAL(10,2)</td>
 <td>DEFAULT 0</td>
-<td>Additional payment received</td>
+<td>Additional reimbursement</td>
+</tr>
+<tr>
+<td>expected_recovery_amount</td>
+<td>DECIMAL(10,2)</td>
+<td></td>
+<td>Expected recovery</td>
+</tr>
+<tr>
+<td>appeal_outcome_category</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Fully approved/Partial</td>
 </tr>
 <tr>
 <td>outcome_notes</td>
 <td>TEXT</td>
-<td>Outcome notes</td>
+<td></td>
+<td>Outcome explanation</td>
+</tr>
+<tr>
+<td>assigned_to</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Assigned user</td>
 </tr>
 <tr>
 <td>submitted_by</td>
 <td>UUID</td>
 <td>FOREIGN KEY → users</td>
+<td>Submitted by user</td>
+</tr>
+<tr>
+<td>reviewed_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Reviewed by user</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
 <tr>
 <td>updated_at</td>
 <td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
 </tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete timestamp</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Deleted by user</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> denial<em>id, claim</em>id, appeal_date, status</p>
+<p><strong>Indexes:</strong> denial_id, claim_id, appeal_date, status, assigned_to, tenant_id</p>
 
 <hr>
 
 <h3>Table 26: patient_statements</h3>
-<p><strong>Purpose:</strong> Track patient billing statements</p>
+<p><strong>Purpose:</strong> Track patient billing statements and statement delivery</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>statement_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Statement identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>patient_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → patients</td>
+<td>Patient</td>
 </tr>
 <tr>
-<td>statement_date</td>
-<td>DATE</td>
-<td>NOT NULL</td>
-<td>Statement date</td>
+<td>guarantor_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → guarantors</td>
+<td>Responsible party</td>
 </tr>
 <tr>
 <td>statement_number</td>
 <td>VARCHAR(50)</td>
 <td>UNIQUE</td>
 <td>Statement number</td>
+</tr>
+<tr>
+<td>statement_cycle</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Monthly/Biweekly</td>
+</tr>
+<tr>
+<td>statement_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Statement date</td>
 </tr>
 <tr>
 <td>previous_balance</td>
@@ -2376,59 +4665,152 @@
 <td>Adjustments</td>
 </tr>
 <tr>
+<td>interest_charges</td>
+<td>DECIMAL(10,2)</td>
+<td>DEFAULT 0</td>
+<td>Interest/late fees</td>
+</tr>
+<tr>
 <td>current_balance</td>
 <td>DECIMAL(10,2)</td>
 <td>NOT NULL</td>
-<td>Current balance due</td>
+<td>Current balance</td>
+</tr>
+<tr>
+<td>minimum_due_amount</td>
+<td>DECIMAL(10,2)</td>
+<td></td>
+<td>Minimum payment due</td>
 </tr>
 <tr>
 <td>due_date</td>
 <td>DATE</td>
+<td></td>
 <td>Payment due date</td>
 </tr>
 <tr>
 <td>delivery_method</td>
 <td>VARCHAR(20)</td>
-<td>Mail, Email, Portal</td>
+<td></td>
+<td>Mail/Email/Portal</td>
+</tr>
+<tr>
+<td>delivery_status</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Pending/Sent/Failed</td>
 </tr>
 <tr>
 <td>sent_date</td>
 <td>DATE</td>
-<td>Date sent</td>
+<td></td>
+<td>Statement sent date</td>
+</tr>
+<tr>
+<td>viewed_in_portal</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Portal viewed flag</td>
+</tr>
+<tr>
+<td>viewed_date</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Viewed timestamp</td>
 </tr>
 <tr>
 <td>pdf_url</td>
 <td>TEXT</td>
-<td>Statement PDF URL</td>
+<td></td>
+<td>PDF storage URL</td>
+</tr>
+<tr>
+<td>statement_notes</td>
+<td>TEXT</td>
+<td></td>
+<td>Internal notes</td>
+</tr>
+<tr>
+<td>generated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Generated by user</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> patient<em>id, statement</em>date</p>
+<p><strong>Indexes:</strong> patient_id, statement_date, statement_number, delivery_status, tenant_id</p>
 
 <hr>
 
 <h3>Table 27: patient_payments</h3>
-<p><strong>Purpose:</strong> Track patient payments</p>
+<p><strong>Purpose:</strong> Track patient payments and payment processing</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>patient_payment_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Patient payment identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>patient_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → patients</td>
+<td>Patient</td>
+</tr>
+<tr>
+<td>guarantor_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → guarantors</td>
+<td>Responsible guarantor</td>
+</tr>
+<tr>
+<td>statement_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patient_statements</td>
+<td>Related statement</td>
+</tr>
+<tr>
+<td>payment_plan_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → payment_plans</td>
+<td>Payment plan reference</td>
 </tr>
 <tr>
 <td>payment_date</td>
@@ -2446,142 +4828,345 @@
 <td>payment_method</td>
 <td>VARCHAR(20)</td>
 <td>NOT NULL</td>
-<td>Credit Card, Debit Card, ACH, Check, Cash</td>
+<td>Card/ACH/Cash</td>
+</tr>
+<tr>
+<td>payment_source</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Portal/Front Desk</td>
 </tr>
 <tr>
 <td>transaction_id</td>
 <td>VARCHAR(100)</td>
-<td>Payment processor transaction ID</td>
+<td></td>
+<td>Payment transaction ID</td>
+</tr>
+<tr>
+<td>authorization_code</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Gateway authorization</td>
 </tr>
 <tr>
 <td>check_number</td>
 <td>VARCHAR(50)</td>
+<td></td>
 <td>Check number</td>
 </tr>
 <tr>
-<td>payment_plan_id</td>
-<td>UUID</td>
-<td>FOREIGN KEY → payment_plans</td>
-<td>If part of payment plan</td>
+<td>card_last_four_digits</td>
+<td>VARCHAR(4)</td>
+<td></td>
+<td>Last four digits</td>
 </tr>
 <tr>
-<td>notes</td>
+<td>payment_gateway</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Stripe/Authorize.Net</td>
+</tr>
+<tr>
+<td>payment_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Pending/Completed/Failed</td>
+</tr>
+<tr>
+<td>reconciliation_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Matched/Pending</td>
+</tr>
+<tr>
+<td>refund_flag</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Refunded indicator</td>
+</tr>
+<tr>
+<td>refund_amount</td>
+<td>DECIMAL(10,2)</td>
+<td>DEFAULT 0</td>
+<td>Refunded amount</td>
+</tr>
+<tr>
+<td>refund_reason</td>
 <td>TEXT</td>
-<td>Payment notes</td>
+<td></td>
+<td>Refund explanation</td>
+</tr>
+<tr>
+<td>posting_notes</td>
+<td>TEXT</td>
+<td></td>
+<td>Posting notes</td>
 </tr>
 <tr>
 <td>received_by</td>
 <td>UUID</td>
 <td>FOREIGN KEY → users</td>
-</tr>
-<tr>
-<td>created_at</td>
-<td>TIMESTAMP</td>
-<td>DEFAULT NOW()</td>
-</tr>
-
-<p><strong>Indexes:</strong> patient<em>id, payment</em>date</p>
-
-<hr>
-
-<h3>Table 28: payment_plans</h3>
-<p><strong>Purpose:</strong> Track patient payment plans</p>
-
-<tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
-</tr>
-<tr>
-<td>plan_id</td>
-<td>UUID</td>
-<td>PRIMARY KEY</td>
-</tr>
-<tr>
-<td>patient_id</td>
-<td>UUID</td>
-<td>FOREIGN KEY → patients</td>
-</tr>
-<tr>
-<td>total_amount</td>
-<td>DECIMAL(10,2)</td>
-<td>NOT NULL</td>
-<td>Total amount owed</td>
-</tr>
-<tr>
-<td>monthly_payment</td>
-<td>DECIMAL(10,2)</td>
-<td>NOT NULL</td>
-<td>Monthly payment amount</td>
-</tr>
-<tr>
-<td>start_date</td>
-<td>DATE</td>
-<td>NOT NULL</td>
-<td>Plan start date</td>
-</tr>
-<tr>
-<td>end_date</td>
-<td>DATE</td>
-<td>NOT NULL</td>
-<td>Plan end date</td>
-</tr>
-<tr>
-<td>interest_rate</td>
-<td>DECIMAL(5,2)</td>
-<td>DEFAULT 0</td>
-<td>Interest rate %</td>
-</tr>
-<tr>
-<td>status</td>
-<td>VARCHAR(20)</td>
-<td>NOT NULL</td>
-<td>Active, Completed, Defaulted, Cancelled</td>
-</tr>
-<tr>
-<td>auto_pay_enabled</td>
-<td>BOOLEAN</td>
-<td>DEFAULT FALSE</td>
-<td>Auto-pay enabled</td>
+<td>Received by user</td>
 </tr>
 <tr>
 <td>created_by</td>
 <td>UUID</td>
 <td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
 <tr>
 <td>updated_at</td>
 <td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
 </tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete timestamp</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Deleted by user</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> patient_id, status</p>
+<p><strong>Indexes:</strong> patient_id, payment_date, payment_status, transaction_id, tenant_id</p>
 
 <hr>
 
-<h3>Table 29: collections</h3>
-<p><strong>Purpose:</strong> Track accounts in collections</p>
+<h3>Table 28: payment_plans</h3>
+<p><strong>Purpose:</strong> Track patient payment plans and installment schedules</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
-<td>collection_id</td>
+<td>plan_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Payment plan identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>patient_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → patients</td>
+<td>Patient</td>
+</tr>
+<tr>
+<td>guarantor_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → guarantors</td>
+<td>Responsible guarantor</td>
+</tr>
+<tr>
+<td>total_amount</td>
+<td>DECIMAL(10,2)</td>
+<td>NOT NULL</td>
+<td>Total balance</td>
+</tr>
+<tr>
+<td>down_payment_amount</td>
+<td>DECIMAL(10,2)</td>
+<td>DEFAULT 0</td>
+<td>Initial payment</td>
+</tr>
+<tr>
+<td>remaining_balance</td>
+<td>DECIMAL(10,2)</td>
+<td></td>
+<td>Remaining balance</td>
+</tr>
+<tr>
+<td>monthly_payment</td>
+<td>DECIMAL(10,2)</td>
+<td>NOT NULL</td>
+<td>Monthly installment</td>
+</tr>
+<tr>
+<td>installment_frequency</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Monthly/Biweekly</td>
+</tr>
+<tr>
+<td>number_of_installments</td>
+<td>INTEGER</td>
+<td></td>
+<td>Total installments</td>
+</tr>
+<tr>
+<td>completed_installments</td>
+<td>INTEGER</td>
+<td>DEFAULT 0</td>
+<td>Completed installments</td>
+</tr>
+<tr>
+<td>missed_payments_count</td>
+<td>INTEGER</td>
+<td>DEFAULT 0</td>
+<td>Missed payment count</td>
+</tr>
+<tr>
+<td>start_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Start date</td>
+</tr>
+<tr>
+<td>end_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>End date</td>
+</tr>
+<tr>
+<td>next_payment_date</td>
+<td>DATE</td>
+<td></td>
+<td>Upcoming payment</td>
+</tr>
+<tr>
+<td>interest_rate</td>
+<td>DECIMAL(5,2)</td>
+<td>DEFAULT 0</td>
+<td>Interest rate</td>
+</tr>
+<tr>
+<td>auto_pay_enabled</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Auto payment enabled</td>
+</tr>
+<tr>
+<td>auto_pay_method</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>ACH/Card</td>
+</tr>
+<tr>
+<td>status</td>
+<td>VARCHAR(20)</td>
+<td>NOT NULL</td>
+<td>Active/Completed</td>
+</tr>
+<tr>
+<td>status_reason</td>
+<td>TEXT</td>
+<td></td>
+<td>Status explanation</td>
+</tr>
+<tr>
+<td>agreement_document_url</td>
+<td>TEXT</td>
+<td></td>
+<td>Signed agreement</td>
+</tr>
+<tr>
+<td>defaulted_date</td>
+<td>DATE</td>
+<td></td>
+<td>Default date</td>
+</tr>
+<tr>
+<td>notes</td>
+<td>TEXT</td>
+<td></td>
+<td>Internal notes</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
+</tr>
+</table>
+
+<p><strong>Indexes:</strong> patient_id, status, next_payment_date, tenant_id</p>
+
+<hr>
+
+<h3>Table 29: collections</h3>
+<p><strong>Purpose:</strong> Track patient balances sent to collections</p>
+
+<table>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>collection_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+<td>Collection identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
+</tr>
+<tr>
+<td>patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+<td>Patient</td>
+</tr>
+<tr>
+<td>guarantor_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → guarantors</td>
+<td>Responsible guarantor</td>
+</tr>
+<tr>
+<td>statement_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patient_statements</td>
+<td>Related statement</td>
 </tr>
 <tr>
 <td>original_balance</td>
@@ -2599,94 +5184,161 @@
 <td>collection_status</td>
 <td>VARCHAR(20)</td>
 <td>NOT NULL</td>
-<td>Internal, External, Bad Debt</td>
+<td>Internal/External/Bad Debt</td>
+</tr>
+<tr>
+<td>collection_stage</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Pre-collection/Agency</td>
 </tr>
 <tr>
 <td>sent_to_collections_date</td>
 <td>DATE</td>
-<td>Date sent to external collections</td>
+<td></td>
+<td>Sent date</td>
 </tr>
 <tr>
 <td>collection_agency</td>
 <td>VARCHAR(100)</td>
-<td>Collection agency name</td>
+<td></td>
+<td>Agency name</td>
+</tr>
+<tr>
+<td>agency_account_number</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Agency reference</td>
 </tr>
 <tr>
 <td>agency_fee_pct</td>
 <td>DECIMAL(5,2)</td>
-<td>Agency commission %</td>
+<td></td>
+<td>Agency commission</td>
+</tr>
+<tr>
+<td>last_collection_activity_date</td>
+<td>DATE</td>
+<td></td>
+<td>Last activity</td>
+</tr>
+<tr>
+<td>next_followup_date</td>
+<td>DATE</td>
+<td></td>
+<td>Follow-up date</td>
+</tr>
+<tr>
+<td>payment_arrangement_flag</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Payment arrangement</td>
+</tr>
+<tr>
+<td>settlement_offer_amount</td>
+<td>DECIMAL(10,2)</td>
+<td></td>
+<td>Settlement offer</td>
+</tr>
+<tr>
+<td>settlement_expiration_date</td>
+<td>DATE</td>
+<td></td>
+<td>Settlement expiration</td>
+</tr>
+<tr>
+<td>bankruptcy_flag</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Bankruptcy indicator</td>
+</tr>
+<tr>
+<td>legal_action_flag</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Legal action initiated</td>
+</tr>
+<tr>
+<td>write_off_flag</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Written off indicator</td>
 </tr>
 <tr>
 <td>notes</td>
 <td>TEXT</td>
+<td></td>
 <td>Collection notes</td>
+</tr>
+<tr>
+<td>assigned_to</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Assigned collector</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
 <tr>
 <td>updated_at</td>
 <td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
 </tr>
+</table>
 
-<p><strong>Indexes:</strong> patient<em>id, collection</em>status</p>
+<p><strong>Indexes:</strong> patient_id, collection_status, collection_agency, next_followup_date, tenant_id</p>
 
 <hr>
 
-<h3>Table 30: refunds</h3>
-<p><strong>Purpose:</strong> Track refunds issued</p>
+<h3>Table 30: refunds (Final Enterprise Version)</h3>
+<p><strong>Purpose:</strong> Track insurance and patient refunds</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>refund_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Refund identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>patient_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → patients</td>
+<td>Patient</td>
 </tr>
 <tr>
 <td>payer_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → payers</td>
-<td>If refund to payer</td>
-</tr>
-<tr>
-<td>refund_amount</td>
-<td>DECIMAL(10,2)</td>
-<td>NOT NULL</td>
-<td>Refund amount</td>
-</tr>
-<tr>
-<td>refund_reason</td>
-<td>TEXT</td>
-<td>NOT NULL</td>
-<td>Reason for refund</td>
-</tr>
-<tr>
-<td>refund_method</td>
-<td>VARCHAR(20)</td>
-<td>Check, ACH, Credit Card Reversal</td>
-</tr>
-<tr>
-<td>check_number</td>
-<td>VARCHAR(50)</td>
-<td>Check number</td>
-</tr>
-<tr>
-<td>refund_date</td>
-<td>DATE</td>
-<td>NOT NULL</td>
-<td>Refund date</td>
+<td>Insurance payer</td>
 </tr>
 <tr>
 <td>original_payment_id</td>
@@ -2695,179 +5347,366 @@
 <td>Original payment</td>
 </tr>
 <tr>
+<td>patient_payment_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patient_payments</td>
+<td>Patient payment</td>
+</tr>
+<tr>
+<td>refund_type</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Patient/Payer</td>
+</tr>
+<tr>
+<td>refund_reason</td>
+<td>TEXT</td>
+<td>NOT NULL</td>
+<td>Refund reason</td>
+</tr>
+<tr>
+<td>refund_category</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Overpayment/Duplicate</td>
+</tr>
+<tr>
+<td>refund_amount</td>
+<td>DECIMAL(10,2)</td>
+<td>NOT NULL</td>
+<td>Refund amount</td>
+</tr>
+<tr>
+<td>refund_method</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Check/ACH/Reversal</td>
+</tr>
+<tr>
+<td>refund_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Pending/Processed</td>
+</tr>
+<tr>
+<td>refund_reference_number</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Refund transaction reference</td>
+</tr>
+<tr>
+<td>check_number</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Refund check number</td>
+</tr>
+<tr>
+<td>bank_transaction_id</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>ACH reference</td>
+</tr>
+<tr>
+<td>approval_required</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Requires approval</td>
+</tr>
+<tr>
+<td>approved_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Approved by user</td>
+</tr>
+<tr>
+<td>approved_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Approval timestamp</td>
+</tr>
+<tr>
+<td>refund_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Refund issued date</td>
+</tr>
+<tr>
+<td>posting_notes</td>
+<td>TEXT</td>
+<td></td>
+<td>Refund notes</td>
+</tr>
+<tr>
+<td>reconciliation_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Matched/Pending</td>
+</tr>
+<tr>
 <td>issued_by</td>
 <td>UUID</td>
 <td>FOREIGN KEY → users</td>
+<td>Issued by user</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
 </tr>
 <tr>
 <td>created_at</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
 </tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
+</tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete timestamp</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Deleted by user</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> patient<em>id, payer</em>id, refund_date</p>
+<p><strong>Indexes:</strong> patient_id, payer_id, refund_date, refund_status, reconciliation_status, tenant_id</p>
 
 <hr>
 
 <h3>Table 31: audit_logs</h3>
 <p><strong>Purpose:</strong> Comprehensive audit trail (HIPAA compliance)</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>log_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Audit log identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>user_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → users</td>
-<td>User who performed action</td>
+<td>User performing action</td>
 </tr>
 <tr>
 <td>action_type</td>
 <td>VARCHAR(50)</td>
 <td>NOT NULL</td>
-<td>Login, Logout, Create, Read, Update, Delete</td>
+<td>Create/Update/Delete/Login</td>
+</tr>
+<tr>
+<td>module_name</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Application module</td>
 </tr>
 <tr>
 <td>table_name</td>
 <td>VARCHAR(50)</td>
-<td>Table affected</td>
+<td></td>
+<td>Affected table</td>
 </tr>
 <tr>
 <td>record_id</td>
 <td>UUID</td>
-<td>Record ID affected</td>
+<td></td>
+<td>Affected record</td>
 </tr>
 <tr>
 <td>patient_id</td>
 <td>UUID</td>
 <td>FOREIGN KEY → patients</td>
-<td>Patient record accessed (if applicable)</td>
+<td>Patient involved</td>
 </tr>
 <tr>
 <td>before_value</td>
 <td>JSONB</td>
-<td>Data before change</td>
+<td></td>
+<td>Before data</td>
 </tr>
 <tr>
 <td>after_value</td>
 <td>JSONB</td>
-<td>Data after change</td>
+<td></td>
+<td>After data</td>
 </tr>
 <tr>
 <td>ip_address</td>
 <td>VARCHAR(50)</td>
-<td>User IP address</td>
+<td></td>
+<td>IP address</td>
+</tr>
+<tr>
+<td>device_info</td>
+<td>TEXT</td>
+<td></td>
+<td>Device/browser info</td>
+</tr>
+<tr>
+<td>session_id</td>
+<td>VARCHAR(255)</td>
+<td></td>
+<td>Session identifier</td>
+</tr>
+<tr>
+<td>action_status</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Success/Failed</td>
 </tr>
 <tr>
 <td>timestamp</td>
 <td>TIMESTAMP</td>
 <td>DEFAULT NOW()</td>
-<td>Action timestamp</td>
+<td>Audit timestamp</td>
 </tr>
+</table>
 
-<p><strong>Indexes:</strong> user<em>id, patient</em>id, action_type, timestamp  </p>
-<p><strong>Retention:</strong> 7 years minimum</p>
-
-<hr>
-
-<h3>Table 32: reports</h3>
-<p><strong>Purpose:</strong> Store saved reports and schedules</p>
-
-<tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
-</tr>
-<tr>
-<td>report_id</td>
-<td>UUID</td>
-<td>PRIMARY KEY</td>
-</tr>
-<tr>
-<td>report_name</td>
-<td>VARCHAR(100)</td>
-<td>NOT NULL</td>
-<td>Report name</td>
-</tr>
-<tr>
-<td>report_type</td>
-<td>VARCHAR(50)</td>
-<td>NOT NULL</td>
-<td>Standard, Custom</td>
-</tr>
-<tr>
-<td>report_category</td>
-<td>VARCHAR(50)</td>
-<td>Financial, Operational, Compliance</td>
-</tr>
-<tr>
-<td>parameters</td>
-<td>JSONB</td>
-<td>Report parameters</td>
-</tr>
-<tr>
-<td>schedule</td>
-<td>VARCHAR(50)</td>
-<td>Daily, Weekly, Monthly, None</td>
-</tr>
-<tr>
-<td>recipients</td>
-<td>TEXT[]</td>
-<td>Email recipients</td>
-</tr>
-<tr>
-<td>created_by</td>
-<td>UUID</td>
-<td>FOREIGN KEY → users</td>
-</tr>
-<tr>
-<td>created_at</td>
-<td>TIMESTAMP</td>
-<td>DEFAULT NOW()</td>
-</tr>
+<p><strong>Indexes:</strong> user_id, patient_id, action_type, timestamp, tenant_id</p>
 
 <hr>
 
-<h3>Table 33: code_sets</h3>
-<p><strong>Purpose:</strong> Store medical code sets (ICD-10, CPT, HCPCS)</p>
+<h3>Table 32: code_sets</h3>
+<p><strong>Purpose:</strong> Store standardized medical coding systems (ICD, CPT, HCPCS, Revenue Codes)</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
-<td>code_id</td>
+<td>code_set_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>Code set identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>code_type</td>
-<td>VARCHAR(10)</td>
+<td>VARCHAR(20)</td>
 <td>NOT NULL</td>
-<td>ICD10, CPT, HCPCS, DRG, MODIFIER</td>
+<td>ICD10, CPT, HCPCS, REVCODE</td>
 </tr>
 <tr>
 <td>code</td>
-<td>VARCHAR(10)</td>
+<td>VARCHAR(20)</td>
 <td>NOT NULL</td>
-<td>Code value</td>
+<td>Medical code</td>
 </tr>
 <tr>
-<td>description</td>
+<td>short_description</td>
+<td>VARCHAR(255)</td>
+<td></td>
+<td>Short description</td>
+</tr>
+<tr>
+<td>long_description</td>
 <td>TEXT</td>
-<td>NOT NULL</td>
-<td>Code description</td>
+<td></td>
+<td>Full description</td>
+</tr>
+<tr>
+<td>code_category</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Category classification</td>
+</tr>
+<tr>
+<td>specialty</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Medical specialty</td>
+</tr>
+<tr>
+<td>gender_specific</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Male/Female/Both</td>
+</tr>
+<tr>
+<td>minimum_age</td>
+<td>INTEGER</td>
+<td></td>
+<td>Minimum patient age</td>
+</tr>
+<tr>
+<td>maximum_age</td>
+<td>INTEGER</td>
+<td></td>
+<td>Maximum patient age</td>
+</tr>
+<tr>
+<td>requires_authorization</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Prior auth required</td>
+</tr>
+<tr>
+<td>requires_medical_necessity</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Medical necessity required</td>
+</tr>
+<tr>
+<td>billable_flag</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+<td>Billable code indicator</td>
+</tr>
+<tr>
+<td>global_period_days</td>
+<td>INTEGER</td>
+<td></td>
+<td>Surgical global period</td>
+</tr>
+<tr>
+<td>relative_value_unit</td>
+<td>DECIMAL(10,2)</td>
+<td></td>
+<td>RVU value</td>
+</tr>
+<tr>
+<td>modifier_allowed</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+<td>Modifier allowed</td>
 </tr>
 <tr>
 <td>effective_date</td>
@@ -2878,152 +5717,2669 @@
 <tr>
 <td>termination_date</td>
 <td>DATE</td>
+<td></td>
 <td>Termination date</td>
 </tr>
 <tr>
-<td>is_active</td>
-<td>BOOLEAN</td>
-<td>DEFAULT TRUE</td>
+<td>annual_update_version</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>CMS annual version</td>
 </tr>
+<tr>
+<td>status</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Active/Inactive</td>
+</tr>
+<tr>
+<td>source_authority</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>CMS/AMA</td>
+</tr>
+<tr>
+<td>notes</td>
+<td>TEXT</td>
+<td></td>
+<td>Internal notes</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
+</tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete timestamp</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Deleted by user</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> code<em>type, code, effective</em>date  </p>
-<p><strong>Update Frequency:</strong> Annual (ICD-10, CPT updates every January 1)</p>
+<p><strong>Indexes:</strong> code_type, code, specialty, status, effective_date, tenant_id</p>
 
 <hr>
 
-<h3>Table 34: ncci_edits</h3>
-<p><strong>Purpose:</strong> Store NCCI (National Correct Coding Initiative) edits</p>
+<h3>Table 33: ncci_edits</h3>
+<p><strong>Purpose:</strong> Store National Correct Coding Initiative (NCCI) edit rules</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
-<td>edit_id</td>
+<td>ncci_edit_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>NCCI edit identifier</td>
 </tr>
 <tr>
-<td>column1_code</td>
-<td>VARCHAR(10)</td>
-<td>NOT NULL</td>
-<td>Column 1 CPT code</td>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
-<td>column2_code</td>
+<td>primary_cpt_code</td>
 <td>VARCHAR(10)</td>
 <td>NOT NULL</td>
-<td>Column 2 CPT code</td>
+<td>Primary CPT code</td>
+</tr>
+<tr>
+<td>secondary_cpt_code</td>
+<td>VARCHAR(10)</td>
+<td>NOT NULL</td>
+<td>Secondary CPT code</td>
+</tr>
+<tr>
+<td>edit_type</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Mutually Exclusive/Column1/Column2</td>
 </tr>
 <tr>
 <td>modifier_indicator</td>
-<td>VARCHAR(1)</td>
-<td>0=Not allowed, 1=Allowed with modifier</td>
+<td>VARCHAR(5)</td>
+<td></td>
+<td>Modifier indicator</td>
+</tr>
+<tr>
+<td>modifier_override_allowed</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Override allowed</td>
+</tr>
+<tr>
+<td>edit_description</td>
+<td>TEXT</td>
+<td></td>
+<td>Edit explanation</td>
+</tr>
+<tr>
+<td>denial_message</td>
+<td>TEXT</td>
+<td></td>
+<td>Claim denial explanation</td>
+</tr>
+<tr>
+<td>cms_reference</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>CMS reference</td>
 </tr>
 <tr>
 <td>effective_date</td>
 <td>DATE</td>
 <td>NOT NULL</td>
+<td>Effective date</td>
 </tr>
 <tr>
-<td>deletion_date</td>
+<td>termination_date</td>
 <td>DATE</td>
+<td></td>
+<td>End date</td>
 </tr>
+<tr>
+<td>severity_level</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Fatal/Warning</td>
+</tr>
+<tr>
+<td>auto_scrub_enabled</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+<td>Auto scrub rule</td>
+</tr>
+<tr>
+<td>override_reason_required</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Override reason required</td>
+</tr>
+<tr>
+<td>override_approval_required</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Approval required</td>
+</tr>
+<tr>
+<td>frequency_limit</td>
+<td>INTEGER</td>
+<td></td>
+<td>Frequency limit</td>
+</tr>
+<tr>
+<td>specialty_restriction</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Specialty restriction</td>
+</tr>
+<tr>
+<td>status</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Active/Inactive</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> column1<em>code, column2</em>code  </p>
-<p><strong>Update Frequency:</strong> Quarterly from CMS</p>
+<p><strong>Indexes:</strong> primary_cpt_code, secondary_cpt_code, effective_date, severity_level, tenant_id</p>
 
 <hr>
 
-<h3>Table 35: lcd_ncd_rules</h3>
-<p><strong>Purpose:</strong> Store LCD/NCD (Local/National Coverage Determination) rules</p>
+<h3>Table 34: lcd_ncd_rules</h3>
+<p><strong>Purpose:</strong> Store Local Coverage Determination (LCD) and National Coverage Determination (NCD) rules</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>rule_id</td>
 <td>UUID</td>
 <td>PRIMARY KEY</td>
+<td>LCD/NCD rule identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
 </tr>
 <tr>
 <td>rule_type</td>
 <td>VARCHAR(10)</td>
 <td>NOT NULL</td>
-<td>LCD, NCD</td>
+<td>LCD/NCD</td>
+</tr>
+<tr>
+<td>rule_number</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>CMS rule number</td>
+</tr>
+<tr>
+<td>payer_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → payers</td>
+<td>Related payer</td>
 </tr>
 <tr>
 <td>cpt_code</td>
 <td>VARCHAR(10)</td>
-<td>NOT NULL</td>
-<td>CPT code</td>
+<td></td>
+<td>CPT/HCPCS code</td>
 </tr>
 <tr>
-<td>covered_icd10_codes</td>
-<td>TEXT[]</td>
-<td>Array of covered ICD-10 codes</td>
-</tr>
-<tr>
-<td>mac_region</td>
+<td>icd10_code</td>
 <td>VARCHAR(10)</td>
-<td>MAC region (for LCD)</td>
+<td></td>
+<td>ICD-10 diagnosis code</td>
+</tr>
+<tr>
+<td>medical_necessity_criteria</td>
+<td>TEXT</td>
+<td></td>
+<td>Medical necessity requirements</td>
+</tr>
+<tr>
+<td>frequency_limit</td>
+<td>INTEGER</td>
+<td></td>
+<td>Frequency limitation</td>
+</tr>
+<tr>
+<td>age_restriction_min</td>
+<td>INTEGER</td>
+<td></td>
+<td>Minimum age</td>
+</tr>
+<tr>
+<td>age_restriction_max</td>
+<td>INTEGER</td>
+<td></td>
+<td>Maximum age</td>
+</tr>
+<tr>
+<td>gender_restriction</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Male/Female/Both</td>
+</tr>
+<tr>
+<td>place_of_service</td>
+<td>VARCHAR(2)</td>
+<td></td>
+<td>POS restriction</td>
+</tr>
+<tr>
+<td>authorization_required</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Prior auth required</td>
+</tr>
+<tr>
+<td>documentation_required</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Additional documentation</td>
+</tr>
+<tr>
+<td>denial_message</td>
+<td>TEXT</td>
+<td></td>
+<td>Denial explanation</td>
+</tr>
+<tr>
+<td>cms_reference_url</td>
+<td>TEXT</td>
+<td></td>
+<td>CMS reference URL</td>
 </tr>
 <tr>
 <td>effective_date</td>
 <td>DATE</td>
 <td>NOT NULL</td>
+<td>Effective date</td>
 </tr>
 <tr>
 <td>termination_date</td>
 <td>DATE</td>
+<td></td>
+<td>Termination date</td>
 </tr>
+<tr>
+<td>status</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Active/Inactive</td>
+</tr>
+<tr>
+<td>auto_validation_enabled</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+<td>Automatic validation</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
+</tr>
+</table>
 
-<p><strong>Indexes:</strong> cpt<em>code, rule</em>type</p>
+<p><strong>Indexes:</strong> cpt_code, icd10_code, payer_id, rule_type, effective_date, tenant_id</p>
+
+<hr>
+
+<h3>Table 35: reports</h3>
+<p><strong>Purpose:</strong> Store generated reports, report configurations, and analytics exports</p>
+
+<table>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>report_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+<td>Report identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
+</tr>
+<tr>
+<td>report_name</td>
+<td>VARCHAR(100)</td>
+<td>NOT NULL</td>
+<td>Report name</td>
+</tr>
+<tr>
+<td>report_category</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Financial/Operational</td>
+</tr>
+<tr>
+<td>report_type</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Dashboard/PDF/Excel</td>
+</tr>
+<tr>
+<td>report_description</td>
+<td>TEXT</td>
+<td></td>
+<td>Report description</td>
+</tr>
+<tr>
+<td>generated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Generated by user</td>
+</tr>
+<tr>
+<td>report_parameters</td>
+<td>JSONB</td>
+<td></td>
+<td>Report filters/parameters</td>
+</tr>
+<tr>
+<td>date_range_from</td>
+<td>DATE</td>
+<td></td>
+<td>Report start date</td>
+</tr>
+<tr>
+<td>date_range_to</td>
+<td>DATE</td>
+<td></td>
+<td>Report end date</td>
+</tr>
+<tr>
+<td>generation_start_time</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Generation start</td>
+</tr>
+<tr>
+<td>generation_end_time</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Generation completion</td>
+</tr>
+<tr>
+<td>execution_time_ms</td>
+<td>INTEGER</td>
+<td></td>
+<td>Execution duration</td>
+</tr>
+<tr>
+<td>row_count</td>
+<td>INTEGER</td>
+<td></td>
+<td>Number of rows</td>
+</tr>
+<tr>
+<td>file_format</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>PDF/XLSX/CSV</td>
+</tr>
+<tr>
+<td>file_size_kb</td>
+<td>INTEGER</td>
+<td></td>
+<td>Report file size</td>
+</tr>
+<tr>
+<td>storage_path</td>
+<td>TEXT</td>
+<td></td>
+<td>File storage location</td>
+</tr>
+<tr>
+<td>report_status</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Processing/Completed/Failed</td>
+</tr>
+<tr>
+<td>scheduled_report</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Scheduled report flag</td>
+</tr>
+<tr>
+<td>schedule_frequency</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Daily/Weekly/Monthly</td>
+</tr>
+<tr>
+<td>next_run_date</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Next execution</td>
+</tr>
+<tr>
+<td>email_distribution_list</td>
+<td>TEXT[]</td>
+<td></td>
+<td>Distribution emails</td>
+</tr>
+<tr>
+<td>access_level</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Public/Restricted</td>
+</tr>
+<tr>
+<td>contains_phi</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+<td>PHI data indicator</td>
+</tr>
+<tr>
+<td>encryption_enabled</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+<td>File encryption</td>
+</tr>
+<tr>
+<td>download_count</td>
+<td>INTEGER</td>
+<td>DEFAULT 0</td>
+<td>Download count</td>
+</tr>
+<tr>
+<td>last_downloaded_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last download</td>
+</tr>
+<tr>
+<td>retention_expiration_date</td>
+<td>DATE</td>
+<td></td>
+<td>Report retention</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by user</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by user</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update timestamp</td>
+</tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete timestamp</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Deleted by user</td>
+</tr>
+</table>
+
+<p><strong>Indexes:</strong> report_name, report_category, generated_by, report_status, scheduled_report, tenant_id</p>
+
+<hr>
+
+<h3>Table 36: tenant_organizations</h3>
+<p><strong>Purpose:</strong> Store multi-tenant organizations (hospitals, clinics, billing companies)</p>
+
+<table>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+<td>Unique tenant identifier</td>
+</tr>
+<tr>
+<td>organization_code</td>
+<td>VARCHAR(50)</td>
+<td>UNIQUE</td>
+<td>Internal organization code</td>
+</tr>
+<tr>
+<td>organization_name</td>
+<td>VARCHAR(150)</td>
+<td>NOT NULL</td>
+<td>Organization name</td>
+</tr>
+<tr>
+<td>organization_type</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Hospital/Clinic/Billing Company</td>
+</tr>
+<tr>
+<td>tax_id</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>EIN/Tax ID</td>
+</tr>
+<tr>
+<td>npi_number</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Organization NPI</td>
+</tr>
+<tr>
+<td>address_line1</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Address</td>
+</tr>
+<tr>
+<td>address_line2</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Address line 2</td>
+</tr>
+<tr>
+<td>city</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>City</td>
+</tr>
+<tr>
+<td>state</td>
+<td>VARCHAR(2)</td>
+<td></td>
+<td>State</td>
+</tr>
+<tr>
+<td>zip_code</td>
+<td>VARCHAR(10)</td>
+<td></td>
+<td>ZIP code</td>
+</tr>
+<tr>
+<td>country</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Country</td>
+</tr>
+<tr>
+<td>timezone</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Organization timezone</td>
+</tr>
+<tr>
+<td>default_timezone</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Default timezone</td>
+</tr>
+<tr>
+<td>phone</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Contact number</td>
+</tr>
+<tr>
+<td>email</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Email</td>
+</tr>
+<tr>
+<td>website_url</td>
+<td>TEXT</td>
+<td></td>
+<td>Organization website</td>
+</tr>
+<tr>
+<td>logo_url</td>
+<td>TEXT</td>
+<td></td>
+<td>Branding logo</td>
+</tr>
+<tr>
+<td>subscription_plan</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Basic/Enterprise</td>
+</tr>
+<tr>
+<td>subscription_start_date</td>
+<td>DATE</td>
+<td></td>
+<td>Subscription start</td>
+</tr>
+<tr>
+<td>subscription_end_date</td>
+<td>DATE</td>
+<td></td>
+<td>Subscription end</td>
+</tr>
+<tr>
+<td>max_users_allowed</td>
+<td>INTEGER</td>
+<td></td>
+<td>License limit</td>
+</tr>
+<tr>
+<td>hipaa_baa_signed</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>HIPAA BAA signed</td>
+</tr>
+<tr>
+<td>hipaa_baa_signed_date</td>
+<td>DATE</td>
+<td></td>
+<td>BAA signed date</td>
+</tr>
+<tr>
+<td>is_active</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+<td>Active status</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update</td>
+</tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Deleted by</td>
+</tr>
+</table>
+
+<p><strong>Indexes:</strong> organization_name, organization_code, tax_id, is_active</p>
+
+<hr>
+
+<h3>Table 37: clearinghouse_submissions</h3>
+<p><strong>Purpose:</strong> Track claim submissions to clearinghouses</p>
+
+<table>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>submission_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+<td>Submission identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
+</tr>
+<tr>
+<td>claim_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → claims</td>
+<td>Related claim</td>
+</tr>
+<tr>
+<td>clearinghouse_name</td>
+<td>VARCHAR(100)</td>
+<td>NOT NULL</td>
+<td>Clearinghouse name</td>
+</tr>
+<tr>
+<td>batch_id</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Clearinghouse batch ID</td>
+</tr>
+<tr>
+<td>submission_method</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>API/SFTP</td>
+</tr>
+<tr>
+<td>transmission_control_number</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>EDI control number</td>
+</tr>
+<tr>
+<td>transmission_date</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Submission date</td>
+</tr>
+<tr>
+<td>submission_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Submitted/Accepted/Rejected</td>
+</tr>
+<tr>
+<td>acknowledgement_999_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>999 status</td>
+</tr>
+<tr>
+<td>acknowledgement_277_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>277 status</td>
+</tr>
+<tr>
+<td>claim_status_277ca</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>277CA claim status</td>
+</tr>
+<tr>
+<td>resubmission_flag</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Resubmitted claim</td>
+</tr>
+<tr>
+<td>resubmission_reason</td>
+<td>TEXT</td>
+<td></td>
+<td>Resubmission reason</td>
+</tr>
+<tr>
+<td>rejection_reason</td>
+<td>TEXT</td>
+<td></td>
+<td>Rejection details</td>
+</tr>
+<tr>
+<td>raw_response</td>
+<td>JSONB</td>
+<td></td>
+<td>Clearinghouse response</td>
+</tr>
+<tr>
+<td>retry_count</td>
+<td>INTEGER</td>
+<td>DEFAULT 0</td>
+<td>Retry attempts</td>
+</tr>
+<tr>
+<td>submitted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Submitted by</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update</td>
+</tr>
+</table>
+
+<p><strong>Indexes:</strong> claim_id, batch_id, submission_status, clearinghouse_name, tenant_id</p>
+
+<hr>
+
+<h3>Table 38: edi_transactions</h3>
+<p><strong>Purpose:</strong> Store inbound and outbound EDI transactions</p>
+
+<table>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>transaction_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+<td>Transaction identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
+</tr>
+<tr>
+<td>transaction_type</td>
+<td>VARCHAR(10)</td>
+<td>NOT NULL</td>
+<td>837/835/270/271</td>
+</tr>
+<tr>
+<td>direction</td>
+<td>VARCHAR(10)</td>
+<td>NOT NULL</td>
+<td>Inbound/Outbound</td>
+</tr>
+<tr>
+<td>clearinghouse_name</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Clearinghouse</td>
+</tr>
+<tr>
+<td>related_claim_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → claims</td>
+<td>Related claim</td>
+</tr>
+<tr>
+<td>payer_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → payers</td>
+<td>Payer</td>
+</tr>
+<tr>
+<td>interchange_control_number</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>ISA control number</td>
+</tr>
+<tr>
+<td>functional_group_number</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>GS control number</td>
+</tr>
+<tr>
+<td>transaction_set_control_number</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>ST control number</td>
+</tr>
+<tr>
+<td>file_name</td>
+<td>VARCHAR(255)</td>
+<td></td>
+<td>EDI file name</td>
+</tr>
+<tr>
+<td>storage_path</td>
+<td>TEXT</td>
+<td></td>
+<td>EDI file location</td>
+</tr>
+<tr>
+<td>raw_edi_content_path</td>
+<td>TEXT</td>
+<td></td>
+<td>Raw EDI content</td>
+</tr>
+<tr>
+<td>transaction_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Processing status</td>
+</tr>
+<tr>
+<td>processed_date</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Processed timestamp</td>
+</tr>
+<tr>
+<td>retry_attempts</td>
+<td>INTEGER</td>
+<td>DEFAULT 0</td>
+<td>Retry count</td>
+</tr>
+<tr>
+<td>error_message</td>
+<td>TEXT</td>
+<td></td>
+<td>Error details</td>
+</tr>
+<tr>
+<td>processed_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Processed by</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
+</tr>
+</table>
+
+<p><strong>Indexes:</strong> transaction_type, transaction_status, payer_id, related_claim_id, tenant_id</p>
+
+<hr>
+
+<h3>Table 39: claim_status_history</h3>
+<p><strong>Purpose:</strong> Maintain claim lifecycle audit history</p>
+
+<table>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>history_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+<td>History identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
+</tr>
+<tr>
+<td>claim_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → claims</td>
+<td>Related claim</td>
+</tr>
+<tr>
+<td>workflow_stage</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Claim workflow stage</td>
+</tr>
+<tr>
+<td>old_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Previous status</td>
+</tr>
+<tr>
+<td>new_status</td>
+<td>VARCHAR(30)</td>
+<td>NOT NULL</td>
+<td>Updated status</td>
+</tr>
+<tr>
+<td>change_reason</td>
+<td>TEXT</td>
+<td></td>
+<td>Reason for status change</td>
+</tr>
+<tr>
+<td>source_system</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Internal/Payer</td>
+</tr>
+<tr>
+<td>automated_change</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Auto workflow update</td>
+</tr>
+<tr>
+<td>external_reference_number</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>External tracking</td>
+</tr>
+<tr>
+<td>changed_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Changed by user</td>
+</tr>
+<tr>
+<td>changed_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Change timestamp</td>
+</tr>
+<tr>
+<td>notes</td>
+<td>TEXT</td>
+<td></td>
+<td>Workflow notes</td>
+</tr>
+</table>
+
+<p><strong>Indexes:</strong> claim_id, new_status, workflow_stage, changed_at, tenant_id</p>
+
+<hr>
+
+<h3>Table 40: work_queues</h3>
+<p><strong>Purpose:</strong> Manage operational RCM work queues</p>
+
+<table>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>queue_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+<td>Queue identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
+</tr>
+<tr>
+<td>queue_name</td>
+<td>VARCHAR(100)</td>
+<td>NOT NULL</td>
+<td>Queue name</td>
+</tr>
+<tr>
+<td>queue_type</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Billing/AR/Coding</td>
+</tr>
+<tr>
+<td>priority_level</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>High/Medium/Low</td>
+</tr>
+<tr>
+<td>assigned_team</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Assigned team</td>
+</tr>
+<tr>
+<td>sla_hours</td>
+<td>INTEGER</td>
+<td></td>
+<td>SLA duration</td>
+</tr>
+<tr>
+<td>escalation_enabled</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Escalation enabled</td>
+</tr>
+<tr>
+<td>escalation_after_hours</td>
+<td>INTEGER</td>
+<td></td>
+<td>Escalation timing</td>
+</tr>
+<tr>
+<td>queue_status</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Active/Paused</td>
+</tr>
+<tr>
+<td>is_active</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+<td>Active flag</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update</td>
+</tr>
+</table>
+
+<p><strong>Indexes:</strong> queue_name, queue_type, queue_status, tenant_id</p>
+
+<hr>
+
+<h3>Table 41: tasks</h3>
+<p><strong>Purpose:</strong> Track workflow tasks and operational activities</p>
+
+<table>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>task_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+<td>Task identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
+</tr>
+<tr>
+<td>queue_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → work_queues</td>
+<td>Related queue</td>
+</tr>
+<tr>
+<td>related_claim_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → claims</td>
+<td>Related claim</td>
+</tr>
+<tr>
+<td>related_patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+<td>Related patient</td>
+</tr>
+<tr>
+<td>related_denial_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → denials</td>
+<td>Related denial</td>
+</tr>
+<tr>
+<td>related_appeal_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → appeals</td>
+<td>Related appeal</td>
+</tr>
+<tr>
+<td>task_title</td>
+<td>VARCHAR(255)</td>
+<td></td>
+<td>Task title</td>
+</tr>
+<tr>
+<td>task_description</td>
+<td>TEXT</td>
+<td></td>
+<td>Task details</td>
+</tr>
+<tr>
+<td>task_type</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Follow-up/Appeal</td>
+</tr>
+<tr>
+<td>task_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Open/In Progress</td>
+</tr>
+<tr>
+<td>priority</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>High/Medium/Low</td>
+</tr>
+<tr>
+<td>assigned_to</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Assigned user</td>
+</tr>
+<tr>
+<td>assigned_date</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Assignment timestamp</td>
+</tr>
+<tr>
+<td>due_date</td>
+<td>DATE</td>
+<td></td>
+<td>Due date</td>
+</tr>
+<tr>
+<td>reopened_flag</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Reopened task</td>
+</tr>
+<tr>
+<td>completed_date</td>
+<td>DATE</td>
+<td></td>
+<td>Completion date</td>
+</tr>
+<tr>
+<td>completion_notes</td>
+<td>TEXT</td>
+<td></td>
+<td>Resolution notes</td>
+</tr>
+<tr>
+<td>notes</td>
+<td>TEXT</td>
+<td></td>
+<td>Internal notes</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update</td>
+</tr>
+</table>
+
+<p><strong>Indexes:</strong> assigned_to, task_status, priority, due_date, tenant_id</p>
+
+<hr>
+
+<h3>Table 42: documents</h3>
+<p><strong>Purpose:</strong> Centralized document management</p>
+
+<table>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>document_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+<td>Document identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
+</tr>
+<tr>
+<td>patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+<td>Patient</td>
+</tr>
+<tr>
+<td>encounter_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → encounters</td>
+<td>Encounter</td>
+</tr>
+<tr>
+<td>claim_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → claims</td>
+<td>Claim</td>
+</tr>
+<tr>
+<td>document_type</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>EOB/Medical Record</td>
+</tr>
+<tr>
+<td>file_name</td>
+<td>VARCHAR(255)</td>
+<td></td>
+<td>Original file name</td>
+</tr>
+<tr>
+<td>file_path</td>
+<td>TEXT</td>
+<td></td>
+<td>Storage path</td>
+</tr>
+<tr>
+<td>file_size_kb</td>
+<td>INTEGER</td>
+<td></td>
+<td>File size</td>
+</tr>
+<tr>
+<td>mime_type</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>PDF/JPG</td>
+</tr>
+<tr>
+<td>version_number</td>
+<td>INTEGER</td>
+<td>DEFAULT 1</td>
+<td>Document version</td>
+</tr>
+<tr>
+<td>checksum_hash</td>
+<td>VARCHAR(255)</td>
+<td></td>
+<td>Integrity hash</td>
+</tr>
+<tr>
+<td>encrypted_flag</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+<td>HIPAA encryption</td>
+</tr>
+<tr>
+<td>document_status</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Active/Archived</td>
+</tr>
+<tr>
+<td>retention_expiration_date</td>
+<td>DATE</td>
+<td></td>
+<td>Retention expiration</td>
+</tr>
+<tr>
+<td>uploaded_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Uploaded by</td>
+</tr>
+<tr>
+<td>uploaded_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Upload timestamp</td>
+</tr>
+<tr>
+<td>is_confidential</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+<td>HIPAA flag</td>
+</tr>
+<tr>
+<td>deleted_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Soft delete</td>
+</tr>
+<tr>
+<td>deleted_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Deleted by</td>
+</tr>
+</table>
+
+<p><strong>Indexes:</strong> patient_id, claim_id, document_type, document_status, tenant_id</p>
+
+<hr>
+
+<h3>Table 43: claim_notes</h3>
+<p><strong>Purpose:</strong> Store claim follow-up notes</p>
+
+<table>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>note_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+<td>Note identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
+</tr>
+<tr>
+<td>claim_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → claims</td>
+<td>Claim</td>
+</tr>
+<tr>
+<td>note_type</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Payer Call/Internal</td>
+</tr>
+<tr>
+<td>note_category</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Billing/Clinical</td>
+</tr>
+<tr>
+<td>visibility_level</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Internal/External</td>
+</tr>
+<tr>
+<td>note_text</td>
+<td>TEXT</td>
+<td>NOT NULL</td>
+<td>Note content</td>
+</tr>
+<tr>
+<td>followup_required</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Follow-up needed</td>
+</tr>
+<tr>
+<td>followup_date</td>
+<td>DATE</td>
+<td></td>
+<td>Follow-up date</td>
+</tr>
+<tr>
+<td>related_task_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tasks</td>
+<td>Linked task</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update</td>
+</tr>
+</table>
+
+<p><strong>Indexes:</strong> claim_id, note_category, followup_date, tenant_id</p>
+
+<hr>
+
+<h3>Table 44: ar_followup_activities</h3>
+<p><strong>Purpose:</strong> Track AR follow-up operations</p>
+
+<table>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>followup_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+<td>Follow-up identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
+</tr>
+<tr>
+<td>claim_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → claims</td>
+<td>Claim</td>
+</tr>
+<tr>
+<td>denial_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → denials</td>
+<td>Denial</td>
+</tr>
+<tr>
+<td>appeal_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → appeals</td>
+<td>Appeal</td>
+</tr>
+<tr>
+<td>payer_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → payers</td>
+<td>Payer</td>
+</tr>
+<tr>
+<td>followup_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Follow-up date</td>
+</tr>
+<tr>
+<td>followup_method</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Call/Portal</td>
+</tr>
+<tr>
+<td>representative_name</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Payer representative</td>
+</tr>
+<tr>
+<td>reference_number</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Call reference</td>
+</tr>
+<tr>
+<td>call_duration_minutes</td>
+<td>INTEGER</td>
+<td></td>
+<td>Call duration</td>
+</tr>
+<tr>
+<td>payer_response_code</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Payer response</td>
+</tr>
+<tr>
+<td>outcome</td>
+<td>TEXT</td>
+<td></td>
+<td>Follow-up result</td>
+</tr>
+<tr>
+<td>recovery_probability</td>
+<td>DECIMAL(5,2)</td>
+<td></td>
+<td>Recovery prediction</td>
+</tr>
+<tr>
+<td>escalation_required</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Escalation required</td>
+</tr>
+<tr>
+<td>next_action_date</td>
+<td>DATE</td>
+<td></td>
+<td>Next action</td>
+</tr>
+<tr>
+<td>assigned_to</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Assigned user</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update</td>
+</tr>
+</table>
+
+<p><strong>Indexes:</strong> claim_id, payer_id, next_action_date, assigned_to, tenant_id</p>
+
+<hr>
+
+<h3>Table 45: guarantors</h3>
+<p><strong>Purpose:</strong> Store financially responsible parties</p>
+
+<table>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>guarantor_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+<td>Guarantor identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
+</tr>
+<tr>
+<td>patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+<td>Patient</td>
+</tr>
+<tr>
+<td>first_name</td>
+<td>VARCHAR(50)</td>
+<td>NOT NULL</td>
+<td>First name</td>
+</tr>
+<tr>
+<td>last_name</td>
+<td>VARCHAR(50)</td>
+<td>NOT NULL</td>
+<td>Last name</td>
+</tr>
+<tr>
+<td>dob</td>
+<td>DATE</td>
+<td></td>
+<td>Date of birth</td>
+</tr>
+<tr>
+<td>relationship_to_patient</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Parent/Spouse</td>
+</tr>
+<tr>
+<td>ssn_encrypted</td>
+<td>VARCHAR(255)</td>
+<td></td>
+<td>Encrypted SSN</td>
+</tr>
+<tr>
+<td>employer_name</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Employer</td>
+</tr>
+<tr>
+<td>financial_class</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Financial class</td>
+</tr>
+<tr>
+<td>phone</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Phone</td>
+</tr>
+<tr>
+<td>email</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Email</td>
+</tr>
+<tr>
+<td>preferred_contact_method</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Email/SMS</td>
+</tr>
+<tr>
+<td>address_line1</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Address</td>
+</tr>
+<tr>
+<td>city</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>City</td>
+</tr>
+<tr>
+<td>state</td>
+<td>VARCHAR(2)</td>
+<td></td>
+<td>State</td>
+</tr>
+<tr>
+<td>zip_code</td>
+<td>VARCHAR(10)</td>
+<td></td>
+<td>ZIP</td>
+</tr>
+<tr>
+<td>consent_signed</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Consent signed</td>
+</tr>
+<tr>
+<td>is_primary_guarantor</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+<td>Primary guarantor</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
+</tr>
+</table>
+
+<p><strong>Indexes:</strong> patient_id, relationship_to_patient, tenant_id</p>
+
+<hr>
+
+<h3>Table 46: bank_deposits</h3>
+<p><strong>Purpose:</strong> Track EFT/check deposit reconciliation</p>
+
+<table>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>deposit_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+<td>Deposit identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
+</tr>
+<tr>
+<td>deposit_batch_number</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Batch number</td>
+</tr>
+<tr>
+<td>deposit_date</td>
+<td>DATE</td>
+<td>NOT NULL</td>
+<td>Deposit date</td>
+</tr>
+<tr>
+<td>deposit_amount</td>
+<td>DECIMAL(10,2)</td>
+<td>NOT NULL</td>
+<td>Deposit amount</td>
+</tr>
+<tr>
+<td>deposit_method</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>EFT/Check</td>
+</tr>
+<tr>
+<td>deposit_source</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>ERA/Manual</td>
+</tr>
+<tr>
+<td>bank_reference_number</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Bank reference</td>
+</tr>
+<tr>
+<td>bank_account_number_masked</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Masked account</td>
+</tr>
+<tr>
+<td>reconciliation_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Pending/Matched</td>
+</tr>
+<tr>
+<td>verified_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Verified by</td>
+</tr>
+<tr>
+<td>verified_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Verification timestamp</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update</td>
+</tr>
+</table>
+
+<p><strong>Indexes:</strong> deposit_date, reconciliation_status, deposit_batch_number, tenant_id</p>
+
+<hr>
+
+<h3>Table 47: reconciliation_batches</h3>
+<p><strong>Purpose:</strong> Match ERA payments against deposits</p>
+
+<table>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>reconciliation_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+<td>Reconciliation identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
+</tr>
+<tr>
+<td>deposit_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → bank_deposits</td>
+<td>Deposit</td>
+</tr>
+<tr>
+<td>era_file_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → era_files</td>
+<td>ERA file</td>
+</tr>
+<tr>
+<td>expected_amount</td>
+<td>DECIMAL(10,2)</td>
+<td></td>
+<td>Expected amount</td>
+</tr>
+<tr>
+<td>actual_amount</td>
+<td>DECIMAL(10,2)</td>
+<td></td>
+<td>Actual amount</td>
+</tr>
+<tr>
+<td>variance_amount</td>
+<td>DECIMAL(10,2)</td>
+<td></td>
+<td>Variance</td>
+</tr>
+<tr>
+<td>reconciliation_notes</td>
+<td>TEXT</td>
+<td></td>
+<td>Finance notes</td>
+</tr>
+<tr>
+<td>auto_reconciled</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Auto reconciled</td>
+</tr>
+<tr>
+<td>manual_review_required</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Manual review</td>
+</tr>
+<tr>
+<td>reconciliation_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Matched/Variance</td>
+</tr>
+<tr>
+<td>reviewed_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Reviewed by</td>
+</tr>
+<tr>
+<td>reconciled_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Reconciled by</td>
+</tr>
+<tr>
+<td>reconciled_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Reconciliation timestamp</td>
+</tr>
+<tr>
+<td>updated_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Last update</td>
+</tr>
+</table>
+
+<p><strong>Indexes:</strong> deposit_id, reconciliation_status, auto_reconciled, tenant_id</p>
+
+<hr>
+
+<h3>Table 48: notifications</h3>
+<p><strong>Purpose:</strong> Manage notifications and alerts</p>
+
+<table>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>notification_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+<td>Notification identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
+</tr>
+<tr>
+<td>notification_type</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>SMS/Email/System</td>
+</tr>
+<tr>
+<td>notification_channel</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Email/SMS/Push</td>
+</tr>
+<tr>
+<td>notification_priority</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>High/Medium/Low</td>
+</tr>
+<tr>
+<td>recipient_user_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Recipient user</td>
+</tr>
+<tr>
+<td>recipient_patient_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → patients</td>
+<td>Recipient patient</td>
+</tr>
+<tr>
+<td>related_entity_type</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Claim/Appointment</td>
+</tr>
+<tr>
+<td>related_entity_id</td>
+<td>UUID</td>
+<td></td>
+<td>Linked entity</td>
+</tr>
+<tr>
+<td>subject</td>
+<td>VARCHAR(255)</td>
+<td></td>
+<td>Subject</td>
+</tr>
+<tr>
+<td>message_body</td>
+<td>TEXT</td>
+<td></td>
+<td>Notification content</td>
+</tr>
+<tr>
+<td>delivery_provider</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Twilio/SendGrid</td>
+</tr>
+<tr>
+<td>delivery_status</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>Pending/Sent</td>
+</tr>
+<tr>
+<td>retry_attempts</td>
+<td>INTEGER</td>
+<td>DEFAULT 0</td>
+<td>Retry attempts</td>
+</tr>
+<tr>
+<td>opened_flag</td>
+<td>BOOLEAN</td>
+<td>DEFAULT FALSE</td>
+<td>Opened status</td>
+</tr>
+<tr>
+<td>opened_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Open timestamp</td>
+</tr>
+<tr>
+<td>sent_at</td>
+<td>TIMESTAMP</td>
+<td></td>
+<td>Sent timestamp</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
+</tr>
+</table>
+
+<p><strong>Indexes:</strong> delivery_status, notification_priority, recipient_user_id, tenant_id</p>
+
+<hr>
+
+<h3>Table 49: notification_templates</h3>
+<p><strong>Purpose:</strong> Reusable notification templates</p>
+
+<table>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>template_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+<td>Template identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
+</tr>
+<tr>
+<td>template_name</td>
+<td>VARCHAR(100)</td>
+<td>NOT NULL</td>
+<td>Template name</td>
+</tr>
+<tr>
+<td>template_category</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Billing/Appointment</td>
+</tr>
+<tr>
+<td>template_type</td>
+<td>VARCHAR(30)</td>
+<td></td>
+<td>SMS/Email</td>
+</tr>
+<tr>
+<td>language_code</td>
+<td>VARCHAR(10)</td>
+<td></td>
+<td>Language</td>
+</tr>
+<tr>
+<td>subject_template</td>
+<td>TEXT</td>
+<td></td>
+<td>Subject template</td>
+</tr>
+<tr>
+<td>body_template</td>
+<td>TEXT</td>
+<td></td>
+<td>Body template</td>
+</tr>
+<tr>
+<td>placeholders_supported</td>
+<td>JSONB</td>
+<td></td>
+<td>Dynamic placeholders</td>
+</tr>
+<tr>
+<td>is_active</td>
+<td>BOOLEAN</td>
+<td>DEFAULT TRUE</td>
+<td>Active template</td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Created by</td>
+</tr>
+<tr>
+<td>updated_by</td>
+<td>UUID</td>
+<td>FOREIGN KEY → users</td>
+<td>Updated by</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
+</tr>
+</table>
+
+<p><strong>Indexes:</strong> template_name, template_category, template_type, tenant_id</p>
+
+<hr>
+
+<h3>Table 50: api_integration_logs</h3>
+<p><strong>Purpose:</strong> Track external API integrations</p>
+
+<table>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>log_id</td>
+<td>UUID</td>
+<td>PRIMARY KEY</td>
+<td>Log identifier</td>
+</tr>
+<tr>
+<td>tenant_id</td>
+<td>UUID</td>
+<td>FOREIGN KEY → tenant_organizations</td>
+<td>Multi-tenant organization</td>
+</tr>
+<tr>
+<td>integration_name</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Integration name</td>
+</tr>
+<tr>
+<td>integration_type</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Payment/Clearinghouse</td>
+</tr>
+<tr>
+<td>request_method</td>
+<td>VARCHAR(10)</td>
+<td></td>
+<td>GET/POST</td>
+</tr>
+<tr>
+<td>api_endpoint</td>
+<td>TEXT</td>
+<td></td>
+<td>API endpoint</td>
+</tr>
+<tr>
+<td>correlation_id</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Distributed tracing</td>
+</tr>
+<tr>
+<td>source_system</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>Internal system</td>
+</tr>
+<tr>
+<td>destination_system</td>
+<td>VARCHAR(50)</td>
+<td></td>
+<td>External API</td>
+</tr>
+<tr>
+<td>request_payload</td>
+<td>JSONB</td>
+<td></td>
+<td>Request payload</td>
+</tr>
+<tr>
+<td>response_payload</td>
+<td>JSONB</td>
+<td></td>
+<td>Response payload</td>
+</tr>
+<tr>
+<td>response_status</td>
+<td>INTEGER</td>
+<td></td>
+<td>HTTP status</td>
+</tr>
+<tr>
+<td>response_time_ms</td>
+<td>INTEGER</td>
+<td></td>
+<td>API latency</td>
+</tr>
+<tr>
+<td>retry_status</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Retry workflow</td>
+</tr>
+<tr>
+<td>retry_count</td>
+<td>INTEGER</td>
+<td>DEFAULT 0</td>
+<td>Retry attempts</td>
+</tr>
+<tr>
+<td>processed_by_service</td>
+<td>VARCHAR(100)</td>
+<td></td>
+<td>Microservice</td>
+</tr>
+<tr>
+<td>severity_level</td>
+<td>VARCHAR(20)</td>
+<td></td>
+<td>Info/Error/Critical</td>
+</tr>
+<tr>
+<td>error_message</td>
+<td>TEXT</td>
+<td></td>
+<td>Error details</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>TIMESTAMP</td>
+<td>DEFAULT NOW()</td>
+<td>Creation timestamp</td>
+</tr>
+</table>
+
+<p><strong>Indexes:</strong> integration_name, integration_type, response_status, severity_level, tenant_id</p>
 
 <hr>
 
 <h2>3. Database Relationships</h2>
 
-<h3>Key Relationships:</h3>
-<li><strong>patients</strong> → <strong>patient_insurance</strong> (1:Many) - One patient, multiple insurances</li>
-<li><strong>patients</strong> → <strong>encounters</strong> (1:Many) - One patient, many visits</li>
-<li><strong>encounters</strong> → <strong>charges</strong> (1:Many) - One encounter, many charges</li>
-<li><strong>encounters</strong> → <strong>claims</strong> (1:1 or 1:Many) - One encounter can generate multiple claims (primary, secondary)</li>
-<li><strong>claims</strong> → <strong>claim_lines</strong> (1:Many) - One claim, multiple line items</li>
-<li><strong>claims</strong> → <strong>payments</strong> (1:Many) - One claim can have multiple payments</li>
-<li><strong>claims</strong> → <strong>denials</strong> (1:1) - One claim, one denial record</li>
-<li><strong>denials</strong> → <strong>appeals</strong> (1:Many) - One denial, multiple appeal levels</li>
-<li><strong>providers</strong> → <strong>provider_credentials</strong> (1:Many) - One provider, credentialed with many payers</li>
-<li><strong>payers</strong> → <strong>payer_contracts</strong> (1:Many) - One payer, multiple contracts</li>
-<li><strong>payer<em>contracts</strong> → <strong>payer</em>contract_rates</strong> (1:Many) - One contract, many CPT rates</li>
+<p><strong>Key Relationships:</strong></p>
+
+<li>patients → patient_insurance (1:Many) - One patient can have multiple insurance policies</li>
+<li>patients → appointments (1:Many) - One patient can schedule multiple appointments</li>
+<li>patients → encounters (1:Many) - One patient can have many medical encounters/visits</li>
+<li>patients → claims (1:Many) - One patient can generate multiple insurance claims</li>
+<li>patients → payments (1:Many) - One patient can have multiple insurance-related payments</li>
+<li>patients → patient_payments (1:Many) - One patient can make multiple direct payments</li>
+<li>patients → patient_statements (1:Many) - One patient can receive multiple billing statements</li>
+<li>patients → collections (1:Many) - One patient can have multiple collection records</li>
+<li>patients → refunds (1:Many) - One patient can receive multiple refunds</li>
+<li>patients → guarantors (1:Many) - One patient can have multiple guarantors</li>
+<li>patients → documents (1:Many) - One patient can have multiple attached documents</li>
+<li>patients → audit_logs (1:Many) - Patient activities tracked in audit logs</li>
+<li>providers → appointments (1:Many) - One provider can have many appointments</li>
+<li>providers → encounters (1:Many) - One provider can perform many encounters</li>
+<li>providers → charges (1:Many) - One provider can generate many charges</li>
+<li>providers → claims (1:Many) - One provider can submit many claims</li>
+<li>providers → claim_lines (1:Many) - One provider can appear on multiple claim lines</li>
+<li>providers → provider_credentials (1:Many) - One provider credentialed with multiple payers</li>
+<li>providers → authorizations (1:Many) - One provider can request multiple authorizations</li>
+<li>appointments → encounters (1:1 or 1:Many) - One appointment may create one or multiple encounters</li>
+<li>encounters → encounter_diagnoses (1:Many) - One encounter can have multiple diagnoses</li>
+<li>encounters → encounter_procedures (1:Many) - One encounter can have multiple procedures</li>
+<li>encounters → charges (1:Many) - One encounter can generate many charges</li>
+<li>encounters → claims (1:1 or 1:Many) - One encounter may generate multiple claims</li>
+<li>encounters → documents (1:Many) - One encounter can have many attached documents</li>
+<li>patient_insurance → eligibility_checks (1:Many) - One insurance can have multiple eligibility verifications</li>
+<li>patient_insurance → claims (1:Many) - One insurance policy can be used for many claims</li>
+<li>patient_insurance → authorizations (1:Many) - One insurance policy can have many authorizations</li>
+<li>payers → patient_insurance (1:Many) - One payer linked to many patient insurance records</li>
+<li>payers → claims (1:Many) - One payer receives many claims</li>
+<li>payers → payments (1:Many) - One payer can issue many payments</li>
+<li>payers → denials (1:Many) - One payer can deny many claims</li>
+<li>payers → refunds (1:Many) - One payer can receive many refunds</li>
+<li>payers → provider_credentials (1:Many) - One payer credentialing many providers</li>
+<li>payers → payer_contracts (1:Many) - One payer can have multiple contracts</li>
+<li>payer_contracts → payer_contract_rates (1:Many) - One contract can contain many CPT reimbursement rates</li>
+<li>authorizations → claims (1:Many) - One authorization can support multiple claims</li>
+<li>authorizations → charges (1:Many) - One authorization may apply to multiple charges</li>
+<li>charges → claim_lines (1:Many) - One charge can create multiple claim lines</li>
+<li>claims → claim_lines (1:Many) - One claim contains many claim lines</li>
+<li>claims → claim_scrubbing_errors (1:Many) - One claim can generate multiple scrub errors</li>
+<li>claims → payments (1:Many) - One claim can receive multiple payments</li>
+<li>claims → denials (1:Many) - One claim can have multiple denials</li>
+<li>claims → appeals (1:Many) - One claim can have multiple appeals</li>
+<li>claims → claim_notes (1:Many) - One claim can contain many notes</li>
+<li>claims → claim_status_history (1:Many) - One claim has multiple status changes</li>
+<li>claims → clearinghouse_submissions (1:Many) - One claim can be submitted multiple times</li>
+<li>claims → edi_transactions (1:Many) - One claim may have multiple EDI transactions</li>
+<li>claims → ar_followup_activities (1:Many) - One claim can have many AR follow-ups</li>
+<li>claims → tasks (1:Many) - One claim can generate many operational tasks</li>
+<li>claims → documents (1:Many) - One claim can have many supporting documents</li>
+<li>claim_lines → payment_line_items (1:Many) - One claim line can receive multiple payment postings</li>
+<li>claim_lines → claim_scrubbing_errors (1:Many) - One claim line can generate multiple scrub errors</li>
+<li>claim_lines → denials (1:Many) - One claim line can be denied multiple times</li>
+<li>payments → payment_line_items (1:Many) - One payment contains multiple line item postings</li>
+<li>payments → refunds (1:Many) - One payment can generate multiple refunds</li>
+<li>payments → reconciliation_batches (1:Many) - One payment may participate in reconciliation</li>
+<li>era_files → payments (1:Many) - One ERA file can contain many payments</li>
+<li>era_files → reconciliation_batches (1:Many) - One ERA file can have multiple reconciliation batches</li>
+<li>bank_deposits → reconciliation_batches (1:Many) - One bank deposit can match multiple reconciliation batches</li>
+<li>denials → appeals (1:Many) - One denial can have multiple appeal levels</li>
+<li>denials → ar_followup_activities (1:Many) - One denial can trigger many follow-up actions</li>
+<li>denials → tasks (1:Many) - One denial can create many tasks</li>
+<li>appeals → tasks (1:Many) - One appeal can create many workflow tasks</li>
+<li>appeals → ar_followup_activities (1:Many) - One appeal can have multiple follow-ups</li>
+<li>patient_statements → patient_payments (1:Many) - One statement can receive multiple payments</li>
+<li>patient_statements → collections (1:Many) - One statement can move into collections</li>
+<li>payment_plans → patient_payments (1:Many) - One payment plan contains multiple payments</li>
+<li>guarantors → patient_statements (1:Many) - One guarantor can receive many statements</li>
+<li>guarantors → collections (1:Many) - One guarantor can have many collection accounts</li>
+<li>work_queues → tasks (1:Many) - One queue contains many tasks</li>
+<li>users → tasks (1:Many) - One user can manage many tasks</li>
+<li>users → notifications (1:Many) - One user can receive many notifications</li>
+<li>notification_templates → notifications (1:Many) - One template generates many notifications</li>
+<li>users → audit_logs (1:Many) - One user can create many audit entries</li>
+<li>users → reports (1:Many) - One user can generate many reports</li>
+<li>users → api_integration_logs (1:Many) - One user/system process can create many integration logs</li>
+<li>tenant_organizations → users (1:Many) - One organization can contain many users</li>
+<li>tenant_organizations → patients (1:Many) - One organization can contain many patients</li>
+<li>tenant_organizations → providers (1:Many) - One organization can contain many providers</li>
+<li>tenant_organizations → claims (1:Many) - One organization can contain many claims</li>
+<li>tenant_organizations → payments (1:Many) - One organization can contain many payments</li>
+<li>tenant_organizations → reports (1:Many) - One organization can contain many reports</li>
+<li>tenant_organizations → documents (1:Many) - One organization can contain many documents</li>
+<li>tenant_organizations → notifications (1:Many) - One organization can contain many notifications</li>
+<li>code_sets → encounter_diagnoses (1:Many) - One code set can map to many diagnoses</li>
+<li>code_sets → encounter_procedures (1:Many) - One code set can map to many procedures</li>
+<li>code_sets → charges (1:Many) - One code set can map to many charges</li>
+<li>ncci_edits → claim_scrubbing_errors (1:Many) - One NCCI rule can trigger many scrub errors</li>
+<li>lcd_ncd_rules → claim_scrubbing_errors (1:Many) - One LCD/NCD rule can trigger many scrub errors</li>
+<li>lcd_ncd_rules → authorizations (1:Many) - One LCD/NCD rule can apply to many authorizations</li>
 
 <hr>
 
-<h2>4. Indexes & Performance</h2>
+<h2>4. Indexes &amp; Performance</h2>
 
-<h3>Critical Indexes:</h3>
-<li>All foreign keys</li>
-<li>Date fields used in queries (service<em>date, payment</em>date, etc.)</li>
-<li>Status fields (claim.status, encounter.status)</li>
-<li>Search fields (patient.last_name, patient.mrn)</li>
+<p><strong>Critical Indexes:</strong></p>
+<li>All primary keys and foreign keys</li>
+<li>tenant_id fields for multi-tenant filtering</li>
+<li>Date fields used in queries (service_date, payment_date, submission_date, encounter_date, denial_date, appeal_date, statement_date)</li>
+<li>Status fields (claim.status, encounter.status, denial.status, payment.status)</li>
+<li>Search fields (patient.last_name, patient.mrn, claim.claim_number)</li>
+<li>Insurance verification fields (verification_status, authorization_number)</li>
+<li>Financial reconciliation fields (reconciliation_status, payment_reference_number)</li>
+<li>Queue and workflow fields (task_status, assigned_to, queue_type)</li>
+<li>EDI transaction tracking fields (transaction_type, submission_status, clearinghouse_name)</li>
+<li>Reporting fields (report_category, report_status)</li>
+<li>Notification delivery fields (delivery_status, notification_priority)</li>
 
-<h3>Partitioning Strategy:</h3>
-<li><strong>claims</strong> table: Partition by submission_date (monthly partitions)</li>
-<li><strong>payments</strong> table: Partition by payment_date (monthly partitions)</li>
-<li><strong>audit_logs</strong> table: Partition by timestamp (monthly partitions)</li>
+<p><strong>Recommended Composite Indexes:</strong></p>
+<li>claims(patient_id, submission_date)</li>
+<li>claims(payer_id, status)</li>
+<li>claim_lines(claim_id, cpt_code)</li>
+<li>payments(claim_id, payment_date)</li>
+<li>denials(status, assigned_to)</li>
+<li>appointments(provider_id, appointment_date)</li>
+<li>encounters(patient_id, encounter_date)</li>
+<li>patient_insurance(patient_id, priority)</li>
+<li>tasks(assigned_to, task_status)</li>
+<li>audit_logs(user_id, timestamp)</li>
+<li>notifications(recipient_user_id, delivery_status)</li>
+<li>reports(report_category, generated_by)</li>
+
+<p><strong>Full-Text Search Index Recommendations:</strong></p>
+<li>claim_notes.note_text</li>
+<li>denial.denial_reason</li>
+<li>appeals.appeal_letter</li>
+<li>documents.file_name</li>
+<li>tasks.task_description</li>
+
+<p><strong>Partitioning Strategy:</strong></p>
+<li>claims table: Partition by submission_date (monthly partitions)</li>
+<li>payments table: Partition by payment_date (monthly partitions)</li>
+<li>audit_logs table: Partition by timestamp (monthly partitions)</li>
+<li>claim_status_history table: Partition by changed_at</li>
+<li>notifications table: Partition by created_at</li>
+<li>api_integration_logs table: Partition by created_at</li>
+<li>edi_transactions table: Partition by processed_date</li>
+<li>reports table: Partition by generation_end_time</li>
+
+<p><strong>Database Optimization Recommendations:</strong></p>
+<li>Use PostgreSQL table partitioning for large transactional tables</li>
+<li>Enable connection pooling using PgBouncer</li>
+<li>Use Redis caching for eligibility checks and frequently accessed payer rules</li>
+<li>Use read replicas for analytics/reporting workloads</li>
+<li>Archive old audit_logs and EDI transactions periodically</li>
+<li>Use JSONB indexing (GIN indexes) for:</li>
+<li>audit_logs.before_value</li>
+<li>audit_logs.after_value</li>
+<li>api_integration_logs.request_payload</li>
+<li>api_integration_logs.response_payload</li>
+<li>Use asynchronous processing for:</li>
+<li>ERA posting</li>
+<li>claim scrubbing</li>
+<li>eligibility checks</li>
+<li>notifications</li>
+<li>report generation</li>
 
 <hr>
 
 <h2>5. Data Retention Policy</h2>
 
+<table>
 <tr>
-<td>Table</td>
-<td>Retention Period</td>
+<th>Table</th>
+<th>Retention Period</th>
 </tr>
 <tr>
 <td>audit_logs</td>
@@ -3035,15 +8391,43 @@
 </tr>
 <tr>
 <td>encounters</td>
+<td>7–10 years</td>
+</tr>
+<tr>
+<td>appointments</td>
 <td>Indefinite</td>
+</tr>
+<tr>
+<td>eligibility_checks</td>
+<td>5–7 years</td>
+</tr>
+<tr>
+<td>authorizations</td>
+<td>7 years</td>
 </tr>
 <tr>
 <td>claims</td>
 <td>10 years</td>
 </tr>
 <tr>
+<td>claim_lines</td>
+<td>10 years</td>
+</tr>
+<tr>
+<td>claim_scrubbing_errors</td>
+<td>5 years</td>
+</tr>
+<tr>
 <td>payments</td>
 <td>10 years</td>
+</tr>
+<tr>
+<td>payment_line_items</td>
+<td>10 years</td>
+</tr>
+<tr>
+<td>era_files</td>
+<td>7 years</td>
 </tr>
 <tr>
 <td>denials</td>
@@ -3054,33 +8438,248 @@
 <td>10 years</td>
 </tr>
 <tr>
+<td>patient_statements</td>
+<td>7 years</td>
+</tr>
+<tr>
+<td>patient_payments</td>
+<td>7–10 years</td>
+</tr>
+<tr>
+<td>payment_plans</td>
+<td>7 years after completion</td>
+</tr>
+<tr>
+<td>collections</td>
+<td>7 years</td>
+</tr>
+<tr>
+<td>refunds</td>
+<td>7 years</td>
+</tr>
+<tr>
+<td>documents</td>
+<td>Based on organization/legal policy</td>
+</tr>
+<tr>
+<td>notifications</td>
+<td>1–2 years</td>
+</tr>
+<tr>
+<td>notification_templates</td>
+<td>Indefinite</td>
+</tr>
+<tr>
+<td>api_integration_logs</td>
+<td>2–5 years</td>
+</tr>
+<tr>
+<td>edi_transactions</td>
+<td>7 years</td>
+</tr>
+<tr>
+<td>reconciliation_batches</td>
+<td>7 years</td>
+</tr>
+<tr>
+<td>bank_deposits</td>
+<td>7 years</td>
+</tr>
+<tr>
 <td>reports</td>
 <td>3 years</td>
 </tr>
+<tr>
+<td>work_queues</td>
+<td>3–5 years</td>
+</tr>
+<tr>
+<td>tasks</td>
+<td>3–5 years</td>
+</tr>
+<tr>
+<td>claim_status_history</td>
+<td>10 years</td>
+</tr>
+<tr>
+<td>ar_followup_activities</td>
+<td>7 years</td>
+</tr>
+<tr>
+<td>code_sets</td>
+<td>Indefinite</td>
+</tr>
+<tr>
+<td>ncci_edits</td>
+<td>Based on CMS update cycle</td>
+</tr>
+<tr>
+<td>lcd_ncd_rules</td>
+<td>Based on CMS update cycle</td>
+</tr>
+</table>
 
 <hr>
 
-<h2>6. Security & Encryption</h2>
+<h2>6. Security &amp; Encryption</h2>
 
-<h3>Encrypted Fields:</h3>
+<p><strong>Encrypted Fields:</strong></p>
 <li>patients.ssn_encrypted</li>
+<li>patient_insurance.subscriber_ssn_encrypted</li>
+<li>guarantors.ssn_encrypted</li>
 <li>providers.ssn_encrypted</li>
+<li>users.password_hash</li>
+<li>users.mfa_secret</li>
+<li>api_integration_logs.request_payload</li>
+<li>api_integration_logs.response_payload</li>
+<li>documents.file_path (if containing PHI)</li>
+<li>bank_deposits.bank_account_number_masked</li>
 <li>Any PHI (Protected Health Information)</li>
+<li>Any PII (Personally Identifiable Information)</li>
+<li>Insurance policy/member numbers</li>
+<li>Authorization reference numbers</li>
+<li>Payment transaction references</li>
+<li>Uploaded medical documents</li>
+<li>Stored EDI transaction files</li>
 
-<h3>Encryption Method:</h3>
+<p><strong>Encryption Method:</strong></p>
 <li>AES-256 encryption at rest</li>
-<li>TLS 1.2+ for data in transit</li>
-<li>Application-level encryption for SSN fields</li>
+<li>TLS 1.2+ / TLS 1.3 for data in transit</li>
+<li>Application-level encryption for:</li>
+<li>SSN fields</li>
+<li>insurance identifiers</li>
+<li>payment-related sensitive fields</li>
+<li>PHI/PII data</li>
+<li>Database-level Transparent Data Encryption (TDE)</li>
+<li>Encrypted database backups</li>
+<li>Encrypted object/document storage</li>
+<li>Signed URL access for secure document retrieval</li>
+<li>Key rotation policy for encryption keys</li>
+<li>Hardware Security Module (HSM) or cloud KMS support</li>
+
+<p><strong>Authentication &amp; Access Security:</strong></p>
+<li>BCrypt or Argon2 password hashing</li>
+<li>Multi-Factor Authentication (MFA)</li>
+<li>OAuth2 / OpenID Connect support</li>
+<li>JWT token-based authentication</li>
+<li>Role-Based Access Control (RBAC)</li>
+<li>Row-Level Security (RLS) for tenant isolation</li>
+<li>Session timeout and auto logout</li>
+<li>IP restriction support for admin access</li>
+<li>Failed login monitoring and account lockout</li>
+
+<p><strong>Audit &amp; Compliance Security:</strong></p>
+<li>Full audit logging for PHI access</li>
+<li>Immutable audit trail records</li>
+<li>Login history tracking</li>
+<li>Data export/download auditing</li>
+<li>API access auditing</li>
+<li>Security event monitoring</li>
+<li>Suspicious activity detection</li>
+<li>Legal hold support</li>
+<li>HIPAA compliance logging</li>
+
+<p><strong>HIPAA Compliance Considerations:</strong></p>
+<li>Minimum necessary access principle</li>
+<li>Secure PHI storage and transmission</li>
+<li>Audit trail retention</li>
+<li>Backup disaster recovery planning</li>
+<li>Business Associate Agreement (BAA) support</li>
+<li>Secure archival storage</li>
+<li>Disaster recovery and failover planning</li>
+<li>Secure deletion and purge policies</li>
+<li>Tenant-level data isolation</li>
+
+<p><strong>Recommended Security Infrastructure:</strong></p>
+
+<table>
+<tr>
+<th>Security Area</th>
+<th>Recommended Technology</th>
+</tr>
+<tr>
+<td>Encryption</td>
+<td>AES-256</td>
+</tr>
+<tr>
+<td>Password Hashing</td>
+<td>BCrypt / Argon2</td>
+</tr>
+<tr>
+<td>Transport Security</td>
+<td>TLS 1.2+ / TLS 1.3</td>
+</tr>
+<tr>
+<td>Authentication</td>
+<td>OAuth2 + JWT</td>
+</tr>
+<tr>
+<td>MFA</td>
+<td>TOTP / SMS / Authenticator Apps</td>
+</tr>
+<tr>
+<td>Secrets Management</td>
+<td>AWS KMS / Azure Key Vault / HashiCorp Vault</td>
+</tr>
+<tr>
+<td>WAF</td>
+<td>Cloudflare / AWS WAF</td>
+</tr>
+<tr>
+<td>SIEM Monitoring</td>
+<td>Splunk / ELK / Datadog</td>
+</tr>
+<tr>
+<td>API Gateway Security</td>
+<td>Kong / Apigee / AWS API Gateway</td>
+</tr>
+</table>
 
 <hr>
 
 <h2>7. Backup Strategy</h2>
 
-<li><strong>Full Backup:</strong> Daily at 2 AM</li>
-<li><strong>Incremental Backup:</strong> Every 4 hours</li>
-<li><strong>Transaction Log Backup:</strong> Every 15 minutes</li>
-<li><strong>Backup Retention:</strong> 30 days</li>
-<li><strong>Disaster Recovery:</strong> Geo-redundant backups in separate region</li>
+<p><strong>Backup Schedule:</strong></p>
+<li>Full Backup: Daily at 2:00 AM</li>
+<li>Incremental Backup: Every 4 hours</li>
+<li>Transaction Log Backup: Every 15 minutes</li>
+<li>Configuration Backup: Daily</li>
+<li>Encryption Key Backup: Daily secure backup</li>
+<li>Document/Object Storage Backup: Daily replication</li>
+
+<p><strong>Backup Retention Policy:</strong></p>
+<li>Daily backups retained for 30 days</li>
+<li>Weekly backups retained for 6 months</li>
+<li>Monthly backups retained for 7 years (HIPAA/compliance)</li>
+<li>Transaction logs retained for 30–90 days</li>
+<li>Archived claim/payment backups retained for 7–10 years</li>
+
+<p><strong>Disaster Recovery Strategy:</strong></p>
+<li>Geo-redundant backups stored in separate region</li>
+<li>Multi-region disaster recovery environment</li>
+<li>Cross-region database replication</li>
+<li>Point-in-Time Recovery (PITR) enabled</li>
+<li>Automatic failover support</li>
+<li>Standby disaster recovery database</li>
+<li>Recovery Time Objective (RTO): 1–4 hours</li>
+<li>Recovery Point Objective (RPO): 15 minutes</li>
+
+<p><strong>Backup Security:</strong></p>
+<li>AES-256 encrypted backups</li>
+<li>TLS-secured backup transmission</li>
+<li>Immutable backup storage support</li>
+<li>Backup access restricted using RBAC</li>
+<li>Separate encryption key management</li>
+<li>Periodic backup integrity verification</li>
+<li>Backup audit logging enabled</li>
+
+<p><strong>Backup Monitoring &amp; Validation:</strong></p>
+<li>Automated backup success/failure alerts</li>
+<li>Backup checksum validation</li>
+<li>Scheduled restore testing</li>
+<li>Disaster recovery drill execution</li>
+<li>Backup performance monitoring</li>
+<li>Replication lag monitoring</li>
 
 <hr>
 

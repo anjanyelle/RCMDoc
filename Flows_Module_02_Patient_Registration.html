@@ -9,8 +9,8 @@
 <body>
 <h1>Module 2: Patient Registration - Complete Flow Documentation</h1>
 
-<p><strong>Version:</strong> 1.0  </p>
-<p><strong>Module ID:</strong> MOD-002  </p>
+<p><strong>Version:</strong> 1.0</p>
+<p><strong>Module ID:</strong> MOD-002</p>
 <p><strong>Category:</strong> Patient Management</p>
 
 <hr>
@@ -60,8 +60,62 @@
 │    - Address Validation API                      │
 │    - Availity (insurance verification)           │
 │                                                  │
+│ 5. Self-Service Kiosk                           │
+│    - Patient self check-in                       │
+│    - ID scan                                     │
+│    - Insurance scan                              │
+│    - Digital signature                           │
+│                                                  │
 └─────────────────────────────────────────────────┘
-</pre>
+</code></pre>
+
+<hr>
+
+<h2>2.1 Pre-Registration Workflow</h2>
+
+<p>In real hospitals:</p>
+<li>Registration starts before patient arrival</li>
+<li>Appointments trigger pre-registration</li>
+<li>Insurance is partially verified before visit</li>
+
+<pre><code>
+┌──────────────────────────┐
+│ Appointment Scheduled    │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Pre-Registration Link    │
+│ Sent to Patient          │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Patient Completes        │
+│ Demographics             │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Insurance Information    │
+│ Uploaded                 │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Consent Forms Signed     │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Eligibility Verification │
+│ Triggered                │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Financial Estimate       │
+│ Generated                │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Patient Ready for Visit  │
+└──────────────────────────┘
+</code></pre>
 
 <hr>
 
@@ -154,7 +208,8 @@
      │            ▼         │
      │   ┌─────────────────┐│
      │   │ Scan Insurance  ││
-     │   │ Card (Front)    ││
+     │   │ Card (Front &amp;   ││
+     │   │ Back)           ││
      │   └────────┬────────┘│
      │            │         │
      │            ▼         │
@@ -212,6 +267,34 @@
      │   │  from patient)  ││
      │   └────────┬────────┘│
      │            │         │
+     │            ▼         │
+     │   ┌─────────────────┐│
+     │   │ Present Consent ││
+     │   │ Forms           ││
+     │   └────────┬────────┘│
+     │            │         │
+     │            ▼         │
+     │   ┌─────────────────┐│
+     │   │ HIPAA Consent   ││
+     │   │ Financial       ││
+     │   │ Consent         ││
+     │   │ Treatment       ││
+     │   │ Consent         ││
+     │   └────────┬────────┘│
+     │            │         │
+     │            ▼         │
+     │   ┌─────────────────┐│
+     │   │ Capture Digital ││
+     │   │ Signature       ││
+     │   └────────┬────────┘│
+     │            │         │
+     │            ▼         │
+     │   ┌─────────────────┐│
+     │   │ Save Consent PDF││
+     │   │ to Document     ││
+     │   │ Management      ││
+     │   └────────┬────────┘│
+     │            │         │
      └────────────┼─────────┘
                   │
                   ▼
@@ -227,6 +310,32 @@
          │ Backend Saves   │
          │ to Database     │
          └────────┬────────┘
+                  ↓
+         ┌─────────────────────────┐
+         │ Trigger Real-Time       │
+         │ Eligibility Verification│
+         └────────┬────────────────┘
+                  ↓
+         ┌─────────────────────────┐
+         │ Verify Active Insurance │
+         │ Coverage                │
+         └────────┬────────────────┘
+                  ↓
+         ┌─────────────────────────┐
+         │ Store Eligibility       │
+         │ Response                │
+         └────────┬────────────────┘
+                  ↓
+         ┌─────────────────────────┐
+         │ Calculate Copay         │
+         │ Deductible              │
+         │ Coinsurance             │
+         └────────┬────────────────┘
+                  ↓
+         ┌─────────────────────────┐
+         │ Show Estimated Patient  │
+         │ Balance                 │
+         └────────┬────────────────┘
                   ↓
          ┌─────────────────┐
          │ Generate Patient│
@@ -254,7 +363,7 @@
          │ Insurance       │
          │ Verification    │
          └─────────────────┘
-</pre>
+</code></pre>
 
 <hr>
 
@@ -268,37 +377,50 @@
 
 <pre><code class="language-typescript">
 // What Frontend Does:
+
 1. Display registration form with sections:
    - Patient Demographics
    - Insurance Information
    - Emergency Contact
    - Guarantor Information
+
 2. Duplicate check on blur:
    - When user enters Last Name + DOB
    - Call GET /api/patients/check-duplicate
    - Show warning if potential duplicate found
+
 3. Insurance card upload:
    - Allow image upload (JPG, PNG)
    - Show preview
    - Send to backend for OCR processing
    - Display extracted data for review
-4. Real-time validation:
+
+4. Identity verification:
+   - Driver license scan
+   - Government ID validation
+   - Face match (optional)
+   - Fraud detection
+
+5. Real-time validation:
    - SSN format: XXX-XX-XXXX
    - Phone format: (XXX) XXX-XXXX
    - Email format: valid email
    - DOB: Must be in past
    - Zip code: 5 digits
-5. Address autocomplete:
+
+6. Address autocomplete:
    - Use Google Places API
    - Auto-fill city, state, zip
-6. Save patient:
+
+7. Save patient:
    - POST /api/patients
    - Show loading spinner
    - Handle success/error
-7. Print wristband:
+
+8. Print wristband:
    - Generate PDF with patient info + barcode
    - Send to printer
-</pre>
+</code></pre>
 
 <p><strong>Code Example:</strong></p>
 <pre><code class="language-typescript">
@@ -319,6 +441,7 @@ const PatientRegistration = () =&gt; {
       planType: ''
     }
   });
+
   // Duplicate check
   const checkDuplicate = async () =&gt; {
     if (formData.lastName &amp;&amp; formData.dob) {
@@ -328,19 +451,24 @@ const PatientRegistration = () =&gt; {
           dob: formData.dob
         }
       });
+      
       if (response.data.exists) {
         setShowDuplicateWarning(true);
         setDuplicatePatients(response.data.patients);
       }
     }
   };
+
   // Handle insurance card upload
   const handleCardUpload = async (file: File) =&gt; {
     const formData = new FormData();
     formData.append('file', file);
+    
     setOcrLoading(true);
+    
     try {
       const response = await api.post('/patients/ocr-insurance-card', formData);
+      
       // Auto-fill insurance fields
       setFormData(prev =&gt; ({
         ...prev,
@@ -357,19 +485,25 @@ const PatientRegistration = () =&gt; {
       setOcrLoading(false);
     }
   };
+
   // Submit form
   const handleSubmit = async (e: FormEvent) =&gt; {
     e.preventDefault();
+    
     // Validate
     const errors = validateForm(formData);
     if (errors.length &gt; 0) {
       setErrors(errors);
       return;
     }
+    
     setLoading(true);
+    
     try {
       const response = await api.post('/patients', formData);
+      
       toast.success(`Patient registered: ${response.data.patientId}`);
+      
       // Redirect to insurance verification
       navigate(`/insurance-verification/${response.data.patientId}`);
     } catch (error) {
@@ -378,13 +512,14 @@ const PatientRegistration = () =&gt; {
       setLoading(false);
     }
   };
+
   return (
     &lt;form onSubmit={handleSubmit}&gt;
       {/* Form fields */}
     &lt;/form&gt;
   );
 };
-</pre>
+</code></pre>
 
 <hr>
 
@@ -396,43 +531,59 @@ const PatientRegistration = () =&gt; {
 
 <pre><code class="language-python">
 # What Backend Does:
+
 1. Receive patient registration request
    - Validate request format
    - Check required fields
+
 2. Check for duplicates
    - Search by: Last Name + DOB + SSN
    - Use fuzzy matching for names
    - Return potential matches
+
 3. Validate data
    - SSN format and checksum
    - Phone number format
    - Email format
    - DOB is valid date in past
    - Zip code exists
+
 4. Process insurance card OCR
    - Upload image to AWS S3
    - Call AWS Textract
    - Extract text fields
    - Parse insurance data using regex
    - Return structured data
+
 5. Generate Patient ID
    - Format: PAT-{sequential_number}
    - Example: PAT-00001, PAT-00002
+
 6. Save to database
    - Insert into patients table
    - Insert into patient_insurance table
    - Insert into emergency_contacts table
    - Insert into guarantors table (if different)
+
 7. Send welcome notification
    - SMS via Twilio
    - Email with patient portal link
+
 8. Log audit entry
    - Record patient creation
    - Store who created it
-9. Return response
-   - Patient ID
-   - Success message
-</pre>
+
+9. Advanced audit logging:
+   - Before/after values
+   - Field-level changes
+   - User IP address
+   - Device information
+   - Record access tracking
+
+10. Return response
+    - Patient ID
+    - Success message
+</code></pre>
 
 <p><strong>Code Example:</strong></p>
 <pre><code class="language-python">
@@ -447,6 +598,7 @@ async def create_patient(
         Patient.last_name == patient.lastName,
         Patient.dob == patient.dob
     ).first()
+    
     if existing:
         # Check if SSN also matches
         if existing.ssn == patient.ssn:
@@ -454,19 +606,24 @@ async def create_patient(
                 status_code=409,
                 detail=f"Patient already exists: {existing.patient_id}"
             )
+    
     # Validate SSN
     if not validate_ssn(patient.ssn):
         raise HTTPException(status_code=400, detail="Invalid SSN format")
+    
     # Generate Patient ID
     last_patient = db.query(Patient).order_by(
         Patient.patient_id.desc()
     ).first()
+    
     if last_patient:
         last_num = int(last_patient.patient_id.split('-')[1])
         new_num = last_num + 1
     else:
         new_num = 1
+    
     patient_id = f"PAT-{new_num:05d}"
+    
     # Create patient record
     db_patient = Patient(
         patient_id=patient_id,
@@ -480,7 +637,9 @@ async def create_patient(
         email=patient.email,
         created_by=current_user.user_id
     )
+    
     db.add(db_patient)
+    
     # Add insurance
     if patient.insurance:
         db_insurance = PatientInsurance(
@@ -493,6 +652,7 @@ async def create_patient(
             is_primary=True
         )
         db.add(db_insurance)
+    
     # Add emergency contact
     if patient.emergencyContact:
         db_contact = EmergencyContact(
@@ -502,19 +662,25 @@ async def create_patient(
             phone=patient.emergencyContact.phone
         )
         db.add(db_contact)
+    
     db.commit()
+    
     # Send welcome SMS
     send_welcome_sms(patient.phone, patient.firstName, patient_id)
+    
     # Log audit
     log_audit(
         user_id=current_user.user_id,
         action="PATIENT_CREATED",
         details={"patient_id": patient_id}
     )
+    
     return {
         "patientId": patient_id,
         "message": "Patient registered successfully"
     }
+
+
 @router.post("/patients/ocr-insurance-card")
 async def ocr_insurance_card(
     file: UploadFile = File(...),
@@ -523,45 +689,57 @@ async def ocr_insurance_card(
     # Upload to S3
     s3_key = f"insurance-cards/{uuid.uuid4()}.jpg"
     s3_client.upload_fileobj(file.file, BUCKET_NAME, s3_key)
+    
     # Call AWS Textract
     textract = boto3.client('textract')
     response = textract.detect_document_text(
         Document={'S3Object': {'Bucket': BUCKET_NAME, 'Name': s3_key}}
     )
+    
     # Extract text
     text_blocks = [block['Text'] for block in response['Blocks'] 
                    if block['BlockType'] == 'LINE']
+    
     # Parse insurance data
     insurance_data = parse_insurance_card(text_blocks)
+    
     return insurance_data
+
+
 def parse_insurance_card(text_blocks: List[str]) -&gt; dict:
     """Parse insurance card text using regex patterns"""
+    
     data = {
         "payerName": None,
         "memberId": None,
         "groupNumber": None,
         "planType": None
     }
+    
     # Common payer names
     payers = ["Aetna", "UnitedHealthcare", "Blue Cross", "Cigna", "Humana"]
+    
     for line in text_blocks:
         # Find payer name
         for payer in payers:
             if payer.lower() in line.lower():
                 data["payerName"] = payer
+        
         # Find Member ID (various patterns)
         if re.search(r'member.*id|id.*number', line, re.I):
             # Next line usually has the ID
             idx = text_blocks.index(line)
             if idx + 1 &lt; len(text_blocks):
                 data["memberId"] = text_blocks[idx + 1]
+        
         # Find Group Number
         if re.search(r'group.*number|grp', line, re.I):
             match = re.search(r'\d+', line)
             if match:
                 data["groupNumber"] = match.group()
+    
     return data
-</pre>
+</code></pre>
 
 <hr>
 
@@ -582,6 +760,7 @@ def parse_insurance_card(text_blocks: List[str]) -&gt; dict:
 SELECT patient_id, first_name, last_name, dob, ssn
 FROM patients
 WHERE last_name = 'Smith' AND dob = '1985-05-15';
+
 -- 2. Insert patient
 INSERT INTO patients (
     patient_id, first_name, last_name, dob, gender, ssn,
@@ -591,6 +770,7 @@ INSERT INTO patients (
     '123 Main St', 'Boston', 'MA', '02101', '(555) 123-4567',
     'john@email.com', 'USR-001', NOW()
 );
+
 -- 3. Insert insurance
 INSERT INTO patient_insurance (
     insurance_id, patient_id, payer_name, member_id, group_number,
@@ -599,16 +779,18 @@ INSERT INTO patient_insurance (
     'INS-00001', 'PAT-00001', 'Aetna', 'W123456789', 'GRP12345',
     'PPO', '2026-01-01', TRUE
 );
+
 -- 4. Insert emergency contact
 INSERT INTO emergency_contacts (
     contact_id, patient_id, name, relationship, phone
 ) VALUES (
     'EC-00001', 'PAT-00001', 'Jane Smith', 'Spouse', '(555) 987-6543'
 );
+
 -- 5. Log audit
 INSERT INTO audit_logs (user_id, action, details, timestamp)
 VALUES ('USR-001', 'PATIENT_CREATED', '{"patient_id": "PAT-00001"}', NOW());
-</pre>
+</code></pre>
 
 <hr>
 
@@ -624,7 +806,7 @@ VALUES ('USR-001', 'PATIENT_CREATED', '{"patient_id": "PAT-00001"}', NOW());
 <p><strong>External APIs:</strong></p>
 
 <li><strong>AWS Textract</strong> (OCR)</li>
-<li>Endpoint: <code>textract.detect<em>document</em>text()</code></li>
+<li>Endpoint: <code>textract.detect_document_text()</code></li>
 <li>Purpose: Extract text from insurance cards</li>
 <li>Cost: $1.50 per 1,000 pages</li>
 
@@ -648,41 +830,50 @@ VALUES ('USR-001', 'PATIENT_CREATED', '{"patient_id": "PAT-00001"}', NOW());
    - Required
    - Min 2 characters
    - Only letters and spaces
+
 2. Last Name:
    - Required
    - Min 2 characters
    - Only letters and spaces
+
 3. Date of Birth:
    - Required
    - Valid date format (MM/DD/YYYY)
    - Must be in the past
    - Patient must be born (not future date)
+
 4. Gender:
    - Required
    - Options: Male, Female, Other
+
 5. SSN:
    - Required
    - Format: XXX-XX-XXXX
    - 9 digits
    - Valid SSN checksum
+
 6. Phone:
    - Required
    - Format: (XXX) XXX-XXXX
    - 10 digits
+
 7. Email:
    - Optional
    - Valid email format
+
 8. Address:
    - Required
    - Min 5 characters
+
 9. Zip Code:
    - Required
    - 5 digits
    - Valid US zip code
+
 10. Insurance Member ID:
     - Required if insurance added
     - Min 5 characters
-</pre>
+</code></pre>
 
 <p><strong>Backend Validations:</strong></p>
 <pre><code class="language-python">
@@ -690,22 +881,26 @@ VALUES ('USR-001', 'PATIENT_CREATED', '{"patient_id": "PAT-00001"}', NOW());
    - Check Last Name + DOB + SSN
    - Fuzzy match on name (Levenshtein distance)
    - Warn if 80% match
+
 2. SSN Validation:
    - Not all zeros
    - Not sequential (123-45-6789)
    - Valid area number
    - Valid group number
+
 3. Age Validation:
    - Must be &gt;= 0 years old
    - Must be &lt; 150 years old
+
 4. Insurance Validation:
    - Payer must exist in payers table
    - Effective date not in far future
+
 5. Data Sanitization:
    - Remove special characters from names
    - Trim whitespace
    - Capitalize names properly
-</pre>
+</code></pre>
 
 <hr>
 
@@ -718,26 +913,63 @@ VALUES ('USR-001', 'PATIENT_CREATED', '{"patient_id": "PAT-00001"}', NOW());
 Hi John! Welcome to Boston General Hospital. 
 Your Patient ID is PAT-00001. 
 Access your portal: https://portal.hospital.com
-</pre>
+</code></pre>
 
 <li><strong>Welcome Email</strong></li>
 <pre><code>
 Subject: Welcome to Boston General Hospital
+
 Dear John Smith,
+
 Thank you for registering with us!
+
 Patient ID: PAT-00001
 Portal: https://portal.hospital.com
 Username: john@email.com
+
 Please set your password to access your medical records.
+
 Best regards,
 Boston General Hospital
-</pre>
+</code></pre>
+
+<li><strong>Portal Activation Email:</strong></li>
+<li>Activation link</li>
+<li>Temporary password</li>
+<li>MFA enrollment</li>
+<li>Portal setup instructions</li>
+
+<pre><code>
+┌──────────────────────────┐
+│ Patient Registered       │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Portal Account Created   │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Activation Email Sent    │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Patient Sets Password    │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ MFA Enrollment           │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Portal Activated         │
+└──────────────────────────┘
+</code></pre>
 
 <li><strong>In-App Success</strong></li>
 <pre><code>
 ✅ Patient registered successfully!
 Patient ID: PAT-00001
-</pre>
+</code></pre>
 
 <hr>
 
@@ -747,6 +979,7 @@ Patient ID: PAT-00001
                     ┌─────────────────────────────────────┐
                     │   PATIENT REGISTRATION SYSTEM       │
                     └─────────────────────────────────────┘
+
 ┌──────────────┐                                    ┌──────────────┐
 │              │                                    │              │
 │ Front Desk   │────────────────────────────────────│ Register New │
@@ -776,6 +1009,7 @@ Patient ID: PAT-00001
        └────────────────────────────────────────────│ Print        │
                                                     │ Wristband    │
                                                     └──────────────┘
+
 ┌──────────────┐                                    ┌──────────────┐
 │              │                                    │              │
 │   System     │────────────────────────────────────│ Validate     │
@@ -791,18 +1025,20 @@ Patient ID: PAT-00001
        └────────────────────────────────────────────│ Store in     │
                                                     │ Database     │
                                                     └──────────────┘
+
 ┌──────────────┐                                    ┌──────────────┐
 │              │                                    │              │
 │ AWS Textract │────────────────────────────────────│ OCR          │
 │              │                                    │ Insurance    │
 └──────────────┘                                    │ Card         │
                                                     └──────────────┘
+
 ┌──────────────┐                                    ┌──────────────┐
 │              │                                    │              │
 │ Twilio API   │────────────────────────────────────│ Send Welcome │
 │              │                                    │ SMS          │
 └──────────────┘                                    └──────────────┘
-</pre>
+</code></pre>
 
 <hr>
 
@@ -967,6 +1203,31 @@ Patient ID: PAT-00001
 │ (if different)      │               │
 └────┬────────────────┘               │
      │                                 │
+     ▼                                 │
+┌─────────────────────┐               │
+│ Present Consent     │               │
+│ Forms               │               │
+└────┬────────────────┘               │
+     │                                 │
+     ▼                                 │
+┌─────────────────────┐               │
+│ HIPAA Consent       │               │
+│ Financial Consent   │               │
+│ Treatment Consent   │               │
+└────┬────────────────┘               │
+     │                                 │
+     ▼                                 │
+┌─────────────────────┐               │
+│ Capture Digital     │               │
+│ Signature           │               │
+└────┬────────────────┘               │
+     │                                 │
+     ▼                                 │
+┌─────────────────────┐               │
+│ Save Consent PDF    │               │
+│ to Document Mgmt    │               │
+└────┬────────────────┘               │
+     │                                 │
      ▼◄────────────────────────────────┘
 ┌─────────────────────┐
 │ Review All Data     │
@@ -1065,7 +1326,7 @@ Patient ID: PAT-00001
 ┌─────────┐
 │   END   │
 └─────────┘
-</pre>
+</code></pre>
 
 <hr>
 
@@ -1162,7 +1423,6 @@ Front Desk    Frontend      Backend API    Database    AWS Textract   Twilio
     │             │              │ INSERT     │             │            │
     │             │              │ emergency  │             │            │
     │             │              ├───────────&gt;│             │            │
-    │             │              │            │             │            │
     │             │              │            │             │ Send SMS   │
     │             │              │            │             ├───────────&gt;│
     │             │              │            │             │            │
@@ -1182,7 +1442,7 @@ Front Desk    Frontend      Backend API    Database    AWS Textract   Twilio
     │ Verification│              │            │             │            │
     │&lt;────────────┤              │            │             │            │
     │             │              │            │             │            │
-</pre>
+</code></pre>
 
 <hr>
 
@@ -1194,7 +1454,7 @@ Front Desk    Frontend      Backend API    Database    AWS Textract   Twilio
 <pre><code class="language-http">
 GET /api/patients/check-duplicate?lastName=Smith&amp;dob=1985-05-15
 Authorization: Bearer {token}
-</pre>
+</code></pre>
 
 <p><strong>Response (No Duplicate):</strong></p>
 <pre><code class="language-json">
@@ -1202,7 +1462,7 @@ Authorization: Bearer {token}
   "exists": false,
   "message": "No duplicate found"
 }
-</pre>
+</code></pre>
 
 <p><strong>Response (Duplicate Found):</strong></p>
 <pre><code class="language-json">
@@ -1220,7 +1480,7 @@ Authorization: Bearer {token}
     }
   ]
 }
-</pre>
+</code></pre>
 
 <hr>
 
@@ -1231,8 +1491,9 @@ Authorization: Bearer {token}
 POST /api/patients/ocr-insurance-card
 Authorization: Bearer {token}
 Content-Type: multipart/form-data
+
 file: [insurance_card.jpg]
-</pre>
+</code></pre>
 
 <p><strong>Response (Success):</strong></p>
 <pre><code class="language-json">
@@ -1244,7 +1505,7 @@ file: [insurance_card.jpg]
   "confidence": 0.92,
   "rawText": ["Aetna", "Member ID: W123456789", "Group: GRP12345"]
 }
-</pre>
+</code></pre>
 
 <p><strong>Response (OCR Failed):</strong></p>
 <pre><code class="language-json">
@@ -1253,7 +1514,7 @@ file: [insurance_card.jpg]
   "message": "Could not extract insurance data. Please enter manually.",
   "rawText": []
 }
-</pre>
+</code></pre>
 
 <hr>
 
@@ -1264,6 +1525,7 @@ file: [insurance_card.jpg]
 POST /api/patients
 Authorization: Bearer {token}
 Content-Type: application/json
+
 {
   "firstName": "John",
   "lastName": "Smith",
@@ -1289,7 +1551,7 @@ Content-Type: application/json
     "phone": "(555) 987-6543"
   }
 }
-</pre>
+</code></pre>
 
 <p><strong>Response (Success):</strong></p>
 <pre><code class="language-json">
@@ -1298,7 +1560,7 @@ Content-Type: application/json
   "message": "Patient registered successfully",
   "createdAt": "2026-05-18T19:30:00Z"
 }
-</pre>
+</code></pre>
 
 <p><strong>Response (Validation Error):</strong></p>
 <pre><code class="language-json">
@@ -1315,7 +1577,7 @@ Content-Type: application/json
     }
   ]
 }
-</pre>
+</code></pre>
 
 <p><strong>Response (Duplicate Error):</strong></p>
 <pre><code class="language-json">
@@ -1323,7 +1585,7 @@ Content-Type: application/json
   "error": "Duplicate patient",
   "message": "Patient with same SSN already exists: PAT-00123"
 }
-</pre>
+</code></pre>
 
 <hr>
 
@@ -1337,7 +1599,19 @@ patients (Main table)
     ├── emergency_contacts (1:Many)
     ├── guarantors (1:1 or 1:0)
     └── appointments (1:Many)
-</pre>
+</code></pre>
+
+<h3>Multi-Tenant Architecture</h3>
+
+<p>Every table contains:</p>
+<li>tenant_id</li>
+<li>organization_id</li>
+<li>facility_id</li>
+
+<p>Purpose:</p>
+<li>Isolate hospital data</li>
+<li>Support SaaS architecture</li>
+<li>Enable multi-hospital deployment</li>
 
 <h3>Table Schemas</h3>
 
@@ -1362,9 +1636,10 @@ CREATE TABLE patients (
     updated_at TIMESTAMP,
     is_active BOOLEAN DEFAULT TRUE
 );
+
 CREATE INDEX idx_patients_name_dob ON patients(last_name, dob);
 CREATE INDEX idx_patients_ssn ON patients(ssn);
-</pre>
+</code></pre>
 
 <p><strong>patient_insurance:</strong></p>
 <pre><code class="language-sql">
@@ -1382,7 +1657,7 @@ CREATE TABLE patient_insurance (
     card_back_url VARCHAR(500),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-</pre>
+</code></pre>
 
 <p><strong>emergency_contacts:</strong></p>
 <pre><code class="language-sql">
@@ -1395,7 +1670,7 @@ CREATE TABLE emergency_contacts (
     email VARCHAR(255),
     is_primary BOOLEAN DEFAULT TRUE
 );
-</pre>
+</code></pre>
 
 <hr>
 
@@ -1422,7 +1697,34 @@ Options:
 1. View existing record
 2. Update existing record
 3. Contact admin if error
-</pre>
+</code></pre>
+
+<hr>
+
+<h3>Scenario 1a: Duplicate Merge Workflow</h3>
+
+<pre><code>
+┌──────────────────────────┐
+│ Duplicate Patient        │
+│ Detected                 │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Send to MPI Review Queue │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ HIM Team Review          │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Merge Approval           │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Record Reconciliation    │
+└──────────────────────────┘
+</code></pre>
 
 <hr>
 
@@ -1444,7 +1746,7 @@ Frontend shows:
 "OCR confidence low. Please review and correct."
    ↓
 User manually corrects fields
-</pre>
+</code></pre>
 
 <hr>
 
@@ -1465,7 +1767,7 @@ User corrects
 Backend also validates
    ↓
 If still invalid, return 400 error
-</pre>
+</code></pre>
 
 <hr>
 
@@ -1487,46 +1789,95 @@ Continue (don't fail registration)
    ↓
 Show warning to staff:
 "Patient saved but SMS failed. Please inform patient manually."
-</pre>
+</code></pre>
 
 <hr>
 
-<h2>11. Dashboard & Status Flow</h2>
-
-<h3>Patient Status States</h3>
+<h3>Scenario 5: Emergency Patient Registration</h3>
 
 <pre><code>
-┌─────────────────────┐
-│   New Registration  │
-│   (status: active)  │
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│   Insurance Added   │
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│   Insurance Verified│
-│   (next module)     │
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│   Appointment       │
-│   Scheduled         │
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│   Checked In        │
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│   In Consultation   │
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│   Discharged        │
-└─────────────────────┘
-</pre>
+┌──────────────────────────┐
+│ Unknown Patient Arrives  │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Generate Temporary MRN   │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Minimal Demographics     │
+│ Collected                │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Emergency Treatment      │
+│ Begins                   │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Full Registration        │
+│ Completed Later          │
+└──────────────────────────┘
+</code></pre>
+
+<hr>
+
+<h2>11. Dashboard &amp; Status Flow</h2>
+
+<h3>Registration Queue Management</h3>
+
+<p>Queue Types:</p>
+<li>Walk-in queue</li>
+<li>Appointment queue</li>
+<li>Emergency queue</li>
+<li>VIP queue</li>
+<li>Kiosk queue</li>
+
+<p>Features:</p>
+<li>Wait time tracking</li>
+<li>Queue priority</li>
+<li>Real-time dashboard</li>
+
+<h3>Enterprise Registration Status Lifecycle</h3>
+
+<pre><code>
+┌──────────────────────────┐
+│      Pre-Registered      │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│         Arrived          │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│       Checked-In         │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Registration Complete    │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Eligibility Verified     │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Financial Clearance      │
+│ Complete                 │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Ready for Encounter      │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│     In Consultation      │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│       Discharged         │
+└──────────────────────────┘
+</code></pre>
 
 <hr>
 
@@ -1539,18 +1890,20 @@ Show warning to staff:
 <p><strong>Setup:</strong></p>
 <pre><code class="language-python">
 import boto3
+
 textract = boto3.client(
     'textract',
     aws_access_key_id=AWS_ACCESS_KEY,
     aws_secret_access_key=AWS_SECRET_KEY,
     region_name='us-east-1'
 )
+
 response = textract.detect_document_text(
     Document={'S3Object': {'Bucket': 'bucket-name', 'Name': 'card.jpg'}}
 )
-</pre>
+</code></pre>
 
-<p><strong>Cost:</strong> $1.50 per 1,000 pages  </p>
+<p><strong>Cost:</strong> $1.50 per 1,000 pages</p>
 <p><strong>Response Time:</strong> 2-5 seconds</p>
 
 <hr>
@@ -1562,40 +1915,101 @@ response = textract.detect_document_text(
 <p><strong>Setup:</strong></p>
 <pre><code class="language-python">
 from twilio.rest import Client
+
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+
 message = client.messages.create(
     body=f"Welcome to Hospital! Your Patient ID is {patient_id}",
     from_=TWILIO_PHONE,
     to=patient_phone
 )
-</pre>
+</code></pre>
 
-<p><strong>Cost:</strong> $0.0079 per SMS  </p>
-<p><strong>Response Time:</strong> < 10 seconds</p>
+<p><strong>Cost:</strong> $0.0079 per SMS</p>
+<p><strong>Response Time:</strong> &lt; 10 seconds</p>
+
+<hr>
+
+<h3>HL7 / FHIR Integration</h3>
+
+<pre><code>
+┌──────────────────────────┐
+│ Registration Completed   │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Generate HL7 ADT A04     │
+│ Message                  │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Send to EMR / EHR        │
+└────────────┬─────────────┘
+             ↓
+┌──────────────────────────┐
+│ Create FHIR Patient      │
+│ Resource                 │
+└──────────────────────────┘
+</code></pre>
+
+<hr>
+
+<h2>13. Document Management</h2>
+
+<li>Insurance cards</li>
+<li>Consent PDFs</li>
+<li>Driver licenses</li>
+<li>Referral documents</li>
+<li>Prior authorization files</li>
+<li>Secure S3 storage</li>
+<li>Signed URL access</li>
+<li>OCR metadata indexing</li>
 
 <hr>
 
 <h2>Summary</h2>
 
-<p><strong>Module:</strong> Patient Registration  </p>
-<p><strong>Complexity:</strong> Medium  </p>
-<p><strong>Development Time:</strong> 1.5 weeks  </p>
-<p><strong>Dependencies:</strong> AWS Textract, Twilio, Database  </p>
-<p><strong>Critical:</strong> Yes (first step in RCM)  </p>
+<p><strong>Module:</strong> Patient Registration</p>
+<p><strong>Complexity:</strong> Medium</p>
+<p><strong>Development Time:</strong> 1.5 weeks</p>
+<p><strong>Dependencies:</strong> AWS Textract, Twilio, Database</p>
+<p><strong>Critical:</strong> Yes (first step in RCM)</p>
+
+<p><strong>Security Features:</strong></p>
+<li>AES-256 encryption</li>
+<li>TLS 1.2+</li>
+<li>MFA authentication</li>
+<li>RBAC authorization</li>
+<li>PHI audit tracking</li>
+<li>Signed URL document access</li>
+<li>HIPAA retention policies</li>
 
 <p><strong>Key Features:</strong></p>
-<p>✅ Duplicate detection  </p>
-<p>✅ OCR for insurance cards  </p>
-<p>✅ Real-time validation  </p>
-<p>✅ Welcome notifications  </p>
-<p>✅ Emergency contacts  </p>
-<p>✅ Guarantor support  </p>
-<p>✅ Audit logging  </p>
-<p>✅ HIPAA compliant (SSN encryption)  </p>
+<p>✅ Pre-registration workflow</p>
+<p>✅ Duplicate detection</p>
+<p>✅ Duplicate merge workflow</p>
+<p>✅ OCR for insurance cards (Front &amp; Back)</p>
+<p>✅ Real-time validation</p>
+<p>✅ Identity verification</p>
+<p>✅ Consent management</p>
+<p>✅ Real-time eligibility verification</p>
+<p>✅ Financial responsibility estimation</p>
+<p>✅ Welcome notifications</p>
+<p>✅ Portal activation with MFA</p>
+<p>✅ Emergency contacts</p>
+<p>✅ Guarantor support</p>
+<p>✅ Audit logging (advanced)</p>
+<p>✅ HIPAA compliant (SSN encryption)</p>
+<p>✅ Multi-tenant architecture</p>
+<p>✅ HL7 / FHIR integration</p>
+<p>✅ Document management</p>
+<p>✅ Queue management</p>
+<p>✅ Self-service kiosk support</p>
+<p>✅ Emergency patient registration</p>
 
 <hr>
 
-<p><strong>Next Module:</strong> <a href="Flows<em>Module</em>03<em>Insurance</em>Verification.md">Module 3: Insurance Verification</a></p>
+<p><strong>Next Module:</strong> <a href="Flows_Module_03_Insurance_Verification.md">Module 3: Insurance Verification</a></p>
 
 </body>
 </html>

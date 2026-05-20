@@ -9,8 +9,8 @@
 <body>
 <h1>Module 3: Insurance Verification - Flow Documentation</h1>
 
-<p><strong>Version:</strong> 1.0  </p>
-<p><strong>Module ID:</strong> MOD-003  </p>
+<p><strong>Version:</strong> 1.0</p>
+<p><strong>Module ID:</strong> MOD-003</p>
 <p><strong>Category:</strong> Patient Management</p>
 
 <hr>
@@ -20,6 +20,8 @@
 <p><strong>Purpose:</strong> Verify patient's insurance coverage and eligibility before providing services.</p>
 
 <p><strong>Why Hospitals Use It:</strong> Prevent claim denials, confirm coverage, check copay/deductible amounts.</p>
+
+<p><strong>Business Goal:</strong> Reduce eligibility-related claim denials, avoid wrong patient billing, confirm patient responsibility before visit, and improve clean claim rate.</p>
 
 <p><strong>Main Users:</strong> Front Desk Staff, Billing Team, Authorization Team</p>
 
@@ -49,8 +51,13 @@
 │    - Waystar (Eligibility check)                 │
 │    - Payer APIs (Direct connections)             │
 │                                                  │
+│ 5. Authorization Team                            │
+│    - Reviews services requiring prior auth      │
+│    - Starts prior auth workflow when required   │
+│    - Tracks authorization approval/denial       │
+│                                                  │
 └─────────────────────────────────────────────────┘
-</pre>
+</code></pre>
 
 <hr>
 
@@ -88,76 +95,84 @@
 └──────────┬──────────┘
            ↓
 ┌─────────────────────┐
-│ Show Loading:       │
-│ "Checking with      │
-│  insurance..."      │
+│ Check if Valid      │
+│ Verification        │
+│ Already Exists      │
 └──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│ Backend Builds      │
-│ EDI 270 Request     │
-│ (Eligibility Inquiry)│
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│ Send to Availity    │
-│ API                 │
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│ Availity Forwards   │
-│ to Insurance Payer  │
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│ Payer Processes     │
-│ Request             │
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│ Payer Returns       │
-│ EDI 271 Response    │
-│ (Eligibility Info)  │
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│ Availity Returns    │
-│ to Backend          │
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│ Backend Parses      │
-│ EDI 271 Response    │
-└──────────┬──────────┘
-           ↓
-    ┌──────┴──────┐
-    │             │
-    ▼             ▼
-┌─────────┐  ┌─────────────────┐
-│ Active  │  │ Inactive/Error  │
-│Coverage │  └────────┬────────┘
-└────┬────┘           │
-     │                ▼
-     │       ┌─────────────────┐
-     │       │ Show Error:     │
-     │       │ - Not Active    │
-     │       │ - Invalid ID    │
-     │       │ - Payer Down    │
-     │       └────────┬────────┘
-     │                │
-     │                ▼
-     │       ┌─────────────────┐
-     │       │ Options:        │
-     │       │ 1. Retry        │
-     │       │ 2. Manual Entry │
-     │       │ 3. Self-Pay     │
-     │       └─────────────────┘
-     │
-     ▼
-┌─────────────────────┐
-│ Save Verification   │
-│ Results to Database │
-└──────────┬──────────┘
+           ├──────────────────────────────────┐
+     [No]  │                                  │ [Yes]
+           ▼                                  ▼
+┌─────────────────────┐            ┌─────────────────────┐
+│ Show Loading:       │            │ Load Saved Result   │
+│ "Checking with      │            │ (Skip API Request)  │
+│  insurance..."      │            └──────────┬──────────┘
+└──────────┬──────────┘                       │
+           ↓                                  │
+┌─────────────────────┐                       │
+│ Backend Builds      │                       │
+│ EDI 270 Request     │                       │
+│ (Eligibility Inquiry)                       │
+└──────────┬──────────┘                       │
+           ↓                                  │
+┌─────────────────────┐                       │
+│ Send to Availity    │                       │
+│ API                 │                       │
+└──────────┬──────────┘                       │
+           ↓                                  │
+┌─────────────────────┐                       │
+│ Availity Forwards   │                       │
+│ to Insurance Payer  │                       │
+└──────────┬──────────┘                       │
+           ↓                                  │
+┌─────────────────────┐                       │
+│ Payer Processes     │                       │
+│ Request             │                       │
+└──────────┬──────────┘                       │
+           ↓                                  │
+┌─────────────────────┐                       │
+│ Payer Returns       │                       │
+│ EDI 271 Response    │                       │
+└──────────┬──────────┘                       │
+           ↓                                  │
+┌─────────────────────┐                       │
+│ Availity Returns    │                       │
+│ to Backend          │                       │
+└──────────┬──────────┘                       │
+           ↓                                  │
+┌─────────────────────┐                       │
+│ Backend Parses      │                       │
+│ EDI 271 Response    │                       │
+└──────────┬──────────┘                       │
+    ┌──────┴──────┐                           │
+    │             │                           │
+    ▼             ▼                           │
+┌─────────┐  ┌─────────────────┐              │
+│ Active  │  │ Inactive/Error  │              │
+│Coverage │  └────────┬────────┘              │
+└────┬────┘           │                       │
+     │                ▼                       │
+     │       ┌─────────────────┐              │
+     │       │ Show Error:     │              │
+     │       │ - Not Active    │              │
+     │       │ - Invalid ID    │              │
+     │       │ - Payer Down    │              │
+     │       └────────┬────────┘              │
+     │                │                       │
+     │                ▼                       │
+     │       ┌─────────────────┐              │
+     │       │ Options:        │              │
+     │       │ 1. Retry        │              │
+     │       │ 2. Manual Entry │              │
+     │       │ 3. Self-Pay     │              │
+     │       └─────────────────┘              │
+     │                                        │
+     ▼                                        │
+┌─────────────────────┐                       │
+│ Save Verification   │                       │
+│ Results to Database │                       │
+└──────────┬──────────┘                       │
+           │                                  │
+           ├──────────────────────────────────┘
            ↓
 ┌─────────────────────┐
 │ Display Results:    │
@@ -214,7 +229,7 @@
      │ Appointment or  │
      │ Check-in        │
      └─────────────────┘
-</pre>
+</code></pre>
 
 <hr>
 
@@ -228,6 +243,7 @@ Hospital System          Availity API         Insurance Payer
        │ - Member ID          │                      │
        │ - Service Date       │                      │
        │ - Service Type       │                      │
+       │ - Trace/Trans ID     │                      │
        ├─────────────────────&gt;│                      │
        │                      │                      │
        │                      │ Forward 270          │
@@ -249,8 +265,9 @@ Hospital System          Availity API         Insurance Payer
        │ - Plan Details       │                      │
        │ - Copay/Deductible   │                      │
        │ - Coverage Limits    │                      │
+       │ - Trace/Trans ID     │                      │
        │                      │                      │
-</pre>
+</code></pre>
 
 <hr>
 
@@ -261,18 +278,26 @@ Hospital System          Availity API         Insurance Payer
 │ Front Desk   │─────────────────────────&gt;│ Verify Insurance │
 │ Staff        │                          │ Eligibility      │
 └──────────────┘                          └──────────────────┘
-                                                   │
-                                          ┌────────┴────────┐
-                                          │                 │
-                                          ▼                 ▼
-                                  ┌──────────────┐  ┌──────────────┐
-                                  │ Check Active │  │ Get Coverage │
-                                  │ Coverage     │  │ Details      │
-                                  └──────────────┘  └──────────────┘
+        │                                          │
+        │                                 ┌────────┴────────┐
+        │                                 │                 │
+        │                                 ▼                 ▼
+        │                         ┌──────────────┐  ┌──────────────┐
+        │                         │ Check Active │  │ Get Coverage │
+        │                         │ Coverage     │  │ Details      │
+        │                         └──────────────┘  └──────────────┘
+        │
+        │                                 ┌──────────────────┐
+        └────────────────────────────────&gt;│ Manual           │
+                                          │ Verification     │
+                                          │ Entry            │
+                                          └──────────────────┘
+
 ┌──────────────┐                          ┌──────────────────┐
 │ Billing Team │─────────────────────────&gt;│ Review Prior Auth│
 │              │                          │ Requirements     │
 └──────────────┘                          └──────────────────┘
+
 ┌──────────────┐                          ┌──────────────────┐
 │ System       │─────────────────────────&gt;│ Send EDI 270     │
 │              │                          │ Request          │
@@ -282,11 +307,12 @@ Hospital System          Availity API         Insurance Payer
        └─────────────────────────────────&gt;│ Parse EDI 271    │
                                           │ Response         │
                                           └──────────────────┘
+
 ┌──────────────┐                          ┌──────────────────┐
 │ Availity API │─────────────────────────&gt;│ Forward to Payer │
 │              │                          └──────────────────┘
 └──────────────┘
-</pre>
+</code></pre>
 
 <hr>
 
@@ -353,6 +379,12 @@ Hospital System          Availity API         Insurance Payer
      │         │ - Timeout       │
      │         │ - Invalid ID    │
      │         │ - Payer Down    │
+     │         └────┬────────────┘
+     │              │
+     │              ▼
+     │         ┌─────────────────┐
+     │         │ Save Failed     │
+     │         │ Attempt &amp; Reason│
      │         └────┬────────────┘
      │              │
      │              ▼
@@ -430,7 +462,7 @@ Hospital System          Availity API         Insurance Payer
      ┌─────────┐
      │   END   │
      └─────────┘
-</pre>
+</code></pre>
 
 <hr>
 
@@ -468,7 +500,11 @@ Staff    Frontend    Backend    Availity    Payer    Database
   │          │          │ 271      │          │          │
   │          │          │          │          │          │
   │          │          │ Save     │          │          │
-  │          │          ├──────────────────────────────&gt;│
+  │          │          ├───────────────────────────────&gt;│
+  │          │          │ Audit Log    │          │          │
+  │          │          ├──┐       │          │          │
+  │          │          │  │       │          │          │
+  │          │          │&lt;─┘       │          │          │
   │          │          │          │          │          │
   │          │ Response │          │          │          │
   │          │&lt;─────────┤          │          │          │
@@ -477,7 +513,7 @@ Staff    Frontend    Backend    Availity    Payer    Database
   │ Results  │          │          │          │          │
   │&lt;─────────┤          │          │          │          │
   │          │          │          │          │          │
-</pre>
+</code></pre>
 
 <hr>
 
@@ -489,15 +525,21 @@ POST /api/insurance/verify
 {
   "patientId": "PAT-00001",
   "insuranceId": "INS-00001",
+  "providerNpi": "1234567890",
+  "payerId": "PAYER01",
+  "traceId": "TRC-77665544",
   "serviceDate": "2026-05-20",
   "serviceType": "Office Visit"
 }
-</pre>
+</code></pre>
 
 <p><strong>Response (Active):</strong></p>
 <pre><code class="language-json">
 {
   "status": "active",
+  "verificationId": "VER-112233",
+  "payerResponseCode": "AAA",
+  "message": "Eligibility Active",
   "planName": "Aetna PPO",
   "effectiveDate": "2026-01-01",
   "copay": 25,
@@ -507,9 +549,14 @@ POST /api/insurance/verify
   "outOfPocketRemaining": 1500,
   "coveragePercent": 80,
   "priorAuthRequired": false,
+  "authorizationRequiredServices": [
+    "MRI",
+    "CT Scan"
+  ],
+  "rawResponseStored": true,
   "verifiedAt": "2026-05-18T19:45:00Z"
 }
-</pre>
+</code></pre>
 
 <p><strong>Response (Inactive):</strong></p>
 <pre><code class="language-json">
@@ -518,7 +565,7 @@ POST /api/insurance/verify
   "reason": "Coverage terminated",
   "terminationDate": "2025-12-31"
 }
-</pre>
+</code></pre>
 
 <hr>
 
@@ -528,24 +575,35 @@ POST /api/insurance/verify
 -- Save verification result
 INSERT INTO insurance_verifications (
     verification_id,
+    trace_id,
+    payer_id,
+    provider_npi,
     patient_id,
     insurance_id,
+    service_type,
+    service_date,
     verified_at,
     status,
+    response_status,
+    error_reason,
     plan_name,
     copay,
     deductible,
     deductible_remaining,
     coverage_percent,
     prior_auth_required,
-    raw_edi_271
+    raw_edi_271,
+    verified_by,
+    created_at,
+    updated_at
 ) VALUES (...);
+
 -- Update insurance status
 UPDATE patient_insurance
 SET verification_status = 'verified',
     last_verified_at = NOW()
 WHERE insurance_id = 'INS-00001';
-</pre>
+</code></pre>
 
 <hr>
 
@@ -557,47 +615,103 @@ Error 1: Payer Timeout
 Retry 3 times
    ↓
 If still fails → Manual verification
+
 Error 2: Invalid Member ID
    ↓
 Show error to staff
    ↓
 Update insurance info
+
 Error 3: Coverage Inactive
    ↓
 Offer self-pay option
    ↓
 Or update insurance
-</pre>
+
+Error 4: Duplicate patient or insurance record
+   ↓
+Prompt staff to merge/select correct record
+   ↓
+Flag duplicate for clean-up
+
+Error 5: Missing Payer ID
+   ↓
+Identify correct payer ID via lookup/payer matrix
+   ↓
+Update insurance profile and retry
+
+Error 6: Invalid Date of Birth
+   ↓
+Compare with registered DOB
+   ↓
+Prompt user to correct DOB in registration and retry
+
+Error 7: API Authentication Failed
+   ↓
+Generate system alert for administrator
+   ↓
+Switch to fallback credential or manual check
+
+Error 8: Availity/Payer Service Unavailable
+   ↓
+Route verification request to manual verification queue
+   ↓
+Notify staff and enable manual status update
+
+Error 9: Partial Response Received
+   ↓
+Identify missing required fields (copay, deductible)
+   ↓
+Prompt staff to perform manual verification call
+
+Error 10: Prior Authorization Required but Not Started
+   ↓
+Block clinical scheduling progression
+   ↓
+Route to Prior Auth team queue automatically
+</code></pre>
 
 <hr>
 
-<h2>11. Dashboard & Status Flow</h2>
+<h2>11. Dashboard &amp; Status Flow</h2>
 
 <pre><code>
-┌─────────────────────┐
-│ Pending Verification│
-└──────────┬──────────┘
-           ↓
-┌─────────────────────┐
-│ Verification Sent   │
-└──────────┬──────────┘
-           ↓
-    ┌──────┴──────┐
-    │             │
-    ▼             ▼
-┌─────────┐  ┌─────────────┐
-│ Active  │  │ Inactive    │
-└────┬────┘  └──────┬──────┘
-     │              │
-     ▼              ▼
-┌─────────┐  ┌─────────────┐
-│Verified │  │ Needs Update│
-└─────────┘  └─────────────┘
-</pre>
+                             ┌──────────────────────┐
+                             │ Pending Verification │
+                             └──────────┬───────────┘
+                                        │
+                   ┌────────────────────┴─────────────────────┐
+                   ▼                                           ▼
+        ┌─────────────────────┐                     ┌─────────────────────┐
+        │  Verification Sent  │                     │   Manual Pending    │
+        └──────────┬──────────┘                     └──────────┬──────────┘
+                   │                                           │
+          ┌────────┴────────┬────────────────┐                 │
+          ▼                 ▼                ▼                 │
+    ┌───────────┐     ┌───────────┐    ┌───────────┐           │
+    │  Active   │     │ Inactive  │    │   Payer   │           │
+    └─────┬─────┘     └─────┬─────┘    │Unavailable│           │
+          │                 │          └─────┬─────┘           │
+          ▼                 ▼                ▼                 │
+    ┌───────────┐     ┌───────────┐    ┌───────────┐           │
+    │ Verified  │     │   Needs   │    │   Retry   │           │
+    └─────┬─────┘     │  Update   │    │ Required  │           │
+          │           └───────────┘    └───────────┘           │
+          ▼                                                    │
+    ┌───────────┐                                              │
+    │   Auth    │                                              │
+    │ Required  │&lt;─────────────────────────────────────────────┘
+    └─────┬─────┘
+          ▼
+   ┌─────────────┐
+   │   Expired   │
+   │Verification │
+   └─────────────┘
+</code></pre>
 
 <hr>
 
-<p><strong>Next Module:</strong> <a href="Flows<em>Module</em>04<em>Appointment</em>Scheduling.md">Module 4: Appointment Scheduling</a></p>
+<p><strong>Next Module:</strong> <a href="Flows_Module_04_Appointment_Scheduling.md">Module 4: Appointment Scheduling</a></p>
 
 </body>
 </html>
