@@ -71,21 +71,80 @@
             <section>
                 <h2>🎯 What is This Application?</h2>
                 <div class="explanation">
-                    <strong>Simple Explanation:</strong> This is a complete healthcare billing system that automates the entire process from patient registration to payment collection. It reduces billing time from 60-90 days to just 5-7 days with 95%+ accuracy using AI and automation.
+                    <strong>Simple Explanation:</strong> This is a complete Healthcare Revenue Cycle Management (RCM) system that automates the entire healthcare billing and revenue process from provider setup and patient registration to insurance claim processing and final payment collection. The system helps hospitals manage provider onboarding, insurance verification, medical coding, claim submission, payment posting, patient billing, and revenue tracking using AI and automation. It reduces billing time from 60–90 days to just 5–7 days with 95%+ accuracy.
                 </div>
 
                 <p>Imagine a hospital or clinic. When you visit a doctor:</p>
-                <ol>
-                    <li>You register at the front desk</li>
-                    <li>They check your insurance</li>
-                    <li>Doctor treats you</li>
-                    <li>Hospital sends bill to insurance</li>
-                    <li>Insurance pays the hospital</li>
-                    <li>You pay remaining amount</li>
-                </ol>
+                <ul>
+                    <li>Patient registers at the hospital</li>
+                    <li>Hospital checks patient insurance</li>
+                    <li>Doctor treats the patient</li>
+                    <li>Hospital creates medical bill</li>
+                    <li>Insurance company pays hospital</li>
+                    <li>Patient pays remaining balance</li>
+                </ul>
 
                 <p><strong>The Problem:</strong> This entire process takes 60-90 days and has many errors.</p>
                 <p><strong>Our Solution:</strong> Automates this entire process and reduces time to 5-7 days with 95%+ accuracy.</p>
+            </section>
+
+            <section>
+                <h2>PRE-RCM / FOUNDATIONAL FLOW (4)</h2>
+                <div class="explanation">
+                    <strong>Module Overview:</strong> The Pre-RCM / Foundational Flow consists of 4 modules that prepare doctors/providers and insurance setup before the actual patient billing process starts. These modules manage provider onboarding, credential verification, insurance enrollment, and contract setup to make providers ready for insurance billing.
+                </div>
+
+                <h3>Module 1 — Provider Management</h3>
+                <p><strong>What Happens:</strong> Hospital adds a new doctor or healthcare provider into the system before patient treatment begins.</p>
+                <p><strong>System Stores:</strong> Provider name, Specialty, Department, NPI number, License details, Experience</p>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Provider profile management</li>
+                    <li>Department assignment</li>
+                    <li>Provider database</li>
+                    <li>Document upload</li>
+                    <li>Provider search</li>
+                </ul>
+
+                <h3>Module 2 — Credentialing Management</h3>
+                <p><strong>What Happens:</strong> Hospital verifies whether provider is legally qualified to practice medicine and bill insurance companies.</p>
+                <p><strong>System Verifies:</strong> Medical license, certifications, education, NPI number, CAQH profile, and malpractice insurance.</p>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Provider credential tracking</li>
+                    <li>License expiration alerts</li>
+                    <li>Insurance enrollment tracking</li>
+                    <li>Document repository</li>
+                    <li>Renewal reminders</li>
+                </ul>
+
+                <h3>Module 3 — Provider Enrollment</h3>
+                <p><strong>What Happens:</strong> Hospital enrolls provider with insurance companies for claim billing approval.</p>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Insurance enrollment tracking</li>
+                    <li>Enrollment status monitoring</li>
+                    <li>Effective date tracking</li>
+                    <li>Payer mapping</li>
+                    <li>Enrollment rejection handling</li>
+                </ul>
+
+                <h3>Module 4 — Contract Management</h3>
+                <p><strong>What Happens:</strong> Hospital manages reimbursement agreements and fee schedules with insurance companies.</p>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Payer contract storage</li>
+                    <li>Reimbursement tracking</li>
+                    <li>Fee schedule management</li>
+                    <li>Underpayment detection</li>
+                    <li>Contract renewal alerts</li>
+                </ul>
+
+                <div class="step-box">
+                    <h4>Provider Becomes Billable</h4>
+                    <p><strong>Rule:</strong> License = Active AND Credentialing = Approved AND Enrollment = Approved AND Contract = Active</p>
+                    <p><strong>Result:</strong> Provider Status = Billable</p>
+                </div>
             </section>
 
             <section>
@@ -240,13 +299,13 @@
             </section>
 
             <section class="module-section">
-                <h2>🔧 All 39 Modules Explained</h2>
+                <h2>🔧 All 37 Modules Explained</h2>
                 <div class="explanation">
-                    <strong>Module Overview:</strong> The RCM system consists of 39 interconnected modules organized into 7 categories. Each module handles a specific part of the revenue cycle, from patient registration to final payment collection.
+                    <strong>Module Overview:</strong> The RCM system consists of 37 interconnected modules organized into 7 categories. Each module handles a specific part of the revenue cycle, from patient registration to final payment collection.
                     <br><br>
                     <strong>CORE RCM MODULES (22)</strong> &rarr; Module 1 &rarr; Module 22<br>
                     <strong>SUPPORTING / ADMINISTRATION MODULES (11)</strong> &rarr; Module 23 &rarr; Module 33<br>
-                    <strong>ADVANCED ENTERPRISE MODULES (6)</strong> &rarr; Module 34 &rarr; Module 39
+                    <strong>ADVANCED ENTERPRISE MODULES (4)</strong> &rarr; Module 34 &rarr; Module 37
                 </div>
 
                 <h3>Category 1: Patient Access Management (5 Modules)</h3>
@@ -624,31 +683,9 @@
                     <li>Data integrity verification</li>
                 </ul>
 
-                <h3>Category 7: Advanced Enterprise Features (6 Modules)</h3>
+                <h3>Category 7: Advanced Enterprise Features (4 Modules)</h3>
 
-                <h4>Module 34: Contract Management</h4>
-                <div class="explanation">This module manages payer contracts, reimbursement schedules, and underpayment detection.</div>
-                <p><strong>Features:</strong></p>
-                <ul>
-                    <li>Payer contract storage</li>
-                    <li>Reimbursement tracking</li>
-                    <li>Fee schedule management</li>
-                    <li>Underpayment detection</li>
-                    <li>Contract renewal alerts</li>
-                </ul>
-
-                <h4>Module 35: Credentialing Management</h4>
-                <div class="explanation">This module tracks provider licenses, certifications, and insurance network enrollments.</div>
-                <p><strong>Features:</strong></p>
-                <ul>
-                    <li>Provider credential tracking</li>
-                    <li>License expiration alerts</li>
-                    <li>Insurance enrollment</li>
-                    <li>Document repository</li>
-                    <li>Renewal reminders</li>
-                </ul>
-
-                <h4>Module 36: Eligibility Batch Processing</h4>
+                <h4>Module 34: Eligibility Batch Processing</h4>
                 <div class="explanation">This module performs automated bulk insurance eligibility verification jobs.</div>
                 <p><strong>Features:</strong></p>
                 <ul>
@@ -659,7 +696,7 @@
                     <li>Coverage updates</li>
                 </ul>
 
-                <h4>Module 37: ERA Automation</h4>
+                <h4>Module 35: ERA Automation</h4>
                 <div class="explanation">This module automates ERA downloading, reconciliation, and payment posting workflows.</div>
                 <p><strong>Features:</strong></p>
                 <ul>
@@ -670,7 +707,7 @@
                     <li>Denial extraction</li>
                 </ul>
 
-                <h4>Module 38: API Management</h4>
+                <h4>Module 36: API Management</h4>
                 <div class="explanation">This module manages external APIs, integrations, authentication, and API monitoring.</div>
                 <p><strong>Features:</strong></p>
                 <ul>
@@ -681,7 +718,7 @@
                     <li>Secure connectivity</li>
                 </ul>
 
-                <h4>Module 39: Security & Compliance Monitoring</h4>
+                <h4>Module 37: Security & Compliance Monitoring</h4>
                 <div class="explanation">This module continuously monitors security events, compliance violations, and suspicious activities.</div>
                 <p><strong>Features:</strong></p>
                 <ul>

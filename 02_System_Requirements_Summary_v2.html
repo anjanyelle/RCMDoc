@@ -38,7 +38,7 @@
 
 <hr>
 
-<h2>2. Core Modules (30 Main Features)</h2>
+<h2>2. Core Modules (37 Main Features)</h2>
 
 <h3>Module 1: User Management, Security &amp; Multi-Tenancy</h3>
 <p><strong>Who uses it:</strong> Everyone / System Admin / Enterprise Hospitals</p>
@@ -208,7 +208,28 @@ POST https://api.waystar.com/eligibility/v1/inquiries
 
 <hr>
 
-<h3>Module 6: Prior Authorization</h3>
+<h3>Module 6: Eligibility Batch Processing</h3>
+<p><strong>Who uses it:</strong> Front desk / Scheduling Team / Billing Admin</p>
+<p><strong>What it does:</strong> Automates bulk insurance eligibility verification for all scheduled patients prior to their appointments (e.g., batch run overnight).</p>
+<p><strong>Key Features:</strong></p>
+<li>Bulk eligibility verification (runs automated EDI 270 queries in batches)</li>
+<li>Scheduled batch jobs (nightly or weekly schedules)</li>
+<li>Overnight processing for next-day appointments</li>
+<li>Exception reporting (flags patients with inactive coverage or failed inquiries)</li>
+<li>Automatic coverage updates in patient profiles</li>
+<li>Payer response parsing (extracts copay, deductible, and coverage details in bulk)</li>
+
+<p><strong>Tech Stack:</strong></p>
+<li>Celery background tasks with Redis queue</li>
+<li>Waystar Bulk Eligibility API (EDI 270/271 batch integration)</li>
+<li>PostgreSQL <code>patient_eligibility_batches</code> table</li>
+
+<p><strong>Common mistake:</strong> Running batch checks during peak hours, causing API rate limit issues.</p>
+
+
+<hr>
+
+<h3>Module 7: Prior Authorization</h3>
 <p><strong>Who uses it:</strong> Authorization team</p>
 <p><strong>What it does:</strong> Get insurance approval before expensive procedures</p>
 <p><strong>Key Features:</strong></p>
@@ -224,7 +245,7 @@ POST https://api.waystar.com/eligibility/v1/inquiries
 
 <hr>
 
-<h3>Module 7: Appointment Scheduling</h3>
+<h3>Module 8: Appointment Scheduling</h3>
 <p><strong>Who uses it:</strong> Front desk</p>
 <p><strong>What it does:</strong> Schedule patient visits</p>
 <p><strong>Key Features:</strong></p>
@@ -247,7 +268,7 @@ POST https://api.waystar.com/eligibility/v1/inquiries
 
 <hr>
 
-<h3>Module 8: Encounter Creation</h3>
+<h3>Module 9: Encounter Creation</h3>
 <p><strong>Who uses it:</strong> Front desk (at check-in)</p>
 <p><strong>What it does:</strong> Create visit record that holds all billing data</p>
 <p><strong>Key Features:</strong></p>
@@ -261,7 +282,7 @@ POST https://api.waystar.com/eligibility/v1/inquiries
 
 <hr>
 
-<h3>Module 9: Clinical Documentation (EMR Integration)</h3>
+<h3>Module 10: Clinical Documentation (EMR Integration)</h3>
 <p><strong>Who uses it:</strong> Doctors, nurses</p>
 <p><strong>What it does:</strong> Receive clinical notes from EMR system</p>
 <p><strong>Key Features:</strong></p>
@@ -283,7 +304,28 @@ POST https://api.waystar.com/eligibility/v1/inquiries
 
 <hr>
 
-<h3>Module 10: Order Management</h3>
+<h3>Module 11: Document Management</h3>
+<p><strong>Who uses it:</strong> Front desk / Medical Coders / Compliance Officer</p>
+<p><strong>What it does:</strong> Securely uploads, categorizes, stores, and retrieves patient documents, insurance cards, referrals, and medical records.</p>
+<p><strong>Key Features:</strong></p>
+<li>Secure document storage with HIPAA-compliant encryption</li>
+<li>Document categorization (Insurance Cards, ID Proofs, Consent Forms, Referral Letters, Clinical Notes)</li>
+<li>OCR scanning for automated metadata extraction</li>
+<li>Search functionality (search by patient MRN, document type, or date)</li>
+<li>Version control for updated forms and consents</li>
+<li>Digital signature integration for patient forms</li>
+
+<p><strong>Tech Stack:</strong></p>
+<li>AWS S3 for secure document storage (encrypted at rest)</li>
+<li>AWS Textract / Tesseract OCR</li>
+<li>PostgreSQL <code>documents</code> metadata table</li>
+
+<p><strong>Common mistake:</strong> Storing unencrypted PHI documents in public S3 buckets (HIPAA violation).</p>
+
+
+<hr>
+
+<h3>Module 12: Order Management</h3>
 <p><strong>Who uses it:</strong> Doctors</p>
 <p><strong>What it does:</strong> Track lab tests, imaging, medications ordered</p>
 <p><strong>Key Features:</strong></p>
@@ -298,7 +340,7 @@ POST https://api.waystar.com/eligibility/v1/inquiries
 
 <hr>
 
-<h3>Module 11: Charge Capture (Automated)</h3>
+<h3>Module 13: Charge Capture (Automated)</h3>
 <p><strong>Who uses it:</strong> Clinical staff, billing team</p>
 <p><strong>What it does:</strong> Convert every service into a billable charge</p>
 <p><strong>Key Features:</strong></p>
@@ -314,7 +356,7 @@ POST https://api.waystar.com/eligibility/v1/inquiries
 
 <hr>
 
-<h3>Module 12: Medical Coding (AI-Assisted)</h3>
+<h3>Module 14: Medical Coding (AI-Assisted)</h3>
 <p><strong>Who uses it:</strong> Medical coders</p>
 <p><strong>What it does:</strong> Assign standardized codes to diagnoses and procedures</p>
 <p><strong>SLA/TAT:</strong> Coding completed within 24 hours of encounter lock.</p>
@@ -364,7 +406,7 @@ AI Output:
 
 <hr>
 
-<h3>Module 13: Coding Compliance</h3>
+<h3>Module 15: Coding Compliance</h3>
 <p><strong>Who uses it:</strong> Coders, compliance team</p>
 <p><strong>What it does:</strong> Prevent coding errors and fraud</p>
 <p><strong>Key Features:</strong></p>
@@ -380,7 +422,7 @@ AI Output:
 
 <hr>
 
-<h3>Module 14: Claim Creation (Automated)</h3>
+<h3>Module 16: Claim Creation (Automated)</h3>
 <p><strong>Who uses it:</strong> Billing team</p>
 <p><strong>What it does:</strong> Generate insurance claim from coded encounter</p>
 <p><strong>SLA/TAT:</strong> Claim generated within 12 hours of coding.</p>
@@ -399,7 +441,7 @@ AI Output:
 
 <hr>
 
-<h3>Module 15: Claim Scrubbing &amp; Error Prediction (AI-Powered)</h3>
+<h3>Module 17: Claim Scrubbing &amp; Error Prediction (AI-Powered)</h3>
 <p><strong>Who uses it:</strong> Billing team</p>
 <p><strong>What it does:</strong> Check claim for errors before submission</p>
 <p><strong>Key Features:</strong></p>
@@ -447,7 +489,7 @@ AI Output:
 
 <hr>
 
-<h3>Module 16: Claim Submission (Electronic)</h3>
+<h3>Module 18: Claim Submission (Electronic)</h3>
 <p><strong>Who uses it:</strong> Billing team</p>
 <p><strong>What it does:</strong> Send claims to insurance companies</p>
 <p><strong>SLA/TAT:</strong> Claim submitted within 24 hours of generation.</p>
@@ -482,7 +524,27 @@ POST https://api.waystar.com/claims/v1/submit
 
 <hr>
 
-<h3>Module 17: Claim Tracking &amp; AR Follow-Up</h3>
+<h3>Module 19: Clearinghouse Validation</h3>
+<p><strong>Who uses it:</strong> Billing team</p>
+<p><strong>What it does:</strong> Performs secondary validation and syntax checks at the clearinghouse level before claims are routed to the final insurance payer.</p>
+<p><strong>Key Features:</strong></p>
+<li>Clearinghouse integration (Waystar, Availity)</li>
+<li>Rejection queue handling (captures technical rejections like wrong payer ID or invalid format)</li>
+<li>Syntax validation (compliance with EDI 5010 standards)</li>
+<li>Claim correction workflow (allows billers to correct and resubmit rejected claims within the UI)</li>
+<li>Submission acknowledgment tracking (tracks EDI 999 and 277CA acknowledgments)</li>
+
+<p><strong>Tech Stack:</strong></p>
+<li>Waystar Claims and Rejections API</li>
+<li>PostgreSQL <code>clearinghouse_rejections</code> table</li>
+<li>WebSocket for instant rejection notifications to billers</li>
+
+<p><strong>Common mistake:</strong> Ignoring clearinghouse technical rejections, leading to claims never reaching the payer.</p>
+
+
+<hr>
+
+<h3>Module 20: Claim Tracking &amp; AR Follow-Up</h3>
 <p><strong>Who uses it:</strong> Billing team / AR Team / Insurance Follow-Up Team</p>
 <p><strong>What it does:</strong> Monitor claim status after submission and follow up on unpaid or pending insurance claims.</p>
 <p><strong>Key Features:</strong></p>
@@ -514,7 +576,27 @@ POST https://api.waystar.com/claims/v1/submit
 
 <hr>
 
-<h3>Module 18: Payment Posting (ERA - Automated)</h3>
+<h3>Module 21: Insurance Adjudication Tracking</h3>
+<p><strong>Who uses it:</strong> Biller / AR team / Finance Manager</p>
+<p><strong>What it does:</strong> Monitors how payers adjudicate claims, showing detailed processing steps, allowed amounts, patient responsibility, and contractual adjustments prior to final payment posting.</p>
+<p><strong>Key Features:</strong></p>
+<li>Adjudication status monitoring (real-time tracking of claim processing status)</li>
+<li>Payer response tracking (interprets payer-specific adjudication codes)</li>
+<li>Medical necessity review visibility (flags claims held for clinical review)</li>
+<li>Contract rule validation (compares payer allowed amounts with contract fee schedules)</li>
+<li>Payer turnaround analytics (tracks average days from submission to adjudication decision)</li>
+
+<p><strong>Tech Stack:</strong></p>
+<li>PostgreSQL <code>claim_adjudication</code> table</li>
+<li>Celery worker for daily adjudication checks via EDI 277</li>
+<li>Waystar Adjudication API integration</li>
+
+<p><strong>Why critical:</strong> Without adjudication tracking, you cannot detect underpayments or identify why claims are partially paid.</p>
+
+
+<hr>
+
+<h3>Module 22: Payment Posting (ERA - Automated)</h3>
 <p><strong>Who uses it:</strong> AR team</p>
 <p><strong>What it does:</strong> Record insurance payments</p>
 <p><strong>SLA/TAT:</strong> Payments posted within 48 hours of ERA receipt.</p>
@@ -543,7 +625,27 @@ POST https://api.waystar.com/claims/v1/submit
 
 <hr>
 
-<h3>Module 19: Denial &amp; Appeals Management</h3>
+<h3>Module 23: ERA Automation</h3>
+<p><strong>Who uses it:</strong> AR team / Finance team</p>
+<p><strong>What it does:</strong> Automates the retrieval of Electronic Remittance Advice (ERA) files and automatically reconciles bank EFT deposits with posted payments.</p>
+<p><strong>Key Features:</strong></p>
+<li>Automatic ERA download (fetches EDI 835 files from clearinghouse daily)</li>
+<li>Auto-posting engine (automatically matches and posts payments to patient accounts)</li>
+<li>Reconciliation automation (reconciles ERA amounts with actual bank EFT deposits)</li>
+<li>Adjustment automation (automatically applies contractual adjustments based on payer contract rules)</li>
+<li>Denial extraction (automatically pulls denial codes and redirects them to the Denial Management worklist)</li>
+
+<p><strong>Tech Stack:</strong></p>
+<li>Python EDI 835 parsing library</li>
+<li>Waystar Remittance Auto-Download API</li>
+<li>PostgreSQL <code>era_files</code> and <code>reconciliation_logs</code> tables</li>
+
+<p><strong>Common mistake:</strong> Posting ERAs without EFT bank deposit confirmation, leading to reconciliation discrepancies.</p>
+
+
+<hr>
+
+<h3>Module 24: Denial &amp; Appeals Management</h3>
 <p><strong>Who uses it:</strong> Denial team</p>
 <p><strong>What it does:</strong> Handle rejected claims and automate/manage appeals to insurance companies</p>
 <p><strong>SLA/TAT:</strong> Appeals filed within 5 days of denial.</p>
@@ -605,7 +707,7 @@ Sincerely,
 
 <hr>
 
-<h3>Module 20: Secondary Billing</h3>
+<h3>Module 25: Secondary Billing</h3>
 <p><strong>Who uses it:</strong> Billing team</p>
 <p><strong>What it does:</strong> Bill second/third insurance after primary pays</p>
 <p><strong>Key Features:</strong></p>
@@ -618,7 +720,7 @@ Sincerely,
 
 <hr>
 
-<h3>Module 21: Patient Billing &amp; Payment Collection</h3>
+<h3>Module 26: Patient Billing &amp; Payment Collection</h3>
 <p><strong>Who uses it:</strong> Patient accounts team</p>
 <p><strong>What it does:</strong> Bill patients for their portion</p>
 <p><strong>Key Features:</strong></p>
@@ -657,7 +759,7 @@ payment_intent = stripe.PaymentIntent.create(
 
 <hr>
 
-<h3>Module 22: Collections</h3>
+<h3>Module 27: Collections</h3>
 <p><strong>Who uses it:</strong> Collections team</p>
 <p><strong>What it does:</strong> Collect overdue patient balances</p>
 <p><strong>Key Features:</strong></p>
@@ -673,7 +775,7 @@ payment_intent = stripe.PaymentIntent.create(
 
 <hr>
 
-<h3>Module 23: Reporting &amp; Analytics (Advanced)</h3>
+<h3>Module 28: Reporting &amp; Analytics (Advanced)</h3>
 <p><strong>Who uses it:</strong> Management, finance team</p>
 <p><strong>What it does:</strong> Track RCM performance with advanced analytics</p>
 
@@ -710,7 +812,7 @@ payment_intent = stripe.PaymentIntent.create(
 
 <hr>
 
-<h3>Module 24: Audit &amp; Compliance</h3>
+<h3>Module 29: Audit &amp; Compliance</h3>
 <p><strong>Who uses it:</strong> Compliance team</p>
 <p><strong>What it does:</strong> Track all activities for audits</p>
 <p><strong>Key Features:</strong></p>
@@ -732,7 +834,7 @@ payment_intent = stripe.PaymentIntent.create(
 
 <hr>
 
-<h3>Module 25: Interoperability</h3>
+<h3>Module 30: Interoperability</h3>
 <p><strong>Who uses it:</strong> IT team</p>
 <p><strong>What it does:</strong> Connect with other systems</p>
 <p><strong>Integrations:</strong></p>
@@ -755,7 +857,7 @@ payment_intent = stripe.PaymentIntent.create(
 
 <hr>
 
-<h3>Module 26: AI &amp; Machine Learning Features (NEW)</h3>
+<h3>Module 31: AI &amp; Machine Learning Features (NEW)</h3>
 <p><strong>Who uses it:</strong> All users (behind the scenes)</p>
 <p><strong>What it does:</strong> Leverage AI to improve efficiency and accuracy</p>
 
@@ -806,7 +908,7 @@ payment_intent = stripe.PaymentIntent.create(
 
 <hr>
 
-<h3>Module 27: Revenue Integrity (NEW)</h3>
+<h3>Module 32: Revenue Integrity (NEW)</h3>
 <p><strong>Who uses it:</strong> Revenue integrity team</p>
 <p><strong>What it does:</strong> Prevent revenue leakage and ensure proper coding</p>
 <p><strong>Key Features:</strong></p>
@@ -826,7 +928,7 @@ payment_intent = stripe.PaymentIntent.create(
 
 <hr>
 
-<h3>Module 28: Patient Portal (NEW)</h3>
+<h3>Module 33: Patient Portal (NEW)</h3>
 <p><strong>Who uses it:</strong> Patients</p>
 <p><strong>What it does:</strong> Patient self-service portal</p>
 <p><strong>Key Features:</strong></p>
@@ -849,7 +951,7 @@ payment_intent = stripe.PaymentIntent.create(
 
 <hr>
 
-<h3>Module 29: Mobile Application (NEW)</h3>
+<h3>Module 34: Mobile Application (NEW)</h3>
 <p><strong>Who uses it:</strong> Staff and patients</p>
 <p><strong>What it does:</strong> Mobile access to RCM system</p>
 <p><strong>Key Features:</strong></p>
@@ -868,7 +970,7 @@ payment_intent = stripe.PaymentIntent.create(
 
 <hr>
 
-<h3>Module 30: Real-Time Dashboard &amp; Notifications (NEW)</h3>
+<h3>Module 35: Real-Time Dashboard &amp; Notifications (NEW)</h3>
 <p><strong>Who uses it:</strong> All users</p>
 <p><strong>What it does:</strong> Real-time updates and alerts</p>
 <p><strong>Key Features:</strong></p>
@@ -885,6 +987,46 @@ payment_intent = stripe.PaymentIntent.create(
 <li>Redis for pub/sub messaging</li>
 <li>Twilio for SMS</li>
 <li>SendGrid for email</li>
+
+<hr>
+
+<h3>Module 36: Automated Workflows</h3>
+<p><strong>Who uses it:</strong> Practice Manager / Billing Admin</p>
+<p><strong>What it does:</strong> Automates common RCM business tasks and routes unresolved items to appropriate team members based on preset rules.</p>
+<p><strong>Key Features:</strong></p>
+<li>Workflow automation (automated progression of claims through cycle steps)</li>
+<li>Task assignment (automatically assigns claims to billers based on payer or specialty)</li>
+<li>Trigger-based actions (e.g., trigger patient email/SMS if balance remains unpaid for 30 days)</li>
+<li>Business rule engine (custom logic builder for routing, exceptions, and holds)</li>
+<li>Process optimization (identifies bottlenecks in the billing and collection workflows)</li>
+
+<p><strong>Tech Stack:</strong></p>
+<li>Celery beats / Redis broker</li>
+<li>Python business rule engines (e.g., RuleEngine)</li>
+<li>PostgreSQL <code>workflows</code> and <code>assigned_tasks</code> tables</li>
+
+<p><strong>Revenue impact:</strong> Reduces idle time between billing steps, shortening Days in AR.</p>
+
+
+<hr>
+
+<h3>Module 37: Data Import/Export</h3>
+<p><strong>Who uses it:</strong> Finance team / Practice Manager / System Admin</p>
+<p><strong>What it does:</strong> Supports importing historical billing data and exporting custom reports, analytics, and patient statements in multiple formats.</p>
+<p><strong>Key Features:</strong></p>
+<li>CSV and Excel import for patients, fee schedules, and providers</li>
+<li>Bulk data migration tools for onboarding new hospital systems</li>
+<li>Scheduled exports (nightly or weekly automated report generation)</li>
+<li>Data validation (validates files for format errors and missing fields before importing)</li>
+<li>Format conversion (converts custom reports into PDF, CSV, Excel, or JSON formats)</li>
+
+<p><strong>Tech Stack:</strong></p>
+<li>pandas, openpyxl, and reportlab libraries in Python</li>
+<li>PostgreSQL bulk copy operations</li>
+<li>S3 storage for holding exported files</li>
+
+<p><strong>Common mistake:</strong> Importing raw Excel sheets without data validation, causing database constraints corruption.</p>
+
 
 <hr>
 
@@ -1012,9 +1154,10 @@ payment_intent = stripe.PaymentIntent.create(
 
 <h2>6. User Roles &amp; Permissions</h2>
 
+<table>
 <tr>
-<td>Role</td>
-<td>Can Do</td>
+<th>Role</th>
+<th>Can Do</th>
 </tr>
 <tr>
 <td><strong>Front Desk</strong></td>
@@ -1060,6 +1203,7 @@ payment_intent = stripe.PaymentIntent.create(
 <td><strong>System Admin</strong></td>
 <td>User management, system configuration, role management, API keys</td>
 </tr>
+</table>
 
 <hr>
 
@@ -1168,11 +1312,12 @@ Collections (Days 60-120)
 
 <h2>9. EDI Transaction Specifications</h2>
 
+<table>
 <tr>
-<td>EDI Code</td>
-<td>Name</td>
-<td>Purpose</td>
-<td>Direction</td>
+<th>EDI Code</th>
+<th>Name</th>
+<th>Purpose</th>
+<th>Direction</th>
 </tr>
 <tr>
 <td><strong>270</strong></td>
@@ -1234,6 +1379,7 @@ Collections (Days 60-120)
 <td>Confirm receipt of EDI transaction</td>
 <td>Inbound</td>
 </tr>
+</table>
 
 <p><strong>Clearinghouse:</strong> Waystar or Availity handles EDI translation and routing</p>
 
@@ -1241,11 +1387,12 @@ Collections (Days 60-120)
 
 <h2>10. Common Mistakes &amp; Prevention</h2>
 
+<table>
 <tr>
-<td>Mistake</td>
-<td>Impact</td>
-<td>Prevention</td>
-<td>Module</td>
+<th>Mistake</th>
+<th>Impact</th>
+<th>Prevention</th>
+<th>Module</th>
 </tr>
 <tr>
 <td>Wrong insurance ID at registration</td>
@@ -1257,56 +1404,57 @@ Collections (Days 60-120)
 <td>Missing prior authorization</td>
 <td>100% denial</td>
 <td>Authorization tracking, alerts</td>
-<td>Module 6</td>
+<td>Module 7</td>
 </tr>
 <tr>
 <td>Incomplete documentation</td>
 <td>Coding errors, denials</td>
 <td>CDI alerts for providers</td>
-<td>Module 9</td>
+<td>Module 10</td>
 </tr>
 <tr>
 <td>Missed charges</td>
 <td>Revenue loss (5-10%)</td>
 <td>Charge reconciliation, AI detection</td>
-<td>Module 11</td>
+<td>Module 13</td>
 </tr>
 <tr>
 <td>Wrong CPT code</td>
 <td>Denial or underpayment</td>
 <td>AI coding assistant, encoder</td>
-<td>Module 12</td>
+<td>Module 14</td>
 </tr>
 <tr>
 <td>NCCI edit violation</td>
 <td>Claim rejection</td>
 <td>Claim scrubbing with NCCI checks</td>
-<td>Module 15</td>
+<td>Module 17</td>
 </tr>
 <tr>
 <td>Late claim submission</td>
 <td>Timely filing denial</td>
 <td>Timely filing alerts, automated submission</td>
-<td>Module 16</td>
+<td>Module 18</td>
 </tr>
 <tr>
 <td>Not appealing denials</td>
 <td>Lost revenue (60% recoverable)</td>
 <td>Denial worklists, appeal tracking</td>
-<td>Module 19</td>
+<td>Module 24</td>
 </tr>
 <tr>
 <td>Undercoding</td>
 <td>Revenue loss</td>
 <td>Revenue integrity module, AI detection</td>
-<td>Module 27</td>
+<td>Module 32</td>
 </tr>
 <tr>
 <td>Poor patient communication</td>
 <td>Low collections</td>
 <td>Patient portal, cost estimates</td>
-<td>Module 28</td>
+<td>Module 33</td>
 </tr>
+</table>
 
 <hr>
 
@@ -1444,20 +1592,20 @@ Collections (Days 60-120)
 <h2>15. Implementation Roadmap</h2>
 
 <h3>Phase 1: MVP (Months 1-4)</h3>
-<li>Modules 1-10, 12, 14-18, 23</li>
+<li>Modules 1-5, 7-10, 12, 14-18, 20, 22, 28</li>
 <li>Core workflow: Patient → Claim → Payment</li>
 <li>Basic AI features (coding assistant)</li>
 <li><strong>Goal:</strong> Launch with 3-5 pilot clinics</li>
 
 <h3>Phase 2: Enhancement (Months 5-8)</h3>
-<li>Modules 11, 19-22, 26</li>
+<li>Modules 11, 13, 19, 21, 24-27, 31</li>
 <li>Advanced AI features (error prediction, OCR)</li>
 <li>Denial management</li>
 <li>Patient billing</li>
 <li><strong>Goal:</strong> 20-30 clinics</li>
 
 <h3>Phase 3: Scale (Months 9-12)</h3>
-<li>Modules 24, 25, 27-30</li>
+<li>Modules 6, 23, 29, 30, 32-37</li>
 <li>Revenue integrity</li>
 <li>Patient portal</li>
 <li>Mobile app</li>
@@ -1505,7 +1653,7 @@ Collections (Days 60-120)
 <p><strong>Status:</strong> Ready for Team Review</p>
 
 <p><strong>Changes from v1.0:</strong></p>
-<li>✅ Added 5 new modules (26-30)</li>
+<li>✅ Added 12 new modules (26-37)</li>
 <li>✅ Added AI/ML features throughout</li>
 <li>✅ Added specific API integrations (Waystar, Stripe, OpenAI, Twilio)</li>
 <li>✅ Added detailed tech stack specifications</li>
