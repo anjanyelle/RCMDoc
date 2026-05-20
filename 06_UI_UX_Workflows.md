@@ -113,6 +113,8 @@ This document describes the user interface design, navigation structure, and scr
 
 #### AR Manager Dashboard:
 
+Screen:
+
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │  Dashboard - AR Management                     [Date: Today]  │
