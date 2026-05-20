@@ -53,53 +53,7 @@
 
 <hr>
 
-<h3>Module 2: User Login & Security</h3>
-
-<p><strong>Purpose:</strong>  </p>
-<p>Secure access control so only authorized staff can access patient data and billing information.</p>
-
-<p><strong>What User Does:</strong></p>
-<li>Opens application</li>
-<li>Enters username and password</li>
-<li>System shows dashboard based on their role</li>
-
-<p><strong>What Backend Does:</strong></p>
-<li>Validates credentials against database</li>
-<li>Generates JWT token (expires in 8 hours)</li>
-<li>Checks user role and permissions</li>
-<li>Returns allowed menu items and features</li>
-
-<p><strong>APIs Needed:</strong></p>
-<li><strong>Internal:</strong> FastAPI authentication endpoints</li>
-<li><strong>External:</strong> None (built in-house)</li>
-
-<p><strong>Tech Details:</strong></p>
-<pre><code class="language-python">
-# Authentication flow
-POST /api/v1/auth/login
-{
-  "username": "biller01",
-  "password": "encrypted_password"
-}
-Response:
-{
-  "access_token": "jwt_token_here",
-  "token_type": "bearer",
-  "user_role": "medical_biller",
-  "permissions": ["view_claims", "submit_claims", "post_payments"]
-}
-</pre>
-
-<p><strong>Security Features:</strong></p>
-<li>Password encryption (bcrypt)</li>
-<li>JWT token-based authentication</li>
-<li>Role-based access control (RBAC)</li>
-<li>Session timeout after 8 hours</li>
-<li>Audit logging for all actions</li>
-
-<hr>
-
-<h3>Module 3: Patient Registration</h3>
+<h3>Module 2: Patient Registration</h3>
 
 <p><strong>Purpose:</strong>  </p>
 <p>Capture and store patient demographic and insurance information accurately.</p>
@@ -138,7 +92,7 @@ Response:
 
 <hr>
 
-<h3>Module 4: Insurance Verification</h3>
+<h3>Module 3: Insurance Verification</h3>
 
 <p><strong>Purpose:</strong>  </p>
 <p>Verify patient insurance eligibility and benefits before appointment to avoid claim denials.</p>
@@ -216,7 +170,7 @@ Response:
 
 <hr>
 
-<h3>Module 5: Prior Authorization / Referral Management</h3>
+<h3>Module 4: Prior Authorization / Referral Management</h3>
 
 <p><strong>Purpose:</strong></p>
 <p>
@@ -262,7 +216,7 @@ Obtain insurance company approval before expensive procedures, specialist consul
 
 <hr>
 
-<h3>Module 6: Patient Check-In</h3>
+<h3>Module 5: Patient Check-In</h3>
 
 <p><strong>Purpose:</strong></p>
 <p>
@@ -317,7 +271,7 @@ Confirm patient arrival, verify demographic and insurance information, collect c
 
 <hr>
 
-<h3>Module 7: Clinical Documentation / EMR</h3>
+<h3>Module 6: Clinical Documentation / EMR</h3>
 
 <p><strong>Purpose:</strong></p>
 <p>
@@ -370,7 +324,7 @@ Maintain a complete and structured Electronic Medical Record (EMR) containing al
 
 <hr>
 
-<h3>Module 8: Medical Coding</h3>
+<h3>Module 7: Medical Coding</h3>
 
 <p><strong>Purpose:</strong>  </p>
 <p>Assign correct ICD-10 diagnosis codes and CPT procedure codes to encounters for accurate billing.</p>
@@ -425,55 +379,76 @@ Response (using OpenAI API):
 
 <hr>
 
-<h3>Module 9: Claim Creation</h3>
+<h3>Module 8: Charge Entry / Charge Capture</h3>
 
-<p><strong>Purpose:</strong>  </p>
-<p>Generate clean, accurate claims from encounter data ready for submission.</p>
+<p><strong>Purpose:</strong></p>
+<p>
+Capture and manage all billable services, procedures, medications, and provider charges accurately to support claim generation and revenue cycle workflows.
+</p>
 
 <p><strong>What User Does:</strong></p>
-<li>Opens "Claims" module</li>
-<li>Selects encounters ready for billing</li>
-<li>Clicks "Create Claim"</li>
-<li>System auto-fills claim form (CMS-1500 or UB-04)</li>
-<li>Reviews claim for errors</li>
-<li>Edits if needed</li>
-<li>Marks claim as "Ready to Submit"</li>
+<li>Opens "Charge Entry / Charge Capture" module</li>
+<li>Searches patient encounter or appointment</li>
+<li>Selects provider and date of service</li>
+<li>Enters billable items:</li>
+<li>Procedures (CPT/HCPCS codes)</li>
+<li>Medications</li>
+<li>Supplies</li>
+<li>Service charges</li>
+<li>Applies modifiers if required</li>
+<li>Reviews fee schedule amounts</li>
+<li>Verifies diagnosis-to-procedure linkage</li>
+<li>Saves charges for billing</li>
+<li>Reviews charge validation alerts</li>
+<li>Submits finalized charges for claim creation</li>
 
 <p><strong>What Backend Does:</strong></p>
-<li>Pulls data from multiple tables:</li>
-<li>Patient demographics</li>
-<li>Insurance information</li>
-<li>Provider information</li>
-<li>Encounter details (date, place of service)</li>
-<li>Diagnosis codes (ICD-10)</li>
-<li>Procedure codes (CPT)</li>
-<li>Charges</li>
-<li>Validates claim against payer rules</li>
-<li>Runs claim scrubbing (error checking)</li>
-<li>Generates claim in EDI 837 format</li>
-<li>Stores claim in database with status "Ready"</li>
+<li>Retrieves encounter and provider details</li>
+<li>Validates CPT/HCPCS procedure codes</li>
+<li>Validates diagnosis linkage using ICD-10 codes</li>
+<li>Applies payer-specific fee schedules</li>
+<li>Calculates charge amounts automatically</li>
+<li>Validates modifiers and coding combinations</li>
+<li>Detects duplicate or missing charges</li>
+<li>Stores charge transactions in billing database</li>
+<li>Generates audit trail for charge updates</li>
+<li>Sends approved charges to claim generation workflow</li>
 
 <p><strong>APIs Needed:</strong></p>
-<li><strong>Internal:</strong> Claim generation logic</li>
-<li><strong>Waystar API</strong> (for claim scrubbing/validation)</li>
+<li><strong>Internal Charge Management API</strong> – charge entry & validation</li>
+<li><strong>Coding API (ICD-10 / CPT / HCPCS Lookup)</strong> – code verification</li>
+<li><strong>Fee Schedule API</strong> – payer pricing & reimbursement validation</li>
+<li><strong>EMR/EHR API (Epic / Cerner / FHIR APIs)</strong> – encounter & clinical data</li>
+<li><strong>Claim Generation API</strong> – billing workflow integration</li>
 
-<p><strong>Claim Validation Rules:</strong></p>
-<li>All required fields present</li>
-<li>Valid NPI numbers</li>
-<li>Valid diagnosis and procedure codes</li>
-<li>Diagnosis supports medical necessity for procedures</li>
-<li>Charges match fee schedule</li>
-<li>No duplicate claims</li>
+<p><strong>Charge Validation Rules:</strong></p>
+<li>Every charge must be linked to a valid encounter</li>
+<li>CPT/HCPCS codes must be active and billable</li>
+<li>Diagnosis codes must support medical necessity</li>
+<li>Required modifiers must be applied where necessary</li>
+<li>Duplicate charges for same service are not allowed</li>
+<li>Charge amount must match configured fee schedule</li>
+<li>Provider must have valid credentials/NPI</li>
+<li>Charges must be finalized before claim generation</li>
 
-<p><strong>Claim Formats:</strong></p>
-<li><strong>CMS-1500:</strong> Professional claims (doctor's office)</li>
-<li><strong>UB-04:</strong> Institutional claims (hospital)</li>
-<li><strong>EDI 837P:</strong> Electronic professional claims</li>
-<li><strong>EDI 837I:</strong> Electronic institutional claims</li>
+<p><strong>Data Stored:</strong></p>
+<li><code>charge_entries</code></li>
+<li><code>charge_details</code></li>
+<li><code>provider_fee_schedules</code></li>
+<li><code>charge_modifiers</code></li>
+<li><code>charge_validation_logs</code></li>
+<li><code>charge_audit_history</code></li>
+
+<p><strong>Reports Generated:</strong></p>
+<li>Charge Capture Summary Report</li>
+<li>Missing Charges Report</li>
+<li>Charge Validation Error Report</li>
+<li>Provider Productivity Report</li>
+<li>Fee Schedule Variance Report</li>
 
 <hr>
 
-<h3>Module 10: Claim Scrubbing</h3>
+<h3>Module 9: Claim Scrubbing</h3>
 
 <p><strong>Purpose:</strong></p>
 <p>
@@ -527,7 +502,7 @@ Perform pre-submission validation of healthcare claims to detect errors, missing
 
 <hr>
 
-<h3>Module 11: Claim Submission</h3>
+<h3>Module 10: Claim Submission</h3>
 
 <p><strong>Purpose:</strong>  </p>
 <p>Submit claims electronically to insurance payers and track submission status.</p>
@@ -593,7 +568,7 @@ Response:
 
 <hr>
 
-<h3>Module 12: Clearinghouse Validation</h3>
+<h3>Module 11: Clearinghouse Validation</h3>
 
 <p><strong>Purpose:</strong></p>
 <p>
@@ -647,7 +622,7 @@ Validate, scrub, and route claims through a clearinghouse to ensure they meet pa
 
 <hr>
 
-<h3>Module 13: Claim Status Tracking</h3>
+<h3>Module 12: Claim Status Tracking</h3>
 
 <p><strong>Purpose:</strong></p>
 <p>
@@ -707,7 +682,7 @@ Track and monitor the real-time status of insurance claims throughout the payer 
 
 <hr>
 
-<h3>Module 14: Insurance Adjudication Tracking</h3>
+<h3>Module 13: Insurance Adjudication Tracking</h3>
 
 <p><strong>Purpose:</strong></p>
 <p>
@@ -770,7 +745,7 @@ Track and analyze the insurance payer adjudication process, including claim appr
 
 <hr>
 
-<h3>Module 15: ERA Processing</h3>
+<h3>Module 14: ERA Processing</h3>
 
 <p><strong>Purpose:</strong></p>
 <p>
@@ -835,7 +810,7 @@ Process Electronic Remittance Advice (ERA) files (EDI 835) received from insuran
 
 <hr>
 
-<h3>Module 16: Payment Posting</h3>
+<h3>Module 15: Payment Posting</h3>
 
 <p><strong>Purpose:</strong>  </p>
 <p>Record payments from insurance companies and patients, and reconcile with claims.</p>
@@ -894,7 +869,7 @@ Adjustment Codes:
 
 <hr>
 
-<h3>Module 17: Denial Dashboard</h3>
+<h3>Module 16: Denial Dashboard</h3>
 
 <p><strong>Purpose:</strong>  </p>
 <p>Track denied claims and manage denial workflow to recover lost revenue.</p>
@@ -947,7 +922,7 @@ Adjustment Codes:
 
 <hr>
 
-<h3>Module 18: Secondary Insurance Billing</h3>
+<h3>Module 17: Secondary Insurance Billing</h3>
 
 <p><strong>Purpose:</strong></p>
 <p>
@@ -1013,7 +988,7 @@ Handle Coordination of Benefits (COB) by billing secondary and tertiary insuranc
 
 <hr>
 
-<h3>Module 19: Patient Billing</h3>
+<h3>Module 18: Patient Billing</h3>
 
 <p><strong>Purpose:</strong></p>
 <p>
@@ -1075,7 +1050,7 @@ Generate patient statements and manage collection of remaining balances after in
 
 <hr>
 
-<h3>Module 20: Accounts Receivable (AR) Follow-Up</h3>
+<h3>Module 19: Accounts Receivable (AR) Follow-Up</h3>
 
 <p><strong>Purpose:</strong></p>
 <p>
@@ -1138,7 +1113,7 @@ Track and manage unpaid insurance and patient balances by prioritizing collectio
 
 <hr>
 
-<h3>Module 21: Collections / Refund / Write-Off Management</h3>
+<h3>Module 20: Collections / Refund / Write-Off Management</h3>
 
 <p><strong>Purpose:</strong></p>
 <p>
@@ -1201,73 +1176,82 @@ Manage overdue collections, process patient refunds, handle credit balances, and
 
 <hr>
 
-<h3>Module 22: Basic Reports</h3>
+<h3>Module 21: Reporting & Analytics</h3>
 
-<p><strong>Purpose:</strong>  </p>
-<p>Provide essential financial and operational reports for practice management.</p>
+<p><strong>Purpose:</strong></p>
+<p>
+Provide operational dashboards, financial analytics, and performance reports to monitor Revenue Cycle Management (RCM) efficiency, revenue trends, denial patterns, and accounts receivable performance.
+</p>
 
 <p><strong>What User Does:</strong></p>
-<li>Opens "Reports" module</li>
-<li>Selects report type</li>
-<li>Selects date range</li>
-<li>Clicks "Generate Report"</li>
-<li>Views report on screen</li>
-<li>Exports to PDF or Excel if needed</li>
+<li>Opens "Reporting & Analytics" module</li>
+<li>Views KPI dashboards:</li>
+<li>Revenue metrics</li>
+<li>Claim submission trends</li>
+<li>Denial rates</li>
+<li>AR aging performance</li>
+<li>Filters reports by Date range, Provider, Location, Payer, or Department</li>
+<li>Generates financial and operational reports</li>
+<li>Reviews denial trend analysis</li>
+<li>Monitors AR performance and collection metrics</li>
+<li>Exports reports in PDF, Excel, or CSV format</li>
+<li>Schedules automated report delivery via email</li>
+<li>Shares dashboards with management teams</li>
 
 <p><strong>What Backend Does:</strong></p>
-<li>Queries database based on report parameters</li>
-<li>Aggregates data</li>
-<li>Calculates metrics</li>
-<li>Formats report</li>
-<li>Returns report data</li>
+<li>Aggregates data from multiple RCM modules (Billing, Claims, Payments, Denials, AR)</li>
+<li>Calculates KPIs and financial metrics:</li>
+<li>Net collections</li>
+<li>Days in AR</li>
+<li>First-pass claim acceptance rate</li>
+<li>Denial percentages</li>
+<li>Generates real-time dashboards and charts</li>
+<li>Performs trend analysis for revenue growth, denial frequency, and payer performance</li>
+<li>Supports drill-down reporting by provider, payer, and department</li>
+<li>Generates exportable report files (PDF/Excel/CSV)</li>
+<li>Schedules recurring report generation and delivery</li>
+<li>Maintains historical analytics data for benchmarking</li>
+<li>Applies role-based access to reports and dashboards</li>
 
 <p><strong>APIs Needed:</strong></p>
-<li><strong>Internal:</strong> Reporting queries</li>
+<li><strong>Internal Reporting API</strong> – dashboard & report generation</li>
+<li><strong>Analytics Engine API</strong> – KPI calculations & trend analysis</li>
+<li><strong>Billing/Claims API</strong> – financial and operational data</li>
+<li><strong>AR Management API</strong> – receivable analytics</li>
+<li><strong>Data Warehouse API</strong> – historical reporting data</li>
+<li><strong>Export API</strong> – PDF/Excel/CSV generation</li>
+<li><strong>Notification API (SendGrid / SMTP)</strong> – scheduled report delivery</li>
 
-<p><strong>MVP Reports:</strong></p>
+<p><strong>Reporting Rules:</strong></p>
+<li>KPI calculations must use real-time financial data</li>
+<li>Reports must support role-based access control (RBAC)</li>
+<li>Financial reports must reconcile with billing and payment systems</li>
+<li>Historical reports must remain immutable after period close</li>
+<li>Exported reports must include audit timestamp</li>
+<li>Scheduled reports must follow configured delivery schedules</li>
+<li>Sensitive financial data must be encrypted and access-controlled</li>
 
-<li><strong>Daily Charges Report</strong></li>
-<li>Total charges posted today</li>
-<li>By provider</li>
-<li>By service type</li>
+<p><strong>Data Stored:</strong></p>
+<li><code>dashboard_metrics</code></li>
+<li><code>financial_reports</code></li>
+<li><code>denial_analytics</code></li>
+<li><code>ar_analytics</code></li>
+<li><code>report_schedules</code></li>
+<li><code>report_exports</code></li>
 
-<li><strong>Claims Status Report</strong></li>
-<li>Claims submitted</li>
-<li>Claims paid</li>
-<li>Claims denied</li>
-<li>Claims pending</li>
-
-<li><strong>Payment Summary Report</strong></li>
-<li>Total payments received</li>
-<li>By payer</li>
-<li>By payment type</li>
-
-<li><strong>Aging Report (A/R)</strong></li>
-<li>Outstanding balances by age:</li>
-<li>0-30 days</li>
-<li>31-60 days</li>
-<li>61-90 days</li>
-<li>90+ days</li>
-
-<li><strong>Denial Report</strong></li>
-<li>Denial rate</li>
-<li>Top denial reasons</li>
-<li>Denied amount</li>
-
-<li><strong>Provider Productivity Report</strong></li>
-<li>Encounters per provider</li>
-<li>Charges per provider</li>
-<li>Collections per provider</li>
-
-<p><strong>Report Features:</strong></p>
-<li>Date range filters</li>
-<li>Export to PDF/Excel</li>
-<li>Email scheduling (optional)</li>
-<li>Dashboard widgets for key metrics</li>
+<p><strong>Reports Generated:</strong></p>
+<li>Revenue Performance Report</li>
+<li>Denial Trend Report</li>
+<li>AR Aging Analysis Report</li>
+<li>Collection Efficiency Report</li>
+<li>Payer Performance Report</li>
+<li>Provider Productivity Report</li>
+<li>Financial KPI Dashboard</li>
+<li>Executive Summary Report</li>
 
 <hr>
 
-<h3>Module 23: Compliance & Audit</h3>
+<h3>Module 22: Compliance & Audit</h3>
 
 <p><strong>Purpose:</strong></p>
 <p>
