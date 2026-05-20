@@ -361,137 +361,103 @@ Imagine a hospital or clinic. When you visit a doctor:
 
 ## 🏗️ Complete Application Architecture
 
-### The Application Has 30 Modules Organized in 7 Categories:
+### The Application Has 39 Modules Organized in 7 Categories:
 
-#### **Category 1: Authentication & Patient Management (Modules 1-5)**
-1. **User Login** - Secure login for staff
-2. **Patient Registration** - Register new patients
-3. **Insurance Verification** - Check coverage
-4. **Appointment Scheduling** - Book appointments
-5. **Patient Check-in** - Check-in process
+CORE RCM MODULES (22) --> Module 1  → Module 22
+SUPPORTING / ADMINISTRATION MODULES (11) --> Module 23 → Module 33
+ADVANCED ENTERPRISE MODULES (6) --> Module 34 → Module 39
 
-#### **Category 2: Clinical Documentation (Modules 6-9)**
-6. **Doctor Consultation** - Doctor's interface
-7. **Clinical Documentation** - Medical notes
-8. **Order Management** - Lab/imaging orders
-9. **Referral Management** - Specialist referrals
+#### **Category 1: Patient Access Management (5 Modules)**
+1. **Appointment Scheduling** - Manage patient appointments, calendars, SMS/email reminders
+2. **Patient Registration** - Capture patient demographics and insurance info
+3. **Insurance Eligibility Verification** - Verify patient insurance coverage in real time
+4. **Prior Authorization / Referral Management** - Obtain payer approvals before procedures
+5. **Patient Check-In** - Front-desk and kiosk arrival check-in
 
-#### **Category 3: Coding & Billing (Modules 10-14)**
-10. **Medical Coding** - AI-assisted coding
-11. **Coding Review** - QA review
-12. **Charge Capture** - Link codes to charges
-13. **Claim Creation** - Generate claims
-14. **Claim Scrubbing** - AI validation
+#### **Category 2: Clinical & Mid-Cycle Management (3 Modules)**
+6. **Clinical Documentation / EMR** - Store clinical notes, diagnoses, orders, prescriptions
+7. **Medical Coding** - Convert clinical records to billing codes (ICD-10, CPT, HCPCS)
+8. **Charge Entry / Charge Capture** - Record billable services and provider charges
 
-#### **Category 4: Claims & Submission (Modules 15-17)**
-15. **Claim Submission** - Send to insurance
-16. **Claim Tracking** - Monitor status
-17. **Insurance Adjudication** - Payer processing
+#### **Category 3: Claims Management (5 Modules)**
+9. **Claim Scrubbing** - Validate claims before submission to prevent rejections
+10. **Claim Submission** - Electronically transmit claims (EDI 837)
+11. **Clearinghouse Validation** - Clean claims at clearinghouse stage
+12. **Claim Status Tracking** - Monitor claim processing (EDI 276/277)
+13. **Insurance Adjudication Tracking** - Track payer adjudication rules and decisions
 
-#### **Category 5: Denial & Payment (Modules 18-22)**
-18. **Denial Management** - Handle denials
-19. **Appeals Workflow** - Appeal denied claims
-20. **Payment Posting** - Post payments
-21. **ERA Reconciliation** - Auto-post ERA
-22. **Secondary Billing** - Bill secondary insurance
+#### **Category 4: Payment & Revenue Management (7 Modules)**
+14. **ERA Processing** - Auto-process Electronic Remittance Advice (EDI 835) files
+15. **Payment Posting** - Post payments and adjustments to patient/insurance balances
+16. **Denial Management** - Appeals workflow and AI denial predictions
+17. **Secondary Insurance Billing** - Bill secondary and tertiary insurance payers
+18. **Patient Billing** - Statements, online payments, and payment plans
+19. **Accounts Receivable (AR) Follow-Up** - Overdue accounts and collection work queues
+20. **Collections / Refund / Write-Off Management** - Overdue collections, write-offs, and refunds
 
-#### **Category 6: Patient Billing & AR (Modules 23-25)**
-23. **Patient Billing** - Bill patients
-24. **Refund Management** - Process refunds
-25. **AR Management** - Aging reports
+#### **Category 5: Reporting, Compliance & Governance (2 Modules)**
+21. **Reporting & Analytics** - KPI dashboards and financial reporting
+22. **Compliance & Audit** - HIPAA audit trails and access monitoring
 
-#### **Category 7: Reporting & Advanced (Modules 26-30)**
-26. **Reporting & Analytics** - Dashboards
-27. **Audit & Compliance** - HIPAA compliance
-28. **Patient Portal** - Patient self-service
-29. **Notifications** - SMS/Email alerts
-30. **AI Automation** - Advanced AI features
+#### **Category 6: Administration & Platform Services (11 Modules)**
+23. **User Login & Authentication** - Secure logins with role-based access and 2FA
+24. **User Management** - Admin tool for roles, permissions, and accounts
+25. **Notification System** - SMS and email alerts/reminders
+26. **Document Management** - Secure storage with OCR scanning
+27. **Third-Party Integrations** - API connectivity with external partners
+28. **Patient Portal** - Patient online billing, scheduling, and messages
+29. **Revenue Cycle Dashboard** - Real-time KPI and AR trend visualization
+30. **Automated Workflows** - RCM business rule engines and task routing
+31. **Data Import/Export** - Bulk imports/exports and CSV/Excel migrations
+32. **System Configuration** - Practice configuration, settings, fee schedules
+33. **Backup & Recovery** - Automated daily backups and recovery workflows
+
+#### **Category 7: Advanced Enterprise Features (6 Modules)**
+34. **Contract Management** - Payer contracts, fee schedules, and underpayment detection
+35. **Credentialing Management** - Track licenses and network enrollment
+36. **Eligibility Batch Processing** - Bulk overnight insurance checks
+37. **ERA Automation** - Automated ERA workflow reconciliation
+38. **API Management** - API gateway, tokens, and monitor logs
+39. **Security & Compliance Monitoring** - Security audit alerts and risk monitoring
 
 ---
 
-## 👥 Who Uses This Application?
+## 👥 User Roles & Permissions
+
+Role-Based Access:
+The system supports multiple enterprise healthcare user roles with role-based permissions, approval workflows, department restrictions, and HIPAA-compliant access controls. This ensures staff members only access information and perform actions relevant to their responsibilities.
 
 ### 1. **Front Desk Staff**
-**What They Do:**
-- Register patients
-- Verify insurance
-- Schedule appointments
-- Check-in patients
-- Collect payments
+- **Access:** Patient Registration, Appointment Scheduling, Patient Check-in, Insurance Verification, Consent Form Collection, Kiosk Registration Support
+- **Restrictions:** Cannot view financial reports, cannot modify billing, cannot access clinical documentation, cannot access payment posting, limited PHI visibility
 
-**Modules They Use:** 1-5, 23
+### 2. **Medical Coder**
+- **Access:** Medical Coding, Charge Entry, Code Review, Coding Validation, Documentation Review
+- **Restrictions:** Cannot submit claims, cannot post payments, cannot modify patient demographics, cannot approve write-offs
 
----
+### 3. **Biller**
+- **Access:** Claim Submission, Claim Status Tracking, Payment Posting, Denial Management, ERA Processing, Secondary Billing
+- **Restrictions:** Cannot modify patient demographics, cannot change diagnosis/procedure codes, cannot access psychotherapy notes, cannot delete posted payments
 
-### 2. **Doctors/Providers**
-**What They Do:**
-- See patients
-- Enter clinical notes
-- Order tests
-- Write prescriptions
-- Refer to specialists
+### 4. **Collections Specialist**
+- **Access:** Patient Billing, AR Management, Payment Plans, Collections Workflow, Refund Request Initiation
+- **Restrictions:** Cannot access clinical notes, cannot modify claims, cannot modify coding, cannot approve refunds
 
-**Modules They Use:** 6-9
+### 5. **Practice Manager**
+- **Access:** All operational modules, Revenue Dashboards, Reporting & Analytics, Staff Monitoring, Operational KPIs
+- **Restrictions:** Cannot create users, cannot modify system settings, cannot bypass audit controls
 
----
+### 6. **Physician / Provider**
+- **Access:** Clinical Documentation, Patient Charts, Orders & Prescriptions, Treatment Plans, Revenue Reports
+- **Restrictions:** Cannot access billing details, cannot modify charges, cannot approve financial adjustments, cannot access collections workflows
 
-### 3. **Medical Coders**
-**What They Do:**
-- Review clinical notes
-- Assign diagnosis codes (ICD-10)
-- Assign procedure codes (CPT)
-- Review AI suggestions
-- Ensure coding accuracy
+### 7. **Compliance Officer**
+- **Access:** Audit Logs, Compliance Reports, Security Monitoring, Access Tracking, HIPAA Monitoring
+- **Restrictions:** Read-only access, cannot modify operational data, cannot post payments, cannot modify claims
 
-**Modules They Use:** 10-11
-
----
-
-### 4. **Billing Staff**
-**What They Do:**
-- Create claims
-- Submit claims
-- Track claim status
-- Post payments
-- Handle denials
-
-**Modules They Use:** 12-22
-
----
-
-### 5. **AR Specialists**
-**What They Do:**
-- Follow up on unpaid claims
-- Work denials
-- File appeals
-- Manage aging accounts
-- Patient collections
-
-**Modules They Use:** 18-25
-
----
-
-### 6. **Practice Manager**
-**What They Do:**
-- Monitor operations
-- Review reports
-- Manage staff
-- Ensure compliance
-- Track revenue
-
-**Modules They Use:** 26-27
-
----
-
-### 7. **Patients**
-**What They Do:**
-- Book appointments online
-- View bills
-- Make payments
-- Access medical records
-- Communicate with clinic
-
-**Modules They Use:** 28
+### 8. **System Administrator**
+- **Access:** All modules, User Management, System Configuration, API Management, Security Configuration, Integration Management
+- **Restrictions:** No operational restrictions, all actions fully audited
 
 ---
 
@@ -521,30 +487,98 @@ Imagine a hospital or clinic. When you visit a doctor:
 
 ---
 
-## 🔐 Security & Privacy
+## 🔒 Security & Compliance
 
-### How We Protect Patient Data:
+HIPAA Compliance: The system implements comprehensive security measures to protect patient data and comply with HIPAA regulations. All data is encrypted, access is logged, and regular audits ensure ongoing compliance.
 
-1. **Encryption**
-   - All data encrypted at rest
-   - All data encrypted in transit
-   - 256-bit AES encryption
+### Data Security
+- **Encryption:** AES-256 encryption at rest, TLS 1.3 in transit, application-level encryption for sensitive PHI
+- **Access Control:** Role-based permissions, multi-factor authentication, department-level access restrictions, tenant-level isolation
+- **Audit Trails:** Complete logging of all data access and modifications, IP/device tracking, failed access monitoring
+- **Data Backup:** Automated daily backups, incremental backups every 4 hours, 30-day backup retention
+- **Disaster Recovery:** 4-hour recovery time objective (RTO), geo-redundant backups, failover recovery support
 
-2. **Access Control**
-   - Role-based permissions
-   - Each user sees only what they need
-   - Audit trail of all access
+### HIPAA Compliance Features
+- Patient consent management
+- Breach notification system
+- Business Associate Agreements (BAA) tracking
+- Regular security risk assessments
+- Employee training tracking
+- PHI access monitoring
+- HIPAA audit reporting
+- Compliance documentation management
 
-3. **HIPAA Compliance**
-   - All requirements met
-   - Regular security audits
-   - Staff training
-   - Business Associate Agreements
+### Session Security
+- Automatic session timeout
+- Concurrent login control
+- Device/session tracking
+- Idle session termination
 
-4. **Backups**
-   - Daily automated backups
-   - 30-day retention
-   - Disaster recovery plan
+### Authentication Policies
+- Strong password enforcement
+- Password expiration policies
+- Failed login lockout
+- OAuth2 / SSO support
+- Password history prevention
+
+### Field-Level Security
+- SSN masking
+- Credit card masking
+- Restricted diagnosis visibility
+- Sensitive PHI protection
+
+### Emergency Access Controls
+- Break-glass emergency access support
+- Emergency access audit logging
+- Emergency justification tracking
+
+### API Security
+- Token-based authentication
+- API rate limiting
+- Secure API gateway
+- Integration access controls
+
+### Security Monitoring
+- Threat detection monitoring
+- Intrusion detection system (IDS)
+- SIEM integration
+- Suspicious activity alerts
+- Real-time security monitoring
+
+### Data Retention Policies
+- HIPAA retention compliance
+- Secure data archival
+- Retention lifecycle management
+- Secure document destruction
+
+### Compliance Reporting
+- HIPAA compliance reports
+- Access audit reports
+- Security incident reports
+- Risk assessment reports
+
+### Multi-Tenant Security
+- Tenant-level data isolation
+- Cross-organization access prevention
+- Facility-level access control
+
+### Financial Security Controls
+- Refund approval workflows
+- Payment adjustment auditing
+- Fraud prevention monitoring
+- Write-off approval controls
+
+### Document Security
+- Secure S3 document storage
+- Signed URL document access
+- OCR metadata protection
+- Digital signature support
+
+### Business Continuity
+- High availability architecture
+- Disaster recovery testing
+- Backup verification
+- Operational continuity planning
 
 ---
 
