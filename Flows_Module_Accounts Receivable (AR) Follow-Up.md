@@ -1,0 +1,654 @@
+# Module: Accounts Receivable (AR) Follow-Up
+
+**Version:** 1.0
+**Module ID:** MOD-020
+**Category:** Revenue Recovery & Collections
+
+---
+
+## 1. Module Overview
+
+**Purpose:** Track unpaid insurance claims and patient balances, follow up with payers, reduce AR aging, and recover pending revenue.
+
+**Why Hospitals Use It:** Hospitals use AR Follow-Up to make sure submitted claims do not stay unpaid for a long time. It helps teams identify pending claims, contact payers, resolve issues, and collect payments faster.
+
+**Main Users:** AR Team, Billing Team, Denial Team, Payment Posting Team, Finance Team, Insurance Payer, System Admin
+
+---
+
+## 2. Actors Involved
+
+```
+┌─────────────────────────────────────────────────┐
+│ ACTORS IN AR FOLLOW-UP MODULE                   │
+├─────────────────────────────────────────────────┤
+│                                                 │
+│ 1. AR Team                                      │
+│    - Tracks unpaid claims                       │
+│    - Follows up with insurance payer            │
+│    - Updates follow-up notes                    │
+│    - Escalates aging claims                     │
+│                                                 │
+│ 2. Billing Team                                 │
+│    - Reviews claim issues                       │
+│    - Corrects billing errors                    │
+│                                                 │
+│ 3. Denial Team                                  │
+│    - Handles denied claims                      │
+│    - Starts appeal workflow                     │
+│                                                 │
+│ 4. Payment Posting Team                         │
+│    - Posts received payments                    │
+│    - Matches ERA/EOB with claim                 │
+│                                                 │
+│ 5. Finance Team                                 │
+│    - Monitors AR aging                          │
+│    - Reviews recovery reports                   │
+│                                                 │
+│ 6. Insurance Payer                              │
+│    - Gives claim status                         │
+│    - Provides payment/denial response           │
+│                                                 │
+│ 7. AI System                                    │
+│    - Predicts claim delay risk                  │
+│    - Suggests next follow-up action             │
+│    - Prioritizes high-value claims              │
+│                                                 │
+│ 8. System                                       │
+│    - AR Workqueue Engine                        │
+│    - Claim Aging Tracker                        │
+│    - Follow-up Scheduler                        │
+│    - SLA Alert Engine                           │
+│    - Audit Log Service                          │
+│                                                 │
+│ 9. External APIs                                │
+│    - Waystar API                                │
+│    - Availity API                               │
+│    - Change Healthcare API                      │
+│    - 277CA Claim Status API                     │
+│    - ERA / 835 Integration                      │
+│                                                 │
+└─────────────────────────────────────────────────┘
+```
+
+---
+
+## 3. Step-by-Step Workflow
+
+```
+┌─────────────────────┐
+│ Claim Submitted     │
+│ to Insurance        │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Claim Not Paid      │
+│ After Expected Days │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Claim Enters AR     │
+│ Follow-Up Queue     │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ System Calculates   │
+│ AR Aging Bucket     │
+│ 0-30 / 31-60 /      │
+│ 61-90 / 90+ Days    │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ AI Prioritizes Claim│
+│ High $ / Aging /    │
+│ Denial Risk         │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Assign Task to      │
+│ AR Specialist       │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ AR Specialist Opens │
+│ Claim               │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Check Claim Status  │
+│ via Payer API       │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Receive Payer       │
+│ Response            │
+│ - In Review         │
+│ - Pending Info      │
+│ - Denied            │
+│ - Paid              │
+│ - Not Found         │
+└──────────┬──────────┘
+           ↓
+      ╱ ╲
+     ╱   ╲
+    ╱Paid?╲──No──────────────┐
+    ╲     ╱                  │
+     ╲   ╱                   │
+      ╲ ╱                    │
+       │Yes                  ▼
+       │             ┌─────────────────┐
+       │             │ Pending / Denied│
+       │             │ / Need Info     │
+       │             └────────┬────────┘
+       │                      │
+       ▼                      ▼
+┌─────────────────────┐  ┌─────────────────────┐
+│ Route to Payment    │  │ Create Follow-Up    │
+│ Posting Team        │  │ Action              │
+└──────────┬──────────┘  └──────────┬──────────┘
+           ↓                        ↓
+┌─────────────────────┐  ┌─────────────────────┐
+│ Post Payment        │  │ Add Notes & Next    │
+│                     │  │ Follow-Up Date      │
+└──────────┬──────────┘  └──────────┬──────────┘
+           ↓                        ↓
+┌─────────────────────┐  ┌─────────────────────┐
+│ Close AR Task       │  │ Escalate if SLA     │
+│                     │  │ Breached            │
+└─────────────────────┘  └─────────────────────┘
+```
+
+---
+
+## 4. AR Follow-Up Engine Flow
+
+```
+┌─────────────────────┐
+│ Unpaid Claim        │
+│ Input               │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Pull Claim Details  │
+│ - Claim ID          │
+│ - Payer             │
+│ - Amount            │
+│ - DOS               │
+│ - Submitted Date    │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Calculate Aging     │
+│ Bucket              │
+│ 0-30 / 31-60 / 90+  │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Check Payer Status  │
+│ API / Portal        │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Parse Response      │
+│ 277CA / ERA / EOB   │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ AI Suggests Next    │
+│ Action              │
+│ - Call payer        │
+│ - Send documents    │
+│ - Appeal denial     │
+│ - Wait              │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Update Workqueue    │
+│ Priority & Status   │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Schedule Next       │
+│ Follow-Up Date      │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Return to Frontend  │
+│ AR Dashboard        │
+└─────────────────────┘
+```
+
+---
+
+## 5. Use Case Diagram
+
+```
+┌──────────────┐                          ┌──────────────────┐
+│ AR Team      │─────────────────────────>│ Track Unpaid     │
+│              │                          │ Claims           │
+└──────┬───────┘                          └──────────────────┘
+       │
+       │                                  ┌──────────────────┐
+       ├─────────────────────────────────>│ Check Payer      │
+       │                                  │ Status           │
+       │                                  └──────────────────┘
+       │
+       │                                  ┌──────────────────┐
+       ├─────────────────────────────────>│ Add Follow-Up    │
+       │                                  │ Notes            │
+       │                                  └──────────────────┘
+       │
+       │                                  ┌──────────────────┐
+       └─────────────────────────────────>│ Escalate Aging   │
+                                          │ Claims           │
+                                          └──────────────────┘
+
+
+┌──────────────┐                          ┌──────────────────┐
+│ Billing Team │─────────────────────────>│ Correct Billing  │
+│              │                          │ Issues           │
+└──────────────┘                          └──────────────────┘
+
+
+┌──────────────┐                          ┌──────────────────┐
+│ Denial Team  │─────────────────────────>│ Handle Denied    │
+│              │                          │ Claims           │
+└──────────────┘                          └──────────────────┘
+
+
+┌──────────────┐                          ┌──────────────────┐
+│ Payment      │─────────────────────────>│ Post Insurance   │
+│ Posting Team │                          │ Payment          │
+└──────────────┘                          └──────────────────┘
+
+
+┌──────────────┐                          ┌──────────────────┐
+│ AI System    │─────────────────────────>│ Prioritize AR    │
+│              │                          │ Workqueue        │
+└──────┬───────┘                          └──────────────────┘
+       │
+       │                                  ┌──────────────────┐
+       └─────────────────────────────────>│ Suggest Next     │
+                                          │ Action           │
+                                          └──────────────────┘
+```
+
+---
+
+## 6. Activity Flow Diagram
+
+```
+┌─────────┐
+│ START   │
+└────┬────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Load AR Workqueue   │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Select Unpaid Claim │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Review Claim Details│
+│ Amount / Payer / Age│
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Check Payer Status  │
+│ via API / Portal    │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Receive Response    │
+└────┬────────────────┘
+     │
+     ▼
+      ╱ ╲
+     ╱   ╲
+    ╱Paid?╲──Yes─────────┐
+    ╲     ╱              │
+     ╲   ╱               │
+      ╲ ╱                │
+       │No               ▼
+       │          ┌─────────────────┐
+       │          │ Send to Payment │
+       │          │ Posting         │
+       │          └────┬────────────┘
+       │               ↓
+       │          ┌─────────┐
+       │          │  END    │
+       │          └─────────┘
+       │
+       ▼
+┌─────────────────────┐
+│ Identify Issue      │
+│ Pending / Denied /  │
+│ Need Info / No Resp │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ AI Suggests Next    │
+│ Follow-Up Action    │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Add Follow-Up Notes │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Schedule Next       │
+│ Follow-Up Date      │
+└────┬────────────────┘
+     │
+     ▼
+      ╱ ╲
+     ╱   ╲
+    ╱Denied?╲──No────────┐
+    ╲      ╱             │
+     ╲    ╱              │
+      ╲  ╱               │
+       │Yes              ▼
+       │          ┌─────────────────┐
+       │          │ Keep in AR      │
+       │          │ Follow-Up Queue │
+       │          └────┬────────────┘
+       │               ↓
+       │          ┌─────────┐
+       │          │  END    │
+       │          └─────────┘
+       │
+       ▼
+┌─────────────────────┐
+│ Route to Denial &   │
+│ Appeals Module      │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────┐
+│ END     │
+└─────────┘
+```
+
+---
+
+## 7. Sequence Diagram
+
+```
+AR Team  Frontend    Backend    Payer API    Database
+   │          │          │           │           │
+   │ Open     │          │           │           │
+   │ AR Queue │          │           │           │
+   ├─────────>│          │           │           │
+   │          │ GET /ar-workqueue    │           │
+   │          ├─────────>│           │           │
+   │          │          │ Load AR   │           │
+   │          │          │ Claims    │           │
+   │          │          ├─────────────────────>│
+   │          │          │ AR Data   │           │
+   │          │          │<─────────────────────┤
+   │          │ Queue    │          │           │
+   │          │ Loaded   │          │           │
+   │<─────────┤          │          │           │
+   │ Select   │          │          │           │
+   │ Claim    │          │          │           │
+   ├─────────>│          │          │           │
+   │          │ GET /claim-detail    │           │
+   │          ├─────────>│           │           │
+   │          │          │ Load Claim│           │
+   │          │          ├─────────────────────>│
+   │          │          │ Claim Data│           │
+   │          │          │<─────────────────────┤
+   │ Refresh  │          │           │           │
+   │ Status   │          │           │           │
+   ├─────────>│          │           │           │
+   │          │ POST /payer/status   │           │
+   │          ├─────────>│           │           │
+   │          │          │ Request Claim Status │
+   │          │          ├──────────>│           │
+   │          │          │           │ Payer     │
+   │          │          │           │ Reviews   │
+   │          │          │ Response  │           │
+   │          │          │<──────────┤           │
+   │          │          │ Parse Response        │
+   │          │          │ Determine Next Action │
+   │          │          │ Update AR Task        │
+   │          │          ├─────────────────────>│
+   │          │          │ Save Notes/Status     │
+   │          │          ├─────────────────────>│
+   │          │ Status / │           │           │
+   │          │ Next Act │           │           │
+   │          │<─────────┤           │           │
+   │ Review   │          │           │           │
+   │ Result   │          │           │           │
+   │<─────────┤          │           │           │
+```
+
+---
+
+## 8. API Flow
+
+**Request:**
+
+```http
+POST /api/ar/follow-up/status-check
+{
+  "claimId": "CLM-00001",
+  "payerId": "PAY-001",
+  "patientId": "PAT-00001",
+  "clearinghouseClaimId": "CH-987654",
+  "submittedDate": "2026-05-01",
+  "currentAgingDays": 35
+}
+```
+
+**Response:**
+
+```json
+{
+  "claimId": "CLM-00001",
+  "payerStatus": "Pending Information",
+  "arStatus": "Follow-Up Required",
+  "agingBucket": "31-60",
+  "claimAmount": 2500.00,
+  "lastFollowUpDate": "2026-05-15",
+  "nextFollowUpDate": "2026-05-25",
+  "suggestedAction": "Call payer and submit missing medical records",
+  "priority": "High",
+  "assignedTeam": "AR Team",
+  "nextAction": "Create follow-up task",
+  "processingTime": "2.1s"
+}
+```
+
+---
+
+## 9. Database Flow
+
+```sql
+-- Save AR follow-up task
+INSERT INTO ar_followup_tasks (
+    task_id,
+    claim_id,
+    payer_id,
+    patient_id,
+    aging_bucket,
+    claim_amount,
+    ar_status,
+    priority,
+    assigned_team,
+    next_followup_date,
+    notes
+) VALUES (
+    'AR-00001',
+    'CLM-00001',
+    'PAY-001',
+    'PAT-00001',
+    '31-60',
+    2500.00,
+    'FOLLOW_UP_REQUIRED',
+    'High',
+    'AR Team',
+    '2026-05-25',
+    'Payer requested missing medical records'
+);
+
+-- Save follow-up notes
+INSERT INTO ar_followup_notes (
+    note_id,
+    task_id,
+    claim_id,
+    added_by,
+    note_text,
+    next_followup_date
+) VALUES (
+    'NOTE-00001',
+    'AR-00001',
+    'CLM-00001',
+    'USR-001',
+    'Called payer, missing records requested',
+    '2026-05-25'
+);
+
+-- Update claim AR status
+UPDATE claims
+SET
+    ar_status = 'FOLLOW_UP_REQUIRED',
+    aging_bucket = '31-60',
+    last_followup_date = NOW()
+WHERE claim_id = 'CLM-00001';
+
+-- Save audit log
+INSERT INTO ar_audit_logs (
+    claim_id,
+    action,
+    performed_by,
+    notes
+) VALUES (
+    'CLM-00001',
+    'AR_FOLLOW_UP_UPDATED',
+    'USR-001',
+    'AR follow-up task created and next follow-up scheduled'
+);
+```
+
+---
+
+## 10. Error Scenarios
+
+```
+Error 1: Payer API Down
+   ↓
+Show error
+   ↓
+Create manual follow-up task
+
+Error 2: Claim Not Found
+   ↓
+Verify claim ID / payer ID
+   ↓
+Check clearinghouse submission
+   ↓
+Resubmit or contact payer
+
+Error 3: No Payer Response
+   ↓
+SLA alert triggered
+   ↓
+AR team calls payer
+
+Error 4: Missing Documents
+   ↓
+Route to Provider / Billing Team
+   ↓
+Attach documents
+   ↓
+Follow up again
+
+Error 5: Denied Claim Found
+   ↓
+Route to Denial & Appeals
+   ↓
+Start denial workflow
+
+Error 6: Payment Already Posted
+   ↓
+Close AR task
+   ↓
+Mark claim resolved
+
+Error 7: Aging Over 90 Days
+   ↓
+Escalate to AR Manager
+   ↓
+High priority recovery review
+```
+
+---
+
+## 11. Dashboard Status Flow
+
+```
+┌─────────────────────┐
+│ Claim Submitted     │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Awaiting Payer      │
+│ Response            │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ AR Aging Started    │
+│ 0-30 Days           │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Follow-Up Required  │
+│ 31-60 Days          │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Escalation Required │
+│ 61-90 Days          │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Critical AR Review  │
+│ 90+ Days            │
+└──────────┬──────────┘
+           ↓
+      ╱ ╲
+     ╱   ╲
+    ╱Paid?╲──No─────────────┐
+    ╲     ╱                 │
+     ╲   ╱                  │
+      ╲ ╱                   │
+       │Yes                 ▼
+       │             ┌─────────────────┐
+       │             │ Denied / Pending│
+       │             │ Route to Team   │
+       │             └────────┬────────┘
+       │                      ↓
+       ▼             ┌─────────────────┐
+┌─────────────────────┐│ Keep Follow-Up │
+│ Payment Posted      ││ / Denial Flow  │
+└──────────┬──────────┘└─────────────────┘
+           ↓
+┌─────────────────────┐
+│ AR Closed           │
+└─────────────────────┘
+```
+
+---
+
+**Next Module:** [Module 21: Patient Collections](Flows_Module_21_Patient_Collections.md)
