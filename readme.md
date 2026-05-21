@@ -43,4 +43,9 @@ Healthcare Revenue Cycle Management documentation covering workflow, modules, da
 + ✅ **Flows_Module_12_Prior_Authorization.md** - Prior Authorization Flow
 + ✅ **Flows_Module_13_Order_Management.md** - Clinical Order Management Flow
 + ✅ **Flows_Module_06_Medical_Coding.md** - Medical Coding Flow
++ ✅ **Flows_Module_14_Encounter.md** - Encounter Management Flow
++ ✅ **Flows_Module_Payment_Posting.md** - Payment Posting Flow
++ ✅ **Flows_Module_20_Secondary_Billing.md** - Secondary Billing Flow
++ ✅ **Flows_Module_11_Denial & Appeals Management.md** - Denial & Appeals Management Flow
++ ✅ **Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md** - Provider Credentialing & Management Flow
 + ✅ **Flows_Module_07_10_Remaining.md** - Remaining Modules (Claims, Payments, Denials, etc.)
