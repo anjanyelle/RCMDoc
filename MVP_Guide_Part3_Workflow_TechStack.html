@@ -190,47 +190,56 @@
 
 <hr>
 
-<h4>**Step 7: Claim Creation** 📄</h4>
+<h4>Step 7: Claim Scrubbing ✅</h4>
 
 <p><strong>What Happens:</strong></p>
-<li>Biller opens "Claims" module</li>
-<li>Selects encounter ENC-2026-9876</li>
-<li>Clicks "Create Claim"</li>
-<li>System auto-generates claim:</li>
-<p>   <code></code>`</p>
-<p>   Claim ID: CLM-2026-001234</p>
-<p>   Format: CMS-1500 (Professional claim)</p>
 
-<p>   Patient: Sarah Johnson</p>
-<p>   DOB: 03/15/1985</p>
-<p>   Insurance: Blue Cross Blue Shield</p>
-<p>   Policy: ABC123456789</p>
+<li>System automatically prepares claim for validation</li>
 
-<p>   Provider: Dr. Smith</p>
-<p>   NPI: 1234567890</p>
-<p>   Tax ID: 12-3456789</p>
+<li>Claim data pulled from patient encounter:</li>
 
-<p>   Service Date: 05/20/2026</p>
-<p>   Place of Service: 11 (Office)</p>
+<pre>
+Patient: Sarah Johnson
+Encounter ID: ENC-2026-9876
+Insurance: Blue Cross Blue Shield
+CPT Code: 99203
 
-<p>   Diagnosis Codes:</p>
-<li>J20.9 (Acute bronchitis)</li>
-<li>R05 (Cough)</li>
-<li>R50.9 (Fever)</li>
+ICD-10 Codes:
+- J20.9 (Acute bronchitis)
+- R05 (Cough)
+- R50.9 (Fever)
 
-<p>   Procedure:</p>
-<p>   CPT: 99203</p>
-<p>   Charge: $150.00</p>
-<p>   Units: 1</p>
-<p>   <code></code>`</p>
+Charge Amount: $150.00
+</pre>
 
-<li><strong>Claim Scrubbing</strong> (via <strong>Waystar API</strong>):</li>
-<li>Validates all fields ✅</li>
-<li>Checks code combinations ✅</li>
-<li>Verifies medical necessity ✅</li>
-<li>No errors found ✅</li>
+<li>System runs automated claim scrubbing checks:</li>
+<li>Validates ICD-10 diagnosis codes</li>
+<li>Validates CPT procedure code</li>
+<li>Checks insurance eligibility</li>
+<li>Verifies provider NPI number</li>
+<li>Validates patient demographics</li>
+<li>Checks required modifiers</li>
+<li>Detects duplicate claims</li>
+<li>Confirms medical necessity</li>
 
-<li>Claim status: "Ready to Submit"</li>
+<li><strong>Waystar API</strong> performs advanced validation:</li>
+
+<pre>
+47 validation rules passed
+Code compatibility verified
+Insurance coverage verified
+Required fields completed
+No duplicate claims found
+</pre>
+
+<li>System displays result:</li>
+
+<pre>
+Claim Status: READY TO SUBMIT
+Claim ID: CLM-2026-001234
+</pre>
+
+<li>Claim moved to submission queue automatically</li>
 
 <p><strong>Time Taken:</strong> 1 minute</p>
 
@@ -257,20 +266,55 @@
 
 <hr>
 
-<h4>**Step 9: Claim Adjudication** ⏳</h4>
+<h4>Step 9: Claim Status Tracking 🔄</h4>
 
-<p><strong>What Happens (at Insurance Company):</strong></p>
-<li>Blue Cross receives claim on May 20</li>
-<li>Processes claim (automated system)</li>
-<li>Checks:</li>
-<li>Patient eligibility ✅</li>
-<li>Coverage for service ✅</li>
-<li>Medical necessity ✅</li>
-<li>Coding accuracy ✅</li>
-<li>Approves claim on May 22</li>
-<li>Sends payment on May 25</li>
+<p><strong>What Happens:</strong></p>
 
-<p><strong>Time Taken:</strong> 5 days (industry average: 14-30 days)</p>
+<li>System automatically monitors submitted claim:</li>
+
+<pre>
+Claim ID: CLM-2026-001234
+Patient: Sarah Johnson
+Insurance: Blue Cross Blue Shield
+Submission Date: 05/20/2026
+</pre>
+
+<li>System sends automated EDI 276 claim status inquiry to payer every 3 days</li>
+
+<li>Insurance payer responds with EDI 277 status updates</li>
+
+<li>Claim tracking updates displayed in dashboard:</li>
+
+<pre>
+Day 3:
+Status: RECEIVED
+Message: Claim received successfully by payer
+</pre>
+
+<pre>
+Day 5:
+Status: IN REVIEW
+Message: Claim under medical review
+</pre>
+
+<pre>
+Day 7:
+Status: APPROVED – PAYMENT PENDING
+Expected Payment: $120.00
+</pre>
+
+<li>Billing team receives automatic notifications for status changes</li>
+
+<li>System updates claim timeline and tracking history automatically</li>
+
+<p><strong>Behind the Scenes:</strong></p>
+
+<li>EDI 276 inquiry sent to payer</li>
+<li>EDI 277 response received from payer</li>
+<li>Claim status updated in real-time dashboard</li>
+<li>Alerts generated for delayed or denied claims</li>
+
+<p><strong>Time Taken:</strong> Automatic background process</p>
 
 <hr>
 
@@ -307,69 +351,155 @@
 
 <hr>
 
-<h3>**Complete Timeline Summary**</h3>
+<h4>Step 11: Patient Billing 💳</h4>
 
-<tr>
-<td>Date</td>
-<td>Event</td>
-<td>Status</td>
-</tr>
-<tr>
-<td>May 18</td>
-<td>Patient registration</td>
-<td>✅ Complete</td>
-</tr>
-<tr>
-<td>May 18</td>
-<td>Insurance verification</td>
-<td>✅ Active coverage</td>
-</tr>
-<tr>
-<td>May 18</td>
-<td>Appointment scheduled</td>
-<td>✅ May 20, 10:00 AM</td>
-</tr>
-<tr>
-<td>May 20</td>
-<td>Patient check-in</td>
-<td>✅ Copay collected</td>
-</tr>
-<tr>
-<td>May 20</td>
-<td>Doctor visit</td>
-<td>✅ Visit complete</td>
-</tr>
-<tr>
-<td>May 20</td>
-<td>Medical coding</td>
-<td>✅ Codes assigned</td>
-</tr>
-<tr>
-<td>May 20</td>
-<td>Claim created</td>
-<td>✅ Ready to submit</td>
-</tr>
-<tr>
-<td>May 20</td>
-<td>Claim submitted</td>
-<td>✅ Accepted by payer</td>
-</tr>
-<tr>
-<td>May 22</td>
-<td>Claim adjudicated</td>
-<td>✅ Approved</td>
-</tr>
-<tr>
-<td>May 25</td>
-<td>Payment received</td>
-<td>✅ $95.00 posted</td>
-</tr>
+<p><strong>What Happens:</strong></p>
 
-<p><strong>Total Days from Service to Payment:</strong> 5 days ⚡  </p>
-<p><strong>Industry Average:</strong> 30-45 days</p>
+<li>System generates patient statement for remaining balance:</li>
 
-<p><strong>Total Revenue Collected:</strong> $120.00 ($25 copay + $95 insurance)  </p>
-<p><strong>Write-off (Contractual):</strong> $30.00  </p>
+<pre>
+Patient: Sarah Johnson
+Claim ID: CLM-2026-001234
+
+Total Charges: $150.00
+Insurance Paid: $120.00
+Copay Collected: $0.00
+
+Remaining Patient Balance: $30.00
+Due Date: June 05, 2026
+</pre>
+
+<li>System emails statement and payment link to Sarah:</li>
+
+<pre>
+Subject: Patient Statement Available
+
+Dear Sarah Johnson,
+
+Your remaining balance of $30.00 is now available.
+Please use the secure payment link below to complete payment.
+
+[Pay Now]
+</pre>
+
+<li>Sarah logs into patient portal</li>
+<li>Pays balance online using credit card via <strong>Stripe API</strong></li>
+
+<li>System confirms successful payment:</li>
+
+<pre>
+Payment Status: SUCCESS
+Amount Paid: $30.00
+Transaction ID: TXN-2026-456789
+</pre>
+
+<li>Receipt emailed automatically to Sarah</li>
+
+<li>Account status updated:</li>
+
+<pre>
+Claim Status: PAID IN FULL ✅
+Patient Balance: $0.00
+</pre>
+
+<p><strong>Behind the Scenes:</strong></p>
+
+<li>Statement generated automatically</li>
+<li>Email notification sent</li>
+<li>Payment processed securely via Stripe</li>
+<li>Receipt generated and emailed</li>
+<li>Patient ledger updated in real time</li>
+<li>Account marked as fully paid</li>
+
+<p><strong>Time Taken:</strong> 1 minute for online payment</p>
+
+<hr>
+
+<h3>Complete Timeline Summary</h3>
+
+<table border="1" cellpadding="8" cellspacing="0">
+  <tr>
+    <th>Date</th>
+    <th>Event</th>
+    <th>Status</th>
+  </tr>
+
+  <tr>
+    <td>May 18</td>
+    <td>Patient registration</td>
+    <td>Patient ID generated</td>
+  </tr>
+
+  <tr>
+    <td>May 18</td>
+    <td>Insurance verification</td>
+    <td>Active coverage verified</td>
+  </tr>
+
+  <tr>
+    <td>May 18</td>
+    <td>Appointment scheduled</td>
+    <td>May 20, 10:00 AM with Dr. Smith</td>
+  </tr>
+
+  <tr>
+    <td>May 20</td>
+    <td>Patient check-in</td>
+    <td>$25 copay collected</td>
+  </tr>
+
+  <tr>
+    <td>May 20</td>
+    <td>Doctor consultation</td>
+    <td>Acute bronchitis diagnosed</td>
+  </tr>
+
+  <tr>
+    <td>May 20</td>
+    <td>Medical coding with AI</td>
+    <td>ICD-10 & CPT codes assigned</td>
+  </tr>
+
+  <tr>
+    <td>May 20</td>
+    <td>Claim scrubbing</td>
+    <td>47 validation checks passed</td>
+  </tr>
+
+  <tr>
+    <td>May 20</td>
+    <td>Claim submitted</td>
+    <td>Accepted by payer</td>
+  </tr>
+
+  <tr>
+    <td>May 25</td>
+    <td>Payment posting</td>
+    <td>ERA processed & payment posted</td>
+  </tr>
+
+  <tr>
+    <td>May 26</td>
+    <td>Patient billing generated</td>
+    <td>Statement emailed</td>
+  </tr>
+
+  <tr>
+    <td>May 27</td>
+    <td>Final patient payment received</td>
+    <td>Paid in Full</td>
+  </tr>
+</table>
+
+<br>
+
+<p><strong>Total Days from Service to Final Payment:</strong> 11 days ⚡</p>
+<p><strong>Traditional Industry Average:</strong> 60–90 days</p>
+
+<br>
+
+<p><strong>Total Revenue Collected:</strong> $150.00 ($120 insurance + $30 patient payment)</p>
+<p><strong>Write-off (Contractual):</strong> $30.00</p>
 <p><strong>Net Collection Rate:</strong> 100% ✅</p>
 
 <hr>
