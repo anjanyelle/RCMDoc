@@ -38,74 +38,178 @@
 
 <hr>
 
-<h2>📦 10 Core Modules</h2>
+<hr>
 
-<tr>
-<td>#</td>
-<td>Module</td>
-<td>Purpose</td>
-<td>Time to Build</td>
-</tr>
-<tr>
-<td>1</td>
-<td><strong>User Login & Security</strong></td>
-<td>Role-based access control</td>
-<td>2 weeks</td>
-</tr>
-<tr>
-<td>2</td>
-<td><strong>Patient Registration</strong></td>
-<td>Capture patient & insurance info</td>
-<td>2 weeks</td>
-</tr>
-<tr>
-<td>3</td>
-<td><strong>Insurance Verification</strong></td>
-<td>Check coverage via Waystar/Availity</td>
-<td>2 weeks</td>
-</tr>
-<tr>
-<td>4</td>
-<td><strong>Appointment Scheduling</strong></td>
-<td>Calendar & scheduling</td>
-<td>2 weeks</td>
-</tr>
-<tr>
-<td>5</td>
-<td><strong>Medical Coding</strong></td>
-<td>ICD-10 & CPT code assignment</td>
-<td>2 weeks</td>
-</tr>
-<tr>
-<td>6</td>
-<td><strong>Claim Creation</strong></td>
-<td>Generate CMS-1500/UB-04 claims</td>
-<td>2 weeks</td>
-</tr>
-<tr>
-<td>7</td>
-<td><strong>Claim Submission</strong></td>
-<td>Submit via Waystar clearinghouse</td>
-<td>2 weeks</td>
-</tr>
-<tr>
-<td>8</td>
-<td><strong>Denial Dashboard</strong></td>
-<td>Track & manage denied claims</td>
-<td>2 weeks</td>
-</tr>
-<tr>
-<td>9</td>
-<td><strong>Payment Posting</strong></td>
-<td>Post insurance & patient payments</td>
-<td>2 weeks</td>
-</tr>
-<tr>
-<td>10</td>
-<td><strong>Basic Reports</strong></td>
-<td>Financial & operational reports</td>
-<td>2 weeks</td>
-</tr>
+<h2>📦 22 Core Modules</h2>
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Module</th>
+            <th>Purpose</th>
+            <th>Estimated Time to Build</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td><strong>Appointment Scheduling</strong></td>
+            <td>Schedule patient appointments and provider calendars</td>
+            <td>2 weeks</td>
+        </tr>
+
+        <tr>
+            <td>2</td>
+            <td><strong>Patient Registration</strong></td>
+            <td>Capture patient demographics and insurance details</td>
+            <td>2 weeks</td>
+        </tr>
+
+        <tr>
+            <td>3</td>
+            <td><strong>Insurance Verification</strong></td>
+            <td>Verify patient insurance eligibility and benefits</td>
+            <td>2 weeks</td>
+        </tr>
+
+        <tr>
+            <td>4</td>
+            <td><strong>Prior Authorization / Referral Management</strong></td>
+            <td>Obtain payer approvals and manage referrals</td>
+            <td>2 weeks</td>
+        </tr>
+
+        <tr>
+            <td>5</td>
+            <td><strong>Patient Check-In</strong></td>
+            <td>Confirm arrival, collect copays, and update queue status</td>
+            <td>2 weeks</td>
+        </tr>
+
+        <tr>
+            <td>6</td>
+            <td><strong>Clinical Documentation / EMR</strong></td>
+            <td>Store clinical notes, diagnoses, prescriptions, and treatment plans</td>
+            <td>3 weeks</td>
+        </tr>
+
+        <tr>
+            <td>7</td>
+            <td><strong>Medical Coding</strong></td>
+            <td>Assign ICD-10, CPT, and HCPCS billing codes</td>
+            <td>2 weeks</td>
+        </tr>
+
+        <tr>
+            <td>8</td>
+            <td><strong>Charge Entry / Charge Capture</strong></td>
+            <td>Record billable services, procedures, and provider charges</td>
+            <td>2 weeks</td>
+        </tr>
+
+        <tr>
+            <td>9</td>
+            <td><strong>Claim Scrubbing</strong></td>
+            <td>Validate claims for coding and billing errors before submission</td>
+            <td>2 weeks</td>
+        </tr>
+
+        <tr>
+            <td>10</td>
+            <td><strong>Claim Submission</strong></td>
+            <td>Submit claims electronically through clearinghouses</td>
+            <td>2 weeks</td>
+        </tr>
+
+        <tr>
+            <td>11</td>
+            <td><strong>Clearinghouse Validation</strong></td>
+            <td>Validate claims against payer and EDI rules</td>
+            <td>2 weeks</td>
+        </tr>
+
+        <tr>
+            <td>12</td>
+            <td><strong>Claim Status Tracking</strong></td>
+            <td>Monitor payer claim status using EDI 276/277 transactions</td>
+            <td>2 weeks</td>
+        </tr>
+
+        <tr>
+            <td>13</td>
+            <td><strong>Insurance Adjudication Tracking</strong></td>
+            <td>Track approvals, denials, underpayments, and payer decisions</td>
+            <td>2 weeks</td>
+        </tr>
+
+        <tr>
+            <td>14</td>
+            <td><strong>ERA Processing</strong></td>
+            <td>Process EDI 835 remittance files and reconcile payments</td>
+            <td>2 weeks</td>
+        </tr>
+
+        <tr>
+            <td>15</td>
+            <td><strong>Payment Posting</strong></td>
+            <td>Post insurance and patient payments into billing accounts</td>
+            <td>2 weeks</td>
+        </tr>
+
+        <tr>
+            <td>16</td>
+            <td><strong>Denial Management</strong></td>
+            <td>Manage denied claims, appeals, and resubmissions</td>
+            <td>2 weeks</td>
+        </tr>
+
+        <tr>
+            <td>17</td>
+            <td><strong>Secondary Insurance Billing</strong></td>
+            <td>Handle COB and secondary/tertiary claim billing</td>
+            <td>2 weeks</td>
+        </tr>
+
+        <tr>
+            <td>18</td>
+            <td><strong>Patient Billing</strong></td>
+            <td>Generate patient statements and collect balances</td>
+            <td>2 weeks</td>
+        </tr>
+
+        <tr>
+            <td>19</td>
+            <td><strong>Accounts Receivable (AR) Follow-Up</strong></td>
+            <td>Track unpaid balances and manage collection workflows</td>
+            <td>2 weeks</td>
+        </tr>
+
+        <tr>
+            <td>20</td>
+            <td><strong>Collections / Refund / Write-Off Management</strong></td>
+            <td>Process collections, refunds, and financial write-offs</td>
+            <td>2 weeks</td>
+        </tr>
+
+        <tr>
+            <td>21</td>
+            <td><strong>Reporting & Analytics</strong></td>
+            <td>Provide KPI dashboards, AR analytics, and financial reports</td>
+            <td>2 weeks</td>
+        </tr>
+
+        <tr>
+            <td>22</td>
+            <td><strong>Compliance & Audit</strong></td>
+            <td>Maintain HIPAA compliance, audit logs, and security monitoring</td>
+            <td>2 weeks</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
 
 <hr>
 
@@ -113,50 +217,106 @@
 
 <p><strong>Patient: Sarah Johnson, 41, has cough and fever</strong></p>
 
-<li><strong>Registration</strong> (3 min)</li>
-<li>Front desk enters patient info</li>
-<li>Insurance: Blue Cross Blue Shield</li>
+<ol>
+    <li>
+        <strong>Patient Registration</strong> (3 min)
+        <ul>
+            <li>Front desk enters patient information</li>
+            <li>Insurance card scanned using OCR</li>
+            <li>Patient ID generated automatically</li>
+        </ul>
+    </li>
 
-<li><strong>Insurance Verification</strong> (30 sec)</li>
-<li>System checks via <strong>Waystar API</strong></li>
-<li>Result: Active, $25 copay, $700 deductible remaining</li>
+    <li>
+        <strong>Insurance Verification</strong> (30 seconds)
+        <ul>
+            <li>System checks via <strong>Waystar / Availity API</strong></li>
+            <li>Result: Active, $25 copay, $700 deductible remaining</li>
+        </ul>
+    </li>
 
-<li><strong>Appointment</strong> (1 min)</li>
-<li>Scheduled for May 20, 10:00 AM with Dr. Smith</li>
+    <li>
+        <strong>Appointment Scheduling</strong> (1 minute)
+        <ul>
+            <li>Appointment booked for May 20, 10:00 AM with Dr. Smith</li>
+            <li>SMS &amp; email confirmation sent automatically</li>
+        </ul>
+    </li>
 
-<li><strong>Check-in</strong> (2 min)</li>
-<li>Collect $25 copay via <strong>Stripe</strong></li>
+    <li>
+        <strong>Patient Check-in</strong> (2 minutes)
+        <ul>
+            <li>Patient confirms details &amp; signs consent forms</li>
+            <li>Collect $25 copay via <strong>Stripe</strong></li>
+        </ul>
+    </li>
 
-<li><strong>Doctor Visit</strong> (20 min)</li>
-<li>Diagnosis: Acute bronchitis</li>
-<li>Treatment: Antibiotics</li>
+    <li>
+        <strong>Doctor Consultation</strong> (20 minutes)
+        <ul>
+            <li>Diagnosis: Acute Bronchitis</li>
+            <li>Treatment: Antibiotics</li>
+            <li>Clinical notes saved in EMR</li>
+        </ul>
+    </li>
 
-<li><strong>Medical Coding</strong> (3 min with AI)</li>
-<li><strong>AI suggests codes</strong> via <strong>OpenAI API</strong></li>
-<li>ICD-10: J20.9 (Acute bronchitis)</li>
-<li>CPT: 99203 (Office visit)</li>
-<li>Charge: $150</li>
+    <li>
+        <strong>Medical Coding with AI</strong> (3 minutes)
+        <ul>
+            <li><strong>AI suggests codes</strong> via <strong>OpenAI API</strong></li>
+            <li>ICD-10: J20.9 (Acute Bronchitis)</li>
+            <li>CPT: 99213 (Office Visit)</li>
+        </ul>
+    </li>
 
-<li><strong>Claim Creation</strong> (1 min)</li>
-<li>System auto-generates claim</li>
-<li><strong>Waystar scrubs</strong> for errors</li>
-<li>Status: Ready to submit</li>
+    <li>
+        <strong>Claim Scrubbing</strong> (1 minute)
+        <ul>
+            <li>Claim validated automatically</li>
+            <li>Checks codes, insurance, modifiers, demographics</li>
+            <li>Status: ✅ Ready to Submit</li>
+        </ul>
+    </li>
 
-<li><strong>Claim Submission</strong> (30 sec)</li>
-<li>Submit via <strong>Waystar API</strong></li>
-<li>Acknowledgment received immediately</li>
+    <li>
+        <strong>Claim Submission</strong> (2 minutes)
+        <ul>
+            <li>Claim submitted via <strong>Waystar API</strong></li>
+            <li>EDI 837 acknowledgment received instantly</li>
+        </ul>
+    </li>
 
-<li><strong>Claim Adjudication</strong> (5 days)</li>
-<li>Insurance processes claim</li>
-<li>Approves payment</li>
+    <li>
+        <strong>Claim Status Tracking</strong> (Automatic)
+        <ul>
+            <li>System checks payer status using EDI 276/277</li>
+            <li>Day 5: In Review</li>
+            <li>Day 7: Approved</li>
+        </ul>
+    </li>
 
-<li><strong>Payment Posting</strong> (1 min)</li>
-<li>ERA received via <strong>Waystar API</strong></li>
-<li>Insurance pays $95</li>
-<li>Patient balance: $0 (copay already collected)</li>
+    <li>
+        <strong>Payment Posting</strong> (Day 10)
+        <ul>
+            <li>Insurance payment auto-posted from ERA (EDI 835)</li>
+            <li>Remaining patient balance calculated automatically</li>
+        </ul>
+    </li>
 
-<p><strong>Total Time: Service to Payment = 5 days</strong> ⚡  </p>
-<p>(Industry average: 30-45 days)</p>
+    <li>
+        <strong>Patient Billing</strong> (Day 11)
+        <ul>
+            <li>Patient statement generated automatically</li>
+            <li>Payment link emailed to Sarah</li>
+            <li>Patient pays remaining balance online</li>
+        </ul>
+    </li>
+</ol>
+
+<p>
+<strong>Total Time: Service to Final Payment = 11 days</strong> ⚡<br>
+<em>(Traditional industry average: 60–90 days)</em>
+</p>
 
 <hr>
 

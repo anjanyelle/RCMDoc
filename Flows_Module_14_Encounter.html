@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 14: Encounter Creation - Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module: Encounter Creation - Flow Documentation</h1>
+
+<p><strong>Version:</strong> 1.0</p>
+<p><strong>Module ID:</strong> MOD-005</p>
+<p><strong>Category:</strong> Clinical & Documentation</p>
+
+<hr>
+
+<h2>1. Module Overview</h2>
+
+<p><strong>Purpose:</strong> Create a clinical encounter when the patient meets the doctor, capture visit details, diagnosis, procedures, orders, and prepare the encounter for documentation, coding, and billing.</p>
+
+<hr>
+
+<h2>2. Actors Involved</h2>
+
+<pre><code>
+┌─────────────────────────────────────────────────┐
+│ ACTORS IN ENCOUNTER CREATION MODULE             │
+├─────────────────────────────────────────────────┤
+│                                                 │
+│ 1. Doctor / Provider                            │
+│    - Starts patient encounter                   │
+│    - Adds diagnosis and procedures              │
+│    - Writes clinical notes                      │
+│                                                 │
+│ 2. Nurse / Medical Assistant                    │
+│    - Captures vitals                            │
+│    - Adds chief complaint                       │
+│    - Updates triage notes                       │
+│                                                 │
+│ 3. Patient                                      │
+│    - Explains symptoms                          │
+│    - Provides medical history                   │
+│                                                 │
+│ 4. Front Desk Staff                             │
+│    - Completes check-in                         │
+│    - Sends patient to queue                     │
+│                                                 │
+│ 5. System                                       │
+│    - Encounter Engine                           │
+│    - Visit Status Tracker                       │
+│    - Documentation Service                      │
+│    - Audit Log Service                          │
+│                                                 │
+│ 6. External APIs                                │
+│    - EHR / EMR API                              │
+│    - Lab API                                    │
+│    - Radiology API                              │
+│    - Pharmacy API                               │
+│                                                 │
+└─────────────────────────────────────────────────┘
+</pre>
+
+<hr>
+
+<h2>3. Step-by-Step Workflow</h2>
+
+<pre><code>
+┌─────────────────────┐
+│ Patient Checked In  │
+│ Queue Assigned      │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Nurse Opens Patient │
+│ from Queue          │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Capture Vitals      │
+│ BP / Temp / Pulse   │
+│ Weight / Height     │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Add Chief Complaint │
+│ Example: Chest Pain │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Doctor Opens Visit  │
+│ Starts Encounter    │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ System Creates      │
+│ Encounter ID        │
+│ ENC-00001           │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Load Patient Data   │
+│ History / Allergies │
+│ Insurance / Orders  │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Doctor Documents    │
+│ Symptoms & Findings │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Add Diagnosis       │
+│ ICD Suggestions     │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Add Procedures      │
+│ CPT Suggestions     │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Create Orders       │
+│ Lab / Radiology / Rx │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Save Encounter      │
+│ Status: In Progress │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Doctor Completes    │
+│ Documentation       │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Validate Encounter  │
+│ Required Fields     │
+└──────────┬──────────┘
+           ↓
+    ╱ ╲
+   ╱   ╲
+  ╱Valid?╲───No──────────┐
+  ╲      ╱               │
+   ╲    ╱                │
+    ╲  ╱                 │
+     │Yes                ▼
+     │            ┌─────────────────┐
+     │            │ Show Missing    │
+     │            │ Fields to Doctor│
+     │            └─────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Sign Encounter      │
+│ Provider Signature  │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Status: Encounter   │
+│ Complete            │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Move to Medical     │
+│ Coding Queue        │
+└─────────────────────┘
+</pre>
+
+<hr>
+
+<h2>4. Encounter Rules Engine Flow</h2>
+
+<pre><code>
+┌─────────────────────┐
+│ Encounter Data      │
+│ Input               │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Validate Visit      │
+│ - Patient checked in│
+│ - Provider assigned │
+│ - Visit type valid  │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Validate Clinical   │
+│ Documentation       │
+│ - Chief complaint   │
+│ - Diagnosis         │
+│ - Assessment        │
+│ - Plan              │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Validate Orders     │
+│ - Lab orders        │
+│ - Radiology orders  │
+│ - Medication orders │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Validate Billing    │
+│ Readiness           │
+│ - Diagnosis present │
+│ - Procedure present │
+│ - Provider signed   │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Return Status       │
+│ Complete / Missing  │
+└─────────────────────┘
+</pre>
+
+<hr>
+
+<h2>5. Use Case Diagram</h2>
+
+<pre><code>
+┌──────────────┐                          ┌──────────────────┐
+│ Doctor /     │─────────────────────────>│ Start Encounter  │
+│ Provider     │                          └──────────────────┘
+└──────┬───────┘
+       │                                  ┌──────────────────┐
+       ├─────────────────────────────────>│ Add Diagnosis    │
+       │                                  └──────────────────┘
+       │                                  ┌──────────────────┐
+       ├─────────────────────────────────>│ Add Procedures   │
+       │                                  └──────────────────┘
+       │                                  ┌──────────────────┐
+       └─────────────────────────────────>│ Sign Encounter   │
+                                          └──────────────────┘
+
+┌──────────────┐                          ┌──────────────────┐
+│ Nurse / MA   │─────────────────────────>│ Capture Vitals   │
+└──────┬───────┘                          └──────────────────┘
+       │                                  ┌──────────────────┐
+       └─────────────────────────────────>│ Add Triage Notes │
+                                          └──────────────────┘
+
+┌──────────────┐                          ┌──────────────────┐
+│ System       │─────────────────────────>│ Create Encounter │
+└──────┬───────┘                          └──────────────────┘
+       │                                  ┌──────────────────┐
+       ├─────────────────────────────────>│ Validate Fields  │
+       │                                  └──────────────────┘
+       │                                  ┌──────────────────┐
+       └─────────────────────────────────>│ Move to Coding   │
+                                          └──────────────────┘
+</pre>
+
+<hr>
+
+<h2>6. Activity Flow Diagram</h2>
+
+<pre><code>
+┌─────────┐
+│ START   │
+└────┬────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Load Checked-In     │
+│ Patient             │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Start Encounter     │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Generate Encounter  │
+│ ID                  │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Capture Vitals      │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Add Chief Complaint │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Add Clinical Notes  │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Add Diagnosis /     │
+│ Procedures          │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Add Orders          │
+│ Lab / Rad / Rx      │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Validate Encounter  │
+└────┬────────────────┘
+     │
+     ▼
+    ╱ ╲
+   ╱   ╲
+  ╱Valid?╲───No────────┐
+  ╲      ╱             │
+   ╲    ╱              │
+    ╲  ╱               │
+     │Yes              ▼
+     │          ┌─────────────────┐
+     │          │ Fix Missing     │
+     │          │ Fields          │
+     │          └────┬────────────┘
+     │               │
+     └───────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Provider Signs      │
+│ Encounter           │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Save to Database    │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Update Status       │
+│ Encounter Complete  │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Send to Medical     │
+│ Coding Queue        │
+└────┬────────────────┘
+     │
+     ▼
+┌─────────┐
+│ END     │
+└─────────┘
+</pre>
+
+<hr>
+
+<h2>7. Sequence Diagram</h2>
+
+<pre><code>
+Doctor    Nurse     Frontend    Backend    Database
+  │         │          │          │          │
+  │         │ Open     │          │          │
+  │         │ Patient  │          │          │
+  │         ├─────────>│          │          │
+  │         │          │ GET /patient        │
+  │         │          ├─────────>│          │
+  │         │          │          │ Load Patient Data
+  │         │          │          ├─────────>│
+  │         │          │ Patient Data        │
+  │         │          │<─────────┤          │
+  │ Capture │          │          │          │
+  │ Vitals  │          │          │          │
+  │<────────┤          │          │          │
+  │         │ POST /vitals        │          │
+  │         ├─────────>│          │          │
+  │         │          ├─────────>│          │
+  │         │          │          │ Save Vitals
+  │         │          │          ├─────────>│
+  │ Start   │          │          │          │
+  │ Encounter          │          │          │
+  ├─────────>│          │          │          │
+  │          │ POST /encounter    │          │
+  │          ├─────────>│          │          │
+  │          │          │ Create Encounter
+  │          │          ├─────────>│          │
+  │          │          │ Encounter Created
+  │          │<─────────┤          │
+  │ Add Notes          │          │          │
+  ├─────────>│          │          │          │
+  │          │ PUT /encounter     │          │
+  │          ├─────────>│          │          │
+  │          │          │ Save Notes
+  │          │          ├─────────>│          │
+  │ Add Dx / CPT       │          │          │
+  ├─────────>│          │          │          │
+  │          │ PUT /diagnosis     │          │
+  │          ├─────────>│          │          │
+  │          │          │ Save Dx / CPT
+  │          │          ├─────────>│          │
+  │ Sign     │          │          │          │
+  │ Encounter          │          │          │
+  ├─────────>│          │          │          │
+  │          │ POST /sign         │          │
+  │          ├─────────>│          │          │
+  │          │          │ Validate Encounter
+  │          │          │ Update Complete
+  │          │          ├─────────>│          │
+  │ Success  │          │          │          │
+  │<─────────┤          │          │          │
+</pre>
+
+<hr>
+
+<h2>8. API Flow</h2>
+
+<p><strong>Request:</strong></p>
+<pre><code class="language-http">
+POST /api/encounters
+{
+  "patientId": "PAT-00001",
+  "appointmentId": "APT-00001",
+  "providerId": "PROV-00001",
+  "visitType": "Office Visit",
+  "chiefComplaint": "Chest pain",
+  "vitals": {
+    "bp": "120/80",
+    "temperature": "98.6",
+    "pulse": 82,
+    "weight": 72
+  }
+}
+</pre>
+
+<p><strong>Response:</strong></p>
+<pre><code class="language-json">
+{
+  "encounterId": "ENC-00001",
+  "status": "IN_PROGRESS",
+  "patientId": "PAT-00001",
+  "providerId": "PROV-00001",
+  "message": "Encounter created successfully"
+}
+</pre>
+
+<hr>
+
+<h2>9. Database Flow</h2>
+
+<pre><code class="language-sql">
+-- Create encounter
+INSERT INTO encounters (
+    encounter_id,
+    patient_id,
+    appointment_id,
+    provider_id,
+    visit_type,
+    chief_complaint,
+    status
+) VALUES (
+    'ENC-00001',
+    'PAT-00001',
+    'APT-00001',
+    'PROV-00001',
+    'Office Visit',
+    'Chest pain',
+    'IN_PROGRESS'
+);
+
+-- Save vitals
+INSERT INTO encounter_vitals (
+    encounter_id,
+    blood_pressure,
+    temperature,
+    pulse,
+    weight
+) VALUES (
+    'ENC-00001',
+    '120/80',
+    '98.6',
+    82,
+    72
+);
+
+-- Save documentation
+INSERT INTO encounter_notes (
+    encounter_id,
+    note_type,
+    note_text,
+    created_by
+) VALUES (
+    'ENC-00001',
+    'SOAP',
+    'Patient presents with chest pain...',
+    'PROV-00001'
+);
+</pre>
+
+<hr>
+
+<h2>10. Error Scenarios</h2>
+
+<pre><code>
+Error 1: Patient Not Checked In
+   ↓
+Show error
+   ↓
+Cannot create encounter
+
+Error 2: Provider Not Assigned
+   ↓
+Show error
+   ↓
+Assign provider before encounter
+
+Error 3: Missing Clinical Notes
+   ↓
+Show warning
+   ↓
+Doctor completes notes
+
+Error 4: Encounter Already Exists
+   ↓
+Open existing encounter
+   ↓
+Prevent duplicate encounter
+</pre>
+
+<hr>
+
+<h2>11. Dashboard & Status Flow</h2>
+
+<pre><code>
+┌─────────────────────┐
+│ Patient Checked In  │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Vitals Captured     │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Encounter In        │
+│ Progress            │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Documentation       │
+│ Pending             │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Provider Signed     │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Encounter Complete  │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Ready for Coding    │
+└─────────────────────┘
+</pre>
+
+<hr>
+
+<p><strong>Next Module:</strong> <a href="Flows_Module_15_Medical_Coding.html">Module 15: Medical Coding</a></p>
+
+</body>
+</html>
