@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 12: Claim Status Tracking - Complete Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module 12: Claim Status Tracking</h1>
+
+<p><strong>Version:</strong> 1.0</p>
+<p><strong>Module ID:</strong> MOD-012</p>
+<p><strong>Category:</strong> Claim Monitoring / Payer Communication / Revenue Cycle Management</p>
+
+<hr>
+
+<h2>1. Module Overview</h2>
+
+<h3>Purpose</h3>
+<p>The Claim Status Tracking module monitors payer claim processing status using EDI 276/277 transactions. It helps hospitals track submitted claims, identify delays, manage payer follow-ups, reduce aging claims, and improve reimbursement visibility.</p>
+
+<hr>
+
+<h3>Why Hospitals Use It</h3>
+<li>Monitor claim processing in real time</li>
+<li>Detect delayed or stuck claims</li>
+<li>Reduce AR aging</li>
+<li>Improve reimbursement tracking</li>
+<li>Automate payer status inquiries</li>
+<li>Improve follow-up efficiency</li>
+<li>Reduce manual claim checking</li>
+
+<hr>
+
+<h3>Business Goals</h3>
+<li>Reduce claim aging</li>
+<li>Improve claim visibility</li>
+<li>Accelerate reimbursement</li>
+<li>Improve follow-up productivity</li>
+<li>Reduce unresolved claims</li>
+<li>Detect payer processing delays</li>
+<li>Improve cash flow predictability</li>
+
+<hr>
+
+<h3>Main Users</h3>
+<li>AR Follow-up Team</li>
+<li>Billing Team</li>
+<li>Revenue Cycle Managers</li>
+<li>Denial Management Team</li>
+<li>Financial Supervisors</li>
+<li>Executives</li>
+
+<hr>
+
+<h2>2. Actors Involved</h2>
+
+<h3>AR Follow-up Team</h3>
+<li>Reviews pending claims</li>
+<li>Performs payer follow-ups</li>
+<li>Resolves delayed claims</li>
+
+<hr>
+
+<h3>Billing Team</h3>
+<li>Tracks claim submission status</li>
+<li>Reviews rejected claims</li>
+
+<hr>
+
+<h3>Denial Management Team</h3>
+<li>Handles denied claims</li>
+<li>Initiates appeals workflow</li>
+
+<hr>
+
+<h3>Revenue Cycle Managers</h3>
+<li>Reviews aging reports</li>
+<li>Monitors reimbursement KPIs</li>
+
+<hr>
+
+<h3>System</h3>
+<li>EDI 276/277 Engine</li>
+<li>Status Tracking Engine</li>
+<li>Alert Engine</li>
+<li>Reporting Engine</li>
+<li>Audit Logging System</li>
+
+<hr>
+
+<h3>External APIs / Systems</h3>
+<li>Clearinghouse APIs</li>
+<li>Insurance Payer APIs</li>
+<li>EDI Gateways</li>
+<li>Billing Systems</li>
+
+<hr>
+
+<h3>Insurance Payers</h3>
+<li>Return EDI 277 Responses</li>
+<li>Send claim processing updates</li>
+<li>Provide adjudication status</li>
+
+<hr>
+
+<h2>3. Core Claim Status Sections</h2>
+
+<h3>Real-Time Claim Tracking</h3>
+<li>Claim lifecycle monitoring</li>
+<li>Real-time status updates</li>
+<li>Pending claim monitoring</li>
+<li>Payer response tracking</li>
+<li>Claim progress visibility</li>
+
+<hr>
+
+<h3>EDI 276/277 Management</h3>
+<li>EDI 276 status inquiry generation</li>
+<li>EDI 277 response processing</li>
+<li>ANSI X12 validation</li>
+<li>Clearinghouse integration</li>
+<li>Batch status processing</li>
+
+<hr>
+
+<h3>Claim Aging Management</h3>
+<li>AR aging reports</li>
+<li>Pending claim tracking</li>
+<li>High aging claims monitoring</li>
+<li>Follow-up prioritization</li>
+<li>Aging trend analysis</li>
+
+<hr>
+
+<h3>Follow-Up Workflow</h3>
+<li>Automated follow-up alerts</li>
+<li>Claim escalation workflow</li>
+<li>Payer follow-up queue</li>
+<li>Task assignment</li>
+<li>Follow-up activity tracking</li>
+
+<hr>
+
+<h3>Claim History Tracking</h3>
+<li>Claim timeline history</li>
+<li>Status change history</li>
+<li>Payer communication logs</li>
+<li>Follow-up notes</li>
+<li>Audit tracking</li>
+
+<hr>
+
+<h3>Denial &amp; Exception Monitoring</h3>
+<li>Rejected claim detection</li>
+<li>Denial identification</li>
+<li>Exception queues</li>
+<li>Missing documentation alerts</li>
+<li>Escalation workflows</li>
+
+<hr>
+
+<h3>Dashboard &amp; Analytics</h3>
+<li>Claim status dashboard</li>
+<li>Pending claims reports</li>
+<li>Aging analytics</li>
+<li>Payer response analytics</li>
+<li>Claim turnaround metrics</li>
+<li>Follow-up productivity reports</li>
+
+<hr>
+
+<h3>Compliance &amp; Audit</h3>
+<li>HIPAA audit logging</li>
+<li>Claim access tracking</li>
+<li>User activity monitoring</li>
+<li>EDI transaction audit trail</li>
+<li>Payer communication logging</li>
+
+<hr>
+
+<h2>4. Step-by-Step Workflow</h2>
+
+<pre><code>
+┌─────────────────────┐
+│ Claim Submitted     │
+│ to Insurance Payer  │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Generate EDI 276    │
+│ Claim Status Inquiry│
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Send Request to     │
+│ Clearinghouse       │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Clearinghouse Sends │
+│ Inquiry to Payer    │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Insurance Payer     │
+│ Processes Request   │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ EDI 277 Claim       │
+│ Status Response     │
+│ Received            │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Validate ANSI X12   │
+│ EDI 277 Response    │
+└──────────┬──────────┘
+           ↓
+      ╱ ╲
+     ╱   ╲
+    ╱Valid?╲────No──────┐
+    ╲      ╱            │
+     ╲    ╱             ▼
+      │Yes        ┌─────────────────┐
+      ▼           │ Exception Queue │
+┌──────────────┐  │ / Error Review  │
+│ Parse Claim  │  └────────┬────────┘
+│ Status Data  │           │
+└──────┬───────┘           ▼
+       ↓             ┌─────────────────┐
+┌─────────────────────┐
+│ Extract Claim Status│
+│ - Pending           │
+│ - Processed         │
+│ - Denied            │
+│ - Paid              │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Match Claim in      │
+│ Billing / AR System │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Update Claim Status │
+│ in Database         │
+└──────────┬──────────┘
+           ↓
+      ╱ ╲
+     ╱   ╲
+    ╱Issue?╲────Yes─────┐
+    ╲      ╱            │
+     ╲    ╱             ▼
+      │No         ┌─────────────────┐
+      ▼           │ Follow-up Queue │
+┌──────────────┐  │ / Denial Queue  │
+│ Claim Status │  └────────┬────────┘
+│ Updated      │           │
+└──────┬───────┘           ▼
+       ↓             ┌─────────────────┐
+┌─────────────────────┐
+│ Generate Alerts &   │
+│ Aging Notifications │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Update Dashboard &  │
+│ Analytics Reports   │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ AR Team / Billing   │
+│ Team Follow-up      │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Claim Resolved /    │
+│ Reimbursement Done  │
+└─────────────────────┘
+</pre>
+
+<hr>
+
+<h2>5. Use Case Diagram</h2>
+
+<pre><code>
+                        ┌──────────────────────┐
+                        │ Insurance Payer      │
+                        └──────────┬───────────┘
+                                   │
+                                   │ Sends EDI 277
+                                   ▼
+┌──────────────────────┐   ┌──────────────────────┐
+│ Billing Team         │   │ Claim Status System  │
+└──────────┬───────────┘   └──────────┬───────────┘
+           │                          │
+           │ Generate EDI 276         │ Process EDI 277
+           ├─────────────────────────>│
+           │                          │
+           │ Review Claim Status      │
+           ├─────────────────────────>│
+           │                          │
+           │ Track Pending Claims     │
+           ├─────────────────────────>│
+           │                          │
+           │                          │ Generate Alerts
+           │                          ├──────────────────────┐
+           │                          │                      │
+           ▼                          ▼                      ▼
+┌──────────────────────┐   ┌──────────────────────┐  ┌──────────────────────┐
+│ AR Follow-up Team    │   │ Dashboard & Reports  │  │ Denial Management    │
+└──────────┬───────────┘   └──────────────────────┘  └──────────┬───────────┘
+           │                                                     │
+           │ Review Aging Claims                                 │ Review Denials
+           ├────────────────────────────────────────────────────>│
+           │                                                     │
+           │ Follow-up with Payers                               │ Initiate Appeals
+           ├────────────────────────────────────────────────────>│
+           │                                                     │
+           │ Escalate Delayed Claims                             │
+           ├────────────────────────────────────────────────────>│
+           │                                                     │
+           ▼                                                     ▼
+┌──────────────────────┐                           ┌──────────────────────┐
+│ Revenue Cycle        │                           │ Financial Supervisor │
+│ Managers             │                           └──────────┬───────────┘
+└──────────┬───────────┘                                      │
+           │                                                  │ Review Escalations
+           │ Review KPI Reports                               │
+           ├─────────────────────────────────────────────────>│
+           │                                                  │
+           │ Monitor Claim Aging                              │
+           ├─────────────────────────────────────────────────>│
+           │                                                  │
+           ▼                                                  ▼
+                 ┌──────────────────────────────┐
+                 │ Claim Resolved / Paid        │
+                 └──────────────────────────────┘
+</pre>
+
+<hr>
+
+<h2>6. Activity Flow Diagram</h2>
+
+<pre><code>
+┌─────────┐
+│ START   │
+└────┬────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Claim Submitted     │
+│ to Insurance Payer  │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Generate & Send     │
+│ EDI 276 Inquiry     │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Receive EDI 277     │
+│ Status Response     │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Validate EDI 277    │
+│ Response Format     │
+└──────────┬──────────┘
+           │
+           ▼
+      ╭───────────╮
+      │ Valid ?   │
+      ╰────┬──────╯
+           │
+     ┌─────┴─────┐
+     │           │
+    YES          NO
+     │           │
+     ▼           ▼
+┌───────────┐   ┌─────────────────┐
+│ Parse &   │   │ Move to         │
+│ Extract   │   │ Exception Queue │
+│ Status    │   │ for Review      │
+└────┬──────┘   └────────┬────────┘
+     │                   │
+     ▼                   ▼
+┌─────────────────────┐  ┌─────────────────┐
+│ Match Claim in      │  │ Manual Error    │
+│ Billing / AR System │  │ Correction      │
+└──────────┬──────────┘  └─────────────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Update Claim Status │
+│ in Database         │
+└──────────┬──────────┘
+           │
+           ▼
+      ╭───────────╮
+      │ Any Issue │
+      │ Detected? │
+      ╰────┬──────╯
+           │
+     ┌─────┴─────┐
+     │           │
+     │           │
+     NO         YES
+     │           │
+     ▼           ▼
+┌───────────┐   ┌─────────────────┐
+│ Generate  │   │ Follow-up /     │
+│ Dashboard │   │ Denial Queue    │
+│ Updates   │   └────────┬────────┘
+└────┬──────┘            │
+     │                   ▼
+     │            ┌─────────────────┐
+     │            │ AR Team /       │
+     │            │ Denial Team     │
+     │            │ Review          │
+     │            └────────┬────────┘
+     │                     │
+     └────────────┬────────┘
+                  ▼
+        ┌─────────────────┐
+        │ Alerts & Aging  │
+        │ Notifications   │
+        └────────┬────────┘
+                 │
+                 ▼
+          ┌────────────┐
+          │ Dashboard  │
+          │ Reporting  │
+          └────┬───────┘
+               │
+               ▼
+        ┌────────────┐
+        │    END     │
+        └────────────┘
+</pre>
+
+<hr>
+
+<h2>7. API Flow</h2>
+
+<h3>Request</h3>
+<pre><code>
+POST /api/claim-status/inquiry
+
+{
+"claimId": "CLM-10001",
+"payerId": "PAY-001",
+"trackingType": "EDI276",
+"requestedBy": "USR-001",
+"tenantId": "TEN-001"
+}
+</pre>
+
+<hr>
+
+<h3>Response</h3>
+<pre><code class="language-json">
+{
+"statusBatchId": "STS-90001",
+"claimId": "CLM-10001",
+"claimStatus": "In Process",
+"payerStatusCode": "P3",
+"lastUpdated": "2026-05-21",
+"followupRequired": false
+}
+</pre>
+
+<hr>
+
+<h2>8. Database Flow</h2>
+
+<h3>Major Tables</h3>
+<li>claim_status_tracking</li>
+<li>edi_276_requests</li>
+<li>edi_277_responses</li>
+<li>claim_followups</li>
+<li>payer_status_logs</li>
+<li>claim_history</li>
+<li>audit_logs</li>
+
+<hr>
+
+<h2>9. Error Scenarios</h3>
+
+<h3>Error 1: Invalid EDI 277 Response</h3>
+<pre><code>
+↓
+Move to exception queue
+↓
+Notify billing team
+</pre>
+
+<hr>
+
+<h3>Error 2: Claim Not Found</h3>
+<pre><code>
+↓
+Create unmatched claim alert
+↓
+Manual review required
+</pre>
+
+<hr>
+
+<h3>Error 3: No Payer Response</h3>
+<pre><code>
+↓
+Generate aging alert
+↓
+AR follow-up initiated
+</pre>
+
+<hr>
+
+<h3>Error 4: Delayed Claim Detected</h3>
+<pre><code>
+↓
+Escalate to follow-up queue
+↓
+Supervisor review
+</pre>
+
+<hr>
+
+<h3>Error 5: Denial Status Received</h3>
+<pre><code>
+↓
+Trigger denial workflow
+↓
+Send to denial management team
+</pre>
+
+<hr>
+
+<h2>10. Dashboard &amp; Analytics</h2>
+<li>Claim Aging Reports</li>
+<li>Pending Claim Volume</li>
+<li>Denial Rate</li>
+<li>Average Processing Time</li>
+<li>Claim Turnaround Time</li>
+<li>Follow-up Productivity</li>
+<li>Payer Response Time</li>
+<li>Escalated Claims</li>
+<li>Claims Resolved</li>
+<li>AR Reduction Metrics</li>
+
+<hr>
+
+<h2>11. Automation &amp; Background Jobs</h2>
+
+<pre><code>
+┌─────────────────────┐
+│ Scheduled Background│
+│ Job Starts          │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Poll Pending Claims │
+│ from Database       │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Generate Automated  │
+│ EDI 276 Requests    │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Send EDI 276 to     │
+│ Clearinghouse       │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Clearinghouse Sends │
+│ Request to Payer    │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Download EDI 277    │
+│ Claim Responses     │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Validate EDI 277    │
+│ Response Data       │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Auto Update Claim   │
+│ Status in Database  │
+└──────────┬──────────┘
+           │
+           ▼
+      ╭──────────────╮
+      │ Any Delay /  │
+      │ Denial Found?│
+      ╰──────┬───────╯
+             │
+      ┌──────┴───────┐
+      │              │
+      │NO            │YES
+      │              │
+      ▼              ▼
+┌──────────────┐  ┌─────────────────┐
+│ Mark Claim   │  │ Generate Aging  │
+│ as Updated   │  │ / Follow-up     │
+└──────┬───────┘  │ Alerts          │
+       │          └────────┬────────┘
+       │                   │
+       ▼                   ▼
+┌─────────────────────┐
+│ Update Dashboard &  │
+│ KPI Analytics       │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Send Notifications  │
+│ to AR / Billing Team│
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Background Job Ends │
+└─────────────────────┘
+</pre>
+
+<hr>
+
+<h2>12. Audit &amp; Compliance</h2>
+
+<pre><code>
+┌─────────────────────┐
+│ User Accesses Claim │
+│ Status Information  │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ System Authenticates│
+│ User Permissions    │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Capture Audit Data  │
+│ - User ID           │
+│ - Claim ID          │
+│ - Timestamp         │
+│ - IP Address        │
+│ - Action Performed  │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Create Immutable    │
+│ Audit Record        │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Store Audit Log in  │
+│ Secure Database     │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Monitor for         │
+│ Unauthorized Access │
+└──────────┬──────────┘
+           │
+           ▼
+      ╭──────────────╮
+      │ Compliance   │
+      │ Violation ?  │
+      ╰──────┬───────╯
+             │
+      ┌──────┴───────┐
+      │              │
+      │NO            │YES
+      │              │
+      ▼              ▼
+┌──────────────┐  ┌─────────────────┐
+│ Continue     │  │ Trigger Security│
+│ Monitoring   │  │ Alert / Audit   │
+└──────┬───────┘  │ Investigation   │
+       │          └────────┬────────┘
+       │                   │
+       ▼                   ▼
+┌─────────────────────┐
+│ HIPAA Compliance    │
+│ Logging Completed   │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Audit Trail Stored  │
+│ for Reporting       │
+└─────────────────────┘
+</pre>
+
+<hr>
+
+<h2>13. Role-Based Access Control</h2>
+<table>
+    <tr>
+        <th>Role</th>
+        <th>Access</th>
+    </tr>
+    <tr>
+        <td>Billing Team</td>
+        <td>Track claim status</td>
+    </tr>
+    <tr>
+        <td>AR Team</td>
+        <td>Follow-up management</td>
+    </tr>
+    <tr>
+        <td>Denial Team</td>
+        <td>Denial workflow access</td>
+    </tr>
+    <tr>
+        <td>Financial Supervisor</td>
+        <td>Escalation approval</td>
+    </tr>
+    <tr>
+        <td>Admin</td>
+        <td>Full access</td>
+    </tr>
+    <tr>
+        <td>Auditor</td>
+        <td>Read-only audit access</td>
+    </tr>
+</table>
+
+<hr>
+
+<h2>14. Enterprise Integrations</h2>
+
+<h3>Clearinghouse Integration</h3>
+<li>Waystar</li>
+<li>Availity</li>
+<li>Change Healthcare</li>
+
+<hr>
+
+<h3>Insurance Payer Integration</h3>
+<li>Medicare</li>
+<li>Medicaid</li>
+<li>Commercial Payers</li>
+
+<hr>
+
+<h3>EHR / Billing Integration</h3>
+<li>Epic</li>
+<li>Cerner</li>
+<li>Athenahealth</li>
+
+<hr>
+
+<h3>Communication Systems</h3>
+<li>Email Alerts</li>
+<li>SMS Notifications</li>
+<li>Workflow Queues</li>
+
+<hr>
+
+<h2>15. Enterprise Enhancements</h2>
+<li>✔ AI-Based Claim Delay Prediction</li>
+<li>✔ Intelligent Aging Prioritization</li>
+<li>✔ Automated Follow-Up Workflows</li>
+<li>✔ Real-Time Payer Monitoring</li>
+<li>✔ Predictive Denial Detection</li>
+<li>✔ Smart Escalation Engine</li>
+<li>✔ Enterprise KPI Dashboards</li>
+<li>✔ Cross-Hospital Claim Visibility</li>
+<li>✔ Automated Status Reconciliation</li>
+<li>✔ Multi-Tenant Claim Isolation</li>
+
+<hr>
+
+<h2>16. Summary</h2>
+<p>The Claim Status Tracking module is one of the most important monitoring systems in healthcare Revenue Cycle Management.</p>
+
+<p>It ensures:</p>
+<li>real-time claim visibility</li>
+<li>payer response monitoring</li>
+<li>AR aging reduction</li>
+<li>automated follow-up workflows</li>
+<li>denial identification</li>
+<li>reimbursement tracking</li>
+<li>claim processing transparency</li>
+
+<p>This module directly impacts:</p>
+<li>hospital cash flow</li>
+<li>reimbursement speed</li>
+<li>AR reduction</li>
+<li>operational productivity</li>
+<li>revenue cycle efficiency</li>
+
+</body>
+</html>
