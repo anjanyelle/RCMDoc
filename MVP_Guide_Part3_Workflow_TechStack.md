@@ -181,47 +181,49 @@ Let me explain the complete workflow using a real example:
 
 ---
 
-#### **Step 7: Claim Creation** 📄
+#### **Step 7: Claim Scrubbing** ✅
 
 **What Happens:**
-1. Biller opens "Claims" module
-2. Selects encounter ENC-2026-9876
-3. Clicks "Create Claim"
-4. System auto-generates claim:
+1. System automatically prepares claim for validation
+2. Claim data pulled from patient encounter:
    ```
-   Claim ID: CLM-2026-001234
-   Format: CMS-1500 (Professional claim)
-   
    Patient: Sarah Johnson
-   DOB: 03/15/1985
+   Encounter ID: ENC-2026-9876
    Insurance: Blue Cross Blue Shield
-   Policy: ABC123456789
-   
-   Provider: Dr. Smith
-   NPI: 1234567890
-   Tax ID: 12-3456789
-   
-   Service Date: 05/20/2026
-   Place of Service: 11 (Office)
-   
-   Diagnosis Codes:
-   1. J20.9 (Acute bronchitis)
-   2. R05 (Cough)
-   3. R50.9 (Fever)
-   
-   Procedure:
-   CPT: 99203
-   Charge: $150.00
-   Units: 1
+   CPT Code: 99203
+   ICD-10 Codes:
+   - J20.9 (Acute bronchitis)
+   - R05 (Cough)
+   - R50.9 (Fever)
+   Charge Amount: $150.00
    ```
 
-5. **Claim Scrubbing** (via **Waystar API**):
-   - Validates all fields ✅
-   - Checks code combinations ✅
-   - Verifies medical necessity ✅
-   - No errors found ✅
+3. System runs automated claim scrubbing checks:
+   - Validates ICD-10 diagnosis codes
+   - Validates CPT procedure code
+   - Checks insurance eligibility
+   - Verifies provider NPI number
+   - Validates patient demographics
+   - Checks required modifiers
+   - Detects duplicate claims
+   - Confirms medical necessity
 
-6. Claim status: "Ready to Submit"
+4. **Waystar API** performs advanced validation:
+   ```
+   ✅ 47 validation rules passed
+   ✅ Code compatibility verified
+   ✅ Insurance coverage verified
+   ✅ Required fields completed
+   ✅ No duplicate claims found
+   ```
+
+5. System displays result:
+   ```
+   ✅ Claim Status: READY TO SUBMIT
+   Claim ID: CLM-2026-001234
+   ```
+
+6. Claim moved to submission queue automatically
 
 **Time Taken:** 1 minute
 
@@ -248,20 +250,51 @@ Let me explain the complete workflow using a real example:
 
 ---
 
-#### **Step 9: Claim Adjudication** ⏳
+#### **Step 9: Claim Status Tracking** 🔄
 
-**What Happens (at Insurance Company):**
-1. Blue Cross receives claim on May 20
-2. Processes claim (automated system)
-3. Checks:
-   - Patient eligibility ✅
-   - Coverage for service ✅
-   - Medical necessity ✅
-   - Coding accuracy ✅
-4. Approves claim on May 22
-5. Sends payment on May 25
+**What Happens:**
+1. System automatically monitors submitted claim:
+   ```
+   Claim ID: CLM-2026-001234
+   Patient: Sarah Johnson
+   Insurance: Blue Cross Blue Shield
+   Submission Date: 05/20/2026
+   ```
 
-**Time Taken:** 5 days (industry average: 14-30 days)
+2. System sends automated EDI 276 claim status inquiry to payer every 3 days
+
+3. Insurance payer responds with EDI 277 status updates
+
+4. Claim tracking updates displayed in dashboard:
+   ```
+   Day 3:
+   Status: RECEIVED
+   Message: Claim received successfully by payer
+   ```
+
+   ```
+   Day 5:
+   Status: IN REVIEW
+   Message: Claim under medical review
+   ```
+
+   ```
+   Day 7:
+   Status: APPROVED – PAYMENT PENDING
+   Expected Payment: $120.00
+   ```
+
+5. Billing team receives automatic notifications for status changes
+
+6. System updates claim timeline and tracking history automatically
+
+**Behind the Scenes:**
+- EDI 276 inquiry sent to payer
+- EDI 277 response received from payer
+- Claim status updated in real-time dashboard
+- Alerts generated for delayed or denied claims
+
+**Time Taken:** Automatic background process
 
 ---
 
@@ -298,25 +331,82 @@ Let me explain the complete workflow using a real example:
 
 ---
 
+#### **Step 11: Patient Billing** 💳
+
+**What Happens:**
+1. System generates patient statement for remaining balance:
+   ```
+   Patient: Sarah Johnson
+   Claim ID: CLM-2026-001234
+   
+   Total Charges: $150.00
+   Insurance Paid: $120.00
+   Copay Collected: $0.00
+   
+   Remaining Patient Balance: $30.00
+   Due Date: June 05, 2026
+   ```
+
+2. System emails statement and payment link to Sarah:
+   ```
+   Subject: Patient Statement Available
+   
+   Dear Sarah Johnson,
+   
+   Your remaining balance of $30.00 is now available.
+   Please use the secure payment link below to complete payment.
+   
+   [Pay Now]
+   ```
+
+3. Sarah logs into patient portal
+4. Pays balance online using credit card via **Stripe API**
+5. System confirms successful payment:
+   ```
+   Payment Status: SUCCESS
+   Amount Paid: $30.00
+   Transaction ID: TXN-2026-456789
+   ```
+
+6. Receipt emailed automatically to Sarah
+7. Account status updated:
+   ```
+   Claim Status: PAID IN FULL ✅
+   Patient Balance: $0.00
+   ```
+
+**Behind the Scenes:**
+- Statement generated automatically
+- Email notification sent
+- Payment processed securely via Stripe
+- Receipt generated and emailed
+- Patient ledger updated in real time
+- Account marked as fully paid
+
+**Time Taken:** 1 minute for online payment
+
+---
+
 ### **Complete Timeline Summary**
 
 | Date | Event | Status |
 |------|-------|--------|
-| May 18 | Patient registration | ✅ Complete |
-| May 18 | Insurance verification | ✅ Active coverage |
-| May 18 | Appointment scheduled | ✅ May 20, 10:00 AM |
-| May 20 | Patient check-in | ✅ Copay collected |
-| May 20 | Doctor visit | ✅ Visit complete |
-| May 20 | Medical coding | ✅ Codes assigned |
-| May 20 | Claim created | ✅ Ready to submit |
+| May 18 | Patient registration | ✅ Patient ID generated |
+| May 18 | Insurance verification | ✅ Active coverage verified |
+| May 18 | Appointment scheduled | ✅ May 20, 10:00 AM with Dr. Smith |
+| May 20 | Patient check-in | ✅ $25 copay collected |
+| May 20 | Doctor consultation | ✅ Acute bronchitis diagnosed |
+| May 20 | Medical coding with AI | ✅ ICD-10 & CPT codes assigned |
+| May 20 | Claim scrubbing | ✅ 47 validation checks passed |
 | May 20 | Claim submitted | ✅ Accepted by payer |
-| May 22 | Claim adjudicated | ✅ Approved |
-| May 25 | Payment received | ✅ $95.00 posted |
+| May 25 | Payment posting | ✅ ERA processed & payment posted |
+| May 26 | Patient billing generated | ✅ Statement emailed |
+| May 27 | Final patient payment received | ✅ Paid in Full |
 
-**Total Days from Service to Payment:** 5 days ⚡  
-**Industry Average:** 30-45 days
+**Total Days from Service to Final Payment:** 11 days ⚡  
+**Traditional Industry Average:** 60–90 days
 
-**Total Revenue Collected:** $120.00 ($25 copay + $95 insurance)  
+**Total Revenue Collected:** $150.00 ($120 insurance + $30 patient payment)  
 **Write-off (Contractual):** $30.00  
 **Net Collection Rate:** 100% ✅
 
