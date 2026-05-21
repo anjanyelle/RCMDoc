@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 20: Secondary Billing - Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module 20: Secondary Billing - Flow Documentation</h1>
+
+<div class="meta">
+    <p><strong>Version:</strong> 1.0 - Updated</p>
+    <p><strong>Module ID:</strong> MOD-020</p>
+    <p><strong>Category:</strong> Billing / Claims / Revenue Cycle Management</p>
+    <p><strong>Next Module:</strong> <a href="Flows_Module_21_Patient_Responsibility.html">Module 21: Patient Responsibility / Patient Billing</a></p>
+</div>
+
+<hr>
+
+<h2>1. Module Overview</h2>
+
+<h3>Purpose</h3>
+<p>Create and submit secondary insurance claims after the primary payer adjudicates the claim, using primary EOB/ERA details, remaining balance, COB rules, and correct patient responsibility calculation.</p>
+
+<h3>Why Hospitals Use It</h3>
+<p>Recover additional reimbursement from secondary insurance, reduce patient balance errors, prevent duplicate billing, and avoid revenue leakage after primary payment.</p>
+
+<h3>Main Users</h3>
+<ul>
+    <li>Billing Specialist</li>
+    <li>AR Manager</li>
+    <li>Payment Posting Team</li>
+    <li>Insurance Verification Team</li>
+    <li>Collections Team</li>
+    <li>Finance Manager</li>
+    <li>Compliance / Audit Team</li>
+    <li>System</li>
+</ul>
+
+<h3>Business Goal</h3>
+<p>Increase total reimbursement, reduce incorrect patient billing, reduce secondary claim denials, reduce secondary timely filing losses, and prevent patient statements before all available insurance benefits are processed.</p>
+
+<hr>
+
+<h2>2. Actors Involved</h2>
+
+<pre><code>
+┌────────────────────────────────────────────────────────┐
+│ ACTORS IN SECONDARY BILLING MODULE                     │
+├────────────────────────────────────────────────────────┤
+│ 1. Billing Specialist                                  │
+│    - Reviews primary payment/EOB                       │
+│    - Creates secondary claim                           │
+│    - Submits secondary claim to clearinghouse/payer    │
+│                                                        │
+│ 2. AR Manager / AR Team                                │
+│    - Monitors secondary claim status                   │
+│    - Follows up unpaid or denied secondary claims       │
+│    - Reviews underpayment, overpayment, and aging issues│
+│                                                        │
+│ 3. Payment Posting Team                                │
+│    - Posts primary ERA/EOB details                     │
+│    - Confirms remaining balance and patient responsibility│
+│    - Posts secondary payment after response             │
+│    - Recalculates balance if primary EOB is reversed/  │
+│      corrected                                         │
+│                                                        │
+│ 4. Insurance Verification Team                         │
+│    - Confirms secondary payer coverage and COB order   │
+│    - Updates secondary policy details if incorrect     │
+│                                                        │
+│ 5. Collections / Patient Billing Team                  │
+│    - Waits until secondary billing is completed before │
+│      billing patient                                   │
+│    - Sends patient statement only for true final       │
+│      responsibility                                    │
+│    - Holds/corrects statement if secondary balance     │
+│      changes                                           │
+│                                                        │
+│ 6. Finance Manager                                     │
+│    - Reviews secondary collection performance           │
+│    - Monitors underpayment, overpayment, write-off,    │
+│      and balance accuracy                              │
+│                                                        │
+│ 7. Compliance / Audit Team                             │
+│    - Reviews secondary billing accuracy                │
+│    - Checks COB-related billing issues                 │
+│    - Audits patient balance calculation and claim      │
+│      changes                                           │
+│                                                        │
+│ 8. System                                              │
+│    - COB rules engine                                  │
+│    - Claim generation and status tracking              │
+│    - ERA/EOB parsing, audit, and database layer        │
+│                                                        │
+│ 9. External Systems                                    │
+│    - Clearinghouse, primary payer, secondary payer     │
+│    - EDI 837, 835, 276/277, 999/277CA where supported  │
+└────────────────────────────────────────────────────────┘
+</code></pre>
+
+<hr>
+
+<h2>3. Step-by-Step Workflow</h2>
+
+<pre><code>
+┌─────────────────────────┐
+│ Primary Claim Submitted │
+│      and Processed      │
+└────────────┬────────────┘
+             │
+             ▼
+┌─────────────────────────┐
+│ Primary ERA/EOB Received│
+│   and Payment Posted    │
+└────────────┬────────────┘
+             │
+             ▼
+┌─────────────────────────┐
+│    System Calculates    │
+│    Remaining Balance    │
+└────────────┬────────────┘
+             │
+             ▼
+┌─────────────────────────┐
+│    Check Patient Has    │
+│   Secondary Insurance   │
+└────────────┬────────────┘
+             │
+      ┌──────┴──────┐
+      │             │
+[No]  ▼             ▼  [Yes]
+┌────────────┐┌─────────────────────────┐
+│No Secondary││Secondary Insurance Found│
+│ Insurance  │└────────────┬────────────┘
+└─────┬──────┘             │
+      │                    ▼
+      │       ┌─────────────────────────┐
+      │       │  Verify COB Order and   │
+      │       │   Secondary Coverage    │
+      │       └────────────┬────────────┘
+      │                    │
+      │                    ▼
+      │       ┌─────────────────────────┐
+      │       │Validate Primary EOB/ERA │
+      │       │ - Paid amount           │
+      │       │ - Adjustments           │
+      │       │ - Deductible/copay/coins│
+      │       │ - Patient responsibility│
+      │       │ - Claim/line status     │
+      │       └────────────┬────────────┘
+      │                    │
+      │                    ▼
+      │       ┌─────────────────────────┐
+      │       │   Check Timely Filing   │
+      │       │  Deadline and Claim IDs │
+      │       └────────────┬────────────┘
+      │                    │
+      │                    ▼
+      │       ┌─────────────────────────┐
+      │       │ Create Secondary Claim  │
+      │       │with Primary EOB Details │
+      │       └────────────┬────────────┘
+      │                    │
+      │                    ▼
+      │       ┌─────────────────────────┐
+      │       │  Scrub Secondary Claim  │
+      │       │ for payer rules/errors  │
+      │       └────────────┬────────────┘
+      │                    │
+      │                    ▼
+      │       ┌─────────────────────────┐
+      │       │ Submit Secondary Claim  │
+      │       │  via Clearinghouse/API  │
+      │       └────────────┬────────────┘
+      │                    │
+      │                    ▼
+      │       ┌─────────────────────────┐
+      │       │ Track Ack / Rejection / │
+      │       │      Claim Status       │
+      │       └────────────┬────────────┘
+      │                    │
+      │                    ▼
+      │       ┌─────────────────────────┐
+      │       │Secondary ERA/EOB Receiv.│
+      │       │   and Payment Posted    │
+      │       └────────────┬────────────┘
+      │                    │
+      │                    ▼
+      │       ┌─────────────────────────┐
+      │       │  Check if Primary EOB   │
+      │       │  Was Adjusted/Reversed  │
+      │       └────────────┬────────────┘
+      │                    │
+      └──────┬─────────────┘
+             │
+             ▼
+┌─────────────────────────┐
+│   Validate Secondary    │
+│   Payment, Adjust., Balance│
+└────────────┬────────────┘
+             │
+             ▼
+┌─────────────────────────┐
+│     Calculate Final     │
+│     Patient Responsibility│
+└────────────┬────────────┘
+             │
+             ▼
+┌─────────────────────────┐
+│ Send to Patient Billing │
+│or Hold Statement if Need│
+└─────────────────────────┘
+</code></pre>
+
+<hr>
+
+<h2>4. Secondary Claim Transaction / Integration Flow</h2>
+
+<pre><code>
+RCM Backend             Clearinghouse/API       Secondary Payer       Payment Posting
+     │                         │                       │                      │
+     │ Build secondary claim   │                       │                      │
+     │ - Original claim data   │                       │                      │
+     │ - Primary claim control │                       │                      │
+     │ - Primary payer paid    │                       │                      │
+     │ - Adjustments/CARC/RARC │                       │                      │
+     │ - Remaining balance     │                       │                      │
+     │ - COB details           │                       │                      │
+     │ - Timely filing deadline│                       │                      │
+     │ - Trace/claim ID        │                       │                      │
+     +------------------------&gt;│                       │                      │
+     │                         │ Forward 837 claim     │                      │
+     │                         +----------------------&gt;│                      │
+     │                         │                       │                      │
+     │ Acknowledgment / 277CA  │                       │                      │
+     │&lt;------------------------+&lt;----------------------+                      │
+     │                         │                       │                      │
+     │ Save submission batch ID and payer claim control number if available  │
+     │                         │                       │                      │
+     │ Claim status 276/277    │                       │                      │
+     │&lt;------------------------------------------------+                      │
+     │                         │                       │                      │
+     │ Secondary ERA/EOB 835   │                       │                      │
+     │&lt;------------------------------------------------+                      │
+     │                         │                                              │
+     │ Parse ERA/EOB and post payment                                         │
+     │ +---------------------------------------------------------------------&gt;│
+     │                                                                      │
+     │ Update claim, balance, patient responsibility, and audit trail        │
+     │                                                                      │
+</code></pre>
+
+<ul>
+    <li><strong>Important:</strong> Use EDI 837 for secondary claim submission when supported by clearinghouse/payer.</li>
+    <li><strong>Important:</strong> Use EDI 835/ERA or manual EOB posting for secondary payment response.</li>
+    <li><strong>Important:</strong> Use 999/277CA acknowledgments to confirm secondary claim acceptance or rejection.</li>
+    <li><strong>Important:</strong> Store trace ID, original claim ID, secondary claim ID, primary EOB/ERA, raw response, parsed response, submission batch ID, and payer claim control number for audit and support.</li>
+</ul>
+
+<hr>
+
+<h2>5. Use Case Diagram</h2>
+
+<pre><code>
++-------------------+                     +-------------------------+
+| Payment Posting   |--------------------&gt;| Post Primary ERA/EOB     |
+| Team              |                     +-------------------------+
++-------------------+                                  │
+                                                       ▼
++-------------------+                     +-------------------------+
+| System            |--------------------&gt;| Check Secondary Coverage |
++-------------------+                     +-------------------------+
+                                                       │
++-------------------+                     +-------------------------+
+| Billing Specialist|--------------------&gt;| Create Secondary Claim   |
++-------------------+                     +-------------------------+
+                                                       │
++-------------------+                     +-------------------------+
+| System            |--------------------&gt;| Scrub Secondary Claim    |
++-------------------+                     +-------------------------+
+                                                       │
++-------------------+                     +-------------------------+
+| Clearinghouse /   |--------------------&gt;| Submit to Secondary Payer|
+| Payer             |                     +-------------------------+
++-------------------+                                  │
+                                                       ▼
++-------------------+                     +-------------------------+
+| AR Team           |--------------------&gt;| Track Status / Follow-up |
++-------------------+                     +-------------------------+
+                                                       │
++-------------------+                     +-------------------------+
+| Payment Posting   |--------------------&gt;| Post Secondary Payment   |
++-------------------+                     +-------------------------+
+                                                       │
++-------------------+                     +-------------------------+
+| AR Team           |--------------------&gt;| Review Under/Overpayment |
++-------------------+                     +-------------------------+
+                                                       │
++-------------------+                     +-------------------------+
+| Payment Posting   |--------------------&gt;| Recalculate Balance if   |
+| Team              |                     | Primary EOB Reversed     |
++-------------------+                     +-------------------------+
+                                                       │
++-------------------+                     +-------------------------+
+| Patient Billing   |--------------------&gt;| Bill Final Patient Bal.  |
++-------------------+                     +-------------------------+
+</code></pre>
+
+<hr>
+
+<h2>6. Activity Flow Diagram</h2>
+
+<pre><code>
+┌───────┐
+│ START │
+└───┬───┘
+    │
+    ▼
+┌───────────────────────┐
+│ Primary EOB/ERA Posted│
+└───┬───────────────────┘
+    │
+    ▼
+┌───────────────────────┐
+│ Check Remaining Bal.  │
+└───┬───────────────────┘
+    │
+    ▼
+   ╱                     ╲
+  ╱ Check Secondary Ins?  ╲
+  ╲                       ╱
+   ╲                     ╱
+     ├──[No]──┐
+     │        │
+     │Yes     ▼
+     │   ┌──────────────┐
+     │   │ Update /     │
+     │   │ Manual Review│
+     │   └──────┬───────┘
+     ▼          │
+┌───────────────────────┐
+│ Verify Secondary COB  │
+│    and Eligibility    │
+└───┬───────────────────┘
+    │
+    ▼
+   ╱                     ╲
+  ╱        Valid?         ╲
+  ╲                       ╱
+   ╲                     ╱
+     ├──[No]──┐
+     │        │
+     │Yes     ▼
+     │   ┌──────────────┐
+     │   │ Update /     │
+     │   │ Manual Review│
+     │   └──────┬───────┘
+     ▼          │
+┌───────────────────────┐
+│ Check Timely Filing   │
+└───┬───────────────────┘
+    │
+    ▼
+┌───────────────────────┐
+│ Create Secondary      │
+│ Claim                 │
+└───┬───────────────────┘
+    │
+    ▼
+┌───────────────────────┐
+│ Scrub Claim           │
+└───┬───────────────────┘
+    │
+    ▼
+┌───────────────────────┐
+│ Submit Claim          │
+└───┬───────────────────┘
+    │
+    ▼
+┌───────────────────────┐
+│ Track Ack/Status      │
+└───┬───────────────────┘
+    │
+    ▼
+┌───────────────────────┐
+│ Post Secondary ERA/EOB│
+└───┬───────────────────┘
+    │
+    ▼
+┌───────────────────────┐
+│ Validate Payment and  │
+│ Remaining Balance     │
+└───┬───────────────────┘
+    │           │
+    ▼           │
+┌───────────────┴───────┐
+│ Recalculate Balance if│
+│ Primary EOB Reversed  │
+└───┬───────────────────┘
+    │
+    ▼
+┌───────────────────────┐
+│ Calculate Final       │
+│ Patient Responsibility│
+└───┬───────────────────┘
+    │
+    ▼
+┌───────────────────────┐
+│ Move to Patient       │
+│ Billing if balance &gt; 0│
+│ or Hold if issue found│
+└───┬───────────────────┘
+    │
+    ▼
+┌───────┐
+│  END  │
+└───────┘
+</code></pre>
+
+<hr>
+
+<h2>7. Sequence Diagram</h2>
+
+<pre><code>
+Billing   Frontend   Backend   Rules/COB   Clearinghouse   Sec Payer   Database   Patient Billing   Audit
+   │          │          │          │             │             │          │             │          │
+   │ Create   │          │          │             │             │          │             │          │
+   │ Sec Claim│          │          │             │             │          │             │          │
+   +---------&gt;│          │          │             │             │          │             │          │
+   │          │ POST /secondary-claims           │             │          │             │          │
+   │          +---------&gt;│          │             │             │          │             │          │
+   │          │          │ Validate COB/EOB       │             │          │             │          │
+   │          │          +---------&gt;│             │             │          │             │          │
+   │          │          │ Rules OK │             │             │          │             │          │
+   │          │          |&lt;---------+             │             │          │             │          │
+   │          │          │ Save secondary claim   │             │          │             │          │
+   │          │          +------------------------------------&gt;│          │             │          │
+   │          │          │ Submit 837             │             │          │             │          │
+   │          │          +----------------------&gt;│             │          │             │          │
+   │          │          │ Ack/277CA              │             │          │             │          │
+   │          │          |&lt;----------------------+             │          │             │          │
+   │          │ Response │          │             │             │          │             │          │
+   │          |&lt;---------+          │             │             │          │             │          │
+   │ Display  │          │          │             │             │          │             │          │
+   │ Status   │          │          │             │             │          │             │          │
+   |&lt;---------+          │          │             │             │          │             │          │
+   │          │          │ Secondary ERA/EOB 835  │             │          │             │          │
+   │          │          |&lt;───────────────────────────────────────────────┤             │          │
+   │          │          │ Post secondary payment │             │          │             │          │
+   │          │          +------------------------------------&gt;│          │             │          │
+   │          │          │ Audit payment posting  │             │          │             │          │
+   │          │          +--------------------------------------------------------------------&gt;│
+   │          │          │ Update final balance   │             │          │             │          │
+   │          │          +------------------------------------&gt;│          │             │          │
+   │          │          │ Audit balance recalculation and billing release                  │
+   │          │          +--------------------------------------------------------------------&gt;│
+   │          │          │ If patient balance &gt; 0, send/hold patient billing                 │
+   │          │          +------------------------------------------------------------&gt;│          │
+</code></pre>
+
+<hr>
+
+<h2>8. API Flow</h2>
+
+<h3>Request</h3>
+<p><code>POST /api/secondary-claims</code></p>
+
+<pre><code class="language-json">
+{
+  "patientId": "PAT-00001",
+  "encounterId": "ENC-00001",
+  "primaryClaimId": "CLM-PRIMARY-00001",
+  "primaryClaimControlNumber": "PCN-12345",
+  "secondaryInsuranceId": "INS-SECONDARY-00001",
+  "secondaryPayerId": "AETNA002",
+  "secondaryPolicyOrder": 2,
+  "primaryPayerId": "BCBS001",
+  "primaryPaidAmount": 120.00,
+  "primaryAdjustmentAmount": 30.00,
+  "patientResponsibility": 30.00,
+  "remainingBalance": 30.00,
+  "primaryEobId": "EOB-00001",
+  "timelyFilingDeadline": "2026-08-20",
+  "serviceLines": [
+    {
+      "cptCode": "99213",
+      "billedAmount": 150.00,
+      "primaryPaid": 120.00,
+      "adjustment": 30.00,
+      "remainingBalance": 30.00,
+      "carcCodes": ["PR-2"],
+      "rarcCodes": []
+    }
+  ],
+  "traceId": "TRC-SEC-00001",
+  "createdBy": "USR-001"
+}
+</code></pre>
+
+<h3>Response - Secondary Claim Created</h3>
+<pre><code class="language-json">
+{
+  "secondaryClaimId": "CLM-SEC-00001",
+  "status": "ready_for_submission",
+  "scrubStatus": "passed",
+  "message": "Secondary claim created and ready for submission",
+  "traceId": "TRC-SEC-00001"
+}
+</code></pre>
+
+<h3>Response - Submitted</h3>
+<pre><code class="language-json">
+{
+  "secondaryClaimId": "CLM-SEC-00001",
+  "status": "submitted",
+  "submissionBatchId": "BATCH-SEC-00001",
+  "clearinghouseTraceId": "CH-SEC-98765",
+  "payerClaimControlNumber": "PCCN-98765",
+  "acknowledgmentStatus": "pending",
+  "message": "Secondary claim submitted to clearinghouse"
+}
+</code></pre>
+
+<h3>Response - Secondary Payment Posted</h3>
+<pre><code class="language-json">
+{
+  "secondaryClaimId": "CLM-SEC-00001",
+  "status": "paid",
+  "secondaryPaidAmount": 25.00,
+  "finalPatientResponsibility": 5.00,
+  "patientBillingRequired": true,
+  "patientStatementStatus": "ready",
+  "message": "Secondary payment posted and final patient balance calculated"
+}
+</code></pre>
+
+<hr>
+
+<h2>9. Database Flow</h2>
+
+<pre><code class="language-sql">
+-- Create secondary claim
+INSERT INTO secondary_claims (
+    secondary_claim_id,
+    patient_id,
+    encounter_id,
+    primary_claim_id,
+    primary_claim_control_number,
+    secondary_insurance_id,
+    secondary_policy_order,
+    secondary_payer_id,
+    primary_eob_id,
+    primary_paid_amount,
+    primary_adjustment_amount,
+    patient_responsibility,
+    remaining_balance,
+    timely_filing_deadline,
+    status,
+    scrub_status,
+    trace_id,
+    created_by,
+    created_at,
+    updated_at
+) VALUES (...);
+
+-- Save secondary claim line details
+INSERT INTO secondary_claim_lines (
+    line_id,
+    secondary_claim_id,
+    cpt_code,
+    billed_amount,
+    primary_paid,
+    primary_adjustment,
+    remaining_balance,
+    carc_codes,
+    rarc_codes,
+    status
+) VALUES (...);
+
+-- Save clearinghouse submission message
+INSERT INTO secondary_claim_messages (
+    message_id,
+    secondary_claim_id,
+    message_type,
+    trace_id,
+    submission_batch_id,
+    clearinghouse_trace_id,
+    payer_claim_control_number,
+    raw_payload,
+    raw_response,
+    acknowledgment_status,
+    status,
+    sent_at
+) VALUES (...);
+
+-- Post secondary payment
+UPDATE secondary_claims
+SET status = 'paid',
+    secondary_paid_amount = 25.00,
+    final_patient_responsibility = 5.00,
+    paid_at = NOW(),
+    balance_recalculated_at = NOW(),
+    updated_at = NOW()
+WHERE secondary_claim_id = 'CLM-SEC-00001';
+
+-- Handle primary EOB reversal / correction
+UPDATE secondary_claims
+SET status = 'balance_recalculation_required',
+    balance_recalculated_at = NOW(),
+    updated_at = NOW()
+WHERE primary_claim_id = 'CLM-PRIMARY-00001';
+
+-- Update patient ledger after secondary payment
+INSERT INTO patient_ledger (
+    ledger_id,
+    patient_id,
+    encounter_id,
+    source_type,
+    source_id,
+    amount,
+    balance_type,
+    created_at
+) VALUES (...);
+
+-- Move final balance to patient billing if needed
+UPDATE encounters
+SET final_patient_balance = 5.00,
+    patient_billing_status = 'ready',
+    patient_statement_released_at = NOW()
+WHERE encounter_id = 'ENC-00001';
+
+-- Hold patient statement when secondary balance changes
+UPDATE encounters
+SET patient_billing_status = 'hold',
+    updated_at = NOW()
+WHERE encounter_id = 'ENC-00001';
+</code></pre>
+
+<hr>
+
+<h2>10. Error Scenarios</h2>
+
+<ul>
+    <li><strong>Error 1: No Secondary Insurance Found</strong>
+        <ul>
+            <li>Route: Move remaining balance to patient responsibility review</li>
+            <li>Action: Send to patient billing if balance is valid</li>
+        </ul>
+    </li>
+    <li><strong>Error 2: Secondary Insurance Inactive</strong>
+        <ul>
+            <li>Route: Notify insurance verification team</li>
+            <li>Action: Update policy or move to patient responsibility after review</li>
+        </ul>
+    </li>
+    <li><strong>Error 3: COB Order Incorrect</strong>
+        <ul>
+            <li>Route: Hold secondary claim</li>
+            <li>Action: Correct primary/secondary payer order before submission</li>
+        </ul>
+    </li>
+    <li><strong>Error 4: Primary EOB/ERA Missing</strong>
+        <ul>
+            <li>Route: Block secondary claim creation</li>
+            <li>Action: Request primary EOB/ERA or post primary payment first</li>
+        </ul>
+    </li>
+    <li><strong>Error 5: Secondary Claim Scrub Failed</strong>
+        <ul>
+            <li>Route: Show errors</li>
+            <li>Action: Correct claim details and rescrub</li>
+        </ul>
+    </li>
+    <li><strong>Error 6: Clearinghouse Rejection</strong>
+        <ul>
+            <li>Route: Show rejection reason</li>
+            <li>Action: Billing corrects and resubmits</li>
+        </ul>
+    </li>
+    <li><strong>Error 7: Secondary Payer Denial</strong>
+        <ul>
+            <li>Route: Route to AR/Denial worklist</li>
+            <li>Action: Appeal, correct, or move balance based on denial reason</li>
+        </ul>
+    </li>
+    <li><strong>Error 8: Duplicate Secondary Claim Found</strong>
+        <ul>
+            <li>Route: Show existing secondary claim</li>
+            <li>Action: Prevent duplicate unless supervisor override is allowed</li>
+        </ul>
+    </li>
+    <li><strong>Error 9: Secondary Payment Less Than Expected</strong>
+        <ul>
+            <li>Route: Create underpayment review task</li>
+            <li>Action: AR team reviews contract/COB/payment reason</li>
+        </ul>
+    </li>
+    <li><strong>Error 10: Patient Balance Calculated Before Secondary Billing Complete</strong>
+        <ul>
+            <li>Route: Block patient statement</li>
+            <li>Action: Wait for secondary claim resolution or supervisor approval</li>
+        </ul>
+    </li>
+    <li><strong>Error 11: Secondary ERA/EOB Unmatched</strong>
+        <ul>
+            <li>Route: Move to unmatched payment queue</li>
+            <li>Action: Manual matching by payment posting team</li>
+        </ul>
+    </li>
+    <li><strong>Error 12: Timely Filing Risk</strong>
+        <ul>
+            <li>Route: Escalate secondary claim</li>
+            <li>Action: Submit urgently or document reason for delay</li>
+        </ul>
+    </li>
+    <li><strong>Error 13: Primary EOB Reversed or Corrected</strong>
+        <ul>
+            <li>Route: Hold secondary claim or recalculate secondary balance</li>
+            <li>Action: Update patient ledger and patient billing status</li>
+        </ul>
+    </li>
+    <li><strong>Error 14: Secondary Overpayment</strong>
+        <ul>
+            <li>Route: Create refund/adjustment review task</li>
+            <li>Action: Finance or AR team reviews before action</li>
+        </ul>
+    </li>
+</ul>
+
+<hr>
+
+<h2>11. Dashboard & Status Flow</h2>
+
+<pre><code>
++----------------------+
+| Primary Paid / EOB   |
+| Posted               |
++----------+-----------+
+           │
+           ▼
++----------------------+
+| Secondary Check      |
++----------+-----------+
+     │                 │
+     ▼                 ▼
++-------------+   +----------------------+
+| No Secondary|   | Secondary Eligible   |
++──────┬──────+   +----------+-----------+
+       │                     │
+       ▼                     ▼
++-------------+   +----------------------+
+| Patient     |   | Secondary Claim      |
+| Balance Rev.|   | Created              |
++-------------+   +----------+-----------+
+                             │
+                             ▼
+                  +----------------------+
+                  | Scrubbed / Ready     |
+                  +----------+-----------+
+                             │
+                             ▼
+                  +----------------------+
+                  | Submitted            |
+                  +----------+-----------+
+                             │
+    +────────────────────────┼────────────────┐
+    │                        │                │
+    ▼                        ▼                ▼
++──────────+           +-------------+  +────────────────+
+| Accepted |           | Rejected    |  | Denied         |
++────┬─────+           +──────┬──────+  +───────┬────────+
+     │                        │                 │
+     ▼                        ▼                 ▼
++──────────+           +-------------+  +────────────────+
+| Paid     |           | Correction  |  | AR Follow-up   |
++────┬─────+           | Needed      |  | / Appeal       |
+     │                 +-------------+  +────────────────+
+     ▼
++----------------------+
+| Validate Secondary   |
+| Payment and Balance  |
++----------+-----------+
+           │
+           ▼
++----------------------+
+| Final Patient Resp.  |
++----------+-----------+
+           │
+           ▼
++----------------------+
+| Ready / Hold Patient |
+| Statement            |
++----------------------+
+</code></pre>
+
+<p><strong>Other possible statuses:</strong> COB Hold, EOB Missing, Timely Filing Risk, Duplicate Claim, Underpayment Review, Unmatched ERA, Primary EOB Reversed, Balance Recalculation Required, Secondary Overpayment Review, Patient Statement Hold.</p>
+
+<hr>
+
+<h2>12. Follow-up & Notification Flow</h2>
+
+<pre><code>
+┌────────────────────────────┐
+│   Primary EOB/ERA Posted   │
+└─────────────┬──────────────┘
+              │
+              ▼
+┌────────────────────────────┐
+│    If Secondary Exists,    │
+│    Notify Billing Team     │
+└─────────────┬──────────────┘
+              │
+              ▼
+┌────────────────────────────┐
+│ If COB/Eligibility Issue,  │
+│  Notify Verification Team  │
+└─────────────┬──────────────┘
+              │
+              ▼
+┌────────────────────────────┐
+│ If Secondary Claim Ready,  │
+│ Submit or Queue for Batch  │
+└─────────────┬──────────────┘
+              │
+              ▼
+┌────────────────────────────┐
+│   If Rejected, Notify      │
+│    Billing Specialist      │
+└─────────────┬──────────────┘
+              │
+              ▼
+┌────────────────────────────┐
+│ If Denied or Unpaid &gt; SLA, │
+│       Notify AR Team       │
+└─────────────┬──────────────┘
+              │
+              ▼
+┌────────────────────────────┐
+│     If Secondary Paid,     │
+│   Notify Payment Posting   │
+│    and Patient Billing     │
+└─────────────┬──────────────┘
+              │
+              ▼
+┌────────────────────────────┐
+│  If Final Patient Balance  │
+│   Exists, Release Statem.  │
+│   or Hold if Issue Found   │
+└────────────────────────────┘
+</code></pre>
+
+<ul>
+    <li>If secondary claim is close to timely filing limit, escalate to billing supervisor.</li>
+    <li>If primary EOB is corrected or reversed, recheck secondary claim and patient balance.</li>
+    <li>If secondary payer denies due to COB issue, return to insurance verification for correction.</li>
+    <li>If final patient balance changes after secondary payment, update patient ledger before statement generation.</li>
+    <li>If patient statement is already generated and secondary payment changes balance, notify patient billing team to correct or hold statement.</li>
+    <li>If secondary overpayment is found, notify AR/Finance for adjustment or refund review.</li>
+</ul>
+
+</body>
+</html>

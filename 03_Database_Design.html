@@ -38,11 +38,12 @@
 <h3>Table 1: users</h3>
 <p><strong>Purpose:</strong> Store all system users (staff, providers, admins)</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>user_id</td>
@@ -308,6 +309,7 @@
 <td>FOREIGN KEY → users</td>
 <td>User who soft deleted record</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> username, email, role_id, tenant_id, employee_id, provider_id, supervisor_user_id, is_active, account_locked, email_verified, deleted_at</p>
 
@@ -316,11 +318,12 @@
 <h3>Table 2: roles</h3>
 <p><strong>Purpose:</strong> Define user roles and permissions</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>role_id</td>
@@ -394,6 +397,7 @@
 <td>FOREIGN KEY → users</td>
 <td>User who deleted role</td>
 </tr>
+</table>
 
 <p>Sample Roles:</p>
 
@@ -427,11 +431,12 @@
 <h3>Table 3: providers</h3>
 <p><strong>Purpose:</strong> Store doctor/provider information</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>provider_id</td>
@@ -649,6 +654,7 @@
 <td>FOREIGN KEY → users</td>
 <td>User who deleted provider</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> npi_type1, last_name, tenant_id, credentialing_status</p>
 
@@ -657,11 +663,12 @@
 <h3>Table 4: provider_credentials</h3>
 <p><strong>Purpose:</strong> Track provider credentialing with each payer</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>credential_id</td>
@@ -765,6 +772,7 @@
 <td></td>
 <td>Last update timestamp</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> provider_id, payer_id, expiration_date</p>
 
@@ -773,11 +781,12 @@
 <h3>Table 5: payers</h3>
 <p><strong>Purpose:</strong> Store insurance companies/payers</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>payer_id</td>
@@ -923,6 +932,7 @@
 <td>FOREIGN KEY → users</td>
 <td>Updated by user</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> payer_name, payer_code, electronic_payer_id</p>
 
@@ -931,11 +941,12 @@
 <h3>Table 6: payer_contracts</h3>
 <p><strong>Purpose:</strong> Store contracted reimbursement agreements with insurance payers</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>contract_id</td>
@@ -1087,6 +1098,7 @@
 <td>FOREIGN KEY → users</td>
 <td>Deleted by user</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> payer_id, contract_status, effective_date, tenant_id</p>
 
@@ -1095,11 +1107,12 @@
 <h3>Table 7: payer_contract_rates</h3>
 <p><strong>Purpose:</strong> Store CPT/HCPCS reimbursement rates for payer contracts</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>rate_id</td>
@@ -1227,6 +1240,7 @@
 <td></td>
 <td>Last update timestamp</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> contract_id, cpt_code, place_of_service, effective_date, tenant_id</p>
 
@@ -1235,11 +1249,12 @@
 <h3>Table 8: chargemaster (CDM)</h3>
 <p><strong>Purpose:</strong> Hospital fee schedule and charge master services</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>cdm_id</td>
@@ -1403,6 +1418,7 @@
 <td>FOREIGN KEY → users</td>
 <td>Deleted by user</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> charge_code, cpt_code, department, billing_category, tenant_id</p>
 
@@ -1411,11 +1427,12 @@
 <h3>Table 9: patients</h3>
 <p><strong>Purpose:</strong> Store patient demographics</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>patient_id</td>
@@ -1663,6 +1680,7 @@
 <td>FOREIGN KEY → users</td>
 <td>Deleted by user</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> mrn, last_name, dob, tenant_id, email</p>
 
@@ -1671,11 +1689,12 @@
 <h3>Table 10: patient_insurance</h3>
 <p><strong>Purpose:</strong> Store patient insurance coverage details</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>insurance_id</td>
@@ -1881,6 +1900,7 @@
 <td>FOREIGN KEY → users</td>
 <td>Deleted by user</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> patient_id, payer_id, priority, verification_status, tenant_id</p>
 
@@ -1889,11 +1909,12 @@
 <h3>Table 11: eligibility_checks</h3>
 <p><strong>Purpose:</strong> Store insurance eligibility verification history</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>check_id</td>
@@ -2033,6 +2054,7 @@
 <td>DEFAULT NOW()</td>
 <td>Creation timestamp</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> patient_id, insurance_id, check_date, transaction_id, tenant_id</p>
 
@@ -2041,11 +2063,12 @@
 <h3>Table 12: authorizations</h3>
 <p><strong>Purpose:</strong> Track prior authorizations</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>authorization_id</td>
@@ -2209,6 +2232,7 @@
 <td></td>
 <td>Last update timestamp</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> patient_id, authorization_number, valid_to, status, tenant_id</p>
 
@@ -2217,11 +2241,12 @@
 <h3>Table 13: appointments</h3>
 <p><strong>Purpose:</strong> Store patient appointments</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>appointment_id</td>
@@ -2379,6 +2404,7 @@
 <td>FOREIGN KEY → users</td>
 <td>Deleted by user</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> patient_id, provider_id, appointment_date, status, tenant_id</p>
 
@@ -2387,11 +2413,12 @@
 <h3>Table 14: encounters</h3>
 <p><strong>Purpose:</strong> Store patient encounter records</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>encounter_id</td>
@@ -2573,6 +2600,7 @@
 <td>FOREIGN KEY → users</td>
 <td>Deleted by user</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> patient_id, provider_id, encounter_date, status, tenant_id</p>
 
@@ -2581,11 +2609,12 @@
 <h3>Table 15: encounter_diagnoses</h3>
 <p><strong>Purpose:</strong> Store encounter diagnoses</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>diagnosis_id</td>
@@ -2659,6 +2688,7 @@
 <td>DEFAULT NOW()</td>
 <td>Creation timestamp</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> encounter_id, icd10_code, tenant_id</p>
 
@@ -2667,11 +2697,12 @@
 <h3>Table 16: encounter_procedures</h3>
 <p><strong>Purpose:</strong> Store encounter procedures</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>procedure_id</td>
@@ -2763,6 +2794,7 @@
 <td>DEFAULT NOW()</td>
 <td>Creation timestamp</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> encounter_id, cpt_code, tenant_id</p>
 
@@ -2771,11 +2803,12 @@
 <h3>Table 17: charges</h3>
 <p><strong>Purpose:</strong> Store billable charges</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>charge_id</td>
@@ -2957,6 +2990,7 @@
 <td>FOREIGN KEY → users</td>
 <td>Deleted by user</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> encounter_id, patient_id, service_date, status, tenant_id</p>
 
@@ -2965,11 +2999,12 @@
 <h3>Table 18: claims</h3>
 <p><strong>Purpose:</strong> Store insurance claims</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>claim_id</td>
@@ -3169,6 +3204,7 @@
 <td>FOREIGN KEY → users</td>
 <td>Deleted by user</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> claim_number, patient_id, payer_id, status, submission_date, tenant_id</p>
 
@@ -3177,11 +3213,12 @@
 <h3>Table 19: claim_lines</h3>
 <p><strong>Purpose:</strong> Store individual claim service line items</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>line_id</td>
@@ -3387,6 +3424,7 @@
 <td>FOREIGN KEY → users</td>
 <td>Deleted by user</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> claim_id, charge_id, cpt_code, service_date, line_status, tenant_id</p>
 
@@ -3395,11 +3433,12 @@
 <h3>Table 20: claim_scrubbing_errors</h3>
 <p><strong>Purpose:</strong> Store claim scrubbing and validation errors</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>error_id</td>
@@ -3551,6 +3590,7 @@
 <td></td>
 <td>Last update timestamp</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> claim_id, claim_line_id, error_level, error_category, resolved, assigned_to, tenant_id</p>
 
@@ -3559,11 +3599,12 @@
 <h3>Table 21: payments</h3>
 <p><strong>Purpose:</strong> Store all payments (insurance and patient)</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>payment_id</td>
@@ -3697,6 +3738,7 @@
 <td>FOREIGN KEY → users</td>
 <td>Deleted by user</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> claim_id, patient_id, payer_id, payment_date, reconciliation_status</p>
 
@@ -3705,11 +3747,12 @@
 <h3>Table 22: payment_line_items (Final Enterprise Version)</h3>
 <p><strong>Purpose:</strong> Store line-level payment posting and reimbursement details</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>line_item_id</td>
@@ -3975,6 +4018,7 @@
 <td>FOREIGN KEY → users</td>
 <td>Deleted by user</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> payment_id, claim_line_id, payer_id, patient_id, reimbursement_status, posting_status, denial_code, adjustment_code, tenant_id</p>
 
@@ -3983,11 +4027,12 @@
 <h3>Table 23: era_files</h3>
 <p><strong>Purpose:</strong> Store ERA (EDI 835) files</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>era_file_id</td>
@@ -4097,6 +4142,7 @@
 <td>DEFAULT NOW()</td>
 <td>Import timestamp</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> payer_id, check_number, check_date, status</p>
 
@@ -4105,11 +4151,12 @@
 <h3>Table 24: Denials</h3>
 <p><strong>Purpose:</strong> Track denied claims and denial management workflow</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>denial_id</td>
@@ -4327,6 +4374,7 @@
 <td>FOREIGN KEY → users</td>
 <td>Deleted by user</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> claim_id, denial_code, denial_category, status, assigned_to, appeal_deadline, tenant_id</p>
 
@@ -4335,11 +4383,12 @@
 <h3>Table 25: appeals</h3>
 <p><strong>Purpose:</strong> Track denial appeals and appeal workflow management</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>appeal_id</td>
@@ -4533,6 +4582,7 @@
 <td>FOREIGN KEY → users</td>
 <td>Deleted by user</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> denial_id, claim_id, appeal_date, status, assigned_to, tenant_id</p>
 
@@ -4541,11 +4591,12 @@
 <h3>Table 26: patient_statements</h3>
 <p><strong>Purpose:</strong> Track patient billing statements and statement delivery</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>statement_id</td>
@@ -4709,6 +4760,7 @@
 <td></td>
 <td>Last update timestamp</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> patient_id, statement_date, statement_number, delivery_status, tenant_id</p>
 
@@ -4717,11 +4769,12 @@
 <h3>Table 27: patient_payments</h3>
 <p><strong>Purpose:</strong> Track patient payments and payment processing</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>patient_payment_id</td>
@@ -4891,6 +4944,7 @@
 <td>FOREIGN KEY → users</td>
 <td>Deleted by user</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> patient_id, payment_date, payment_status, transaction_id, tenant_id</p>
 
@@ -4899,11 +4953,12 @@
 <h3>Table 28: payment_plans</h3>
 <p><strong>Purpose:</strong> Track patient payment plans and installment schedules</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>plan_id</td>
@@ -5067,6 +5122,7 @@
 <td></td>
 <td>Last update timestamp</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> patient_id, status, next_payment_date, tenant_id</p>
 
@@ -5075,11 +5131,12 @@
 <h3>Table 29: collections</h3>
 <p><strong>Purpose:</strong> Track patient balances sent to collections</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>collection_id</td>
@@ -5243,6 +5300,7 @@
 <td></td>
 <td>Last update timestamp</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> patient_id, collection_status, collection_agency, next_followup_date, tenant_id</p>
 
@@ -5251,11 +5309,12 @@
 <h3>Table 30: refunds (Final Enterprise Version)</h3>
 <p><strong>Purpose:</strong> Track insurance and patient refunds</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>refund_id</td>
@@ -5425,6 +5484,7 @@
 <td>FOREIGN KEY → users</td>
 <td>Deleted by user</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> patient_id, payer_id, refund_date, refund_status, reconciliation_status, tenant_id</p>
 
@@ -5433,11 +5493,12 @@
 <h3>Table 31: audit_logs</h3>
 <p><strong>Purpose:</strong> Comprehensive audit trail (HIPAA compliance)</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>log_id</td>
@@ -5529,6 +5590,7 @@
 <td>DEFAULT NOW()</td>
 <td>Audit timestamp</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> user_id, patient_id, action_type, timestamp, tenant_id</p>
 
@@ -5537,11 +5599,12 @@
 <h3>Table 32: code_sets</h3>
 <p><strong>Purpose:</strong> Store standardized medical coding systems (ICD, CPT, HCPCS, Revenue Codes)</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>code_set_id</td>
@@ -5717,6 +5780,7 @@
 <td>FOREIGN KEY → users</td>
 <td>Deleted by user</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> code_type, code, specialty, status, effective_date, tenant_id</p>
 
@@ -5725,11 +5789,12 @@
 <h3>Table 33: ncci_edits</h3>
 <p><strong>Purpose:</strong> Store National Correct Coding Initiative (NCCI) edit rules</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>ncci_edit_id</td>
@@ -5869,6 +5934,7 @@
 <td></td>
 <td>Last update timestamp</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> primary_cpt_code, secondary_cpt_code, effective_date, severity_level, tenant_id</p>
 
@@ -5877,11 +5943,12 @@
 <h3>Table 34: lcd_ncd_rules</h3>
 <p><strong>Purpose:</strong> Store Local Coverage Determination (LCD) and National Coverage Determination (NCD) rules</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>rule_id</td>
@@ -6033,6 +6100,7 @@
 <td></td>
 <td>Last update timestamp</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> cpt_code, icd10_code, payer_id, rule_type, effective_date, tenant_id</p>
 
@@ -6041,11 +6109,12 @@
 <h3>Table 35: reports</h3>
 <p><strong>Purpose:</strong> Store generated reports, report configurations, and analytics exports</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>report_id</td>
@@ -6251,6 +6320,7 @@
 <td>FOREIGN KEY → users</td>
 <td>Deleted by user</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> report_name, report_category, generated_by, report_status, scheduled_report, tenant_id</p>
 
@@ -6259,11 +6329,12 @@
 <h3>Table 36: tenant_organizations</h3>
 <p><strong>Purpose:</strong> Store multi-tenant organizations (hospitals, clinics, billing companies)</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>tenant_id</td>
@@ -6451,6 +6522,7 @@
 <td>FOREIGN KEY → users</td>
 <td>Deleted by</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> organization_name, organization_code, tax_id, is_active</p>
 
@@ -6459,11 +6531,12 @@
 <h3>Table 37: clearinghouse_submissions</h3>
 <p><strong>Purpose:</strong> Track claim submissions to clearinghouses</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>submission_id</td>
@@ -6585,6 +6658,7 @@
 <td></td>
 <td>Last update</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> claim_id, batch_id, submission_status, clearinghouse_name, tenant_id</p>
 
@@ -6593,11 +6667,12 @@
 <h3>Table 38: edi_transactions</h3>
 <p><strong>Purpose:</strong> Store inbound and outbound EDI transactions</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>transaction_id</td>
@@ -6713,6 +6788,7 @@
 <td>DEFAULT NOW()</td>
 <td>Creation timestamp</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> transaction_type, transaction_status, payer_id, related_claim_id, tenant_id</p>
 
@@ -6721,11 +6797,12 @@
 <h3>Table 39: claim_status_history</h3>
 <p><strong>Purpose:</strong> Maintain claim lifecycle audit history</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>history_id</td>
@@ -6805,6 +6882,7 @@
 <td></td>
 <td>Workflow notes</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> claim_id, new_status, workflow_stage, changed_at, tenant_id</p>
 
@@ -6813,11 +6891,12 @@
 <h3>Table 40: work_queues</h3>
 <p><strong>Purpose:</strong> Manage operational RCM work queues</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>queue_id</td>
@@ -6909,6 +6988,7 @@
 <td></td>
 <td>Last update</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> queue_name, queue_type, queue_status, tenant_id</p>
 
@@ -6917,11 +6997,12 @@
 <h3>Table 41: tasks</h3>
 <p><strong>Purpose:</strong> Track workflow tasks and operational activities</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>task_id</td>
@@ -7061,6 +7142,7 @@
 <td></td>
 <td>Last update</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> assigned_to, task_status, priority, due_date, tenant_id</p>
 
@@ -7069,11 +7151,12 @@
 <h3>Table 42: documents</h3>
 <p><strong>Purpose:</strong> Centralized document management</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>document_id</td>
@@ -7195,6 +7278,7 @@
 <td>FOREIGN KEY → users</td>
 <td>Deleted by</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> patient_id, claim_id, document_type, document_status, tenant_id</p>
 
@@ -7203,11 +7287,12 @@
 <h3>Table 43: claim_notes</h3>
 <p><strong>Purpose:</strong> Store claim follow-up notes</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>note_id</td>
@@ -7287,6 +7372,7 @@
 <td></td>
 <td>Last update</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> claim_id, note_category, followup_date, tenant_id</p>
 
@@ -7295,11 +7381,12 @@
 <h3>Table 44: ar_followup_activities</h3>
 <p><strong>Purpose:</strong> Track AR follow-up operations</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>followup_id</td>
@@ -7415,6 +7502,7 @@
 <td></td>
 <td>Last update</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> claim_id, payer_id, next_action_date, assigned_to, tenant_id</p>
 
@@ -7423,11 +7511,12 @@
 <h3>Table 45: guarantors</h3>
 <p><strong>Purpose:</strong> Store financially responsible parties</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>guarantor_id</td>
@@ -7555,6 +7644,7 @@
 <td>DEFAULT NOW()</td>
 <td>Creation timestamp</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> patient_id, relationship_to_patient, tenant_id</p>
 
@@ -7563,11 +7653,12 @@
 <h3>Table 46: bank_deposits</h3>
 <p><strong>Purpose:</strong> Track EFT/check deposit reconciliation</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>deposit_id</td>
@@ -7659,6 +7750,7 @@
 <td></td>
 <td>Last update</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> deposit_date, reconciliation_status, deposit_batch_number, tenant_id</p>
 
@@ -7667,11 +7759,12 @@
 <h3>Table 47: reconciliation_batches</h3>
 <p><strong>Purpose:</strong> Match ERA payments against deposits</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>reconciliation_id</td>
@@ -7763,6 +7856,7 @@
 <td></td>
 <td>Last update</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> deposit_id, reconciliation_status, auto_reconciled, tenant_id</p>
 
@@ -7771,11 +7865,12 @@
 <h3>Table 48: notifications</h3>
 <p><strong>Purpose:</strong> Manage notifications and alerts</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>notification_id</td>
@@ -7885,6 +7980,7 @@
 <td>DEFAULT NOW()</td>
 <td>Creation timestamp</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> delivery_status, notification_priority, recipient_user_id, tenant_id</p>
 
@@ -7893,11 +7989,12 @@
 <h3>Table 49: notification_templates</h3>
 <p><strong>Purpose:</strong> Reusable notification templates</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>template_id</td>
@@ -7977,6 +8074,7 @@
 <td>DEFAULT NOW()</td>
 <td>Creation timestamp</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> template_name, template_category, template_type, tenant_id</p>
 
@@ -7985,11 +8083,12 @@
 <h3>Table 50: api_integration_logs</h3>
 <p><strong>Purpose:</strong> Track external API integrations</p>
 
+<table>
 <tr>
-<td>Column</td>
-<td>Type</td>
-<td>Constraints</td>
-<td>Description</td>
+<th>Column</th>
+<th>Type</th>
+<th>Constraints</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>log_id</td>
@@ -8105,6 +8204,7 @@
 <td>DEFAULT NOW()</td>
 <td>Creation timestamp</td>
 </tr>
+</table>
 
 <p><strong>Indexes:</strong> integration_name, integration_type, response_status, severity_level, tenant_id</p>
 
@@ -8276,9 +8376,10 @@
 
 <h2>5. Data Retention Policy</h2>
 
+<table>
 <tr>
-<td>Table</td>
-<td>Retention Period</td>
+<th>Table</th>
+<th>Retention Period</th>
 </tr>
 <tr>
 <td>audit_logs</td>
@@ -8416,6 +8517,7 @@
 <td>lcd_ncd_rules</td>
 <td>Based on CMS update cycle</td>
 </tr>
+</table>
 
 <hr>
 
@@ -8490,9 +8592,10 @@
 
 <p><strong>Recommended Security Infrastructure:</strong></p>
 
+<table>
 <tr>
-<td>Security Area</td>
-<td>Recommended Technology</td>
+<th>Security Area</th>
+<th>Recommended Technology</th>
 </tr>
 <tr>
 <td>Encryption</td>
@@ -8530,6 +8633,7 @@
 <td>API Gateway Security</td>
 <td>Kong / Apigee / AWS API Gateway</td>
 </tr>
+</table>
 
 <hr>
 

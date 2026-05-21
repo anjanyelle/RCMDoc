@@ -70,13 +70,13 @@ Each module documentation includes:
 ---
 
 ### Category 5: Denial & Payment (Modules 18-22)
-**Document:** `Flows_Module_07_10_Remaining.md`
+**Documents:** `Flows_Module_Payment_Posting.md` (Payment Posting), `Flows_Module_20_Secondary_Billing.md` (Secondary Billing), `Flows_Module_11_Denial & Appeals Management.md` (Denial & Appeals), and `Flows_Module_07_10_Remaining.md` (Remaining)
 
-18. **Denial Management**
-19. **Appeals Workflow**
-20. **Payment Posting**
-21. **ERA/835 Reconciliation**
-22. **Secondary Billing**
+18. **Payment Posting**
+19. **ERA/835 Reconciliation**
+20. **Secondary Billing**
+21. **Denial Management**
+22. **Appeals Workflow**
 
 ---
 
@@ -156,11 +156,11 @@ Each module documentation includes:
 | 15 | Claim Submission | Claims | `Flows_Module_07_10_Remaining.md` |
 | 16 | Claim Tracking | Claims | `Flows_Module_07_10_Remaining.md` |
 | 17 | Insurance Adjudication | Claims | `Flows_Module_07_10_Remaining.md` |
-| 18 | Denial Management | Denial & Payment | `Flows_Module_07_10_Remaining.md` |
-| 19 | Appeals Workflow | Denial & Payment | `Flows_Module_07_10_Remaining.md` |
-| 20 | Payment Posting | Denial & Payment | `Flows_Module_07_10_Remaining.md` |
-| 21 | ERA/835 Reconciliation | Denial & Payment | `Flows_Module_07_10_Remaining.md` |
-| 22 | Secondary Billing | Denial & Payment | `Flows_Module_07_10_Remaining.md` |
+| 18 | Payment Posting | Denial & Payment | `Flows_Module_Payment_Posting.md` |
+| 19 | ERA/835 Reconciliation | Denial & Payment | `Flows_Module_07_10_Remaining.md` |
+| 20 | Secondary Billing | Denial & Payment | `Flows_Module_20_Secondary_Billing.md` |
+| 21 | Denial Management | Denial & Payment | `Flows_Module_11_Denial & Appeals Management.md` |
+| 22 | Appeals Workflow | Denial & Payment | `Flows_Module_11_Denial & Appeals Management.md` |
 | 23 | Patient Billing | Patient & AR | `Flows_Module_07_10_Remaining.md` |
 | 24 | Refund Management | Patient & AR | `Flows_Module_07_10_Remaining.md` |
 | 25 | AR Management | Patient & AR | `Flows_Module_07_10_Remaining.md` |
@@ -316,10 +316,17 @@ For questions or clarifications:
 
 **Document Navigation:**
 - **Master Index:** `Module_Flows_Master_Index.md` (This document)
-- **Module 1:** `Flows_Module_01_User_Login.md`
-- **Module 2:** `Flows_Module_02_Patient_Registration.md`
-- **Module 3:** `Flows_Module_03_Insurance_Verification.md`
-- **Module 4:** `Flows_Module_04_Appointment_Scheduling.md`
-- **Module 5:** `Flows_Module_05_Patient_Checkin.md`
-- **Module 6:** `Flows_Module_06_Medical_Coding.md`
+- **Module 1: User Login:** `Flows_Module_01_User_Login.md`
+- **Module 2: Patient Registration:** `Flows_Module_02_Patient_Registration.md`
+- **Module 3: Insurance Verification:** `Flows_Module_03_Insurance_Verification.md`
+- **Module 4: Appointment Scheduling:** `Flows_Module_04_Appointment_Scheduling.md`
+- **Module 5: Patient Check-in:** `Flows_Module_05_Patient_Checkin.md`
+- **Module 6: Medical Coding:** `Flows_Module_06_Medical_Coding.md`
+- **Module 12: Prior Authorization:** `Flows_Module_12_Prior_Authorization.md`
+- **Module 13: Order Management:** `Flows_Module_13_Order_Management.md`
+- **Module 14: Encounter Management:** `Flows_Module_14_Encounter.md`
+- **Module 18: Payment Posting:** `Flows_Module_Payment_Posting.md`
+- **Module 20: Secondary Billing:** `Flows_Module_20_Secondary_Billing.md`
+- **Denial & Appeals:** `Flows_Module_11_Denial & Appeals Management.md`
+- **Provider Credentialing:** `Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md`
 - **Remaining Modules:** `Flows_Module_07_10_Remaining.md`
