@@ -1,0 +1,560 @@
+File: Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.html (Total lines: 1234)
+Last 10 lines:
+  L1225: 
+  L1226: <p>This module directly impacts:</p>
+  L1227: <li>provider activation,</li>
+  L1228: <li>payer reimbursement,</li>
+  L1229: <li>claim acceptance,</li>
+  L1230: <li>compliance,</li>
+  L1231: <li>and enterprise operational readiness.</li>
+  L1232: 
+  L1233: </body>
+  L1234: </html>
+============================================================
+
+File: Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md (Total lines: 1282)
+Last 10 lines:
+  L1273: * billing eligibility is active,
+  L1274: * and healthcare organizations can receive reimbursements successfully.
+  L1275: 
+  L1276: This module directly impacts:
+  L1277: 
+  L1278: * provider activation,
+  L1279: * payer reimbursement,
+  L1280: * claim acceptance,
+  L1281: * compliance,
+  L1282: * and enterprise operational readiness.
+============================================================
+
+File: Flows_Module_04_Appointment_Scheduling.html (Total lines: 904)
+Last 10 lines:
+  L895: │ Log Delivery Status │
+  L896: └─────────────────────┘
+  L897: </code></pre>
+  L898: 
+  L899: <hr>
+  L900: 
+  L901: <p><strong>Next Module:</strong> <a href="Flows_Module_05_Patient_Checkin.md">Module 5: Patient Check-in</a></p>
+  L902: 
+  L903: </body>
+  L904: </html>
+============================================================
+
+File: Flows_Module_04_Appointment_Scheduling.md (Total lines: 892)
+Last 10 lines:
+  L883: └────┬────┘
+  L884: ↓
+  L885: ┌─────────────────────┐
+  L886: │ Log Delivery Status │
+  L887: └─────────────────────┘
+  L888: ```
+  L889: 
+  L890: ---
+  L891: 
+  L892: **Next Module:** [Module 5: Patient Check-in](Flows_Module_05_Patient_Checkin.md)
+============================================================
+
+File: Flows_Module_02_Patient_Registration.html (Total lines: 2015)
+Last 10 lines:
+  L2006: <p>✅ Queue management</p>
+  L2007: <p>✅ Self-service kiosk support</p>
+  L2008: <p>✅ Emergency patient registration</p>
+  L2009: 
+  L2010: <hr>
+  L2011: 
+  L2012: <p><strong>Next Module:</strong> <a href="Flows_Module_03_Insurance_Verification.md">Module 3: Insurance Verification</a></p>
+  L2013: 
+  L2014: </body>
+  L2015: </html>
+============================================================
+
+File: Flows_Module_02_Patient_Registration.md (Total lines: 2003)
+Last 10 lines:
+  L1994: ✅ Multi-tenant architecture
+  L1995: ✅ HL7 / FHIR integration
+  L1996: ✅ Document management
+  L1997: ✅ Queue management
+  L1998: ✅ Self-service kiosk support
+  L1999: ✅ Emergency patient registration
+  L2000: 
+  L2001: ---
+  L2002: 
+  L2003: **Next Module:** [Module 3: Insurance Verification](Flows_Module_03_Insurance_Verification.md)
+============================================================
+
+File: Flows_Module_03_Insurance_Verification.html (Total lines: 717)
+Last 10 lines:
+  L708: │Verification │
+  L709: └─────────────┘
+  L710: </code></pre>
+  L711: 
+  L712: <hr>
+  L713: 
+  L714: <p><strong>Next Module:</strong> <a href="Flows_Module_04_Appointment_Scheduling.md">Module 4: Appointment Scheduling</a></p>
+  L715: 
+  L716: </body>
+  L717: </html>
+============================================================
+
+File: Flows_Module_03_Insurance_Verification.md (Total lines: 705)
+Last 10 lines:
+  L696: ▼
+  L697: ┌─────────────┐
+  L698: │   Expired   │
+  L699: │Verification │
+  L700: └─────────────┘
+  L701: ```
+  L702: 
+  L703: ---
+  L704: 
+  L705: **Next Module:** [Module 4: Appointment Scheduling](Flows_Module_04_Appointment_Scheduling.md)
+============================================================
+
+File: Flows_Module_12_Prior_Authorization.html (Total lines: 715)
+Last 10 lines:
+  L706: v
+  L707: +--------------------------+
+  L708: | If Denied                |
+  L709: | Notify Provider and      |
+  L710: | Scheduling Team          |
+  L711: +--------------------------+
+  L712: </code></pre>
+  L713: 
+  L714: </body>
+  L715: </html>
+============================================================
+
+File: Flows_Module_12_Prior_Authorization.md (Total lines: 703)
+Last 10 lines:
+  L694: | Billing                  |
+  L695: +------------+-------------+
+  L696: |
+  L697: v
+  L698: +--------------------------+
+  L699: | If Denied                |
+  L700: | Notify Provider and      |
+  L701: | Scheduling Team          |
+  L702: +--------------------------+
+  L703: ```
+============================================================
+
+File: Flows_Module_05_Patient_Checkin.html (Total lines: 1116)
+Last 10 lines:
+  L1107: │ Ready for Checkout  │
+  L1108: └─────────────────────┘
+  L1109: </pre>
+  L1110: 
+  L1111: <hr>
+  L1112: 
+  L1113: <p><strong>Next Module:</strong> <a href="Flows<em>Module</em>06<em>Medical</em>Coding.md">Module 6: Medical Coding (AI-Assisted)</a></p>
+  L1114: 
+  L1115: </body>
+  L1116: </html>
+============================================================
+
+File: Flows_Module_05_Patient_Checkin.md (Total lines: 758)
+Last 10 lines:
+  L749: ↓
+  L750: ┌─────────────────────┐
+  L751: │ Consultation        │
+  L752: │ Complete            │
+  L753: └─────────────────────┘
+  L754: ```
+  L755: 
+  L756: ---
+  L757: 
+  L758: **Next Module:** [Module 6: Medical Coding (AI-Assisted)](Flows_Module_06_Medical_Coding.md)
+============================================================
+
+File: Flows_Module_14_Encounter.html (Total lines: 571)
+Last 10 lines:
+  L562: │ Ready for Coding    │
+  L563: └─────────────────────┘
+  L564: </pre>
+  L565: 
+  L566: <hr>
+  L567: 
+  L568: <p><strong>Next Module:</strong> <a href="Flows_Module_15_Medical_Coding.html">Module 15: Medical Coding</a></p>
+  L569: 
+  L570: </body>
+  L571: </html>
+============================================================
+
+File: Flows_Module_14_Encounter.md (Total lines: 561)
+Last 10 lines:
+  L552: └──────────┬──────────┘
+  L553: ↓
+  L554: ┌─────────────────────┐
+  L555: │ Ready for Coding    │
+  L556: └─────────────────────┘
+  L557: ```
+  L558: 
+  L559: ---
+  L560: 
+  L561: **Next Module:** [Module 15: Medical Coding](Flows_Module_15_Medical_Coding.md)
+============================================================
+
+File: Flows_Module_13_Order_Management.html (Total lines: 818)
+Last 10 lines:
+  L809: </code></pre>
+  L810: <li><strong>Important:</strong> If critical or stat order is delayed, escalate to provider and department supervisor.</li>
+  L811: <li><strong>Important:</strong> If order is cancelled, notify department and billing/charge capture team if any charge was already created.</li>
+  L812: <li><strong>Important:</strong> If result is abnormal or critical, notify provider based on clinical escalation policy and track acknowledgment.</li>
+  L813: <li><strong>Important:</strong> If completed order has missing charge mapping, create charge exception task.</li>
+  L814: <li><strong>Important:</strong> If order is modified after submission, notify responsible department and resend update if supported.</li>
+  L815: <li><strong>Important:</strong> If patient does not complete ordered service, notify provider/scheduling for follow-up.</li>
+  L816: 
+  L817: </body>
+  L818: </html>
+============================================================
+
+File: Flows_Module_13_Order_Management.md (Total lines: 806)
+Last 10 lines:
+  L797: | Notify Ordering User and |
+  L798: | Responsible Department   |
+  L799: +--------------------------+
+  L800: ```
+  L801: * **Important:** If critical or stat order is delayed, escalate to provider and department supervisor.
+  L802: * **Important:** If order is cancelled, notify department and billing/charge capture team if any charge was already created.
+  L803: * **Important:** If result is abnormal or critical, notify provider based on clinical escalation policy and track acknowledgment.
+  L804: * **Important:** If completed order has missing charge mapping, create charge exception task.
+  L805: * **Important:** If order is modified after submission, notify responsible department and resend update if supported.
+  L806: * **Important:** If patient does not complete ordered service, notify provider/scheduling for follow-up.
+============================================================
+
+File: Flows_Module_06_Medical_Coding.html (Total lines: 1044)
+Last 10 lines:
+  L1035: │ Capture             │
+  L1036: └─────────────────────┘
+  L1037: </pre>
+  L1038: 
+  L1039: <hr>
+  L1040: 
+  L1041: <p><strong>Next Module:</strong> <a href="Flows<em>Module</em>07<em>Charge</em>Capture.md">Module 7: Charge Capture</a></p>
+  L1042: 
+  L1043: </body>
+  L1044: </html>
+============================================================
+
+File: Flows_Module_06_Medical_Coding.md (Total lines: 745)
+Last 10 lines:
+  L736: ↓
+  L737: ┌─────────────────────┐
+  L738: │ Ready for Charge    │
+  L739: │ Capture             │
+  L740: └─────────────────────┘
+  L741: ```
+  L742: 
+  L743: ---
+  L744: 
+  L745: **Next Module:** [Module 7: Charge Capture](Flows_Module_07_Charge_Capture.md)
+============================================================
+
+File: Flows_Module_07_10_Remaining.html (Total lines: 685)
+Last 10 lines:
+  L676: Link codes      Build EDI 837    AI validation      Send to payer
+  L677: to charges      CMS-1500         Fix errors         via Waystar
+  L678: Calculate $     Validate         Re-scrub           Get ACK
+  L679: Review          Generate ID      Approve            Track status
+  L680: </pre>
+  L681: 
+  L682: <p><strong>Next Module:</strong> <a href="Flows<em>Module</em>11<em>Prior</em>Authorization.md">Module 11: Prior Authorization</a></p>
+  L683: 
+  L684: </body>
+  L685: </html>
+============================================================
+
+File: Flows_Module_07_10_Remaining.md (Total lines: 724)
+Last 10 lines:
+  L715: ```
+  L716: Charge Capture → Claim Creation → Claim Scrubbing → Claim Submission
+  L717: ↓                ↓                 ↓                  ↓
+  L718: Link codes      Build EDI 837    AI validation      Send to payer
+  L719: to charges      CMS-1500         Fix errors         via Waystar
+  L720: Calculate $     Validate         Re-scrub           Get ACK
+  L721: Review          Generate ID      Approve            Track status
+  L722: ```
+  L723: 
+  L724: **Next Module:** [Module 11: Prior Authorization](Flows_Module_11_Prior_Authorization.md)
+============================================================
+
+File: Flows_Module_Insurance Adjudication Tracking.html (Total lines: 598)
+Last 10 lines:
+  L589: │ Denial Workqueue    │
+  L590: └─────────────────────┘
+  L591: </pre>
+  L592: 
+  L593: <hr>
+  L594: 
+  L595: <p><strong>Next Module:</strong> <a href="Flows_Module_14_Encounter.html">Module 14: Encounter Creation</a></p>
+  L596: 
+  L597: </body>
+  L598: </html>
+============================================================
+
+File: Flows_Module_Insurance Adjudication Tracking.md (Total lines: 588)
+Last 10 lines:
+  L579: ↓
+  L580: ┌─────────────────────┐
+  L581: │ Payment Posted OR   │
+  L582: │ Denial Workqueue    │
+  L583: └─────────────────────┘
+  L584: ```
+  L585: 
+  L586: ---
+  L587: 
+  L588: **Next Module:** [Module 14: Encounter Creation](Flows_Module_14_Encounter.md)
+============================================================
+
+File: Flows_Module_Payment_Posting.html (Total lines: 852)
+Last 10 lines:
+  L843: <li>hospital cash flow,</li>
+  L844: <li>reimbursement accuracy,</li>
+  L845: <li>financial reporting,</li>
+  L846: <li>operational efficiency,</li>
+  L847: <li>and enterprise revenue integrity.</li>
+  L848: 
+  L849: <hr>
+  L850: 
+  L851: </body>
+  L852: </html>
+============================================================
+
+File: Flows_Module_Payment_Posting.md (Total lines: 812)
+Last 10 lines:
+  L803: - and payer reimbursement issues remain unresolved.
+  L804: 
+  L805: This module directly impacts:
+  L806: 
+  L807: - hospital cash flow,
+  L808: - reimbursement accuracy,
+  L809: - financial reporting,
+  L810: - operational efficiency,
+  L811: - and enterprise revenue integrity.
+  L812: 
+============================================================
+
+File: Flows_Module_11_Denial & Appeals Management.html (Total lines: 1044)
+Last 10 lines:
+  L1035: │    CLOSED    │
+  L1036: └──────────────┘
+  L1037: </pre>
+  L1038: 
+  L1039: <hr>
+  L1040: 
+  L1041: <p><strong>Next Module:</strong> <a href="Flows_Module_12_Patient_Billing.html">Module 12: Patient Billing</a></p>
+  L1042: 
+  L1043: </body>
+  L1044: </html>
+============================================================
+
+File: Flows_Module_11_Denial & Appeals Management.md (Total lines: 1040)
+Last 10 lines:
+  L1031: │
+  L1032: ▼
+  L1033: ┌──────────────┐
+  L1034: │    CLOSED    │
+  L1035: └──────────────┘
+  L1036: ```
+  L1037: 
+  L1038: ---
+  L1039: 
+  L1040: **Next Module:** [Module 12: Patient Billing](Flows_Module_12_Patient_Billing.md)
+============================================================
+
+File: Flows_Module_20_Secondary_Billing.html (Total lines: 864)
+Last 10 lines:
+  L855: <li>If secondary claim is close to timely filing limit, escalate to billing supervisor.</li>
+  L856: <li>If primary EOB is corrected or reversed, recheck secondary claim and patient balance.</li>
+  L857: <li>If secondary payer denies due to COB issue, return to insurance verification for correction.</li>
+  L858: <li>If final patient balance changes after secondary payment, update patient ledger before statement generation.</li>
+  L859: <li>If patient statement is already generated and secondary payment changes balance, notify patient billing team to correct or hold statement.</li>
+  L860: <li>If secondary overpayment is found, notify AR/Finance for adjustment or refund review.</li>
+  L861: </ul>
+  L862: 
+  L863: </body>
+  L864: </html>
+============================================================
+
+File: Flows_Module_20_Secondary_Billing.md (Total lines: 793)
+Last 10 lines:
+  L784: │   or Hold if Issue Found   │
+  L785: └────────────────────────────┘
+  L786: ```
+  L787: 
+  L788: - If secondary claim is close to timely filing limit, escalate to billing supervisor.
+  L789: - If primary EOB is corrected or reversed, recheck secondary claim and patient balance.
+  L790: - If secondary payer denies due to COB issue, return to insurance verification for correction.
+  L791: - If final patient balance changes after secondary payment, update patient ledger before statement generation.
+  L792: - If patient statement is already generated and secondary payment changes balance, notify patient billing team to correct or hold statement.
+  L793: - If secondary overpayment is found, notify AR/Finance for adjustment or refund review.
+============================================================
+
+File: Flows_Module_18_Patient_Billing.html (Total lines: 793)
+Last 10 lines:
+  L784: <li>If statement delivery fails, retry or switch to another approved delivery method.</li>
+  L785: <li>If patient disputes the balance, pause collections until review is completed.</li>
+  L786: <li>If financial assistance is requested, pause patient billing/collections until decision is made.</li>
+  L787: <li>If patient payment creates a credit balance, create refund/adjustment review before issuing refund.</li>
+  L788: <li>If communication consent is missing, use only approved delivery method and update patient preferences.</li>
+  L789: <li>Reconcile payment gateway transactions with patient ledger daily and create exception tasks for mismatches.</li>
+  L790: </ul>
+  L791: 
+  L792: </body>
+  L793: </html>
+============================================================
+
+File: Flows_Module_18_Patient_Billing.md (Total lines: 735)
+Last 10 lines:
+  L726: ```
+  L727: 
+  L728: - If secondary payment or primary EOB correction changes the balance, hold or correct statement before patient collection.
+  L729: - If payment gateway fails, notify patient and keep balance open until verified payment success.
+  L730: - If statement delivery fails, retry or switch to another approved delivery method.
+  L731: - If patient disputes the balance, pause collections until review is completed.
+  L732: - If financial assistance is requested, pause patient billing/collections until decision is made.
+  L733: - If patient payment creates a credit balance, create refund/adjustment review before issuing refund.
+  L734: - If communication consent is missing, use only approved delivery method and update patient preferences.
+  L735: - Reconcile payment gateway transactions with patient ledger daily and create exception tasks for mismatches.
+============================================================
+
+File: Flows_Module_Accounts Receivable (AR) Follow-Up.html (Total lines: 664)
+Last 10 lines:
+  L655: │ AR Closed           │
+  L656: └─────────────────────┘
+  L657: </pre>
+  L658: 
+  L659: <hr>
+  L660: 
+  L661: <p><strong>Next Module:</strong> <a href="Flows_Module_21_Patient_Collections.html">Module 21: Patient Collections</a></p>
+  L662: 
+  L663: </body>
+  L664: </html>
+============================================================
+
+File: Flows_Module_Accounts Receivable (AR) Follow-Up.md (Total lines: 654)
+Last 10 lines:
+  L645: └──────────┬──────────┘└─────────────────┘
+  L646: ↓
+  L647: ┌─────────────────────┐
+  L648: │ AR Closed           │
+  L649: └─────────────────────┘
+  L650: ```
+  L651: 
+  L652: ---
+  L653: 
+  L654: **Next Module:** [Module 21: Patient Collections](Flows_Module_21_Patient_Collections.md)
+============================================================
+
+File: Flows_Module_Collections.html (Total lines: 534)
+Last 10 lines:
+  L525: 
+  L526: <p>This module improves:</p>
+  L527: <li>Cash flow</li>
+  L528: <li>Revenue recovery</li>
+  L529: <li>Financial accuracy</li>
+  L530: <li>Collection efficiency</li>
+  L531: <li>Compliance management</li>
+  L532: 
+  L533: </body>
+  L534: </html>
+============================================================
+
+File: Flows_Module_Collections.md (Total lines: 416)
+Last 10 lines:
+  L407: - Revenue recovery analytics
+  L408: - Compliance monitoring
+  L409: 
+  L410: This module improves:
+  L411: 
+  L412: - Cash flow
+  L413: - Revenue recovery
+  L414: - Financial accuracy
+  L415: - Collection efficiency
+  L416: - Compliance management
+============================================================
+
+File: Flows_Module_Reporting_Analytics.html (Total lines: 559)
+Last 10 lines:
+  L550: 
+  L551: <p>This module helps hospitals improve:</p>
+  L552: <li>Revenue performance</li>
+  L553: <li>Operational efficiency</li>
+  L554: <li>Reimbursement optimization</li>
+  L555: <li>Financial forecasting</li>
+  L556: <li>Enterprise decision-making</li>
+  L557: 
+  L558: </body>
+  L559: </html>
+============================================================
+
+File: Flows_Module_Reporting_Analytics.md (Total lines: 497)
+Last 10 lines:
+  L488: * Predictive analytics
+  L489: * Executive dashboards
+  L490: 
+  L491: This module helps hospitals improve:
+  L492: 
+  L493: * Revenue performance
+  L494: * Operational efficiency
+  L495: * Reimbursement optimization
+  L496: * Financial forecasting
+  L497: * Enterprise decision-making
+============================================================
+
+File: Flows_Module_Compliance & Audit.html (Total lines: 826)
+Last 10 lines:
+  L817: │ Status: Closed      │
+  L818: └─────────────────────┘
+  L819: </pre>
+  L820: 
+  L821: <hr>
+  L822: 
+  L823: <p><strong>Next Module:</strong> <a href="Flows_Module_20_Reporting_Analytics.html">Module 20: Reporting & Analytics</a></p>
+  L824: 
+  L825: </body>
+  L826: </html>
+============================================================
+
+File: Flows_Module_Compliance & Audit.md (Total lines: 816)
+Last 10 lines:
+  L807: ↓
+  L808: ┌─────────────────────┐
+  L809: │ CLOSED              │
+  L810: │ Status: Closed      │
+  L811: └─────────────────────┘
+  L812: ```
+  L813: 
+  L814: ---
+  L815: 
+  L816: **Next Module:** [Module 20: Reporting & Analytics](Flows_Module_20_Reporting_Analytics.md)
+============================================================
+
+File: Flows_Module_01_User_Login.html (Total lines: 1802)
+Last 10 lines:
+  L1793: <p>✅ Audit logging</p>
+  L1794: <p>✅ Role-based access control</p>
+  L1795: <p>✅ Session management</p>
+  L1796: <p>✅ HIPAA compliant</p>
+  L1797: 
+  L1798: <hr>
+  L1799: 
+  L1800: <p><strong>Next Module:</strong> <a href="Flows_Module_02_Patient_Registration.md">Module 2: Patient Registration</a></p>
+  L1801: </body>
+  L1802: </html>
+============================================================
+
+File: Flows_Module_01_User_Login.md (Total lines: 1771)
+Last 10 lines:
+  L1762: ✅ Optional 2FA via SMS
+  L1763: ✅ Account lockout protection
+  L1764: ✅ Audit logging
+  L1765: ✅ Role-based access control
+  L1766: ✅ Session management
+  L1767: ✅ HIPAA compliant
+  L1768: 
+  L1769: ---
+  L1770: 
+  L1771: **Next Module:** [Module 2: Patient Registration](Flows_Module_02_Patient_Registration.md)
+============================================================
+

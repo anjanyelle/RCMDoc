@@ -1,8 +1,8 @@
-# Module: Encounter Creation - Flow Documentation
+# Module 6: Clinical Documentation / EMR (Encounter) - Flow Documentation
 
 **Version:** 1.0
-**Module ID:** MOD-005
-**Category:** Clinical & Documentation
+**Module ID:** MOD-006
+**Category:** Category 2: Clinical & Mid-Cycle Management
 
 ---
 
@@ -558,4 +558,4 @@ Prevent duplicate encounter
 
 ---
 
-**Next Module:** [Module 15: Medical Coding](Flows_Module_15_Medical_Coding.md)
+**Next Module:** [Module 6 (Support): Order Management](Flows_Module_13_Order_Management.md)

@@ -1,8 +1,8 @@
-# Module 1: User Login & Authentication - Complete Flow Documentation
+# Module 23: User Login & Authentication - Flow Documentation
 
 **Version:** 1.0  
-**Module ID:** MOD-001  
-**Category:** Authentication & Security
+**Module ID:** MOD-023  
+**Category:** Category 6: Administration & Platform Services
 
 ---
 
@@ -1768,4 +1768,4 @@ Security Monitoring
 
 ---
 
-**Next Module:** [Module 2: Patient Registration](Flows_Module_02_Patient_Registration.md)
+**Next Module:** [Pre-RCM Modules 1-4: Provider Onboarding, Credentialing, Enrollment, & Contract Management](Flows_Module_PROVIDER%20CREDENTIALING%20%26%20MANAGEMENT.md)

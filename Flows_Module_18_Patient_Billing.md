@@ -3,8 +3,8 @@ Updated for Business, Production, and Industry-Level RCM Workflow
 
 **Version:** 1.0 - Updated  
 **Module ID:** MOD-018  
-**Category:** Patient Financial Services / Patient Responsibility  
-**Next Module:** Module 19: Collections / Payment Plans  
+**Category:** Category 4: Payment & Revenue Management
+**Next Module:** [Module 19: Accounts Receivable (AR) Follow-Up](Flows_Module_Accounts%20Receivable%20%28AR%29%20Follow-Up.md)
 
 ---
 

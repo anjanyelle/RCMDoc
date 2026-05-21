@@ -1,0 +1,839 @@
+File: Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.html
+First 15 lines:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 2: Provider Credentialing &amp; Management - Complete Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>MODULE 2 — PROVIDER CREDENTIALING &amp; MANAGEMENT</h1>
+
+<p><strong>Version:</strong> 1.0</p>
+<p><strong>Module ID:</strong> MOD-002</p>
+<p><strong>Category:</strong> Provider Management / Revenue Cycle Management</p>
+
+
+Next lines: []
+============================================================
+
+File: Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md
+First 15 lines:
+# MODULE 2 — PROVIDER CREDENTIALING & MANAGEMENT
+
+**Version:** 1.0
+**Module ID:** MOD-002
+**Category:** Provider Management / Revenue Cycle Management
+
+---
+
+# 1. Module Overview
+
+## Purpose
+
+The Provider Credentialing & Management module manages the complete lifecycle of healthcare provider onboarding, verification, enrollment, compliance monitoring, privileging, and recredentialing.
+
+This module ensures providers are legally authorized, clinically qualified, and insurance-enrolled before they begin patient care and billing.
+
+Next lines: []
+============================================================
+
+File: Flows_Module_04_Appointment_Scheduling.html
+First 15 lines:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 4: Appointment Scheduling - Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module 4: Appointment Scheduling - Flow Documentation</h1>
+
+<p><strong>Version:</strong> 1.0</p>
+<p><strong>Module ID:</strong> MOD-004</p>
+<p><strong>Category:</strong> Patient Management</p>
+
+
+Next lines: ['<p><strong>Next Module:</strong> <a href="Flows_Module_05_Patient_Checkin.md">Module 5: Patient Check-in</a></p>']
+============================================================
+
+File: Flows_Module_04_Appointment_Scheduling.md
+First 15 lines:
+# Module 4: Appointment Scheduling - Flow Documentation
+
+**Version:** 1.0  
+**Module ID:** MOD-004  
+**Category:** Patient Management
+
+---
+
+## 1. Module Overview
+
+**Purpose:** Schedule patient appointments with doctors, manage calendar, send reminders.
+
+**Why Hospitals Use It:** Optimize doctor schedules, reduce no-shows, improve patient experience.
+
+**Business Goal:** Reduce no-shows, improve doctor schedule utilization, avoid double-booking, and improve patient appointment experience.
+
+Next lines: ['**Next Module:** [Module 5: Patient Check-in](Flows_Module_05_Patient_Checkin.md)']
+============================================================
+
+File: Flows_Module_02_Patient_Registration.html
+First 15 lines:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 2: Patient Registration - Complete Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module 2: Patient Registration - Complete Flow Documentation</h1>
+
+<p><strong>Version:</strong> 1.0</p>
+<p><strong>Module ID:</strong> MOD-002</p>
+<p><strong>Category:</strong> Patient Management</p>
+
+
+Next lines: ['<p><strong>Next Module:</strong> <a href="Flows_Module_03_Insurance_Verification.md">Module 3: Insurance Verification</a></p>']
+============================================================
+
+File: Flows_Module_02_Patient_Registration.md
+First 15 lines:
+# Module 2: Patient Registration - Complete Flow Documentation
+
+**Version:** 1.0  
+**Module ID:** MOD-002  
+**Category:** Patient Management
+
+---
+
+## 1. Module Overview
+
+### Purpose
+Capture and store complete patient demographic and insurance information for billing and clinical purposes.
+
+### Why Hospitals Use It
+- **Accurate Billing:** Correct patient info ensures claims get paid
+
+Next lines: ['**Next Module:** [Module 3: Insurance Verification](Flows_Module_03_Insurance_Verification.md)']
+============================================================
+
+File: Flows_Module_03_Insurance_Verification.html
+First 15 lines:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 3: Insurance Verification - Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module 3: Insurance Verification - Flow Documentation</h1>
+
+<p><strong>Version:</strong> 1.0</p>
+<p><strong>Module ID:</strong> MOD-003</p>
+<p><strong>Category:</strong> Patient Management</p>
+
+
+Next lines: ['<p><strong>Next Module:</strong> <a href="Flows_Module_04_Appointment_Scheduling.md">Module 4: Appointment Scheduling</a></p>']
+============================================================
+
+File: Flows_Module_03_Insurance_Verification.md
+First 15 lines:
+# Module 3: Insurance Verification - Flow Documentation
+
+**Version:** 1.0  
+**Module ID:** MOD-003  
+**Category:** Patient Management
+
+---
+
+## 1. Module Overview
+
+**Purpose:** Verify patient's insurance coverage and eligibility before providing services.
+
+**Why Hospitals Use It:** Prevent claim denials, confirm coverage, check copay/deductible amounts.
+
+**Business Goal:** Reduce eligibility-related claim denials, avoid wrong patient billing, confirm patient responsibility before visit, and improve clean claim rate.
+
+Next lines: ['**Next Module:** [Module 4: Appointment Scheduling](Flows_Module_04_Appointment_Scheduling.md)']
+============================================================
+
+File: Flows_Module_12_Prior_Authorization.html
+First 15 lines:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flows Module 06 Prior Authorization</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module 6: Prior Authorization - Flow Documentation</h1>
+<p><strong>Updated for Business, Production, and Industry-Level RCM Workflow</strong></p>
+
+<p><strong>Version:</strong> 1.0 - Updated</p>
+<p><strong>Module ID:</strong> MOD-006</p>
+<p><strong>Category:</strong> Patient Management / Authorization Management</p>
+
+Next lines: []
+============================================================
+
+File: Flows_Module_12_Prior_Authorization.md
+First 15 lines:
+# Module 6: Prior Authorization - Flow Documentation
+**Updated for Business, Production, and Industry-Level RCM Workflow**
+
+**Version:** 1.0 - Updated  
+**Module ID:** MOD-006  
+**Category:** Patient Management / Authorization Management  
+
+---
+
+## 1. Module Overview
+* **Purpose:** Check whether insurance approval is required before service, submit authorization requests, track payer decision, and save authorization number for claim submission.
+* **Why Hospitals Use It:** Prevent authorization-related denials, confirm medical necessity, avoid delayed procedures, and make sure claims include valid authorization details.
+* **Main Users:** Prior Authorization Specialist, Front Desk Staff, Billing Team, Provider, Clinical Staff.
+* **Business Goal:** Reduce prior-authorization denials, avoid cancelled or delayed services, improve clean claim rate, reduce avoidable write-offs, prevent cancelled procedures, and improve reimbursement accuracy by ensuring authorization is completed before service is provided.
+
+
+Next lines: []
+============================================================
+
+File: Flows_Module_05_Patient_Checkin.html
+First 15 lines:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 5: Patient Check-in - Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module 5: Patient Check-in - Flow Documentation</h1>
+
+<p><strong>Version:</strong> 1.0  </p>
+<p><strong>Module ID:</strong> MOD-005  </p>
+<p><strong>Category:</strong> Patient Management</p>
+
+
+Next lines: ['<p><strong>Next Module:</strong> <a href="Flows<em>Module</em>06<em>Medical</em>Coding.md">Module 6: Medical Coding (AI-Assisted)</a></p>']
+============================================================
+
+File: Flows_Module_05_Patient_Checkin.md
+First 15 lines:
+# Module 5: Patient Check-in - Flow Documentation
+
+**Version:** 1.0  
+**Module ID:** MOD-005  
+**Category:** Patient Management
+
+---
+
+## 1. Module Overview
+
+**Purpose:** Check-in patients when they arrive for appointments, verify information, collect copay.
+
+**Why Hospitals Use It:** Streamline patient flow, update information, collect payments upfront.
+
+**Main Users:** Front Desk Staff, Patients (self-check-in kiosk)
+
+Next lines: ['**Next Module:** [Module 6: Medical Coding (AI-Assisted)](Flows_Module_06_Medical_Coding.md)']
+============================================================
+
+File: Flows_Module_14_Encounter.html
+First 15 lines:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 14: Encounter Creation - Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module: Encounter Creation - Flow Documentation</h1>
+
+<p><strong>Version:</strong> 1.0</p>
+<p><strong>Module ID:</strong> MOD-005</p>
+<p><strong>Category:</strong> Clinical & Documentation</p>
+
+
+Next lines: ['<p><strong>Next Module:</strong> <a href="Flows_Module_15_Medical_Coding.html">Module 15: Medical Coding</a></p>']
+============================================================
+
+File: Flows_Module_14_Encounter.md
+First 15 lines:
+# Module: Encounter Creation - Flow Documentation
+
+**Version:** 1.0
+**Module ID:** MOD-005
+**Category:** Clinical & Documentation
+
+---
+
+## 1. Module Overview
+
+**Purpose:** Create a clinical encounter when the patient meets the doctor, capture visit details, diagnosis, procedures, orders, and prepare the encounter for documentation, coding, and billing.
+
+---
+
+## 2. Actors Involved
+
+Next lines: ['**Next Module:** [Module 15: Medical Coding](Flows_Module_15_Medical_Coding.md)']
+============================================================
+
+File: Flows_Module_13_Order_Management.html
+First 15 lines:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flows Module 13 Order Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module 10: Order Management - Flow Documentation</h1>
+<p><strong>Updated for Business, Production, and Industry-Level RCM Workflow</strong></p>
+
+<p><strong>Version:</strong> 1.0 - Updated</p>
+<p><strong>Module ID:</strong> MOD-010</p>
+<p><strong>Category:</strong> Clinical Workflow / Order Management / Charge Capture Support</p>
+
+Next lines: ['<p><strong>Next Module:</strong> Module 11: Charge Capture / Service Documentation</p>']
+============================================================
+
+File: Flows_Module_13_Order_Management.md
+First 15 lines:
+# Module 10: Order Management - Flow Documentation
+**Updated for Business, Production, and Industry-Level RCM Workflow**
+
+**Version:** 1.0 - Updated  
+**Module ID:** MOD-010  
+**Category:** Clinical Workflow / Order Management / Charge Capture Support  
+**Next Module:** Module 11: Charge Capture / Service Documentation  
+
+---
+
+## 1. Module Overview
+* **Purpose:** Create, manage, track, complete, modify, and cancel clinical orders such as lab, radiology/imaging, pharmacy/medication, referrals, procedures, and other services ordered during an encounter.
+* **Why Hospitals Use It:** Ensure ordered services are completed, documented, authorized when needed, connected to results, and available for charge capture and billing.
+* **Main Users:** Provider / Doctor, Clinical Staff, Nurses, Lab Team, Radiology Team, Pharmacy Team, Prior Authorization Specialist, Billing Team, Patient.
+* **Business Goal:** Reduce missed services, missed charges, duplicate orders, authorization-related delays, patient safety risks, and claim denials by making sure each order has clear status, ownership, result tracking, provider review, and billing linkage.
+
+Next lines: ['**Next Module:** Module 11: Charge Capture / Service Documentation']
+============================================================
+
+File: Flows_Module_06_Medical_Coding.html
+First 15 lines:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 6: Medical Coding (AI-Assisted) - Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module 6: Medical Coding (AI-Assisted) - Flow Documentation</h1>
+
+<p><strong>Version:</strong> 1.0  </p>
+<p><strong>Module ID:</strong> MOD-006  </p>
+<p><strong>Category:</strong> Clinical & Documentation</p>
+
+
+Next lines: ['<p><strong>Next Module:</strong> <a href="Flows<em>Module</em>07<em>Charge</em>Capture.md">Module 7: Charge Capture</a></p>']
+============================================================
+
+File: Flows_Module_06_Medical_Coding.md
+First 15 lines:
+# Module 6: Medical Coding (AI-Assisted) - Flow Documentation
+
+**Version:** 1.0  
+**Module ID:** MOD-006  
+**Category:** Clinical & Documentation
+
+---
+
+## 1. Module Overview
+
+**Purpose:** Convert clinical documentation into ICD-10, CPT, and HCPCS codes for billing using AI assistance.
+
+**Why Hospitals Use It:** Accurate coding ensures proper reimbursement, reduces claim denials, speeds up billing.
+
+**Main Users:** Medical Coders, Billing Team, AI System
+
+Next lines: ['**Next Module:** [Module 7: Charge Capture](Flows_Module_07_Charge_Capture.md)']
+============================================================
+
+File: Flows_Module_07_10_Remaining.html
+First 15 lines:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modules 7-10: Charge Capture, Claim Creation, Scrubbing, Submission</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Modules 7-10: Charge Capture, Claim Creation, Scrubbing, Submission</h1>
+
+<p><strong>Version:</strong> 1.0  </p>
+<p><strong>Category:</strong> Billing & Claims</p>
+
+<hr>
+
+Next lines: ['<p><strong>Next Module:</strong> <a href="Flows<em>Module</em>11<em>Prior</em>Authorization.md">Module 11: Prior Authorization</a></p>']
+============================================================
+
+File: Flows_Module_07_10_Remaining.md
+First 15 lines:
+# Modules 7-10: Charge Capture, Claim Creation, Scrubbing, Submission
+
+**Version:** 1.0  
+**Category:** Billing & Claims
+
+---
+
+# Module 7: Charge Capture
+
+## 1. Overview
+**Purpose:** Capture all billable services, procedures, medications, and supplies and convert them into charges for insurance claim creation and patient billing.
+
+## 2. Actors
+- Billing Team, Medical Coder, Provider/Doctor, System, Charge Master Database (CDM), Insurance Contract Engine, Revenue Integrity Team, Compliance Team
+
+
+Next lines: ['**Next Module:** [Module 11: Prior Authorization](Flows_Module_11_Prior_Authorization.md)']
+============================================================
+
+File: Flows_Module_Insurance Adjudication Tracking.html
+First 15 lines:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module: Insurance Adjudication Tracking - Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module: Insurance Adjudication Tracking</h1>
+
+<p><strong>Version:</strong> 1.0</p>
+<p><strong>Module ID:</strong> MOD-013</p>
+<p><strong>Category:</strong> Claims & Payer Processing</p>
+
+
+Next lines: ['<p><strong>Next Module:</strong> <a href="Flows_Module_14_Encounter.html">Module 14: Encounter Creation</a></p>']
+============================================================
+
+File: Flows_Module_Insurance Adjudication Tracking.md
+First 15 lines:
+# Module: Insurance Adjudication Tracking
+
+**Version:** 1.0
+**Module ID:** MOD-013
+**Category:** Claims & Payer Processing
+
+---
+
+## 1. Module Overview
+
+**Purpose:** Track how insurance companies review, process, approve, deny, or partially pay submitted claims.
+
+**Why Hospitals Use It:** After claim submission, hospitals need to know claim status, payer decisions, payment amount, denial reason, adjustment amount, and next action.
+
+**Main Users:** Billing Team, AR Team, Claim Follow-up Team, Denial Team, Finance Team, System Admin
+
+Next lines: ['**Next Module:** [Module 14: Encounter Creation](Flows_Module_14_Encounter.md)']
+============================================================
+
+File: Flows_Module_Payment_Posting.html
+First 15 lines:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 18: Payment Posting - Complete Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module 18: Payment Posting - Complete Flow Documentation</h1>
+
+<p><strong>Version:</strong> 1.0  </p>
+<p><strong>Module ID:</strong> MOD-018  </p>
+<p><strong>Category:</strong> Financial Management / Revenue Cycle Management</p>
+
+
+Next lines: []
+============================================================
+
+File: Flows_Module_Payment_Posting.md
+First 15 lines:
+# Module 18: Payment Posting - Flow Documentation
+
+**Version:** 1.0  
+**Module ID:** MOD-018  
+**Category:** Financial Management / Revenue Cycle Management  
+
+---
+
+## 1. Module Overview
+
+**Purpose:** Process insurance and patient payments, reconcile ERA/EFT transactions, update AR balances, apply financial adjustments, and realize hospital revenue.
+
+**Why Hospitals Use It:** Ensure accurate payment posting, reduce manual reconciliation work, detect denials/underpayments, improve cash flow, and maintain financial accuracy.
+
+**Business Goal:** Accelerate revenue realization, reduce AR days, automate payment reconciliation, prevent revenue leakage, and ensure payer contract compliance.
+
+Next lines: []
+============================================================
+
+File: Flows_Module_11_Denial & Appeals Management.html
+First 15 lines:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 11: Denial & Appeals Management - Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module 11: Denial & Appeals Management - Flow Documentation</h1>
+
+<p><strong>Version:</strong> 1.0  </p>
+<p><strong>Module ID:</strong> MOD-011  </p>
+<p><strong>Category:</strong> Revenue Cycle Management</p>
+
+
+Next lines: ['<p><strong>Next Module:</strong> <a href="Flows_Module_12_Patient_Billing.html">Module 12: Patient Billing</a></p>']
+============================================================
+
+File: Flows_Module_11_Denial & Appeals Management.md
+First 15 lines:
+# Module 11: Denial & Appeals Management - Flow Documentation
+
+**Version:** 1.0  
+**Module ID:** MOD-011  
+**Category:** Revenue Cycle Management
+
+---
+
+## 1. Module Overview
+
+**Purpose:** Manage insurance claim denials, track appeal processes, and maximize revenue recovery through systematic denial management.
+
+**Why Hospitals Use It:** Reduce revenue loss from denials, improve claim acceptance rates, ensure timely appeals, maintain compliance with payer requirements.
+
+**Main Users:** Billing Team, Claims Analysts, Denial Management Specialists, Revenue Cycle Managers
+
+Next lines: ['**Next Module:** [Module 12: Patient Billing](Flows_Module_12_Patient_Billing.md)']
+============================================================
+
+File: Flows_Module_20_Secondary_Billing.html
+First 15 lines:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 20: Secondary Billing - Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module 20: Secondary Billing - Flow Documentation</h1>
+
+<div class="meta">
+    <p><strong>Version:</strong> 1.0 - Updated</p>
+    <p><strong>Module ID:</strong> MOD-020</p>
+    <p><strong>Category:</strong> Billing / Claims / Revenue Cycle Management</p>
+
+Next lines: ['<p><strong>Next Module:</strong> <a href="Flows_Module_21_Patient_Responsibility.html">Module 21: Patient Responsibility / Patient Billing</a></p>']
+============================================================
+
+File: Flows_Module_20_Secondary_Billing.md
+First 15 lines:
+# Module 20: Secondary Billing - Flow Documentation
+
+**Version:** 1.0 - Updated  
+**Module ID:** MOD-020  
+**Category:** Billing / Claims / Revenue Cycle Management  
+**Next Module:** [Module 21: Patient Responsibility / Patient Billing](Flows_Module_21_Patient_Responsibility.md)
+
+---
+
+## 1. Module Overview
+
+**Purpose:** Create and submit secondary insurance claims after the primary payer adjudicates the claim, using primary EOB/ERA details, remaining balance, COB rules, and correct patient responsibility calculation.
+
+**Why Hospitals Use It:** Recover additional reimbursement from secondary insurance, reduce patient balance errors, prevent duplicate billing, and avoid revenue leakage after primary payment.
+
+
+Next lines: ['**Next Module:** [Module 21: Patient Responsibility / Patient Billing](Flows_Module_21_Patient_Responsibility.md)']
+============================================================
+
+File: Flows_Module_18_Patient_Billing.html
+First 15 lines:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 18: Patient Billing - Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module 18: Patient Billing - Flow Documentation</h1>
+
+<div class="meta">
+    <p><strong>Version:</strong> 1.0 - Updated</p>
+    <p><strong>Module ID:</strong> MOD-018</p>
+    <p><strong>Category:</strong> Patient Financial Services / Patient Responsibility</p>
+
+Next lines: ['<p><strong>Next Module:</strong> Module 19: Collections / Payment Plans</p>']
+============================================================
+
+File: Flows_Module_18_Patient_Billing.md
+First 15 lines:
+# Module 18: Patient Billing - Flow Documentation
+Updated for Business, Production, and Industry-Level RCM Workflow
+
+**Version:** 1.0 - Updated  
+**Module ID:** MOD-018  
+**Category:** Patient Financial Services / Patient Responsibility  
+**Next Module:** Module 19: Collections / Payment Plans  
+
+---
+
+## 1. Module Overview
+
+### Purpose
+Generate, review, send, and track patient statements after all applicable insurance payments, secondary billing, adjustments, and patient responsibility calculations are completed.
+
+
+Next lines: ['**Next Module:** Module 19: Collections / Payment Plans']
+============================================================
+
+File: Flows_Module_Accounts Receivable (AR) Follow-Up.html
+First 15 lines:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module: Accounts Receivable (AR) Follow-Up - Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module: Accounts Receivable (AR) Follow-Up</h1>
+
+<p><strong>Version:</strong> 1.0</p>
+<p><strong>Module ID:</strong> MOD-020</p>
+<p><strong>Category:</strong> Revenue Recovery & Collections</p>
+
+
+Next lines: ['<p><strong>Next Module:</strong> <a href="Flows_Module_21_Patient_Collections.html">Module 21: Patient Collections</a></p>']
+============================================================
+
+File: Flows_Module_Accounts Receivable (AR) Follow-Up.md
+First 15 lines:
+# Module: Accounts Receivable (AR) Follow-Up
+
+**Version:** 1.0
+**Module ID:** MOD-020
+**Category:** Revenue Recovery & Collections
+
+---
+
+## 1. Module Overview
+
+**Purpose:** Track unpaid insurance claims and patient balances, follow up with payers, reduce AR aging, and recover pending revenue.
+
+**Why Hospitals Use It:** Hospitals use AR Follow-Up to make sure submitted claims do not stay unpaid for a long time. It helps teams identify pending claims, contact payers, resolve issues, and collect payments faster.
+
+**Main Users:** AR Team, Billing Team, Denial Team, Payment Posting Team, Finance Team, Insurance Payer, System Admin
+
+Next lines: ['**Next Module:** [Module 21: Patient Collections](Flows_Module_21_Patient_Collections.md)']
+============================================================
+
+File: Flows_Module_Collections.html
+First 15 lines:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 20: Collections / Refund / Write-Off Management - Complete Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module 20: Collections / Refund / Write-Off Management</h1>
+
+<p><strong>Version:</strong> 1.0</p>
+<p><strong>Module ID:</strong> MOD-020</p>
+<p><strong>Category:</strong> Collections / Financial Recovery / Revenue Cycle Management</p>
+
+
+Next lines: []
+============================================================
+
+File: Flows_Module_Collections.md
+First 15 lines:
+Module 20: Collections / Refund / Write-Off Management
+
+Version: 1.0
+
+Module ID: MOD-020
+
+Category: Collections / Financial Recovery / Revenue Cycle Management
+
+
+1. Module Overview
+
+Purpose
+
+The Collections / Refund / Write-Off Management module manages overdue collections, patient refunds, credit balances, financial adjustments, and write-off workflows to ensure proper revenue recovery and financial reconciliation.
+
+
+Next lines: []
+============================================================
+
+File: Flows_Module_Reporting_Analytics.html
+First 15 lines:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 23: Reporting &amp; Analytics - Complete Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module 23: Reporting &amp; Analytics</h1>
+
+<p><strong>Version:</strong> 1.0</p>
+<p><strong>Module ID:</strong> MOD-023</p>
+<p><strong>Category:</strong> Business Intelligence / Analytics / Revenue Cycle Management</p>
+
+
+Next lines: []
+============================================================
+
+File: Flows_Module_Reporting_Analytics.md
+First 15 lines:
+Module 23: Reporting & Analytics
+
+Version: 1.0
+
+Module ID: MOD-023
+
+Category: Business Intelligence / Analytics / Revenue Cycle Management
+
+---
+
+1. Module Overview
+
+Purpose
+
+The Reporting & Analytics module collects data from all RCM modules and provides dashboards, KPIs, financial reports, operational insights, denial trends, AR analytics, and executive-level intelligence for hospital management.
+
+Next lines: []
+============================================================
+
+File: Flows_Module_Compliance & Audit.html
+First 15 lines:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module: Compliance & Audit - Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module: Compliance & Audit</h1>
+
+<p><strong>Version:</strong> 1.0</p>
+<p><strong>Module ID:</strong> MOD-019</p>
+<p><strong>Category:</strong> Security, Compliance & Governance</p>
+
+
+Next lines: ['<p><strong>Next Module:</strong> <a href="Flows_Module_20_Reporting_Analytics.html">Module 20: Reporting & Analytics</a></p>']
+============================================================
+
+File: Flows_Module_Compliance & Audit.md
+First 15 lines:
+# Module: Compliance & Audit
+
+**Version:** 1.0
+**Module ID:** MOD-019
+**Category:** Security, Compliance & Governance
+
+---
+
+## 1. Module Overview
+
+**Purpose:** Track, monitor, and validate all user/system actions to ensure HIPAA, CMS, payer, billing, coding, and internal compliance rules are followed.
+
+**Why Hospitals Use It:** Hospitals need this module to prevent HIPAA violations, fraud, unauthorized access, billing mistakes, audit failures, and compliance penalties.
+
+**Main Users:** Compliance Team, Internal Auditor, Security Team, Admin Team, Billing Team, Coding Team, Providers, System Admin
+
+Next lines: ['**Next Module:** [Module 20: Reporting & Analytics](Flows_Module_20_Reporting_Analytics.md)']
+============================================================
+
+File: Flows_Module_01_User_Login.html
+First 15 lines:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 1: User Login & Authentication - Complete Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module 1: User Login &amp; Authentication - Complete Flow Documentation</h1>
+
+<p><strong>Version:</strong> 1.0</p>
+<p><strong>Module ID:</strong> MOD-001</p>
+<p><strong>Category:</strong> Authentication &amp; Security</p>
+
+
+Next lines: ['<p><strong>Next Module:</strong> <a href="Flows_Module_02_Patient_Registration.md">Module 2: Patient Registration</a></p>']
+============================================================
+
+File: Flows_Module_01_User_Login.md
+First 15 lines:
+# Module 1: User Login & Authentication - Complete Flow Documentation
+
+**Version:** 1.0  
+**Module ID:** MOD-001  
+**Category:** Authentication & Security
+
+---
+
+## 1. Module Overview
+
+### Purpose
+Secure user authentication system that verifies user credentials and provides role-based access to the RCM application.
+
+### Why Hospitals Use It
+- **Security:** Protects sensitive patient data (HIPAA compliance)
+
+Next lines: ['**Next Module:** [Module 2: Patient Registration](Flows_Module_02_Patient_Registration.md)']
+============================================================

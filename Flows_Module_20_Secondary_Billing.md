@@ -1,9 +1,9 @@
-# Module 20: Secondary Billing - Flow Documentation
+# Module 17: Secondary Insurance Billing - Flow Documentation
 
 **Version:** 1.0 - Updated  
-**Module ID:** MOD-020  
-**Category:** Billing / Claims / Revenue Cycle Management  
-**Next Module:** [Module 21: Patient Responsibility / Patient Billing](Flows_Module_21_Patient_Responsibility.md)
+**Module ID:** MOD-017  
+**Category:** Category 4: Payment & Revenue Management
+**Next Module:** [Module 18: Patient Billing](Flows_Module_18_Patient_Billing.md)
 
 ---
 

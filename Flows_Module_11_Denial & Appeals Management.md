@@ -1,8 +1,8 @@
-# Module 11: Denial & Appeals Management - Flow Documentation
+# Module 16: Denial & Appeals Management - Flow Documentation
 
 **Version:** 1.0  
-**Module ID:** MOD-011  
-**Category:** Revenue Cycle Management
+**Module ID:** MOD-016  
+**Category:** Category 4: Payment & Revenue Management
 
 ---
 
@@ -1037,4 +1037,4 @@ Review payer rules and root cause
 
 ---
 
-**Next Module:** [Module 12: Patient Billing](Flows_Module_12_Patient_Billing.md)
+**Next Module:** [Module 17: Secondary Insurance Billing](Flows_Module_20_Secondary_Billing.md)

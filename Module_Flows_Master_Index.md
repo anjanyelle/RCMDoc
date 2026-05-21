@@ -8,7 +8,7 @@
 
 ## 📋 Overview
 
-This documentation provides **complete flow diagrams, workflows, use cases, and action plans** for all 30 modules in the Healthcare RCM Application.
+This documentation provides **complete flow diagrams, workflows, use cases, and action plans** for all 37 modules in the Healthcare RCM Application.
 
 Each module documentation includes:
 1. ✅ Module Overview
@@ -27,76 +27,38 @@ Each module documentation includes:
 
 ## 📚 Module Categories
 
-### Category 1: Authentication & Patient Management (Modules 1-6)
-**Documents:** `Flows_Module_01_User_Login.md` through `Flows_Module_05_Patient_Checkin.md`, and `Flows_Module_12_Prior_Authorization.md`
+### Category 1: Authentication & Patient Management (Modules 1-5, 23)
+**Documents:** [Flows_Module_04_Appointment_Scheduling.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_04_Appointment_Scheduling.md), [Flows_Module_02_Patient_Registration.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_02_Patient_Registration.md), [Flows_Module_03_Insurance_Verification.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_03_Insurance_Verification.md), [Flows_Module_12_Prior_Authorization.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_12_Prior_Authorization.md), [Flows_Module_05_Patient_Checkin.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_05_Patient_Checkin.md), [Flows_Module_01_User_Login.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_01_User_Login.md)
 
-1. **User Login & Authentication**
-2. **Patient Registration**
-3. **Insurance Verification**
-4. **Appointment Scheduling**
-5. **Patient Check-in**
-6. **Prior Authorization**
-
----
-
-### Category 2: Clinical & Documentation (Modules 6a-9)
-**Documents:** `Flows_Module_13_Order_Management.md` (Order Management) and `Flows_Module_07_10_Remaining.md` (Grouped)
-
-6a. **Doctor Consultation**
-7. **Clinical Documentation**
-8. **Order Management**
-9. **Referral Management**
+1. **Module 1: Appointment Scheduling**
+2. **Module 2: Patient Registration**
+3. **Module 3: Insurance Eligibility Verification**
+4. **Module 4: Prior Authorization / Referral Management**
+5. **Module 5: Patient Check-In**
+6. **Module 23: User Login & Authentication**
 
 ---
 
-### Category 3: Coding & Billing (Modules 10-14)
-**Documents:** `Flows_Module_06_Medical_Coding.md` and `Flows_Module_07_10_Remaining.md`
+### Category 2: Clinical Documentation & Billing (Pre-RCM & Modules 6-22)
+**Documents:** [Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md), [Flows_Module_14_Encounter.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_14_Encounter.md), [Flows_Module_13_Order_Management.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_13_Order_Management.md), [Flows_Module_06_Medical_Coding.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_06_Medical_Coding.md), [Flows_Module_07_10_Remaining.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_07_10_Remaining.md), [Flows_Module_Insurance Adjudication Tracking.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_Insurance Adjudication Tracking.md), [Flows_Module_Payment_Posting.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_Payment_Posting.md), [Flows_Module_11_Denial & Appeals Management.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_11_Denial & Appeals Management.md), [Flows_Module_20_Secondary_Billing.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_20_Secondary_Billing.md), [Flows_Module_18_Patient_Billing.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_18_Patient_Billing.md), [Flows_Module_Accounts Receivable (AR) Follow-Up.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_Accounts Receivable (AR) Follow-Up.md), [Flows_Module_Collections.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_Collections.md), [Flows_Module_Reporting_Analytics.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_Reporting_Analytics.md), [Flows_Module_Compliance & Audit.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_Compliance & Audit.md)
 
-10. **Medical Coding**
-11. **Coding Review**
-12. **Charge Capture**
-13. **Claim Creation**
-14. **Claim Scrubbing**
-
----
-
-### Category 4: Claims & Submission (Modules 15-17)
-**Document:** `Flows_Module_07_10_Remaining.md`
-
-15. **Claim Submission**
-16. **Claim Tracking**
-17. **Insurance Adjudication**
-
----
-
-### Category 5: Denial & Payment (Modules 18-22)
-**Documents:** `Flows_Module_Payment_Posting.md` (Payment Posting), `Flows_Module_20_Secondary_Billing.md` (Secondary Billing), `Flows_Module_11_Denial & Appeals Management.md` (Denial & Appeals), and `Flows_Module_07_10_Remaining.md` (Remaining)
-
-18. **Payment Posting**
-19. **ERA/835 Reconciliation**
-20. **Secondary Billing**
-21. **Denial Management**
-22. **Appeals Workflow**
-
----
-
-### Category 6: Patient Billing & AR (Modules 23-25)
-**Document:** `Flows_Module_07_10_Remaining.md`
-
-23. **Patient Billing**
-24. **Refund Management**
-25. **AR Management**
-
----
-
-### Category 7: Reporting & Advanced (Modules 26-30)
-**Document:** `Flows_Module_07_10_Remaining.md`
-
-26. **Reporting & Analytics**
-27. **Audit & Compliance**
-28. **Patient Portal**
-29. **Notifications & Messaging**
-30. **AI-Based Automation**
+1. **Pre-RCM Module 2: Provider Credentialing & Management**
+2. **Module 6: Encounter Management**
+3. **Module 6 (Support): Order Management**
+4. **Module 7: Medical Coding**
+5. **Module 8: Charge Capture**
+6. **Module 8a: Claim Creation**
+7. **Module 9: Claim Scrubbing**
+8. **Module 10: Claim Submission**
+9. **Module 13: Insurance Adjudication Tracking**
+10. **Module 15: Payment Posting**
+11. **Module 16: Denial & Appeals Management**
+12. **Module 17: Secondary Insurance Billing**
+13. **Module 18: Patient Billing**
+14. **Module 19: Accounts Receivable (AR) Follow-Up**
+15. **Module 20: Collections / Refund / Write-Off Management**
+16. **Module 21: Reporting & Analytics**
+17. **Module 22: Compliance & Audit**
 
 ---
 
@@ -138,37 +100,29 @@ Each module documentation includes:
 
 | Module # | Module Name | Category | Document |
 |----------|-------------|----------|----------|
-| 1 | User Login & Authentication | Auth & Patient | `Flows_Module_01_User_Login.md` |
-| 2 | Patient Registration | Auth & Patient | `Flows_Module_02_Patient_Registration.md` |
-| 3 | Insurance Verification | Auth & Patient | `Flows_Module_03_Insurance_Verification.md` |
-| 4 | Appointment Scheduling | Auth & Patient | `Flows_Module_04_Appointment_Scheduling.md` |
-| 5 | Patient Check-in | Auth & Patient | `Flows_Module_05_Patient_Checkin.md` |
-| 6 | Prior Authorization | Auth & Patient | `Flows_Module_12_Prior_Authorization.md` |
-| 6a | Doctor Consultation | Clinical | `Flows_Module_07_10_Remaining.md` |
-| 7 | Clinical Documentation | Clinical | `Flows_Module_07_10_Remaining.md` |
-| 8 | Order Management | Clinical | `Flows_Module_13_Order_Management.md` |
-| 9 | Referral Management | Clinical | `Flows_Module_07_10_Remaining.md` |
-| 10 | Medical Coding | Coding & Billing | `Flows_Module_06_Medical_Coding.md` |
-| 11 | Coding Review | Coding & Billing | `Flows_Module_07_10_Remaining.md` |
-| 12 | Charge Capture | Coding & Billing | `Flows_Module_07_10_Remaining.md` |
-| 13 | Claim Creation | Coding & Billing | `Flows_Module_07_10_Remaining.md` |
-| 14 | Claim Scrubbing | Coding & Billing | `Flows_Module_07_10_Remaining.md` |
-| 15 | Claim Submission | Claims | `Flows_Module_07_10_Remaining.md` |
-| 16 | Claim Tracking | Claims | `Flows_Module_07_10_Remaining.md` |
-| 17 | Insurance Adjudication | Claims | `Flows_Module_07_10_Remaining.md` |
-| 18 | Payment Posting | Denial & Payment | `Flows_Module_Payment_Posting.md` |
-| 19 | ERA/835 Reconciliation | Denial & Payment | `Flows_Module_07_10_Remaining.md` |
-| 20 | Secondary Billing | Denial & Payment | `Flows_Module_20_Secondary_Billing.md` |
-| 21 | Denial Management | Denial & Payment | `Flows_Module_11_Denial & Appeals Management.md` |
-| 22 | Appeals Workflow | Denial & Payment | `Flows_Module_11_Denial & Appeals Management.md` |
-| 23 | Patient Billing | Patient & AR | `Flows_Module_07_10_Remaining.md` |
-| 24 | Refund Management | Patient & AR | `Flows_Module_07_10_Remaining.md` |
-| 25 | AR Management | Patient & AR | `Flows_Module_07_10_Remaining.md` |
-| 26 | Reporting & Analytics | Advanced | `Flows_Module_07_10_Remaining.md` |
-| 27 | Audit & Compliance | Advanced | `Flows_Module_07_10_Remaining.md` |
-| 28 | Patient Portal | Advanced | `Flows_Module_07_10_Remaining.md` |
-| 29 | Notifications & Messaging | Advanced | `Flows_Module_07_10_Remaining.md` |
-| 30 | AI-Based Automation | Advanced | `Flows_Module_07_10_Remaining.md` |
+| 1 | Appointment Scheduling | Auth & Patient | [Flows_Module_04_Appointment_Scheduling.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_04_Appointment_Scheduling.md) |
+| 2 | Patient Registration | Auth & Patient | [Flows_Module_02_Patient_Registration.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_02_Patient_Registration.md) |
+| 3 | Insurance Eligibility Verification | Auth & Patient | [Flows_Module_03_Insurance_Verification.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_03_Insurance_Verification.md) |
+| 4 | Prior Authorization / Referral Management | Auth & Patient | [Flows_Module_12_Prior_Authorization.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_12_Prior_Authorization.md) |
+| 5 | Patient Check-In | Auth & Patient | [Flows_Module_05_Patient_Checkin.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_05_Patient_Checkin.md) |
+| 23 | User Login & Authentication | Auth & Patient | [Flows_Module_01_User_Login.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_01_User_Login.md) |
+| Pre-RCM 2 | Provider Credentialing & Management | Clinical & Billing | [Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md) |
+| 6 | Encounter Management | Clinical & Billing | [Flows_Module_14_Encounter.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_14_Encounter.md) |
+| 6 (Support) | Order Management | Clinical & Billing | [Flows_Module_13_Order_Management.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_13_Order_Management.md) |
+| 7 | Medical Coding (AI-Assisted) | Clinical & Billing | [Flows_Module_06_Medical_Coding.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_06_Medical_Coding.md) |
+| 8 | Charge Capture | Clinical & Billing | [Flows_Module_07_10_Remaining.md#module-7-charge-capture](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_07_10_Remaining.md#module-7-charge-capture) |
+| 8a | Claim Creation | Clinical & Billing | [Flows_Module_07_10_Remaining.md#module-8-claim-creation](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_07_10_Remaining.md#module-8-claim-creation) |
+| 9 | Claim Scrubbing (AI-Powered) | Clinical & Billing | [Flows_Module_07_10_Remaining.md#module-9-claim-scrubbing-ai-powered](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_07_10_Remaining.md#module-9-claim-scrubbing-ai-powered) |
+| 10 | Claim Submission | Clinical & Billing | [Flows_Module_07_10_Remaining.md#module-10-claim-submission](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_07_10_Remaining.md#module-10-claim-submission) |
+| 13 | Insurance Adjudication Tracking | Clinical & Billing | [Flows_Module_Insurance Adjudication Tracking.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_Insurance Adjudication Tracking.md) |
+| 15 | Payment Posting | Clinical & Billing | [Flows_Module_Payment_Posting.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_Payment_Posting.md) |
+| 16 | Denial & Appeals Management | Clinical & Billing | [Flows_Module_11_Denial & Appeals Management.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_11_Denial & Appeals Management.md) |
+| 17 | Secondary Insurance Billing | Clinical & Billing | [Flows_Module_20_Secondary_Billing.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_20_Secondary_Billing.md) |
+| 18 | Patient Billing | Clinical & Billing | [Flows_Module_18_Patient_Billing.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_18_Patient_Billing.md) |
+| 19 | Accounts Receivable (AR) Follow-Up | Clinical & Billing | [Flows_Module_Accounts Receivable (AR) Follow-Up.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_Accounts Receivable (AR) Follow-Up.md) |
+| 20 | Collections / Refund / Write-Off Management | Clinical & Billing | [Flows_Module_Collections.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_Collections.md) |
+| 21 | Reporting & Analytics | Clinical & Billing | [Flows_Module_Reporting_Analytics.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_Reporting_Analytics.md) |
+| 22 | Compliance & Audit | Clinical & Billing | [Flows_Module_Compliance & Audit.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_Compliance & Audit.md) |
 
 ---
 
@@ -315,18 +269,24 @@ For questions or clarifications:
 ---
 
 **Document Navigation:**
-- **Master Index:** `Module_Flows_Master_Index.md` (This document)
-- **Module 1: User Login:** `Flows_Module_01_User_Login.md`
-- **Module 2: Patient Registration:** `Flows_Module_02_Patient_Registration.md`
-- **Module 3: Insurance Verification:** `Flows_Module_03_Insurance_Verification.md`
-- **Module 4: Appointment Scheduling:** `Flows_Module_04_Appointment_Scheduling.md`
-- **Module 5: Patient Check-in:** `Flows_Module_05_Patient_Checkin.md`
-- **Module 6: Medical Coding:** `Flows_Module_06_Medical_Coding.md`
-- **Module 12: Prior Authorization:** `Flows_Module_12_Prior_Authorization.md`
-- **Module 13: Order Management:** `Flows_Module_13_Order_Management.md`
-- **Module 14: Encounter Management:** `Flows_Module_14_Encounter.md`
-- **Module 18: Payment Posting:** `Flows_Module_Payment_Posting.md`
-- **Module 20: Secondary Billing:** `Flows_Module_20_Secondary_Billing.md`
-- **Denial & Appeals:** `Flows_Module_11_Denial & Appeals Management.md`
-- **Provider Credentialing:** `Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md`
-- **Remaining Modules:** `Flows_Module_07_10_Remaining.md`
+- **Master Index:** [Module_Flows_Master_Index.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Module_Flows_Master_Index.md) (This document)
+- **Module 1: Appointment Scheduling:** [Flows_Module_04_Appointment_Scheduling.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_04_Appointment_Scheduling.md)
+- **Module 2: Patient Registration:** [Flows_Module_02_Patient_Registration.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_02_Patient_Registration.md)
+- **Module 3: Insurance Verification:** [Flows_Module_03_Insurance_Verification.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_03_Insurance_Verification.md)
+- **Module 4: Prior Authorization:** [Flows_Module_12_Prior_Authorization.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_12_Prior_Authorization.md)
+- **Module 5: Patient Check-in:** [Flows_Module_05_Patient_Checkin.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_05_Patient_Checkin.md)
+- **Module 23: User Login & Authentication:** [Flows_Module_01_User_Login.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_01_User_Login.md)
+- **Pre-RCM Module 2: Provider Credentialing & Management:** [Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md)
+- **Module 6: Encounter Management:** [Flows_Module_14_Encounter.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_14_Encounter.md)
+- **Module 6 (Support): Order Management:** [Flows_Module_13_Order_Management.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_13_Order_Management.md)
+- **Module 7: Medical Coding:** [Flows_Module_06_Medical_Coding.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_06_Medical_Coding.md)
+- **Modules 8-10: Remaining Core Modules:** [Flows_Module_07_10_Remaining.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_07_10_Remaining.md)
+- **Module 13: Insurance Adjudication Tracking:** [Flows_Module_Insurance Adjudication Tracking.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_Insurance Adjudication Tracking.md)
+- **Module 15: Payment Posting:** [Flows_Module_Payment_Posting.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_Payment_Posting.md)
+- **Module 16: Denial & Appeals Management:** [Flows_Module_11_Denial & Appeals Management.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_11_Denial & Appeals Management.md)
+- **Module 17: Secondary Insurance Billing:** [Flows_Module_20_Secondary_Billing.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_20_Secondary_Billing.md)
+- **Module 18: Patient Billing:** [Flows_Module_18_Patient_Billing.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_18_Patient_Billing.md)
+- **Module 19: Accounts Receivable (AR) Follow-Up:** [Flows_Module_Accounts Receivable (AR) Follow-Up.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_Accounts Receivable (AR) Follow-Up.md)
+- **Module 20: Collections / Refund / Write-Off Management:** [Flows_Module_Collections.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_Collections.md)
+- **Module 21: Reporting & Analytics:** [Flows_Module_Reporting_Analytics.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_Reporting_Analytics.md)
+- **Module 22: Compliance & Audit:** [Flows_Module_Compliance & Audit.md](file:///c:/Lalataksha V Company/RCM - All Lakshya/RCMDoc/Flows_Module_Compliance & Audit.md)

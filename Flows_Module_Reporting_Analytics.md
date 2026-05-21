@@ -2,9 +2,9 @@ Module 23: Reporting & Analytics
 
 Version: 1.0
 
-Module ID: MOD-023
+Module ID: MOD-021
 
-Category: Business Intelligence / Analytics / Revenue Cycle Management
+Category: Category 5: Reporting, Compliance & Governance
 
 ---
 
@@ -495,3 +495,7 @@ This module helps hospitals improve:
 * Reimbursement optimization
 * Financial forecasting
 * Enterprise decision-making
+
+---
+
+**Next Module:** [Module 22: Compliance & Audit](Flows_Module_Compliance%20%26%20Audit.md)

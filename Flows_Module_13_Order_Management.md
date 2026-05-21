@@ -1,10 +1,10 @@
-# Module 10: Order Management - Flow Documentation
+# Module 6 (Support): Order Management - Flow Documentation
 **Updated for Business, Production, and Industry-Level RCM Workflow**
 
 **Version:** 1.0 - Updated  
-**Module ID:** MOD-010  
-**Category:** Clinical Workflow / Order Management / Charge Capture Support  
-**Next Module:** Module 11: Charge Capture / Service Documentation  
+**Module ID:** MOD-006-SUPPORT  
+**Category:** Category 2: Clinical & Mid-Cycle Management
+**Next Module:** [Module 7: Medical Coding (AI-Assisted)](Flows_Module_06_Medical_Coding.md)
 
 ---
 

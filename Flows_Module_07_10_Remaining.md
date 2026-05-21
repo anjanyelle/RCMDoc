@@ -1,11 +1,11 @@
-# Modules 7-10: Charge Capture, Claim Creation, Scrubbing, Submission
+# Modules 8-10: Charge Entry / Charge Capture, Claim Creation, Scrubbing, & Submission
 
 **Version:** 1.0  
-**Category:** Billing & Claims
+**Category:** Category 2 & Category 3: Clinical, Billing & Claims Management
 
 ---
 
-# Module 7: Charge Capture
+# Module 8: Charge Entry / Charge Capture
 
 ## 1. Overview
 **Purpose:** Capture all billable services, procedures, medications, and supplies and convert them into charges for insurance claim creation and patient billing.
@@ -200,7 +200,7 @@
 
 ---
 
-# Module 8: Claim Creation
+# Module 8a: Claim Creation
 
 ## 1. Overview
 **Purpose:** Create CMS-1500, UB-04, and EDI 837 claims using captured charges, patient details, provider data, and insurance information for claim submission.
@@ -721,4 +721,4 @@ Charge Capture → Claim Creation → Claim Scrubbing → Claim Submission
   Review          Generate ID      Approve            Track status
 ```
 
-**Next Module:** [Module 11: Prior Authorization](Flows_Module_11_Prior_Authorization.md)
+**Next Module:** [Module 13: Insurance Adjudication Tracking](Flows_Module_Insurance%20Adjudication%20Tracking.md)

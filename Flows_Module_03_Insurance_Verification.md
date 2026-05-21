@@ -1,8 +1,8 @@
-# Module 3: Insurance Verification - Flow Documentation
+# Module 3: Insurance Eligibility Verification - Flow Documentation
 
 **Version:** 1.0  
 **Module ID:** MOD-003  
-**Category:** Patient Management
+**Category:** Category 1: Patient Access Management
 
 ---
 
@@ -702,4 +702,4 @@ Route to Prior Auth team queue automatically
 
 ---
 
-**Next Module:** [Module 4: Appointment Scheduling](Flows_Module_04_Appointment_Scheduling.md)
+**Next Module:** [Module 4: Prior Authorization / Referral Management](Flows_Module_12_Prior_Authorization.md)
