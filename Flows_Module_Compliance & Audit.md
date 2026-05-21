@@ -1,8 +1,8 @@
-# Module: Compliance & Audit
+# Module 22: Compliance & Audit
 
 **Version:** 1.0
-**Module ID:** MOD-019
-**Category:** Security, Compliance & Governance
+**Module ID:** MOD-022
+**Category:** Category 5: Reporting, Compliance & Governance
 
 ---
 
@@ -813,4 +813,4 @@ Compliance report generated
 
 ---
 
-**Next Module:** [Module 20: Reporting & Analytics](Flows_Module_20_Reporting_Analytics.md)
+**Next Module:** [Module 23: User Login & Authentication](Flows_Module_01_User_Login.md)

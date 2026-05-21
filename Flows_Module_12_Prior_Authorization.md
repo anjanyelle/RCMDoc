@@ -1,9 +1,9 @@
-# Module 6: Prior Authorization - Flow Documentation
+# Module 4: Prior Authorization / Referral Management - Flow Documentation
 **Updated for Business, Production, and Industry-Level RCM Workflow**
 
 **Version:** 1.0 - Updated  
-**Module ID:** MOD-006  
-**Category:** Patient Management / Authorization Management  
+**Module ID:** MOD-004  
+**Category:** Category 1: Patient Access Management
 
 ---
 
@@ -701,3 +701,7 @@ Other possible statuses: Expired, Cancelled, Units Exhausted.
 | Scheduling Team          |
 +--------------------------+
 ```
+
+---
+
+**Next Module:** [Module 5: Patient Check-In](Flows_Module_05_Patient_Checkin.md)

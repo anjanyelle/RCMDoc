@@ -4,7 +4,7 @@ Version: 1.0
 
 Module ID: MOD-020
 
-Category: Collections / Financial Recovery / Revenue Cycle Management
+Category: Category 4: Payment & Revenue Management
 
 
 1. Module Overview
@@ -414,3 +414,7 @@ This module improves:
 - Financial accuracy
 - Collection efficiency
 - Compliance management
+
+---
+
+**Next Module:** [Module 21: Reporting & Analytics](Flows_Module_Reporting_Analytics.md)

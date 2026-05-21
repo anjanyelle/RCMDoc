@@ -2,7 +2,7 @@
 
 **Version:** 1.0  
 **Module ID:** MOD-002  
-**Category:** Patient Management
+**Category:** Category 1: Patient Access Management
 
 ---
 
@@ -2000,4 +2000,4 @@ message = client.messages.create(
 
 ---
 
-**Next Module:** [Module 3: Insurance Verification](Flows_Module_03_Insurance_Verification.md)
+**Next Module:** [Module 3: Insurance Eligibility Verification](Flows_Module_03_Insurance_Verification.md)

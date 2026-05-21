@@ -1,0 +1,216 @@
+=== DETAILED EXTRACTION ===
+
+--- Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md ---
+First Header: Pre-RCM Modules 1-4: Provider Onboarding, Credentialing, Enrollment, & Contract Management
+Module IDs: ['** MOD-PRE-01-04']
+Categories: ['** Pre-RCM / Foundational Flow']
+Next Modules: ['** [Module 1: Appointment Scheduling](Flows_Module_04_Appointment_Scheduling.md)']
+Footer links found in MD:
+  - [Module 1: Appointment Scheduling] -> (Flows_Module_04_Appointment_Scheduling.md)
+Footer links found in HTML:
+  - [Module 1: Appointment Scheduling] -> (Flows_Module_04_Appointment_Scheduling.html)
+
+--- Flows_Module_04_Appointment_Scheduling.md ---
+First Header: Module 1: Appointment Scheduling - Flow Documentation
+Module Headers: ['Module 1: Appointment Scheduling - Flow Documentation']
+Module IDs: ['** MOD-001  ']
+Categories: ['** Category 1: Patient Access Management']
+Next Modules: ['** [Module 2: Patient Registration](Flows_Module_02_Patient_Registration.md)']
+Footer links found in MD:
+  - [Module 2: Patient Registration] -> (Flows_Module_02_Patient_Registration.md)
+Footer links found in HTML:
+  - [Module 2: Patient Registration] -> (Flows_Module_02_Patient_Registration.html)
+
+--- Flows_Module_02_Patient_Registration.md ---
+First Header: Module 2: Patient Registration - Complete Flow Documentation
+Module Headers: ['Module 2: Patient Registration - Complete Flow Documentation']
+Module IDs: ['** MOD-002  ']
+Categories: ['** Category 1: Patient Access Management']
+Next Modules: ['** [Module 3: Insurance Eligibility Verification](Flows_Module_03_Insurance_Verification.md)']
+Footer links found in MD:
+  - [Module 3: Insurance Eligibility Verification] -> (Flows_Module_03_Insurance_Verification.md)
+Footer links found in HTML:
+  - [Module 3: Insurance Eligibility Verification] -> (Flows_Module_03_Insurance_Verification.html)
+
+--- Flows_Module_03_Insurance_Verification.md ---
+First Header: Module 3: Insurance Eligibility Verification - Flow Documentation
+Module Headers: ['Module 3: Insurance Eligibility Verification - Flow Documentation']
+Module IDs: ['** MOD-003  ']
+Categories: ['** Category 1: Patient Access Management']
+Next Modules: ['** [Module 4: Prior Authorization / Referral Management](Flows_Module_12_Prior_Authorization.md)']
+Footer links found in MD:
+  - [Module 4: Prior Authorization / Referral Management] -> (Flows_Module_12_Prior_Authorization.md)
+Footer links found in HTML:
+  - [Module 4: Prior Authorization / Referral Management] -> (Flows_Module_12_Prior_Authorization.html)
+
+--- Flows_Module_12_Prior_Authorization.md ---
+First Header: Module 4: Prior Authorization / Referral Management - Flow Documentation
+Module Headers: ['Module 4: Prior Authorization / Referral Management - Flow Documentation']
+Module IDs: ['** MOD-004  ']
+Categories: ['** Category 1: Patient Access Management']
+Next Modules: ['** [Module 5: Patient Check-In](Flows_Module_05_Patient_Checkin.md)']
+Footer links found in MD:
+  - [Module 5: Patient Check-In] -> (Flows_Module_05_Patient_Checkin.md)
+Footer links found in HTML:
+  - [Module 5: Patient Check-In] -> (Flows_Module_05_Patient_Checkin.html)
+
+--- Flows_Module_05_Patient_Checkin.md ---
+First Header: Module 5: Patient Check-In - Flow Documentation
+Module Headers: ['Module 5: Patient Check-In - Flow Documentation']
+Module IDs: ['** MOD-005  ']
+Categories: ['** Category 1: Patient Access Management']
+Next Modules: ['** [Module 6: Clinical Documentation / EMR (Encounter)](Flows_Module_14_Encounter.md)']
+Footer links found in MD:
+  - [Module 6: Clinical Documentation / EMR (Encounter)] -> (Flows_Module_14_Encounter.md)
+Footer links found in HTML:
+  - [Module 6: Clinical Documentation / EMR (Encounter)] -> (Flows_Module_14_Encounter.html)
+
+--- Flows_Module_14_Encounter.md ---
+First Header: Module 6: Clinical Documentation / EMR (Encounter) - Flow Documentation
+Module Headers: ['Module 6: Clinical Documentation / EMR (Encounter) - Flow Documentation']
+Module IDs: ['** MOD-006']
+Categories: ['** Category 2: Clinical & Mid-Cycle Management']
+Next Modules: ['** [Module 6 (Support): Order Management](Flows_Module_13_Order_Management.md)']
+Footer links found in MD:
+  - [Module 6 (Support): Order Management] -> (Flows_Module_13_Order_Management.md)
+Footer links found in HTML:
+  - [Module 6 (Support): Order Management] -> (Flows_Module_13_Order_Management.html)
+
+--- Flows_Module_13_Order_Management.md ---
+First Header: Module 6 (Support): Order Management - Flow Documentation
+Module Headers: ['Module 6 (Support): Order Management - Flow Documentation']
+Module IDs: ['** MOD-006-SUPPORT  ']
+Categories: ['** Category 2: Clinical & Mid-Cycle Management']
+Next Modules: ['** [Module 7: Medical Coding (AI-Assisted)](Flows_Module_06_Medical_Coding.md)']
+Footer links found in MD:
+  - [Module 7: Medical Coding (AI-Assisted)] -> (Flows_Module_06_Medical_Coding.md)
+Footer links found in HTML:
+  - [Module 7: Medical Coding (AI-Assisted)] -> (Flows_Module_06_Medical_Coding.html)
+
+--- Flows_Module_06_Medical_Coding.md ---
+First Header: Module 7: Medical Coding (AI-Assisted) - Flow Documentation
+Module Headers: ['Module 7: Medical Coding (AI-Assisted) - Flow Documentation']
+Module IDs: ['** MOD-007  ']
+Categories: ['** Category 2: Clinical & Mid-Cycle Management']
+Next Modules: ['** [Module 8: Charge Entry / Charge Capture](Flows_Module_07_10_Remaining.md#module-8-charge-capture)']
+Footer links found in MD:
+  - [Module 8: Charge Entry / Charge Capture] -> (Flows_Module_07_10_Remaining.md#module-8-charge-capture)
+Footer links found in HTML:
+  - [Module 8: Charge Entry / Charge Capture] -> (Flows_Module_07_10_Remaining.html#module-8-charge-capture)
+
+--- Flows_Module_07_10_Remaining.md ---
+First Header: Modules 8-12: Charge Capture, Claim Creation, Scrubbing, Submission, & Status Tracking
+Module Headers: ['Module 7: Charge Capture', 'Module 8: Claim Creation', 'Module 9: Claim Scrubbing (AI-Powered)', 'Module 10: Claim Submission']
+Module IDs: []
+Categories: ['** Category 2 & Category 3: Clinical, Billing & Claims Management']
+Next Modules: ['** [Module 13: Insurance Adjudication Tracking](Flows_Module_Insurance%20Adjudication%20Tracking.md)']
+Footer links found in MD:
+  - [Module 13: Insurance Adjudication Tracking] -> (Flows_Module_Insurance%20Adjudication%20Tracking.md)
+Footer links found in HTML:
+  - [Module 13: Insurance Adjudication Tracking] -> (Flows_Module_Insurance%20Adjudication%20Tracking.html)
+
+--- Flows_Module_Insurance Adjudication Tracking.md ---
+First Header: Module 13: Insurance Adjudication Tracking
+Module Headers: ['Module 13: Insurance Adjudication Tracking']
+Module IDs: ['** MOD-013']
+Categories: ['** Category 3: Claims Management']
+Next Modules: ['** [Module 15: Payment Posting](Flows_Module_Payment_Posting.md)']
+Footer links found in MD:
+  - [Module 15: Payment Posting] -> (Flows_Module_Payment_Posting.md)
+Footer links found in HTML:
+  - [Module 15: Payment Posting] -> (Flows_Module_Payment_Posting.html)
+
+--- Flows_Module_Payment_Posting.md ---
+First Header: Module 15: Payment Posting - Flow Documentation
+Module Headers: ['Module 15: Payment Posting - Flow Documentation']
+Module IDs: ['** MOD-015  ']
+Categories: ['** Category 4: Payment & Revenue Management']
+Next Modules: ['** [Module 16: Denial & Appeals Management](Flows_Module_11_Denial%20%26%20Appeals%20Management.md)']
+Footer links found in MD:
+  - [Module 16: Denial & Appeals Management] -> (Flows_Module_11_Denial%20%26%20Appeals%20Management.md)
+Footer links found in HTML:
+  - [Module 16: Denial & Appeals Management] -> (Flows_Module_11_Denial%20%26%20Appeals%20Management.html)
+
+--- Flows_Module_11_Denial & Appeals Management.md ---
+First Header: Module 16: Denial & Appeals Management - Flow Documentation
+Module Headers: ['Module 16: Denial & Appeals Management - Flow Documentation']
+Module IDs: ['** MOD-016  ']
+Categories: ['** Category 4: Payment & Revenue Management']
+Next Modules: ['** [Module 17: Secondary Insurance Billing](Flows_Module_20_Secondary_Billing.md)']
+Footer links found in MD:
+  - [Module 17: Secondary Insurance Billing] -> (Flows_Module_20_Secondary_Billing.md)
+Footer links found in HTML:
+  - [Module 17: Secondary Insurance Billing] -> (Flows_Module_20_Secondary_Billing.html)
+
+--- Flows_Module_20_Secondary_Billing.md ---
+First Header: Module 17: Secondary Insurance Billing - Flow Documentation
+Module Headers: ['Module 17: Secondary Insurance Billing - Flow Documentation']
+Module IDs: ['** MOD-017  ']
+Categories: ['** Category 4: Payment & Revenue Management']
+Next Modules: ['** [Module 18: Patient Billing](Flows_Module_18_Patient_Billing.md)']
+Footer links found in MD:
+  - [Module 18: Patient Billing] -> (Flows_Module_18_Patient_Billing.md)
+Footer links found in HTML:
+  - [Module 18: Patient Billing] -> (Flows_Module_18_Patient_Billing.html)
+
+--- Flows_Module_18_Patient_Billing.md ---
+First Header: Module 18: Patient Billing - Flow Documentation
+Module Headers: ['Module 18: Patient Billing - Flow Documentation']
+Module IDs: ['** MOD-018  ']
+Categories: ['** Category 4: Payment & Revenue Management']
+Next Modules: ['** [Module 19: Accounts Receivable (AR) Follow-Up](Flows_Module_Accounts%20Receivable%20%28AR%29%20Follow-Up.md)']
+Footer links found in MD:
+  - [Module 19: Accounts Receivable (AR) Follow-Up] -> (Flows_Module_Accounts%20Receivable%20%28AR%29%20Follow-Up.md)
+Footer links found in HTML:
+  - [Module 19: Accounts Receivable (AR) Follow-Up] -> (Flows_Module_Accounts%20Receivable%20%28AR%29%20Follow-Up.html)
+
+--- Flows_Module_Accounts Receivable (AR) Follow-Up.md ---
+First Header: Module 19: Accounts Receivable (AR) Follow-Up
+Module Headers: ['Module 19: Accounts Receivable (AR) Follow-Up']
+Module IDs: ['** MOD-019']
+Categories: ['** Category 4: Payment & Revenue Management']
+Next Modules: ['** [Module 20: Collections / Refund / Write-Off Management](Flows_Module_Collections.md)']
+Footer links found in MD:
+  - [Module 20: Collections / Refund / Write-Off Management] -> (Flows_Module_Collections.md)
+Footer links found in HTML:
+  - [Module 20: Collections / Refund / Write-Off Management] -> (Flows_Module_Collections.html)
+
+--- Flows_Module_Collections.md ---
+Module IDs: ['MOD-020']
+Categories: ['Category 4: Payment & Revenue Management']
+Next Modules: ['** [Module 21: Reporting & Analytics](Flows_Module_Reporting_Analytics.md)']
+Footer links found in MD:
+  - [Module 21: Reporting & Analytics] -> (Flows_Module_Reporting_Analytics.md)
+Footer links found in HTML:
+  - [Module 21: Reporting & Analytics] -> (Flows_Module_Reporting_Analytics.html)
+
+--- Flows_Module_Reporting_Analytics.md ---
+Module IDs: ['MOD-021']
+Categories: ['Category 5: Reporting, Compliance & Governance']
+Next Modules: ['** [Module 22: Compliance & Audit](Flows_Module_Compliance%20%26%20Audit.md)']
+Footer links found in MD:
+  - [Module 22: Compliance & Audit] -> (Flows_Module_Compliance%20%26%20Audit.md)
+Footer links found in HTML:
+  - [Module 22: Compliance & Audit] -> (Flows_Module_Compliance%20%26%20Audit.html)
+
+--- Flows_Module_Compliance & Audit.md ---
+First Header: Module 22: Compliance & Audit
+Module Headers: ['Module 22: Compliance & Audit']
+Module IDs: ['** MOD-022']
+Categories: ['** Category 5: Reporting, Compliance & Governance']
+Next Modules: ['** [Module 23: User Login & Authentication](Flows_Module_01_User_Login.md)']
+Footer links found in MD:
+  - [Module 23: User Login & Authentication] -> (Flows_Module_01_User_Login.md)
+Footer links found in HTML:
+  - [Module 23: User Login & Authentication] -> (Flows_Module_01_User_Login.html)
+
+--- Flows_Module_01_User_Login.md ---
+First Header: Module 23: User Login & Authentication - Flow Documentation
+Module Headers: ['Module 23: User Login & Authentication - Flow Documentation']
+Module IDs: ['** MOD-023  ']
+Categories: ['** Category 6: Administration & Platform Services']
+Next Modules: ['** [Pre-RCM Modules 1-4: Provider Onboarding, Credentialing, Enrollment, & Contract Management](Flows_Module_PROVIDER%20CREDENTIALING%20%26%20MANAGEMENT.md)']
+Footer links found in MD:
+  - [Pre-RCM Modules 1-4: Provider Onboarding, Credentialing, Enrollment, & Contract Management] -> (Flows_Module_PROVIDER%20CREDENTIALING%20%26%20MANAGEMENT.md)
+Footer links found in HTML:
+  - [Pre-RCM Modules 1-4: Provider Onboarding, Credentialing, Enrollment, & Contract Management] -> (Flows_Module_PROVIDER%20CREDENTIALING%20%26%20MANAGEMENT.html)

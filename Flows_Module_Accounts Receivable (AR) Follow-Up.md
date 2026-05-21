@@ -1,8 +1,8 @@
-# Module: Accounts Receivable (AR) Follow-Up
+# Module 19: Accounts Receivable (AR) Follow-Up
 
 **Version:** 1.0
-**Module ID:** MOD-020
-**Category:** Revenue Recovery & Collections
+**Module ID:** MOD-019
+**Category:** Category 4: Payment & Revenue Management
 
 ---
 
@@ -651,4 +651,4 @@ High priority recovery review
 
 ---
 
-**Next Module:** [Module 21: Patient Collections](Flows_Module_21_Patient_Collections.md)
+**Next Module:** [Module 20: Collections / Refund / Write-Off Management](Flows_Module_Collections.md)

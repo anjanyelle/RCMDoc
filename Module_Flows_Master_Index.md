@@ -8,7 +8,7 @@
 
 ## 📋 Overview
 
-This documentation provides **complete flow diagrams, workflows, use cases, and action plans** for all 30 modules in the Healthcare RCM Application.
+This documentation provides **complete flow diagrams, workflows, use cases, and action plans** for all 37 modules in the Healthcare RCM Application.
 
 Each module documentation includes:
 1. ✅ Module Overview
@@ -27,76 +27,79 @@ Each module documentation includes:
 
 ## 📚 Module Categories
 
-### Category 1: Authentication & Patient Management (Modules 1-6)
-**Documents:** `Flows_Module_01_User_Login.md` through `Flows_Module_05_Patient_Checkin.md`, and `Flows_Module_12_Prior_Authorization.md`
+### Category PRE-RCM / FOUNDATIONAL FLOW (Modules 1-4)
+**Documents:** [Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md](Flows_Module_PROVIDER%20CREDENTIALING%20&%20MANAGEMENT.md)
 
-1. **User Login & Authentication**
-2. **Patient Registration**
-3. **Insurance Verification**
-4. **Appointment Scheduling**
-5. **Patient Check-in**
-6. **Prior Authorization**
+1. **Pre-RCM Modules 1-4: Provider Onboarding, Credentialing, Enrollment, & Contract Management**
 
 ---
 
-### Category 2: Clinical & Documentation (Modules 6a-9)
-**Documents:** `Flows_Module_13_Order_Management.md` (Order Management) and `Flows_Module_07_10_Remaining.md` (Grouped)
+### Category 1: Patient Access Management (5 Modules)
+**Documents:** [Flows_Module_04_Appointment_Scheduling.md](Flows_Module_04_Appointment_Scheduling.md), [Flows_Module_02_Patient_Registration.md](Flows_Module_02_Patient_Registration.md), [Flows_Module_03_Insurance_Verification.md](Flows_Module_03_Insurance_Verification.md), [Flows_Module_12_Prior_Authorization.md](Flows_Module_12_Prior_Authorization.md), [Flows_Module_05_Patient_Checkin.md](Flows_Module_05_Patient_Checkin.md)
 
-6a. **Doctor Consultation**
-7. **Clinical Documentation**
-8. **Order Management**
-9. **Referral Management**
-
----
-
-### Category 3: Coding & Billing (Modules 10-14)
-**Documents:** `Flows_Module_06_Medical_Coding.md` and `Flows_Module_07_10_Remaining.md`
-
-10. **Medical Coding**
-11. **Coding Review**
-12. **Charge Capture**
-13. **Claim Creation**
-14. **Claim Scrubbing**
+1. **Module 1: Appointment Scheduling**
+2. **Module 2: Patient Registration**
+3. **Module 3: Insurance Eligibility Verification**
+4. **Module 4: Prior Authorization / Referral Management**
+5. **Module 5: Patient Check-In**
 
 ---
 
-### Category 4: Claims & Submission (Modules 15-17)
-**Document:** `Flows_Module_07_10_Remaining.md`
+### Category 2: Clinical & Mid-Cycle Management (3 Modules)
+**Documents:** [Flows_Module_14_Encounter.md](Flows_Module_14_Encounter.md), [Flows_Module_13_Order_Management.md](Flows_Module_13_Order_Management.md), [Flows_Module_06_Medical_Coding.md](Flows_Module_06_Medical_Coding.md), [Flows_Module_07_10_Remaining.md#module-8-charge-entry-charge-capture](Flows_Module_07_10_Remaining.md#module-8-charge-entry-charge-capture)
 
-15. **Claim Submission**
-16. **Claim Tracking**
-17. **Insurance Adjudication**
-
----
-
-### Category 5: Denial & Payment (Modules 18-22)
-**Documents:** `Flows_Module_Payment_Posting.md` (Payment Posting), `Flows_Module_20_Secondary_Billing.md` (Secondary Billing), `Flows_Module_11_Denial & Appeals Management.md` (Denial & Appeals), and `Flows_Module_07_10_Remaining.md` (Remaining)
-
-18. **Payment Posting**
-19. **ERA/835 Reconciliation**
-20. **Secondary Billing**
-21. **Denial Management**
-22. **Appeals Workflow**
+1. **Module 6: Clinical Documentation / EMR**
+2. **Module 6 (Support): Order Management**
+3. **Module 7: Medical Coding**
+4. **Module 8: Charge Entry / Charge Capture**
 
 ---
 
-### Category 6: Patient Billing & AR (Modules 23-25)
-**Document:** `Flows_Module_07_10_Remaining.md`
+### Category 3: Claims Management (5 Modules)
+**Documents:** [Flows_Module_07_10_Remaining.md#module-9-claim-scrubbing-ai-powered](Flows_Module_07_10_Remaining.md#module-9-claim-scrubbing-ai-powered), [Flows_Module_07_10_Remaining.md#module-10-claim-submission](Flows_Module_07_10_Remaining.md#module-10-claim-submission), [Flows_Module_07_10_Remaining.md#module-8-claim-creation](Flows_Module_07_10_Remaining.md#module-8-claim-creation), [Flows_Module_Clearinghouse Validation.md](Flows_Module_Clearinghouse%20Validation.md), [Flows_Module_Claim_status_tracking.md](Flows_Module_Claim_status_tracking.md), [Flows_Module_Insurance Adjudication Tracking.md](Flows_Module_Insurance%20Adjudication%20Tracking.md)
 
-23. **Patient Billing**
-24. **Refund Management**
-25. **AR Management**
+1. **Module 9: Claim Scrubbing**
+2. **Module 10: Claim Submission**
+3. **Module 10 (Support): Claim Creation**
+4. **Module 11: Clearinghouse Validation**
+5. **Module 12: Claim Status Tracking**
+6. **Module 13: Insurance Adjudication Tracking**
 
 ---
 
-### Category 7: Reporting & Advanced (Modules 26-30)
-**Document:** `Flows_Module_07_10_Remaining.md`
+### Category 4: Payment & Revenue Management (7 Modules)
+**Documents:** [Flows_Module_14_ERA_Processing.md](Flows_Module_14_ERA_Processing.md), [Flows_Module_Payment_Posting.md](Flows_Module_Payment_Posting.md), [Flows_Module_11_Denial & Appeals Management.md](Flows_Module_11_Denial%20&%20Appeals%20Management.md), [Flows_Module_20_Secondary_Billing.md](Flows_Module_20_Secondary_Billing.md), [Flows_Module_18_Patient_Billing.md](Flows_Module_18_Patient_Billing.md), [Flows_Module_Accounts Receivable (AR) Follow-Up.md](Flows_Module_Accounts%20Receivable%20(AR)%20Follow-Up.md), [Flows_Module_Collections.md](Flows_Module_Collections.md)
 
-26. **Reporting & Analytics**
-27. **Audit & Compliance**
-28. **Patient Portal**
-29. **Notifications & Messaging**
-30. **AI-Based Automation**
+1. **Module 14: ERA Processing**
+2. **Module 15: Payment Posting**
+3. **Module 16: Denial Management**
+4. **Module 17: Secondary Insurance Billing**
+5. **Module 18: Patient Billing**
+6. **Module 19: Accounts Receivable (AR) Follow-Up**
+7. **Module 20: Collections / Refund / Write-Off Management**
+
+---
+
+### Category 5: Reporting, Compliance & Governance (2 Modules)
+**Documents:** [Flows_Module_Reporting_Analytics.md](Flows_Module_Reporting_Analytics.md), [Flows_Module_Compliance & Audit.md](Flows_Module_Compliance%20&%20Audit.md)
+
+1. **Module 21: Reporting & Analytics**
+2. **Module 22: Compliance & Audit**
+
+---
+
+### Category 6: Administration & Platform Services (11 Modules)
+**Documents:** [Flows_Module_01_User_Login.md](Flows_Module_01_User_Login.md)
+
+1. **Module 23: User Login & Authentication**
+2. **Modules 24-33: Platform Core Modules** *(Coming Soon)*
+
+---
+
+### Category 7: Advanced Enterprise Features (4 Modules)
+**Documents:** None *(Coming Soon)*
+
+1. **Modules 34-37: Enterprise Integrations & Monitor** *(Coming Soon)*
 
 ---
 
@@ -136,39 +139,48 @@ Each module documentation includes:
 
 ## 🔗 Quick Navigation
 
-| Module # | Module Name | Category | Document |
-|----------|-------------|----------|----------|
-| 1 | User Login & Authentication | Auth & Patient | `Flows_Module_01_User_Login.md` |
-| 2 | Patient Registration | Auth & Patient | `Flows_Module_02_Patient_Registration.md` |
-| 3 | Insurance Verification | Auth & Patient | `Flows_Module_03_Insurance_Verification.md` |
-| 4 | Appointment Scheduling | Auth & Patient | `Flows_Module_04_Appointment_Scheduling.md` |
-| 5 | Patient Check-in | Auth & Patient | `Flows_Module_05_Patient_Checkin.md` |
-| 6 | Prior Authorization | Auth & Patient | `Flows_Module_12_Prior_Authorization.md` |
-| 6a | Doctor Consultation | Clinical | `Flows_Module_07_10_Remaining.md` |
-| 7 | Clinical Documentation | Clinical | `Flows_Module_07_10_Remaining.md` |
-| 8 | Order Management | Clinical | `Flows_Module_13_Order_Management.md` |
-| 9 | Referral Management | Clinical | `Flows_Module_07_10_Remaining.md` |
-| 10 | Medical Coding | Coding & Billing | `Flows_Module_06_Medical_Coding.md` |
-| 11 | Coding Review | Coding & Billing | `Flows_Module_07_10_Remaining.md` |
-| 12 | Charge Capture | Coding & Billing | `Flows_Module_07_10_Remaining.md` |
-| 13 | Claim Creation | Coding & Billing | `Flows_Module_07_10_Remaining.md` |
-| 14 | Claim Scrubbing | Coding & Billing | `Flows_Module_07_10_Remaining.md` |
-| 15 | Claim Submission | Claims | `Flows_Module_07_10_Remaining.md` |
-| 16 | Claim Tracking | Claims | `Flows_Module_07_10_Remaining.md` |
-| 17 | Insurance Adjudication | Claims | `Flows_Module_07_10_Remaining.md` |
-| 18 | Payment Posting | Denial & Payment | `Flows_Module_Payment_Posting.md` |
-| 19 | ERA/835 Reconciliation | Denial & Payment | `Flows_Module_07_10_Remaining.md` |
-| 20 | Secondary Billing | Denial & Payment | `Flows_Module_20_Secondary_Billing.md` |
-| 21 | Denial Management | Denial & Payment | `Flows_Module_11_Denial & Appeals Management.md` |
-| 22 | Appeals Workflow | Denial & Payment | `Flows_Module_11_Denial & Appeals Management.md` |
-| 23 | Patient Billing | Patient & AR | `Flows_Module_07_10_Remaining.md` |
-| 24 | Refund Management | Patient & AR | `Flows_Module_07_10_Remaining.md` |
-| 25 | AR Management | Patient & AR | `Flows_Module_07_10_Remaining.md` |
-| 26 | Reporting & Analytics | Advanced | `Flows_Module_07_10_Remaining.md` |
-| 27 | Audit & Compliance | Advanced | `Flows_Module_07_10_Remaining.md` |
-| 28 | Patient Portal | Advanced | `Flows_Module_07_10_Remaining.md` |
-| 29 | Notifications & Messaging | Advanced | `Flows_Module_07_10_Remaining.md` |
-| 30 | AI-Based Automation | Advanced | `Flows_Module_07_10_Remaining.md` |
+| Module # | Module Name | Category | Document Link | Status |
+|----------|-------------|----------|---------------|--------|
+| Pre-RCM 1-4 | Provider Onboarding, Credentialing, Enrollment, & Contract Management | Pre-RCM | [Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md](Flows_Module_PROVIDER%20CREDENTIALING%20&%20MANAGEMENT.md) | ✅ Active |
+| 1 | Appointment Scheduling | Category 1 | [Flows_Module_04_Appointment_Scheduling.md](Flows_Module_04_Appointment_Scheduling.md) | ✅ Active |
+| 2 | Patient Registration | Category 1 | [Flows_Module_02_Patient_Registration.md](Flows_Module_02_Patient_Registration.md) | ✅ Active |
+| 3 | Insurance Eligibility Verification | Category 1 | [Flows_Module_03_Insurance_Verification.md](Flows_Module_03_Insurance_Verification.md) | ✅ Active |
+| 4 | Prior Authorization / Referral Management | Category 1 | [Flows_Module_12_Prior_Authorization.md](Flows_Module_12_Prior_Authorization.md) | ✅ Active |
+| 5 | Patient Check-In | Category 1 | [Flows_Module_05_Patient_Checkin.md](Flows_Module_05_Patient_Checkin.md) | ✅ Active |
+| 6 | Clinical Documentation / EMR | Category 2 | [Flows_Module_14_Encounter.md](Flows_Module_14_Encounter.md) | ✅ Active |
+| 6 (Support) | Order Management | Category 2 | [Flows_Module_13_Order_Management.md](Flows_Module_13_Order_Management.md) | ✅ Active |
+| 7 | Medical Coding | Category 2 | [Flows_Module_06_Medical_Coding.md](Flows_Module_06_Medical_Coding.md) | ✅ Active |
+| 8 | Charge Entry / Charge Capture | Category 2 | [Flows_Module_07_10_Remaining.md#module-8-charge-entry-charge-capture](Flows_Module_07_10_Remaining.md#module-8-charge-entry-charge-capture) | ✅ Active |
+| 9 | Claim Scrubbing | Category 3 | [Flows_Module_07_10_Remaining.md#module-9-claim-scrubbing-ai-powered](Flows_Module_07_10_Remaining.md#module-9-claim-scrubbing-ai-powered) | ✅ Active |
+| 10 | Claim Submission | Category 3 | [Flows_Module_07_10_Remaining.md#module-10-claim-submission](Flows_Module_07_10_Remaining.md#module-10-claim-submission) | ✅ Active |
+| 10 (Support) | Claim Creation | Category 3 | [Flows_Module_07_10_Remaining.md#module-8-claim-creation](Flows_Module_07_10_Remaining.md#module-8-claim-creation) | ✅ Active |
+| 11 | Clearinghouse Validation | Category 3 | [Flows_Module_Clearinghouse Validation.md](Flows_Module_Clearinghouse%20Validation.md) | ✅ Active |
+| 12 | Claim Status Tracking | Category 3 | [Flows_Module_Claim_status_tracking.md](Flows_Module_Claim_status_tracking.md) | ✅ Active |
+| 13 | Insurance Adjudication Tracking | Category 3 | [Flows_Module_Insurance Adjudication Tracking.md](Flows_Module_Insurance%20Adjudication%20Tracking.md) | ✅ Active |
+| 14 | ERA Processing | Category 4 | [Flows_Module_14_ERA_Processing.md](Flows_Module_14_ERA_Processing.md) | ✅ Active |
+| 15 | Payment Posting | Category 4 | [Flows_Module_Payment_Posting.md](Flows_Module_Payment_Posting.md) | ✅ Active |
+| 16 | Denial Management | Category 4 | [Flows_Module_11_Denial & Appeals Management.md](Flows_Module_11_Denial%20&%20Appeals%20Management.md) | ✅ Active |
+| 17 | Secondary Insurance Billing | Category 4 | [Flows_Module_20_Secondary_Billing.md](Flows_Module_20_Secondary_Billing.md) | ✅ Active |
+| 18 | Patient Billing | Category 4 | [Flows_Module_18_Patient_Billing.md](Flows_Module_18_Patient_Billing.md) | ✅ Active |
+| 19 | Accounts Receivable (AR) Follow-Up | Category 4 | [Flows_Module_Accounts Receivable (AR) Follow-Up.md](Flows_Module_Accounts%20Receivable%20(AR)%20Follow-Up.md) | ✅ Active |
+| 20 | Collections / Refund / Write-Off Management | Category 4 | [Flows_Module_Collections.md](Flows_Module_Collections.md) | ✅ Active |
+| 21 | Reporting & Analytics | Category 5 | [Flows_Module_Reporting_Analytics.md](Flows_Module_Reporting_Analytics.md) | ✅ Active |
+| 22 | Compliance & Audit | Category 5 | [Flows_Module_Compliance & Audit.md](Flows_Module_Compliance%20&%20Audit.md) | ✅ Active |
+| 23 | User Login & Authentication | Category 6 | [Flows_Module_01_User_Login.md](Flows_Module_01_User_Login.md) | ✅ Active |
+| 24 | User Management | Category 6 | *Coming Soon* | 🔒 Disabled |
+| 25 | Notification System | Category 6 | *Coming Soon* | 🔒 Disabled |
+| 26 | Document Management | Category 6 | *Coming Soon* | 🔒 Disabled |
+| 27 | Third-Party Integrations | Category 6 | *Coming Soon* | 🔒 Disabled |
+| 28 | Patient Portal | Category 6 | *Coming Soon* | 🔒 Disabled |
+| 29 | Revenue Cycle Dashboard | Category 6 | *Coming Soon* | 🔒 Disabled |
+| 30 | Automated Workflows | Category 6 | *Coming Soon* | 🔒 Disabled |
+| 31 | Data Import/Export | Category 6 | *Coming Soon* | 🔒 Disabled |
+| 32 | System Configuration | Category 6 | *Coming Soon* | 🔒 Disabled |
+| 33 | Backup & Recovery | Category 6 | *Coming Soon* | 🔒 Disabled |
+| 34 | Eligibility Batch Processing | Category 7 | *Coming Soon* | 🔒 Disabled |
+| 35 | ERA Automation | Category 7 | *Coming Soon* | 🔒 Disabled |
+| 36 | API Management | Category 7 | *Coming Soon* | 🔒 Disabled |
+| 37 | Security & Compliance Monitoring | Category 7 | *Coming Soon* | 🔒 Disabled |
 
 ---
 
@@ -187,8 +199,8 @@ Retry Logic (if applicable) → Escalate (if critical) → Notify Admin
 ```
 
 ### Standard Status Flow:
-```Draft → Pending → In Progress → Review → Approved/Rejected → 
-Completed/Failed → Archived
+```
+Draft → Pending → In Progress → Review → Approved/Rejected → Completed/Failed → Archived
 ```
 
 **RCM Specific Status Distinctions:**
@@ -293,6 +305,7 @@ Each module tracks:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | May 18, 2026 | Initial release - All 30 modules |
+| 1.1 | May 21, 2026 | Updated categories, added Module 14 ERA Processing Flow |
 
 ---
 
@@ -315,18 +328,25 @@ For questions or clarifications:
 ---
 
 **Document Navigation:**
-- **Master Index:** `Module_Flows_Master_Index.md` (This document)
-- **Module 1: User Login:** `Flows_Module_01_User_Login.md`
-- **Module 2: Patient Registration:** `Flows_Module_02_Patient_Registration.md`
-- **Module 3: Insurance Verification:** `Flows_Module_03_Insurance_Verification.md`
-- **Module 4: Appointment Scheduling:** `Flows_Module_04_Appointment_Scheduling.md`
-- **Module 5: Patient Check-in:** `Flows_Module_05_Patient_Checkin.md`
-- **Module 6: Medical Coding:** `Flows_Module_06_Medical_Coding.md`
-- **Module 12: Prior Authorization:** `Flows_Module_12_Prior_Authorization.md`
-- **Module 13: Order Management:** `Flows_Module_13_Order_Management.md`
-- **Module 14: Encounter Management:** `Flows_Module_14_Encounter.md`
-- **Module 18: Payment Posting:** `Flows_Module_Payment_Posting.md`
-- **Module 20: Secondary Billing:** `Flows_Module_20_Secondary_Billing.md`
-- **Denial & Appeals:** `Flows_Module_11_Denial & Appeals Management.md`
-- **Provider Credentialing:** `Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md`
-- **Remaining Modules:** `Flows_Module_07_10_Remaining.md`
+- **Master Index:** [Module_Flows_Master_Index.md](Module_Flows_Master_Index.md) (This document)
+- **Module 1: User Login:** [Flows_Module_01_User_Login.md](Flows_Module_01_User_Login.md)
+- **Module 2: Patient Registration:** [Flows_Module_02_Patient_Registration.md](Flows_Module_02_Patient_Registration.md)
+- **Module 3: Insurance Verification:** [Flows_Module_03_Insurance_Verification.md](Flows_Module_03_Insurance_Verification.md)
+- **Module 4: Appointment Scheduling:** [Flows_Module_04_Appointment_Scheduling.md](Flows_Module_04_Appointment_Scheduling.md)
+- **Module 5: Patient Check-in:** [Flows_Module_05_Patient_Checkin.md](Flows_Module_05_Patient_Checkin.md)
+- **Module 6: Medical Coding:** [Flows_Module_06_Medical_Coding.md](Flows_Module_06_Medical_Coding.md)
+- **Module 12: Prior Authorization:** [Flows_Module_12_Prior_Authorization.md](Flows_Module_12_Prior_Authorization.md)
+- **Module 13: Order Management:** [Flows_Module_13_Order_Management.md](Flows_Module_13_Order_Management.md)
+- **Module 14: Encounter Management:** [Flows_Module_14_Encounter.md](Flows_Module_14_Encounter.md)
+- **Module 14 (New): ERA Processing:** [Flows_Module_14_ERA_Processing.md](Flows_Module_14_ERA_Processing.md)
+- **Module 15: Payment Posting:** [Flows_Module_Payment_Posting.md](Flows_Module_Payment_Posting.md)
+- **Module 18: Patient Billing:** [Flows_Module_18_Patient_Billing.md](Flows_Module_18_Patient_Billing.md)
+- **Module 20: Secondary Billing:** [Flows_Module_20_Secondary_Billing.md](Flows_Module_20_Secondary_Billing.md)
+- **Denial & Appeals:** [Flows_Module_11_Denial & Appeals Management.md](Flows_Module_11_Denial%20&%20Appeals%20Management.md)
+- **Provider Credentialing:** [Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md](Flows_Module_PROVIDER%20CREDENTIALING%20&%20MANAGEMENT.md)
+- **AR Follow-up:** [Flows_Module_Accounts Receivable (AR) Follow-Up.md](Flows_Module_Accounts%20Receivable%20(AR)%20Follow-Up.md)
+- **Collections:** [Flows_Module_Collections.md](Flows_Module_Collections.md)
+- **Reporting & Analytics:** [Flows_Module_Reporting_Analytics.md](Flows_Module_Reporting_Analytics.md)
+- **Compliance & Audit:** [Flows_Module_Compliance & Audit.md](Flows_Module_Compliance%20&%20Audit.md)
+- **Remaining Modules:** [Flows_Module_07_10_Remaining.md](Flows_Module_07_10_Remaining.md)
+- **Insurance Adjudication:** [Flows_Module_Insurance Adjudication Tracking.md](Flows_Module_Insurance%20Adjudication%20Tracking.md)

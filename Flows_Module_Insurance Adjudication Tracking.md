@@ -1,8 +1,8 @@
-# Module: Insurance Adjudication Tracking
+# Module 13: Insurance Adjudication Tracking
 
 **Version:** 1.0
 **Module ID:** MOD-013
-**Category:** Claims & Payer Processing
+**Category:** Category 3: Claims Management
 
 ---
 
@@ -585,4 +585,4 @@ AR follow-up with payer
 
 ---
 
-**Next Module:** [Module 14: Encounter Creation](Flows_Module_14_Encounter.md)
+**Next Module:** [Module 15: Payment Posting](Flows_Module_Payment_Posting.md)

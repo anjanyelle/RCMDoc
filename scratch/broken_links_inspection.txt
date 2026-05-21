@@ -1,0 +1,316 @@
+[Flows_Module_04_Appointment_Scheduling.html L104]: │ (Next 30 days)      │
+  L103: │ Available Slots     │
+  L105: └──────────┬──────────┘
+
+[Flows_Module_04_Appointment_Scheduling.html L901]: <p><strong>Next Module:</strong> <a href="Flows_Module_05_Patient_Checkin.md">Module 5: Patient Check-in</a></p>
+  L900: 
+  L902: 
+
+[Flows_Module_04_Appointment_Scheduling.md L95]: │ (Next 30 days)      │
+  L94: │ Available Slots     │
+  L96: └──────────┬──────────┘
+
+[Flows_Module_04_Appointment_Scheduling.md L892]: **Next Module:** [Module 5: Patient Check-in](Flows_Module_05_Patient_Checkin.md)
+  L891: 
+
+[Flows_Module_02_Patient_Registration.html L730]: # Next line usually has the ID
+  L729: if re.search(r'member.*id|id.*number', line, re.I):
+  L731: idx = text_blocks.index(line)
+
+[Flows_Module_02_Patient_Registration.html L2012]: <p><strong>Next Module:</strong> <a href="Flows_Module_03_Insurance_Verification.md">Module 3: Insurance Verification</a></p>
+  L2011: 
+  L2013: 
+
+[Flows_Module_02_Patient_Registration.md L721]: # Next line usually has the ID
+  L720: if re.search(r'member.*id|id.*number', line, re.I):
+  L722: idx = text_blocks.index(line)
+
+[Flows_Module_02_Patient_Registration.md L2003]: **Next Module:** [Module 3: Insurance Verification](Flows_Module_03_Insurance_Verification.md)
+  L2002: 
+
+[Flows_Module_03_Insurance_Verification.html L459]: │ Next Step       │
+  L458: │ Proceed to      │
+  L460: └────┬────────────┘
+
+[Flows_Module_03_Insurance_Verification.html L714]: <p><strong>Next Module:</strong> <a href="Flows_Module_04_Appointment_Scheduling.md">Module 4: Appointment Scheduling</a></p>
+  L713: 
+  L715: 
+
+[Flows_Module_03_Insurance_Verification.md L450]: │ Next Step       │
+  L449: │ Proceed to      │
+  L451: └────┬────────────┘
+
+[Flows_Module_03_Insurance_Verification.md L705]: **Next Module:** [Module 4: Appointment Scheduling](Flows_Module_04_Appointment_Scheduling.md)
+  L704: 
+
+[Flows_Module_12_Prior_Authorization.html L504]: next_follow_up_at = NOW() + INTERVAL '2 days',
+  L503: SET last_follow_up_at = NOW(),
+  L505: updated_at = NOW()
+
+[Flows_Module_12_Prior_Authorization.md L495]: next_follow_up_at = NOW() + INTERVAL '2 days',
+  L494: SET last_follow_up_at = NOW(),
+  L496: updated_at = NOW()
+
+[Flows_Module_05_Patient_Checkin.html L1113]: <p><strong>Next Module:</strong> <a href="Flows<em>Module</em>06<em>Medical</em>Coding.md">Module 6: Medical Coding (AI-Assisted)</a></p>
+  L1112: 
+  L1114: 
+
+[Flows_Module_05_Patient_Checkin.md L758]: **Next Module:** [Module 6: Medical Coding (AI-Assisted)](Flows_Module_06_Medical_Coding.md)
+  L757: 
+
+[Flows_Module_14_Encounter.html L568]: <p><strong>Next Module:</strong> <a href="Flows_Module_15_Medical_Coding.html">Module 15: Medical Coding</a></p>
+  L567: 
+  L569: 
+
+[Flows_Module_14_Encounter.md L561]: **Next Module:** [Module 15: Medical Coding](Flows_Module_15_Medical_Coding.md)
+  L560: 
+
+[Flows_Module_13_Order_Management.html L16]: <p><strong>Next Module:</strong> Module 11: Charge Capture / Service Documentation</p>
+  L15: <p><strong>Category:</strong> Clinical Workflow / Order Management / Charge Capture Support</p>
+  L17: 
+
+[Flows_Module_13_Order_Management.md L7]: **Next Module:** Module 11: Charge Capture / Service Documentation
+  L6: **Category:** Clinical Workflow / Order Management / Charge Capture Support
+  L8: 
+
+[Flows_Module_06_Medical_Coding.html L1041]: <p><strong>Next Module:</strong> <a href="Flows<em>Module</em>07<em>Charge</em>Capture.md">Module 7: Charge Capture</a></p>
+  L1040: 
+  L1042: 
+
+[Flows_Module_06_Medical_Coding.md L745]: **Next Module:** [Module 7: Charge Capture](Flows_Module_07_Charge_Capture.md)
+  L744: 
+
+[Flows_Module_07_10_Remaining.html L682]: <p><strong>Next Module:</strong> <a href="Flows<em>Module</em>11<em>Prior</em>Authorization.md">Module 11: Prior Authorization</a></p>
+  L681: 
+  L683: 
+
+[Flows_Module_07_10_Remaining.md L724]: **Next Module:** [Module 11: Prior Authorization](Flows_Module_11_Prior_Authorization.md)
+  L723: 
+
+[Flows_Module_Insurance Adjudication Tracking.html L22]: <p><strong>Why Hospitals Use It:</strong> After claim submission, hospitals need to know claim status, payer decisions, payment amount, denial reason, adjustment amount, and next action.</p>
+  L21: 
+  L23: 
+
+[Flows_Module_Insurance Adjudication Tracking.html L195]: │ Trigger Next Action │
+  L194: ┌─────────────────────┐
+  L196: │ - Payment Posting   │
+
+[Flows_Module_Insurance Adjudication Tracking.html L426]: "nextAction": "Post payment",
+  L425: "eraId": "ERA-00001",
+  L427: "processingTime": "2.4s"
+
+[Flows_Module_Insurance Adjudication Tracking.html L447]: next_action
+  L446: patient_responsibility,
+  L448: ) VALUES (
+
+[Flows_Module_Insurance Adjudication Tracking.html L595]: <p><strong>Next Module:</strong> <a href="Flows_Module_14_Encounter.html">Module 14: Encounter Creation</a></p>
+  L594: 
+  L596: 
+
+[Flows_Module_Insurance Adjudication Tracking.md L13]: **Why Hospitals Use It:** After claim submission, hospitals need to know claim status, payer decisions, payment amount, denial reason, adjustment amount, and next action.
+  L12: 
+  L14: 
+
+[Flows_Module_Insurance Adjudication Tracking.md L186]: │ Trigger Next Action │
+  L185: ┌─────────────────────┐
+  L187: │ - Payment Posting   │
+
+[Flows_Module_Insurance Adjudication Tracking.md L419]: "nextAction": "Post payment",
+  L418: "eraId": "ERA-00001",
+  L420: "processingTime": "2.4s"
+
+[Flows_Module_Insurance Adjudication Tracking.md L440]: next_action
+  L439: patient_responsibility,
+  L441: ) VALUES (
+
+[Flows_Module_Insurance Adjudication Tracking.md L588]: **Next Module:** [Module 14: Encounter Creation](Flows_Module_14_Encounter.md)
+  L587: 
+
+[Flows_Module_11_Denial & Appeals Management.html L1041]: <p><strong>Next Module:</strong> <a href="Flows_Module_12_Patient_Billing.html">Module 12: Patient Billing</a></p>
+  L1040: 
+  L1042: 
+
+[Flows_Module_11_Denial & Appeals Management.md L1040]: **Next Module:** [Module 12: Patient Billing](Flows_Module_12_Patient_Billing.md)
+  L1039: 
+
+[Flows_Module_20_Secondary_Billing.html L16]: <p><strong>Next Module:</strong> <a href="Flows_Module_21_Patient_Responsibility.html">Module 21: Patient Responsibility / Patient Billing</a></p>
+  L15: <p><strong>Category:</strong> Billing / Claims / Revenue Cycle Management</p>
+  L17: </div>
+
+[Flows_Module_20_Secondary_Billing.md L6]: **Next Module:** [Module 21: Patient Responsibility / Patient Billing](Flows_Module_21_Patient_Responsibility.md)
+  L5: **Category:** Billing / Claims / Revenue Cycle Management
+  L7: 
+
+[Flows_Module_18_Patient_Billing.html L16]: <p><strong>Next Module:</strong> Module 19: Collections / Payment Plans</p>
+  L15: <p><strong>Category:</strong> Patient Financial Services / Patient Responsibility</p>
+  L17: </div>
+
+[Flows_Module_18_Patient_Billing.html L459]: "nextReminderAt": "2026-06-27T09:00:00Z",
+  L458: "statementCycle": "initial",
+  L460: "paymentLinkCreated": true,
+
+[Flows_Module_18_Patient_Billing.html L517]: next_reminder_at,
+  L516: last_statement_sent_at,
+  L518: trace_id,
+
+[Flows_Module_18_Patient_Billing.html L751]: | Move to Next Statement     |
+  L750: | If Not Paid by Due Date,   |
+  L752: | Cycle / Send Reminder      |
+
+[Flows_Module_18_Patient_Billing.md L7]: **Next Module:** Module 19: Collections / Payment Plans
+  L6: **Category:** Patient Financial Services / Patient Responsibility
+  L8: 
+
+[Flows_Module_18_Patient_Billing.md L448]: "nextReminderAt": "2026-06-27T09:00:00Z",
+  L447: "statementCycle": "initial",
+  L449: "paymentLinkCreated": true,
+
+[Flows_Module_18_Patient_Billing.md L508]: next_reminder_at,
+  L507: last_statement_sent_at,
+  L509: trace_id,
+
+[Flows_Module_18_Patient_Billing.md L698]: | Move to Next Statement     |
+  L697: | If Not Paid by Due Date,   |
+  L699: | Cycle / Send Reminder      |
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.html L63]: │    - Suggests next follow-up action             │
+  L62: │    - Predicts claim delay risk                  │
+  L64: │    - Prioritizes high-value claims              │
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.html L160]: │ Post Payment        │  │ Add Notes & Next    │
+  L159: ┌─────────────────────┐  ┌─────────────────────┐
+  L161: │                     │  │ Follow-Up Date      │
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.html L206]: │ AI Suggests Next    │
+  L205: ┌─────────────────────┐
+  L207: │ Action              │
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.html L220]: │ Schedule Next       │
+  L219: ┌─────────────────────┐
+  L221: │ Follow-Up Date      │
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.html L280]: └─────────────────────────────────>│ Suggest Next     │
+  L279: │                                  ┌──────────────────┐
+  L281: │ Action           │
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.html L347]: │ AI Suggests Next    │
+  L346: ┌─────────────────────┐
+  L348: │ Follow-Up Action    │
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.html L358]: │ Schedule Next       │
+  L357: ┌─────────────────────┐
+  L359: │ Follow-Up Date      │
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.html L432]: │          │          │ Determine Next Action │
+  L431: │          │          │ Parse Response        │
+  L433: │          │          │ Update AR Task        │
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.html L438]: │          │ Next Act │           │           │
+  L437: │          │ Status / │           │           │
+  L439: │          │<─────────┤           │           │
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.html L471]: "nextFollowUpDate": "2026-05-25",
+  L470: "lastFollowUpDate": "2026-05-15",
+  L472: "suggestedAction": "Call payer and submit missing medical records",
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.html L475]: "nextAction": "Create follow-up task",
+  L474: "assignedTeam": "AR Team",
+  L476: "processingTime": "2.1s"
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.html L496]: next_followup_date,
+  L495: assigned_team,
+  L497: notes
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.html L519]: next_followup_date
+  L518: note_text,
+  L520: ) VALUES (
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.html L547]: 'AR follow-up task created and next follow-up scheduled'
+  L546: 'USR-001',
+  L548: );
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.html L661]: <p><strong>Next Module:</strong> <a href="Flows_Module_21_Patient_Collections.html">Module 21: Patient Collections</a></p>
+  L660: 
+  L662: 
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.md L54]: │    - Suggests next follow-up action             │
+  L53: │    - Predicts claim delay risk                  │
+  L55: │    - Prioritizes high-value claims              │
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.md L151]: │ Post Payment        │  │ Add Notes & Next    │
+  L150: ┌─────────────────────┐  ┌─────────────────────┐
+  L152: │                     │  │ Follow-Up Date      │
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.md L197]: │ AI Suggests Next    │
+  L196: ┌─────────────────────┐
+  L198: │ Action              │
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.md L211]: │ Schedule Next       │
+  L210: ┌─────────────────────┐
+  L212: │ Follow-Up Date      │
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.md L271]: └─────────────────────────────────>│ Suggest Next     │
+  L270: │                                  ┌──────────────────┐
+  L272: │ Action           │
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.md L338]: │ AI Suggests Next    │
+  L337: ┌─────────────────────┐
+  L339: │ Follow-Up Action    │
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.md L349]: │ Schedule Next       │
+  L348: ┌─────────────────────┐
+  L350: │ Follow-Up Date      │
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.md L423]: │          │          │ Determine Next Action │
+  L422: │          │          │ Parse Response        │
+  L424: │          │          │ Update AR Task        │
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.md L429]: │          │ Next Act │           │           │
+  L428: │          │ Status / │           │           │
+  L430: │          │<─────────┤           │           │
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.md L464]: "nextFollowUpDate": "2026-05-25",
+  L463: "lastFollowUpDate": "2026-05-15",
+  L465: "suggestedAction": "Call payer and submit missing medical records",
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.md L468]: "nextAction": "Create follow-up task",
+  L467: "assignedTeam": "AR Team",
+  L469: "processingTime": "2.1s"
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.md L489]: next_followup_date,
+  L488: assigned_team,
+  L490: notes
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.md L512]: next_followup_date
+  L511: note_text,
+  L513: ) VALUES (
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.md L540]: 'AR follow-up task created and next follow-up scheduled'
+  L539: 'USR-001',
+  L541: );
+
+[Flows_Module_Accounts Receivable (AR) Follow-Up.md L654]: **Next Module:** [Module 21: Patient Collections](Flows_Module_21_Patient_Collections.md)
+  L653: 
+
+[Flows_Module_Compliance & Audit.html L542]: "nextAction": "Compliance review required",
+  L541: ],
+  L543: "processingTime": "1.8s"
+
+[Flows_Module_Compliance & Audit.html L823]: <p><strong>Next Module:</strong> <a href="Flows_Module_20_Reporting_Analytics.html">Module 20: Reporting & Analytics</a></p>
+  L822: 
+  L824: 
+
+[Flows_Module_Compliance & Audit.md L535]: "nextAction": "Compliance review required",
+  L534: ],
+  L536: "processingTime": "1.8s"
+
+[Flows_Module_Compliance & Audit.md L816]: **Next Module:** [Module 20: Reporting & Analytics](Flows_Module_20_Reporting_Analytics.md)
+  L815: 
+
+[Flows_Module_01_User_Login.html L1800]: <p><strong>Next Module:</strong> <a href="Flows_Module_02_Patient_Registration.md">Module 2: Patient Registration</a></p>
+  L1799: 
+  L1801: </body>
+
+[Flows_Module_01_User_Login.md L1771]: **Next Module:** [Module 2: Patient Registration](Flows_Module_02_Patient_Registration.md)
+  L1770: 
+
