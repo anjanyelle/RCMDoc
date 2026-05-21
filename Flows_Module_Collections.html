@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 20: Collections / Refund / Write-Off Management - Complete Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module 20: Collections / Refund / Write-Off Management</h1>
+
+<p><strong>Version:</strong> 1.0</p>
+<p><strong>Module ID:</strong> MOD-020</p>
+<p><strong>Category:</strong> Collections / Financial Recovery / Revenue Cycle Management</p>
+
+<hr>
+
+<h2>1. Module Overview</h2>
+
+<h3>Purpose</h3>
+<p>The Collections / Refund / Write-Off Management module manages overdue collections, patient refunds, credit balances, financial adjustments, and write-off workflows to ensure proper revenue recovery and financial reconciliation.</p>
+
+<hr>
+
+<h3>Why Hospitals Use It</h3>
+<li>Recover outstanding balances</li>
+<li>Reduce bad debt</li>
+<li>Improve cash collections</li>
+<li>Manage patient refunds</li>
+<li>Track credit balances</li>
+<li>Automate collection workflows</li>
+<li>Improve financial reconciliation</li>
+<li>Ensure financial compliance</li>
+
+<hr>
+
+<h3>Business Goals</h3>
+<li>Improve revenue recovery</li>
+<li>Reduce outstanding balances</li>
+<li>Reduce bad debt write-offs</li>
+<li>Improve patient payment compliance</li>
+<li>Automate refund workflows</li>
+<li>Improve financial reconciliation</li>
+<li>Maintain audit compliance</li>
+
+<hr>
+
+<h3>Main Users</h3>
+<li>Collections Team</li>
+<li>Billing Team</li>
+<li>Finance Department</li>
+<li>Revenue Cycle Managers</li>
+<li>Refund Processing Team</li>
+<li>Compliance Team</li>
+<li>Executives</li>
+
+<hr>
+
+<h2>2. Actors Involved</h2>
+
+<h3>Collections Team</h3>
+<li>Reviews overdue balances</li>
+<li>Contacts patients</li>
+<li>Manages collection workflows</li>
+
+<hr>
+
+<h3>Billing Team</h3>
+<li>Reviews patient balances</li>
+<li>Handles disputes and adjustments</li>
+
+<hr>
+
+<h3>Finance Department</h3>
+<li>Reviews refunds and write-offs</li>
+<li>Monitors financial reconciliation</li>
+
+<hr>
+
+<h3>Refund Processing Team</h3>
+<li>Processes patient refunds</li>
+<li>Tracks refund approvals</li>
+
+<hr>
+
+<h3>Compliance Team</h3>
+<li>Reviews audit logs</li>
+<li>Ensures HIPAA compliance</li>
+
+<hr>
+
+<h3>External Systems</h3>
+<li>Payment Gateways</li>
+<li>Banking Systems</li>
+<li>Collection Agencies</li>
+<li>Patient Portals</li>
+
+<hr>
+
+<h2>3. Core Management Sections</h2>
+
+<h3>Collections Management</h3>
+<li>Collection workflows</li>
+<li>Patient balance follow-up</li>
+<li>Payment reminder notifications</li>
+<li>Collection queue management</li>
+<li>Collection agency integration</li>
+<li>Payment plan management</li>
+<li>Outstanding balance tracking</li>
+
+<hr>
+
+<h3>Refund Management</h3>
+<li>Patient refund processing</li>
+<li>Insurance overpayment refunds</li>
+<li>Refund approval workflow</li>
+<li>Refund tracking</li>
+<li>Refund audit logging</li>
+<li>Refund payment processing</li>
+<li>Duplicate payment refund handling</li>
+
+<hr>
+
+<h3>Credit Balance Management</h3>
+<li>Credit balance identification</li>
+<li>Credit balance reconciliation</li>
+<li>Credit transfer handling</li>
+<li>Overpayment management</li>
+<li>Credit aging analysis</li>
+<li>Refund vs adjustment validation</li>
+
+<hr>
+
+<h3>Write-Off Management</h3>
+<li>Small balance write-offs</li>
+<li>Administrative write-offs</li>
+<li>Bad debt write-offs</li>
+<li>Charity write-offs</li>
+<li>Contractual adjustments</li>
+<li>Financial adjustment approval workflow</li>
+<li>Write-off audit tracking</li>
+
+<hr>
+
+<h3>Financial Reconciliation</h3>
+<li>Outstanding balance reconciliation</li>
+<li>Payment variance validation</li>
+<li>Refund reconciliation</li>
+<li>Adjustment balancing</li>
+<li>Credit/debit verification</li>
+
+<hr>
+
+<h3>Communication &amp; Notifications</h3>
+<li>SMS payment reminders</li>
+<li>Email balance notifications</li>
+<li>Patient statement generation</li>
+<li>Collection escalation alerts</li>
+<li>Refund status notifications</li>
+
+<hr>
+
+<h3>Dashboard &amp; Analytics</h3>
+<li>Collection recovery reports</li>
+<li>Refund analytics</li>
+<li>Credit balance reports</li>
+<li>Write-off analytics</li>
+<li>Outstanding balance dashboard</li>
+<li>Bad debt trends</li>
+<li>Revenue recovery KPIs</li>
+
+<hr>
+
+<h3>Compliance &amp; Audit</h3>
+<li>HIPAA audit logging</li>
+<li>Financial audit trails</li>
+<li>Refund audit tracking</li>
+<li>Write-off approval tracking</li>
+<li>User activity monitoring</li>
+<li>Compliance reporting</li>
+
+<hr>
+
+<h3>Automation Features</h3>
+<li>Automated payment reminders</li>
+<li>Auto-escalation workflows</li>
+<li>Refund processing automation</li>
+<li>Credit balance detection</li>
+<li>Small balance auto write-off rules</li>
+<li>Scheduled collections jobs</li>
+
+<hr>
+
+<h2>4. Workflow</h2>
+
+<pre><code>
+┌─────────────────────┐
+│ Outstanding Balance │
+│ Generated           │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Generate Patient    │
+│ Statement           │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Send SMS / Email    │
+│ Notifications       │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Patient Makes       │
+│ Payment?            │
+└──────────┬──────────┘
+           ↓
+      ╱ ╲
+     ╱   ╲
+    ╱Yes? ╲────No─────┐
+    ╲      ╱          │
+     ╲    ╱           ▼
+      │Yes      ┌─────────────────┐
+      ▼         │ Collections     │
+┌─────────────┐ │ Follow-up Queue │
+│ Update      │ └────────┬────────┘
+│ Balance     │          │
+└─────┬───────┘          ▼
+      ↓           ┌─────────────────┐
+┌─────────────┐   │ Collection      │
+│ Revenue     │   │ Agency /        │
+│ Collected   │   │ Payment Plan    │
+└─────────────┘   └────────┬────────┘
+                            ↓
+                    ┌─────────────────┐
+                    │ Refund /        │
+                    │ Write-Off Flow  │
+                    └─────────────────┘
+</pre>
+
+<hr>
+
+<h2>5. Dashboard Components</h2>
+<li>Outstanding Balance Dashboard</li>
+<li>Collection Recovery Reports</li>
+<li>Refund Analytics</li>
+<li>Credit Balance Reports</li>
+<li>Write-Off Reports</li>
+<li>Bad Debt Trends</li>
+<li>Payment Plan Analytics</li>
+<li>Collection Team Productivity</li>
+<li>Revenue Recovery KPIs</li>
+<li>Financial Adjustment Reports</li>
+
+<hr>
+
+<h2>6. KPI Metrics</h2>
+<li>Collection Recovery Rate</li>
+<li>Refund Processing Time</li>
+<li>Bad Debt Ratio</li>
+<li>Outstanding Balance Amount</li>
+<li>Write-Off Percentage</li>
+<li>Payment Plan Success Rate</li>
+<li>Revenue Recovery Percentage</li>
+<li>Credit Balance Aging</li>
+
+<hr>
+
+<h2>7. Communication Flow</h2>
+<table>
+    <tr>
+        <th>Module Stage</th>
+        <th>Purpose</th>
+        <th>Communication Method</th>
+    </tr>
+    <tr>
+        <td>Patient Reminder</td>
+        <td>Outstanding balance follow-up</td>
+        <td>SMS / Email</td>
+    </tr>
+    <tr>
+        <td>Collections Follow-up</td>
+        <td>Payment recovery</td>
+        <td>Phone Calls</td>
+    </tr>
+    <tr>
+        <td>Refund Processing</td>
+        <td>Send refunds</td>
+        <td>EFT / Banking API</td>
+    </tr>
+    <tr>
+        <td>Collection Escalation</td>
+        <td>Agency integration</td>
+        <td>API / Secure Transfer</td>
+    </tr>
+    <tr>
+        <td>Financial Reporting</td>
+        <td>Reports &amp; dashboards</td>
+        <td>BI Dashboard</td>
+    </tr>
+</table>
+
+<hr>
+
+<h2>8. API Flow</h2>
+
+<h3>Request</h3>
+<pre><code>
+POST /api/collections/refund
+</pre>
+
+<hr>
+
+<h3>Response</h3>
+<pre><code class="language-json">
+{
+  "refundId": "REF-1001",
+  "patientId": "PAT-2001",
+  "refundAmount": 250,
+  "refundStatus": "approved"
+}
+</pre>
+
+<hr>
+
+<h2>9. Database Flow</h2>
+
+<h3>Major Tables</h3>
+<li>patient_balances</li>
+<li>collection_accounts</li>
+<li>refunds</li>
+<li>write_offs</li>
+<li>credit_balances</li>
+<li>payment_transactions</li>
+<li>audit_logs</li>
+
+<hr>
+
+<h3>Multi-Tenant Architecture</h3>
+<p>Every financial table contains:</p>
+<li>tenant_id</li>
+<li>organization_id</li>
+<li>facility_id</li>
+<li>branch_id</li>
+
+<hr>
+
+<h2>10. Error Scenarios</h2>
+<table>
+    <tr>
+        <th>Error</th>
+        <th>Action</th>
+    </tr>
+    <tr>
+        <td>Duplicate Refund</td>
+        <td>Trigger refund review</td>
+    </tr>
+    <tr>
+        <td>Invalid Balance</td>
+        <td>Manual reconciliation</td>
+    </tr>
+    <tr>
+        <td>Payment Failure</td>
+        <td>Retry transaction</td>
+    </tr>
+    <tr>
+        <td>Unauthorized Refund</td>
+        <td>Block &amp; audit log</td>
+    </tr>
+    <tr>
+        <td>Notification Failure</td>
+        <td>Retry notification</td>
+    </tr>
+    <tr>
+        <td>Write-Off Approval Failure</td>
+        <td>Escalate to supervisor</td>
+    </tr>
+</table>
+
+<hr>
+
+<h2>11. Automation &amp; Background Jobs</h2>
+
+<pre><code>
+┌─────────────────────┐
+│ Run Daily Balance   │
+│ Monitoring Job      │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Generate Statements │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Send Payment        │
+│ Reminders           │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Detect Credit       │
+│ Balances            │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Trigger Refund /    │
+│ Write-Off Workflow  │
+└─────────────────────┘
+</pre>
+
+<hr>
+
+<h2>12. Audit &amp; Compliance</h2>
+
+<pre><code>
+┌─────────────────────┐
+│ User Performs       │
+│ Financial Action    │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Capture Audit Data  │
+│ - User ID           │
+│ - Timestamp         │
+│ - Patient ID        │
+│ - Refund / Writeoff │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ Store Immutable     │
+│ Audit Logs          │
+└──────────┬──────────┘
+           ↓
+┌─────────────────────┐
+│ HIPAA &amp; Financial   │
+│ Compliance Review   │
+└─────────────────────┘
+</pre>
+
+<li>HIPAA compliance monitoring</li>
+<li>Financial audit trails</li>
+<li>Refund audit tracking</li>
+<li>Write-off approval tracking</li>
+<li>User activity monitoring</li>
+<li>Compliance reporting</li>
+
+<hr>
+
+<h2>13. Role-Based Access Control</h2>
+<table>
+    <tr>
+        <th>Role</th>
+        <th>Access</th>
+    </tr>
+    <tr>
+        <td>Collections Team</td>
+        <td>Collections workflows</td>
+    </tr>
+    <tr>
+        <td>Finance Team</td>
+        <td>Refund &amp; write-off review</td>
+    </tr>
+    <tr>
+        <td>Billing Team</td>
+        <td>Patient balance management</td>
+    </tr>
+    <tr>
+        <td>Admin</td>
+        <td>Full financial access</td>
+    </tr>
+    <tr>
+        <td>Auditor</td>
+        <td>Read-only reports</td>
+    </tr>
+</table>
+
+<hr>
+
+<h2>14. Enterprise Integrations</h2>
+
+<h3>Payment Gateways</h3>
+<li>Stripe</li>
+<li>PayPal</li>
+<li>Authorize.Net</li>
+
+<hr>
+
+<h3>Banking Systems</h3>
+<li>EFT APIs</li>
+<li>ACH Systems</li>
+
+<hr>
+
+<h3>Collection Agencies</h3>
+<li>External Collection Services</li>
+<li>Agency APIs</li>
+
+<hr>
+
+<h3>Patient Portals</h3>
+<li>MyChart</li>
+<li>Athena Portal</li>
+
+<hr>
+
+<h2>15. Enterprise Enhancements</h2>
+<li>AI Payment Prediction</li>
+<li>Smart Collection Prioritization</li>
+<li>Automated Refund Processing</li>
+<li>Predictive Recovery Analytics</li>
+<li>Revenue Leakage Detection</li>
+<li>Real-Time Collections Dashboard</li>
+<li>Multi-Hospital Financial Analytics</li>
+
+<hr>
+
+<h2>16. Summary</h2>
+<p>The Collections / Refund / Write-Off Management module helps hospitals recover outstanding balances, manage refunds, track write-offs, and improve financial reconciliation.</p>
+
+<p>It provides:</p>
+<li>Collections workflows</li>
+<li>Refund management</li>
+<li>Credit balance handling</li>
+<li>Financial adjustment tracking</li>
+<li>Revenue recovery analytics</li>
+<li>Compliance monitoring</li>
+
+<p>This module improves:</p>
+<li>Cash flow</li>
+<li>Revenue recovery</li>
+<li>Financial accuracy</li>
+<li>Collection efficiency</li>
+<li>Compliance management</li>
+
+</body>
+</html>
