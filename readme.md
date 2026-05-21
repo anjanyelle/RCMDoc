@@ -34,7 +34,7 @@ Healthcare Revenue Cycle Management documentation covering workflow, modules, da
 + ✅ **[Development_Phase_Guide_Part4_PaymentDenials.md](Development_Phase_Guide_Part4_PaymentDenials.md)** - Phase 3: Payment posting, denial management, patient billing (with code)
 + ✅ **[Development_Phase_Guide_Part5_ReportsDeployment.md](Development_Phase_Guide_Part5_ReportsDeployment.md)** - Phase 4: Reports, compliance, AWS deployment, team structure
 
-## Module Flows (21/37 Completed)
+## Module Flows (23/37 Completed)
 + ✅ **[Flows_Module_01_User_Login.md](Flows_Module_01_User_Login.md)** - Module 23: User Login & Authentication Flow
 + ✅ **[Flows_Module_02_Patient_Registration.md](Flows_Module_02_Patient_Registration.md)** - Module 2: Patient Registration Flow
 + ✅ **[Flows_Module_03_Insurance_Verification.md](Flows_Module_03_Insurance_Verification.md)** - Module 3: Insurance Eligibility Verification Flow
@@ -45,6 +45,8 @@ Healthcare Revenue Cycle Management documentation covering workflow, modules, da
 + ✅ **[Flows_Module_12_Prior_Authorization.md](Flows_Module_12_Prior_Authorization.md)** - Module 4: Prior Authorization Flow
 + ✅ **[Flows_Module_13_Order_Management.md](Flows_Module_13_Order_Management.md)** - Module 6 Support: Clinical Order Management Flow
 + ✅ **[Flows_Module_14_Encounter.md](Flows_Module_14_Encounter.md)** - Module 6: Encounter Management / EMR Flow
++ ✅ **[Flows_Module_Clearinghouse Validation.md](Flows_Module_Clearinghouse%20Validation.md)** - Module 11: Clearinghouse Validation Flow
++ ✅ **[Flows_Module_Claim_status_tracking.md](Flows_Module_Claim_status_tracking.md)** - Module 12: Claim Status Tracking Flow
 + ✅ **[Flows_Module_14_ERA_Processing.md](Flows_Module_14_ERA_Processing.md)** - Module 14: ERA Processing Flow
 + ✅ **[Flows_Module_Payment_Posting.md](Flows_Module_Payment_Posting.md)** - Module 15: Payment Posting Flow
 + ✅ **[Flows_Module_11_Denial & Appeals Management.md](Flows_Module_11_Denial%20&%20Appeals%20Management.md)** - Module 16: Denial Management Flow

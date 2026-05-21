@@ -27,13 +27,10 @@ Each module documentation includes:
 
 ## 📚 Module Categories
 
-### Category PRE-RCM / FOUNDATIONAL FLOW (4 Modules)
+### Category PRE-RCM / FOUNDATIONAL FLOW (Modules 1-4)
 **Documents:** [Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md](Flows_Module_PROVIDER%20CREDENTIALING%20&%20MANAGEMENT.md)
 
-1. **Pre-RCM Module 1: Provider Management**
-2. **Pre-RCM Module 2: Credentialing Management**
-3. **Pre-RCM Module 3: Provider Enrollment**
-4. **Pre-RCM Module 4: Contract Management**
+1. **Pre-RCM Modules 1-4: Provider Onboarding, Credentialing, Enrollment, & Contract Management**
 
 ---
 
@@ -59,13 +56,13 @@ Each module documentation includes:
 ---
 
 ### Category 3: Claims Management (5 Modules)
-**Documents:** [Flows_Module_07_10_Remaining.md#module-9-claim-scrubbing-ai-powered](Flows_Module_07_10_Remaining.md#module-9-claim-scrubbing-ai-powered), [Flows_Module_07_10_Remaining.md#module-10-claim-submission](Flows_Module_07_10_Remaining.md#module-10-claim-submission), [Flows_Module_07_10_Remaining.md#module-8-claim-creation](Flows_Module_07_10_Remaining.md#module-8-claim-creation), [Flows_Module_Insurance Adjudication Tracking.md](Flows_Module_Insurance%20Adjudication%20Tracking.md)
+**Documents:** [Flows_Module_07_10_Remaining.md#module-9-claim-scrubbing-ai-powered](Flows_Module_07_10_Remaining.md#module-9-claim-scrubbing-ai-powered), [Flows_Module_07_10_Remaining.md#module-10-claim-submission](Flows_Module_07_10_Remaining.md#module-10-claim-submission), [Flows_Module_07_10_Remaining.md#module-8-claim-creation](Flows_Module_07_10_Remaining.md#module-8-claim-creation), [Flows_Module_Clearinghouse Validation.md](Flows_Module_Clearinghouse%20Validation.md), [Flows_Module_Claim_status_tracking.md](Flows_Module_Claim_status_tracking.md), [Flows_Module_Insurance Adjudication Tracking.md](Flows_Module_Insurance%20Adjudication%20Tracking.md)
 
 1. **Module 9: Claim Scrubbing**
 2. **Module 10: Claim Submission**
 3. **Module 10 (Support): Claim Creation**
-4. **Module 11: Clearinghouse Validation** *(Coming Soon)*
-5. **Module 12: Claim Status Tracking** *(Coming Soon)*
+4. **Module 11: Clearinghouse Validation**
+5. **Module 12: Claim Status Tracking**
 6. **Module 13: Insurance Adjudication Tracking**
 
 ---
@@ -144,10 +141,7 @@ Each module documentation includes:
 
 | Module # | Module Name | Category | Document Link | Status |
 |----------|-------------|----------|---------------|--------|
-| Pre-RCM 1 | Provider Management | Pre-RCM | [Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md](Flows_Module_PROVIDER%20CREDENTIALING%20&%20MANAGEMENT.md) | ✅ Active |
-| Pre-RCM 2 | Credentialing Management | Pre-RCM | [Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md](Flows_Module_PROVIDER%20CREDENTIALING%20&%20MANAGEMENT.md) | ✅ Active |
-| Pre-RCM 3 | Provider Enrollment | Pre-RCM | [Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md](Flows_Module_PROVIDER%20CREDENTIALING%20&%20MANAGEMENT.md) | ✅ Active |
-| Pre-RCM 4 | Contract Management | Pre-RCM | [Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md](Flows_Module_PROVIDER%20CREDENTIALING%20&%20MANAGEMENT.md) | ✅ Active |
+| Pre-RCM 1-4 | Provider Onboarding, Credentialing, Enrollment, & Contract Management | Pre-RCM | [Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.md](Flows_Module_PROVIDER%20CREDENTIALING%20&%20MANAGEMENT.md) | ✅ Active |
 | 1 | Appointment Scheduling | Category 1 | [Flows_Module_04_Appointment_Scheduling.md](Flows_Module_04_Appointment_Scheduling.md) | ✅ Active |
 | 2 | Patient Registration | Category 1 | [Flows_Module_02_Patient_Registration.md](Flows_Module_02_Patient_Registration.md) | ✅ Active |
 | 3 | Insurance Eligibility Verification | Category 1 | [Flows_Module_03_Insurance_Verification.md](Flows_Module_03_Insurance_Verification.md) | ✅ Active |
@@ -160,8 +154,8 @@ Each module documentation includes:
 | 9 | Claim Scrubbing | Category 3 | [Flows_Module_07_10_Remaining.md#module-9-claim-scrubbing-ai-powered](Flows_Module_07_10_Remaining.md#module-9-claim-scrubbing-ai-powered) | ✅ Active |
 | 10 | Claim Submission | Category 3 | [Flows_Module_07_10_Remaining.md#module-10-claim-submission](Flows_Module_07_10_Remaining.md#module-10-claim-submission) | ✅ Active |
 | 10 (Support) | Claim Creation | Category 3 | [Flows_Module_07_10_Remaining.md#module-8-claim-creation](Flows_Module_07_10_Remaining.md#module-8-claim-creation) | ✅ Active |
-| 11 | Clearinghouse Validation | Category 3 | *Coming Soon* | 🔒 Disabled |
-| 12 | Claim Status Tracking | Category 3 | *Coming Soon* | 🔒 Disabled |
+| 11 | Clearinghouse Validation | Category 3 | [Flows_Module_Clearinghouse Validation.md](Flows_Module_Clearinghouse%20Validation.md) | ✅ Active |
+| 12 | Claim Status Tracking | Category 3 | [Flows_Module_Claim_status_tracking.md](Flows_Module_Claim_status_tracking.md) | ✅ Active |
 | 13 | Insurance Adjudication Tracking | Category 3 | [Flows_Module_Insurance Adjudication Tracking.md](Flows_Module_Insurance%20Adjudication%20Tracking.md) | ✅ Active |
 | 14 | ERA Processing | Category 4 | [Flows_Module_14_ERA_Processing.md](Flows_Module_14_ERA_Processing.md) | ✅ Active |
 | 15 | Payment Posting | Category 4 | [Flows_Module_Payment_Posting.md](Flows_Module_Payment_Posting.md) | ✅ Active |
