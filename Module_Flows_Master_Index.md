@@ -55,12 +55,12 @@ Each module documentation includes:
 
 ---
 
-### Category 3: Claims Management (5 Modules)
-**Documents:** [Flows_Module_07_10_Remaining.md#module-9-claim-scrubbing-ai-powered](Flows_Module_07_10_Remaining.md#module-9-claim-scrubbing-ai-powered), [Flows_Module_07_10_Remaining.md#module-10-claim-submission](Flows_Module_07_10_Remaining.md#module-10-claim-submission), [Flows_Module_07_10_Remaining.md#module-8-claim-creation](Flows_Module_07_10_Remaining.md#module-8-claim-creation), [Flows_Module_Clearinghouse Validation.md](Flows_Module_Clearinghouse%20Validation.md), [Flows_Module_Claim_status_tracking.md](Flows_Module_Claim_status_tracking.md), [Flows_Module_Insurance Adjudication Tracking.md](Flows_Module_Insurance%20Adjudication%20Tracking.md)
+### Category 3: Claims Management (6 Modules)
+**Documents:** [Flows_Module_07_10_Remaining.md#module-8-claim-creation](Flows_Module_07_10_Remaining.md#module-8-claim-creation), [Flows_Module_07_10_Remaining.md#module-9-claim-scrubbing-ai-powered](Flows_Module_07_10_Remaining.md#module-9-claim-scrubbing-ai-powered), [Flows_Module_07_10_Remaining.md#module-10-claim-submission](Flows_Module_07_10_Remaining.md#module-10-claim-submission), [Flows_Module_Clearinghouse Validation.md](Flows_Module_Clearinghouse%20Validation.md), [Flows_Module_Claim_status_tracking.md](Flows_Module_Claim_status_tracking.md), [Flows_Module_Insurance Adjudication Tracking.md](Flows_Module_Insurance%20Adjudication%20Tracking.md)
 
-1. **Module 9: Claim Scrubbing**
-2. **Module 10: Claim Submission**
-3. **Module 10 (Support): Claim Creation**
+1. **Module 8a: Claim Creation**
+2. **Module 9a: Claim Scrubbing**
+3. **Module 10: Claim Submission**
 4. **Module 11: Clearinghouse Validation**
 5. **Module 12: Claim Status Tracking**
 6. **Module 13: Insurance Adjudication Tracking**
@@ -151,9 +151,9 @@ Each module documentation includes:
 | 6 (Support) | Order Management | Category 2 | [Flows_Module_13_Order_Management.md](Flows_Module_13_Order_Management.md) | ✅ Active |
 | 7 | Medical Coding | Category 2 | [Flows_Module_06_Medical_Coding.md](Flows_Module_06_Medical_Coding.md) | ✅ Active |
 | 8 | Charge Entry / Charge Capture | Category 2 | [Flows_Module_07_10_Remaining.md#module-8-charge-entry-charge-capture](Flows_Module_07_10_Remaining.md#module-8-charge-entry-charge-capture) | ✅ Active |
-| 9 | Claim Scrubbing | Category 3 | [Flows_Module_07_10_Remaining.md#module-9-claim-scrubbing-ai-powered](Flows_Module_07_10_Remaining.md#module-9-claim-scrubbing-ai-powered) | ✅ Active |
+| 8a | Claim Creation | Category 3 | [Flows_Module_07_10_Remaining.md#module-8-claim-creation](Flows_Module_07_10_Remaining.md#module-8-claim-creation) | ✅ Active |
+| 9a | Claim Scrubbing | Category 3 | [Flows_Module_07_10_Remaining.md#module-9-claim-scrubbing-ai-powered](Flows_Module_07_10_Remaining.md#module-9-claim-scrubbing-ai-powered) | ✅ Active |
 | 10 | Claim Submission | Category 3 | [Flows_Module_07_10_Remaining.md#module-10-claim-submission](Flows_Module_07_10_Remaining.md#module-10-claim-submission) | ✅ Active |
-| 10 (Support) | Claim Creation | Category 3 | [Flows_Module_07_10_Remaining.md#module-8-claim-creation](Flows_Module_07_10_Remaining.md#module-8-claim-creation) | ✅ Active |
 | 11 | Clearinghouse Validation | Category 3 | [Flows_Module_Clearinghouse Validation.md](Flows_Module_Clearinghouse%20Validation.md) | ✅ Active |
 | 12 | Claim Status Tracking | Category 3 | [Flows_Module_Claim_status_tracking.md](Flows_Module_Claim_status_tracking.md) | ✅ Active |
 | 13 | Insurance Adjudication Tracking | Category 3 | [Flows_Module_Insurance Adjudication Tracking.md](Flows_Module_Insurance%20Adjudication%20Tracking.md) | ✅ Active |

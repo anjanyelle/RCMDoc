@@ -350,7 +350,7 @@
 
 ---
 
-# Module 9: Claim Scrubbing (AI-Powered)
+# Module 9a: Claim Scrubbing (AI-Powered)
 
 ## 1. Overview
 **Purpose:** Validate claims using rules engine and AI to detect billing errors, coding issues, missing information, and denial risks before claim submission.
@@ -520,7 +520,7 @@
 ```
 ┌──────────────────────────┐
 │ Claim Scrubbed OK        │
-│ (from Module 9)          │
+│ (from Module 9a)         │
 └────────────┬─────────────┘
              ↓
 ┌──────────────────────────┐
