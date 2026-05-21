@@ -34,7 +34,7 @@ Healthcare Revenue Cycle Management documentation covering workflow, modules, da
 + ✅ **[Development_Phase_Guide_Part4_PaymentDenials.md](Development_Phase_Guide_Part4_PaymentDenials.md)** - Phase 3: Payment posting, denial management, patient billing (with code)
 + ✅ **[Development_Phase_Guide_Part5_ReportsDeployment.md](Development_Phase_Guide_Part5_ReportsDeployment.md)** - Phase 4: Reports, compliance, AWS deployment, team structure
 
-## Module Flows (24 Completed)
+## Module Flows (25 Completed)
 + ✅ **[Flows_Module_01_User_Login.md](Flows_Module_01_User_Login.md)** - Module 23-24: User Login & Authentication, User Management Flow
 + ✅ **[Flows_Module_02_Patient_Registration.md](Flows_Module_02_Patient_Registration.md)** - Module 2: Patient Registration Flow
 + ✅ **[Flows_Module_03_Insurance_Verification.md](Flows_Module_03_Insurance_Verification.md)** - Module 3: Insurance Eligibility Verification Flow
@@ -58,4 +58,5 @@ Healthcare Revenue Cycle Management documentation covering workflow, modules, da
 + ✅ **[Flows_Module_Compliance & Audit.md](Flows_Module_Compliance%20&%20Audit.md)** - Module 22: Compliance & Audit Flow
 + ✅ **[Flows_Module_Insurance Adjudication Tracking.md](Flows_Module_Insurance%20Adjudication%20Tracking.md)** - Module 13: Insurance Adjudication Tracking Flow
 + ✅ **[Flows_Module_07_10_Remaining.md](Flows_Module_07_10_Remaining.md)** - Module 8, 9, 9a, 10: Remaining Charge Capture, Claim Creation, Claim Scrubbing, & Claim Submission Flow
-+ ✅ **[Flows_Module_25_33_High_Level_Summary.md](Flows_Module_25_33_High_Level_Summary.md)** - Modules 25-33: Platform Core Modules (High Level Summary)
++ ✅ **[Flows_Module_25_33_High_Level_Summary.md](Flows_Module_25_33_High_Level_Summary.md)** - Modules 25-33: Platform Core Modules (High Level Summary)
++ ✅ **[Flows_Module_34_37_High_Level_Summary.md](Flows_Module_34_37_High_Level_Summary.md)** - Modules 34-37: Platform Core Modules (High Level Summary)

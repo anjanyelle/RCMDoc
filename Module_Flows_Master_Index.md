@@ -97,9 +97,9 @@ Each module documentation includes:
 ---
 
 ### Category 7: Advanced Enterprise Features (4 Modules)
-**Documents:** None *(Coming Soon)*
+**Documents:** [Flows_Module_34_37_High_Level_Summary.md](Flows_Module_34_37_High_Level_Summary.md)
 
-1. **Modules 34-37: Enterprise Integrations & Monitor** *(Coming Soon)*
+1. **Modules 34-37: Platform Core Modules (High Level Summary)**
 
 ---
 
@@ -168,10 +168,7 @@ Each module documentation includes:
 | 22 | Compliance & Audit | Category 5 | [Flows_Module_Compliance & Audit.md](Flows_Module_Compliance%20&%20Audit.md) | ✅ Active |
 | 23-24 | User Login & Authentication, User Management | Category 6 | [Flows_Module_01_User_Login.md](Flows_Module_01_User_Login.md) | ✅ Active |
 | 25-33 | Platform Core Modules (High Level Summary) | Category 6 | [Flows_Module_25_33_High_Level_Summary.md](Flows_Module_25_33_High_Level_Summary.md) | ✅ Active |
-| 34 | Eligibility Batch Processing | Category 7 | *Coming Soon* | 🔒 Disabled |
-| 35 | ERA Automation | Category 7 | *Coming Soon* | 🔒 Disabled |
-| 36 | API Management | Category 7 | *Coming Soon* | 🔒 Disabled |
-| 37 | Security & Compliance Monitoring | Category 7 | *Coming Soon* | 🔒 Disabled |
+| 34-37 | Platform Core Modules (High Level Summary) | Category 7 | [Flows_Module_34_37_High_Level_Summary.md](Flows_Module_34_37_High_Level_Summary.md) | ✅ Active
 
 ---
 
@@ -341,4 +338,5 @@ For questions or clarifications:
 - **Compliance & Audit:** [Flows_Module_Compliance & Audit.md](Flows_Module_Compliance%20&%20Audit.md)
 - **Remaining Modules:** [Flows_Module_07_10_Remaining.md](Flows_Module_07_10_Remaining.md)
 - **Insurance Adjudication:** [Flows_Module_Insurance Adjudication Tracking.md](Flows_Module_Insurance%20Adjudication%20Tracking.md)
-- **Platform Core Summary:** [Flows_Module_25_33_High_Level_Summary.md](Flows_Module_25_33_High_Level_Summary.md)
+- **Platform Core Summary (Modules 25-33):** [Flows_Module_25_33_High_Level_Summary.md](Flows_Module_25_33_High_Level_Summary.md)
+- **Platform Core Summary (Modules 34-37):** [Flows_Module_34_37_High_Level_Summary.md](Flows_Module_34_37_High_Level_Summary.md)
