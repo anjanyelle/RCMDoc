@@ -1234,6 +1234,72 @@ CREATE TABLE failed_login_attempts (
 
 ---
 
+### Multi-Tenant Architecture
+
+Purpose
+
+Support multiple hospitals, clinics, provider groups, and healthcare organizations within a single RCM platform while maintaining complete data isolation and security.
+
+Architecture Features
+
+- Tenant-level data isolation
+- Organization-based access control
+- Facility-level segregation
+- Shared application architecture
+- Secure tenant-specific APIs
+- Role-based tenant permissions
+- Cross-facility restrictions
+- Tenant-aware reporting
+
+Tenant Hierarchy
+
+```
+Tenant
+   ↓
+Organization
+   ↓
+Facility
+   ↓
+Department
+   ↓
+Users
+```
+
+Database Isolation
+
+Every major table contains:
+
+- tenant_id
+- organization_id
+- facility_id
+
+Purpose
+
+- Prevent cross-hospital data leakage
+- Support SaaS deployment
+- Enable enterprise scalability
+- Maintain HIPAA compliance
+- Support multi-hospital systems
+
+Security Controls
+
+- Row-level security
+- JWT tenant validation
+- Tenant-aware API filtering
+- Separate audit trails
+- Encrypted tenant data
+
+Example
+
+Hospital A users cannot access:
+- Hospital B patients
+- claims
+- payments
+- providers
+- reports
+
+---
+
 ## 10. Error Scenarios
 
 ### Scenario 1: Invalid Credentials
@@ -1767,5 +1833,3 @@ Security Monitoring
 ✅ HIPAA compliant  
 
 ---
-
-**Next Module:** [Module 2: Patient Registration](Flows_Module_02_Patient_Registration.md)

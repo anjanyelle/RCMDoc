@@ -1243,6 +1243,77 @@ CREATE TABLE failed_login_attempts (
 
 <hr>
 
+<h3>Multi-Tenant Architecture</h3>
+
+<h3>Purpose</h3>
+<p>Support multiple hospitals, clinics, provider groups, and healthcare organizations within a single RCM platform while maintaining complete data isolation and security.</p>
+
+<hr>
+
+<h3>Architecture Features</h3>
+<li>Tenant-level data isolation</li>
+<li>Organization-based access control</li>
+<li>Facility-level segregation</li>
+<li>Shared application architecture</li>
+<li>Secure tenant-specific APIs</li>
+<li>Role-based tenant permissions</li>
+<li>Cross-facility restrictions</li>
+<li>Tenant-aware reporting</li>
+
+<hr>
+
+<h3>Tenant Hierarchy</h3>
+
+<pre><code>
+Tenant
+   ↓
+Organization
+   ↓
+Facility
+   ↓
+Department
+   ↓
+Users
+</pre>
+
+<hr>
+
+<h3>Database Isolation</h3>
+<p>Every major table contains:</p>
+<li>tenant_id</li>
+<li>organization_id</li>
+<li>facility_id</li>
+
+<hr>
+
+<h3>Purpose</h3>
+<li>Prevent cross-hospital data leakage</li>
+<li>Support SaaS deployment</li>
+<li>Enable enterprise scalability</li>
+<li>Maintain HIPAA compliance</li>
+<li>Support multi-hospital systems</li>
+
+<hr>
+
+<h3>Security Controls</h3>
+<li>Row-level security</li>
+<li>JWT tenant validation</li>
+<li>Tenant-aware API filtering</li>
+<li>Separate audit trails</li>
+<li>Encrypted tenant data</li>
+
+<hr>
+
+<h3>Example</h3>
+<p>Hospital A users cannot access:</p>
+<li>Hospital B patients</li>
+<li>claims</li>
+<li>payments</li>
+<li>providers</li>
+<li>reports</li>
+
+<hr>
+
 <h2>10. Error Scenarios</h2>
 
 <h3>Scenario 1: Invalid Credentials</h3>
@@ -1797,6 +1868,5 @@ Security Monitoring
 
 <hr>
 
-<p><strong>Next Module:</strong> <a href="Flows_Module_02_Patient_Registration.md">Module 2: Patient Registration</a></p>
 </body>
 </html>
