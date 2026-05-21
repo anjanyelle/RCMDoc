@@ -57,4 +57,4 @@ Healthcare Revenue Cycle Management documentation covering workflow, modules, da
 + ✅ **[Flows_Module_Reporting_Analytics.md](Flows_Module_Reporting_Analytics.md)** - Module 21: Reporting & Analytics Flow
 + ✅ **[Flows_Module_Compliance & Audit.md](Flows_Module_Compliance%20&%20Audit.md)** - Module 22: Compliance & Audit Flow
 + ✅ **[Flows_Module_Insurance Adjudication Tracking.md](Flows_Module_Insurance%20Adjudication%20Tracking.md)** - Module 13: Insurance Adjudication Tracking Flow
-+ ✅ **[Flows_Module_07_10_Remaining.md](Flows_Module_07_10_Remaining.md)** - Module 8, 8a, 9a, 10: Remaining Charge Capture, Claim Creation, Claim Scrubbing, & Claim Submission Flow
++ ✅ **[Flows_Module_07_10_Remaining.md](Flows_Module_07_10_Remaining.md)** - Module 8, 9, 9a, 10: Remaining Charge Capture, Claim Creation, Claim Scrubbing, & Claim Submission Flow

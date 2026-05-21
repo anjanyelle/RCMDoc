@@ -200,7 +200,7 @@
 
 ---
 
-# Module 8a: Claim Creation
+# Module 9a: Claim Creation
 
 ## 1. Overview
 **Purpose:** Create CMS-1500, UB-04, and EDI 837 claims using captured charges, patient details, provider data, and insurance information for claim submission.
@@ -350,7 +350,7 @@
 
 ---
 
-# Module 9a: Claim Scrubbing (AI-Powered)
+# Module 9: Claim Scrubbing (AI-Powered)
 
 ## 1. Overview
 **Purpose:** Validate claims using rules engine and AI to detect billing errors, coding issues, missing information, and denial risks before claim submission.
@@ -520,7 +520,7 @@
 ```
 ┌──────────────────────────┐
 │ Claim Scrubbed OK        │
-│ (from Module 9a)         │
+│ (from Module 9)          │
 └────────────┬─────────────┘
              ↓
 ┌──────────────────────────┐
