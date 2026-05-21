@@ -1,8 +1,8 @@
-# Module 18: Payment Posting - Flow Documentation
+# Module 15: Payment Posting - Flow Documentation
 
 **Version:** 1.0  
-**Module ID:** MOD-018  
-**Category:** Financial Management / Revenue Cycle Management  
+**Module ID:** MOD-015  
+**Category:** Category 4: Payment & Revenue Management
 
 ---
 
@@ -810,3 +810,6 @@ This module directly impacts:
 - operational efficiency,
 - and enterprise revenue integrity.
 
+---
+
+**Next Module:** [Module 16: Denial & Appeals Management](Flows_Module_11_Denial%20%26%20Appeals%20Management.md)

@@ -1,8 +1,8 @@
-# Module 6: Medical Coding (AI-Assisted) - Flow Documentation
+# Module 7: Medical Coding (AI-Assisted) - Flow Documentation
 
 **Version:** 1.0  
-**Module ID:** MOD-006  
-**Category:** Clinical & Documentation
+**Module ID:** MOD-007  
+**Category:** Category 2: Clinical & Mid-Cycle Management
 
 ---
 
@@ -742,4 +742,4 @@ Coder selects correct code
 
 ---
 
-**Next Module:** [Module 7: Charge Capture](Flows_Module_07_Charge_Capture.md)
+**Next Module:** [Module 8: Charge Entry / Charge Capture](Flows_Module_07_10_Remaining.md#module-8-charge-entry-charge-capture)

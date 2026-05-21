@@ -1,8 +1,8 @@
-# Module 5: Patient Check-in - Flow Documentation
+# Module 5: Patient Check-In - Flow Documentation
 
 **Version:** 1.0  
 **Module ID:** MOD-005  
-**Category:** Patient Management
+**Category:** Category 1: Patient Access Management
 
 ---
 
@@ -755,4 +755,4 @@ Display queue number
 
 ---
 
-**Next Module:** [Module 6: Medical Coding (AI-Assisted)](Flows_Module_06_Medical_Coding.md)
+**Next Module:** [Module 6: Clinical Documentation / EMR (Encounter)](Flows_Module_14_Encounter.md)

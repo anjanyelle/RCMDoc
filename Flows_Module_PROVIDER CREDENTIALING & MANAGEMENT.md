@@ -1,8 +1,8 @@
-# MODULE 2 — PROVIDER CREDENTIALING & MANAGEMENT
+# Pre-RCM Modules 1-4: Provider Onboarding, Credentialing, Enrollment, & Contract Management
 
 **Version:** 1.0
-**Module ID:** MOD-002
-**Category:** Provider Management / Revenue Cycle Management
+**Module ID:** MOD-PRE-01-04
+**Category:** Pre-RCM / Foundational Flow
 
 ---
 
@@ -1280,3 +1280,7 @@ This module directly impacts:
 * claim acceptance,
 * compliance,
 * and enterprise operational readiness.
+
+---
+
+**Next Module:** [Module 1: Appointment Scheduling](Flows_Module_04_Appointment_Scheduling.md)

@@ -1,8 +1,8 @@
-# Module 4: Appointment Scheduling - Flow Documentation
+# Module 1: Appointment Scheduling - Flow Documentation
 
 **Version:** 1.0  
-**Module ID:** MOD-004  
-**Category:** Patient Management
+**Module ID:** MOD-001  
+**Category:** Category 1: Patient Access Management
 
 ---
 
@@ -889,4 +889,4 @@ Prompt for supervisor override code/credentials
 
 ---
 
-**Next Module:** [Module 5: Patient Check-in](Flows_Module_05_Patient_Checkin.md)
+**Next Module:** [Module 2: Patient Registration](Flows_Module_02_Patient_Registration.md)
