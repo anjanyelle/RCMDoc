@@ -89,10 +89,10 @@ Each module documentation includes:
 ---
 
 ### Category 6: Administration & Platform Services (11 Modules)
-**Documents:** [Flows_Module_01_User_Login.md](Flows_Module_01_User_Login.md)
+**Documents:** [Flows_Module_01_User_Login.md](Flows_Module_01_User_Login.md), [Flows_Module_25_33_High_Level_Summary.md](Flows_Module_25_33_High_Level_Summary.md)
 
-1. **Module 23: User Login & Authentication**
-2. **Modules 24-33: Platform Core Modules** *(Coming Soon)*
+1. **Module 23-24: User Login & Authentication, User Management**
+2. **Modules 25-33: Platform Core Modules (High Level Summary)**
 
 ---
 
@@ -166,17 +166,8 @@ Each module documentation includes:
 | 20 | Collections / Refund / Write-Off Management | Category 4 | [Flows_Module_Collections.md](Flows_Module_Collections.md) | ✅ Active |
 | 21 | Reporting & Analytics | Category 5 | [Flows_Module_Reporting_Analytics.md](Flows_Module_Reporting_Analytics.md) | ✅ Active |
 | 22 | Compliance & Audit | Category 5 | [Flows_Module_Compliance & Audit.md](Flows_Module_Compliance%20&%20Audit.md) | ✅ Active |
-| 23 | User Login & Authentication | Category 6 | [Flows_Module_01_User_Login.md](Flows_Module_01_User_Login.md) | ✅ Active |
-| 24 | User Management | Category 6 | *Coming Soon* | 🔒 Disabled |
-| 25 | Notification System | Category 6 | *Coming Soon* | 🔒 Disabled |
-| 26 | Document Management | Category 6 | *Coming Soon* | 🔒 Disabled |
-| 27 | Third-Party Integrations | Category 6 | *Coming Soon* | 🔒 Disabled |
-| 28 | Patient Portal | Category 6 | *Coming Soon* | 🔒 Disabled |
-| 29 | Revenue Cycle Dashboard | Category 6 | *Coming Soon* | 🔒 Disabled |
-| 30 | Automated Workflows | Category 6 | *Coming Soon* | 🔒 Disabled |
-| 31 | Data Import/Export | Category 6 | *Coming Soon* | 🔒 Disabled |
-| 32 | System Configuration | Category 6 | *Coming Soon* | 🔒 Disabled |
-| 33 | Backup & Recovery | Category 6 | *Coming Soon* | 🔒 Disabled |
+| 23-24 | User Login & Authentication, User Management | Category 6 | [Flows_Module_01_User_Login.md](Flows_Module_01_User_Login.md) | ✅ Active |
+| 25-33 | Platform Core Modules (High Level Summary) | Category 6 | [Flows_Module_25_33_High_Level_Summary.md](Flows_Module_25_33_High_Level_Summary.md) | ✅ Active |
 | 34 | Eligibility Batch Processing | Category 7 | *Coming Soon* | 🔒 Disabled |
 | 35 | ERA Automation | Category 7 | *Coming Soon* | 🔒 Disabled |
 | 36 | API Management | Category 7 | *Coming Soon* | 🔒 Disabled |
@@ -329,7 +320,7 @@ For questions or clarifications:
 
 **Document Navigation:**
 - **Master Index:** [Module_Flows_Master_Index.md](Module_Flows_Master_Index.md) (This document)
-- **Module 1: User Login:** [Flows_Module_01_User_Login.md](Flows_Module_01_User_Login.md)
+- **Module 23-24: User Login & User Management:** [Flows_Module_01_User_Login.md](Flows_Module_01_User_Login.md)
 - **Module 2: Patient Registration:** [Flows_Module_02_Patient_Registration.md](Flows_Module_02_Patient_Registration.md)
 - **Module 3: Insurance Verification:** [Flows_Module_03_Insurance_Verification.md](Flows_Module_03_Insurance_Verification.md)
 - **Module 4: Appointment Scheduling:** [Flows_Module_04_Appointment_Scheduling.md](Flows_Module_04_Appointment_Scheduling.md)
@@ -350,3 +341,4 @@ For questions or clarifications:
 - **Compliance & Audit:** [Flows_Module_Compliance & Audit.md](Flows_Module_Compliance%20&%20Audit.md)
 - **Remaining Modules:** [Flows_Module_07_10_Remaining.md](Flows_Module_07_10_Remaining.md)
 - **Insurance Adjudication:** [Flows_Module_Insurance Adjudication Tracking.md](Flows_Module_Insurance%20Adjudication%20Tracking.md)
+- **Platform Core Summary:** [Flows_Module_25_33_High_Level_Summary.md](Flows_Module_25_33_High_Level_Summary.md)
