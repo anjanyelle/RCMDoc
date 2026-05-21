@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 14: ERA Processing - Flow Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Module 14: ERA Processing - Flow Documentation</h1>
+
+<div class="meta">
+    <p><strong>Version:</strong> 1.0 - Updated</p>
+    <p><strong>Module ID:</strong> MOD-014</p>
+    <p><strong>Category:</strong> Category 4: Payment & Revenue Management</p>
+    <p><strong>Next Module:</strong> <a href="Flows_Module_Payment_Posting.html">Module 15: Payment Posting</a></p>
+</div>
+
+<hr>
+
+<h2>1. Module Overview</h2>
+
+<h3>Purpose</h3>
+<p>Process Electronic Remittance Advice (EDI 835) files received from insurance payers, extract payment, adjustment, denial, patient responsibility, provider-level adjustment, and reconciliation details, and prepare accurate payment posting.</p>
+
+<h3>Why Hospitals Use It</h3>
+<p>Automates payer payment processing, reduces manual posting errors, identifies denials and adjustments, supports faster reconciliation, prevents duplicate ERA posting, and keeps claim and patient balances accurate before patient billing.</p>
+
+<h3>Main Users</h3>
+<p>Payment Posting Team, Billing Team, AR Team, Denial Management Team, Finance Manager, Compliance / Audit Team, System, Clearinghouse / Payer.</p>
+
+<h3>Business Goal</h3>
+<p>Improve payment posting speed and accuracy, reduce unapplied cash, detect denials early, reconcile payer payments with EFT/bank deposits, validate allowed/contractual amounts, handle PLB/provider-level adjustments, and ensure correct claim, ledger, secondary billing, and patient responsibility balances.</p>
+
+<hr>
+
+<h2>2. Actors Involved</h2>
+
+<pre><code>
++-----------------------------------------------------------------------+
+| ACTORS IN ERA PROCESSING MODULE                                       |
++-----------------------------------------------------------------------+
+| 1. Payment Posting Team                                               |
+|    - Reviews imported ERA files and auto-posting results              |
+|    - Handles unmatched payments, exceptions, reversals, and takebacks |
+|                                                                       |
+| 2. Billing Team                                                       |
+|    - Reviews claim-level payment updates                              |
+|    - Confirms claim balance before next billing action                 |
+|                                                                       |
+| 3. AR / Denial Management Team                                        |
+|    - Reviews denied, partially paid, or unpaid claim lines             |
+|    - Starts denial follow-up, appeal, or correction workflow           |
+|                                                                       |
+| 4. Finance Manager                                                    |
+|    - Reconciles ERA payments with bank deposits / EFT                 |
+|    - Reviews PLB adjustments, underpayment, overpayment, and cash      |
+|                                                                       |
+| 5. Compliance / Audit Team                                            |
+|    - Audits payment posting, adjustments, manual overrides, balances   |
+|                                                                       |
+| 6. System                                                             |
+|    - ERA parser, matching rules, auto-posting, reconciliation, audit   |
+|                                                                       |
+| 7. External Systems                                                   |
+|    - Payer, clearinghouse, bank/EFT system, PM/claims system           |
+|    - EDI 835, EFT, claim status, and payment gateway where applicable  |
++-----------------------------------------------------------------------+
+</code></pre>
+
+<hr>
+
+<h2>3. Step-by-Step Workflow</h2>
+
+<pre><code>
++-----------------------------+
+| ERA / EDI 835 Received     |
+| from Payer/Clearinghouse   |
++-------------+---------------+
+              |
+              v
++-----------------------------+
+| Validate ERA File           |
+| - File format               |
+| - Payer ID                  |
+| - Trace/check/EFT number    |
+| - Payment date/method       |
+| - File hash duplicate check |
++-------------+---------------+
+              |
+        +-----+------+
+        |            |
+        v            v
++--------------+  +-----------------------------+
+| Invalid /    |  | Valid ERA File              |
+| Duplicate    |  +-------------+---------------+
++------+-------+                |
+       |                        v
+       |          +-----------------------------+
+       |          | Parse ERA 835 Segments:     |
+       |          | - Claim/line payments       |
+       |          | - CARC/RARC codes           |
+       |          | - Patient responsibility     |
+       |          | - PLB/provider adjustments   |
+       |          +-------------+---------------+
+       |                        |
+       |                        v
+       |          +-----------------------------+
+       |          | Match ERA to Claims, Lines, |
+       |          | Encounters, and Patients    |
+       |          +-------------+---------------+
+       |                        |
+       |              +---------+---------+
+       |              |                   |
+       |              v                   v
+       |   +------------------+   +-----------------------------+
+       |   | Match Failed /   |   | Match Successful            |
+       |   | Manual Review    |   +-------------+---------------+
+       |   +--------+---------+                 |
+       |            |                           v
+       |            |             +-----------------------------+
+       |            |             | Apply Posting Rules:        |
+       |            |             | - Paid amount               |
+       |            |             | - Contractual adjustment     |
+       |            |             | - Denial/rejection reason    |
+       |            |             | - Allowed amount validation  |
+       |            |             | - Patient responsibility     |
+       |            |             +-------------+---------------+
+       |            |                           |
+       |            |                           v
+       |            |             +-----------------------------+
+       |            |             | Partial Auto-Post: only     |
+       |            |             | fully matched/rule-passed   |
+       |            |             | items; hold exceptions      |
+       |            |             +-------------+---------------+
+       |            |                           |
+       +------------+---------------------------+
+                                    |
+                                    v
+             +--------------------------------------------+
+             | Reconcile ERA Payment with EFT/Bank Deposit|
+             +----------------------+---------------------+
+                                    |
+                                    v
+             +--------------------------------------------+
+             | Update Claim, Ledger, Denial Worklist,     |
+             | Secondary Billing Need, Patient Resp.,     |
+             | PLB Adjustments, and Audit Trail           |
+             +----------------------+---------------------+
+                                    |
+                                    v
+             +--------------------------------------------+
+             | Send Completed Balances to Patient Billing |
+             | or Denial / AR / Secondary Billing Follow-up|
+             +--------------------------------------------+
+</code></pre>
+
+<hr>
+
+<h2>4. ERA Transaction / Integration Flow</h2>
+
+<pre><code>
+Payer / Clearinghouse      RCM Backend            Rules Engine       Claims/Ledger       Finance
+        |                         |                     |                 |               |
+        | Send ERA 835 file       |                     |                 |               |
+        +------------------------>|                     |                 |               |
+        |                         | Validate file       |                 |               |
+        |                         | - duplicate/file hash check           |               |
+        |                         | - payer/check/EFT ID                  |               |
+        |                         +-------------------->|                 |               |
+        |                         | Parse ERA/PLB data  |                 |               |
+        |                         +-------------------->|                 |               |
+        |                         | Match claim/line    |                 |               |
+        |                         +------------------------------------->|
+        |                         | Validate allowed/contractual amounts |
+        |                         +-------------------->|                 |
+        |                         | Auto-post passed items; hold exceptions             |
+        |                         +------------------------------------->|
+        |                         | Reconcile EFT/bank deposit and PLB adjustments      |
+        |                         +---------------------------------------------------->|
+        |                         | Update claim status, ledger, denials, patient resp. |
+        |                         +------------------------------------->|
+        |                         | Audit all posting, adjustment, and override actions |
+</code></pre>
+
+<ul>
+    <li><strong>Important:</strong> Store raw ERA file, parsed ERA JSON, payer trace/check/EFT number, file hash, claim match result, posting result, exception reason, PLB adjustment details, and reconciliation status.</li>
+    <li><strong>Important:</strong> Do not update patient balance until ERA posting and reconciliation rules are completed.</li>
+    <li><strong>Important:</strong> CARC/RARC codes should drive denial, adjustment, and patient responsibility workflows.</li>
+    <li><strong>Important:</strong> If ERA creates secondary billing requirement or changes patient responsibility, hold patient billing until secondary billing and balance validation are complete.</li>
+</ul>
+
+<hr>
+
+<h2>5. Use Case Diagram</h2>
+
+<pre><code>
++-------------------+                     +-------------------------+
+| Clearinghouse /   |-------------------->| Send ERA 835 File       |
+| Payer             |                     +-------------------------+
++-------------------+                                  |
+                                                     v
++-------------------+                     +-------------------------+
+| System            |-------------------->| Validate / Parse ERA    |
++-------------------+                     +-------------------------+
+                                                     |
++-------------------+                     +-------------------------+
+| System            |-------------------->| Match Claims and Lines  |
++-------------------+                     +-------------------------+
+                                                     |
++-------------------+                     +-------------------------+
+| System            |-------------------->| Validate Allowed Amount |
+|                   |                     | / Contractual Adj.      |
++-------------------+                     +-------------------------+
+                                                     |
++-------------------+                     +-------------------------+
+| Payment Posting   |-------------------->| Review Auto-Posting     |
+| Team              |                     | Exceptions              |
++-------------------+                     +-------------------------+
+                                                     |
++-------------------+                     +-------------------------+
+| Finance Manager   |-------------------->| Reconcile EFT / Deposit |
+|                   |                     | and PLB Adjustments     |
++-------------------+                     +-------------------------+
+                                                     |
++-------------------+                     +-------------------------+
+| Denial / AR Team  |-------------------->| Review Denials /        |
+|                   |                     | Underpayments           |
++-------------------+                     +-------------------------+
+                                                     |
++-------------------+                     +-------------------------+
+| Patient Billing / |-------------------->| Receive Final Patient   |
+| Secondary Billing |                     | Responsibility / Hold   |
++-------------------+                     +-------------------------+
+</code></pre>
+
+<hr>
+
+<h2>6. Activity Flow Diagram</h2>
+
+<pre><code>
++-------+
+| START |
++---+---+
+    |
+    v
++-----------------------+
+| Receive ERA 835 File  |
++---+-------------------+
+    |
+    v
++-----------------------+
+| Validate File, Hash,  |
+| Payer, EFT, Duplicate |
++---+-------------------+
+    |
+    v
+   / \
+  /   \
+ < Valid >--No---------------------------+
+  \  ?  /                                |
+   \ /                                   |
+    |Yes                                 |
+    v                                    v
++-----------------------+        +---------------+
+| Parse ERA Segments    |        | Exception /   |
+| and PLB Adjustments   |        | Manual Review |
++---+-------------------+        +-------+-------+
+    |                                    |
+    v                                    |
++-----------------------+                |
+| Match Claim / Patient |                |
+| / Service Line        |                |
++---+-------------------+                |
+    |                                    |
+    v                                    |
+   / \                                   |
+  /   \                                  |
+ < Match >--No---------------------------+
+  \  ?  /                                |
+   \ /                                   |
+    |Yes                                 |
+    v                                    |
++-----------------------+                |
+| Validate Contract /   |                |
+| Allowed Amount        |                |
++---+-------------------+                |
+    |                                    |
+    v                                    |
++-----------------------+                |
+| Auto-Post Passed Items|                |
+| Hold Failed Lines     |                |
++---+-------------------+                |
+    |                                    |
+    v
++-----------------------+                |
+| Extract Denials, PLB, |                |
+| Patient Responsibility|                |
++---+-------------------+                |
+    |                                    |
+    +-------------------+----------------+
+                        |
+                        v
+              +-----------------------+
+              | Reconcile EFT / Bank  |
+              | Deposit               |
+              +---+-------------------+
+                  |
+                  v
+              +-----------------------+
+              | Update Claims, Ledger,|
+              | Worklists, Holds, Audit|
+              +---+-------------------+
+                  |
+                  v
+               +-------+
+               |  END  |
+               +-------+
+</code></pre>
+
+<hr>
+
+<h2>7. Sequence Diagram</h2>
+
+<pre><code>
+Payer/CH   Backend   Parser   Rules/Match   Database   Finance   Denial/AR   Audit
+   |          |        |         |           |          |          |        |
+   | ERA 835  |        |         |           |          |          |        |
+   +--------->|        |         |           |          |          |        |
+   |          | Validate file/hash          |          |          |        |
+   |          +------->|         |           |          |          |        |
+   |          | Parse segments and PLB      |          |          |        |
+   |          +------->|         |           |          |          |        |
+   |          |        | Parsed ERA          |          |          |        |
+   |          |<-------+         |           |          |          |        |
+   |          | Match claims/service lines  |          |          |        |
+   |          +----------------->|           |          |          |        |
+   |          | Validate allowed/contract amounts       |          |        |
+   |          +----------------->|           |          |          |        |
+   |          | Save raw/parsed ERA, posting, exceptions, PLB       |        |
+   |          +----------------------------->|          |          |        |
+   |          | Reconcile EFT/deposit                  |          |        |
+   |          +---------------------------------------->|          |        |
+   |          | Send denials/underpayments to AR worklist             |        |
+   |          +-------------------------------------------------->|        |
+   |          | Audit ERA import, posting, exceptions, adjustments     |        |
+   |          +---------------------------------------------------------->|
+</code></pre>
+
+<hr>
+
+<h2>8. API Flow</h2>
+
+<h3>Request</h3>
+<p><code>POST /api/era/import</code></p>
+<pre><code>{
+  "payerId": "BCBS001",
+  "clearinghouseId": "WAYSTAR",
+  "eraFileName": "ERA_835_20260520.edi",
+  "fileSource": "clearinghouse_sftp",
+  "fileHash": "sha256-xxxx",
+  "checkOrEftNumber": "EFT-98765",
+  "paymentMethod": "EFT",
+  "payerPaymentDate": "2026-05-20",
+  "receivedAt": "2026-05-20T09:30:00Z",
+  "traceId": "TRC-ERA-00001",
+  "uploadedBy": "SYSTEM"
+}</code></pre>
+
+<h3>Response - ERA Imported</h3>
+<pre><code>{
+  "eraId": "ERA-00001",
+  "status": "imported",
+  "duplicateFile": false,
+  "claimCount": 25,
+  "totalPaymentAmount": 12500.00,
+  "providerAdjustmentAmount": -100.00,
+  "message": "ERA file imported and ready for parsing",
+  "traceId": "TRC-ERA-00001"
+}</code></pre>
+
+<h3>Response - Auto Posting Completed</h3>
+<pre><code>{
+  "eraId": "ERA-00001",
+  "status": "posted_with_exceptions",
+  "autoPostedClaims": 21,
+  "exceptionClaims": 4,
+  "denialsExtracted": 3,
+  "unmatchedPayments": 1,
+  "contractVarianceItems": 2,
+  "secondaryBillingRequired": true,
+  "reconciliationStatus": "pending_eft_match",
+  "message": "ERA processed. Exceptions require manual review."
+}</code></pre>
+
+<h3>Response - Reconciliation Completed</h3>
+<pre><code>{
+  "eraId": "ERA-00001",
+  "status": "reconciled",
+  "eftTraceNumber": "EFT-98765",
+  "bankDepositAmount": 12500.00,
+  "eraPaymentAmount": 12500.00,
+  "differenceAmount": 0.00,
+  "message": "ERA payment reconciled with bank deposit"
+}</code></pre>
+
+<hr>
+
+<h2>9. Database Flow</h2>
+
+<pre><code>-- Save ERA file metadata
+INSERT INTO era_files (
+    era_id, payer_id, clearinghouse_id, file_name, file_source,
+    raw_file_url, file_hash, total_payment_amount, check_or_eft_number,
+    payment_method, payer_payment_date, duplicate_file, status, trace_id,
+    received_at, created_at, updated_at
+) VALUES (...);
+
+-- Save claim-level ERA details
+INSERT INTO era_claim_payments (
+    era_claim_payment_id, era_id, claim_id, payer_claim_control_number,
+    billed_amount, allowed_amount, paid_amount, adjustment_amount,
+    contractual_adjustment_amount, patient_responsibility,
+    claim_status, match_status, exception_reason, created_at
+) VALUES (...);
+
+-- Save service-line payment details
+INSERT INTO era_service_line_payments (
+    line_payment_id, era_claim_payment_id, claim_line_id, cpt_code,
+    billed_amount, allowed_amount, paid_amount, adjustment_amount,
+    carc_codes, rarc_codes, denial_flag, patient_responsibility,
+    contract_variance_flag, created_at
+) VALUES (...);
+
+-- Save provider-level adjustments from PLB segments
+INSERT INTO era_provider_adjustments (
+    adjustment_id, era_id, adjustment_code, adjustment_amount,
+    reason, created_at
+) VALUES (...);
+
+-- Post payment and adjustments to claim ledger
+INSERT INTO claim_ledger (
+    ledger_id, claim_id, source_type, source_id, transaction_type,
+    amount, balance_after, created_at
+) VALUES (...);
+
+-- Create denial / exception worklist item
+INSERT INTO denial_worklist (
+    denial_id, claim_id, era_id, denial_reason_code, rarc_codes,
+    priority, status, created_at
+) VALUES (...);
+
+-- Save EFT / bank reconciliation
+INSERT INTO era_reconciliation (
+    reconciliation_id, era_id, eft_trace_number, era_payment_amount,
+    bank_deposit_amount, difference_amount, status, reconciled_by, reconciled_at
+) VALUES (...);
+
+-- Update claim after posting
+UPDATE claims
+SET status = 'paid_or_partially_paid',
+    paid_amount = paid_amount + 120.00,
+    patient_responsibility = 30.00,
+    updated_at = NOW()
+WHERE claim_id = 'CLM-00001';</code></pre>
+
+<hr>
+
+<h2>10. Error Scenarios</h2>
+
+<ul>
+    <li><strong>Error 1: Invalid ERA File Format</strong>
+        <ul>
+            <li><em>Route:</em> Reject file import</li>
+            <li><em>Action:</em> Notify payment posting team and request corrected file</li>
+        </ul>
+    </li>
+    <li><strong>Error 2: Duplicate ERA File</strong>
+        <ul>
+            <li><em>Route:</em> Block duplicate posting</li>
+            <li><em>Action:</em> Use payer/check/EFT/date/payment amount/file hash to identify duplicate</li>
+        </ul>
+    </li>
+    <li><strong>Error 3: Claim Not Found</strong>
+        <ul>
+            <li><em>Route:</em> Move to unmatched payment queue</li>
+            <li><em>Action:</em> Manual matching by payment posting team</li>
+        </ul>
+    </li>
+    <li><strong>Error 4: Service Line Not Matched</strong>
+        <ul>
+            <li><em>Route:</em> Hold line-level posting</li>
+            <li><em>Action:</em> Review CPT, claim line, and payer control number</li>
+        </ul>
+    </li>
+    <li><strong>Error 5: Payment Amount Mismatch</strong>
+        <ul>
+            <li><em>Route:</em> Create reconciliation exception</li>
+            <li><em>Action:</em> Finance reviews ERA vs EFT/bank deposit</li>
+        </ul>
+    </li>
+    <li><strong>Error 6: Denial Codes Found</strong>
+        <ul>
+            <li><em>Route:</em> Create denial worklist item</li>
+            <li><em>Action:</em> AR/Denial team reviews CARC/RARC and next action</li>
+        </ul>
+    </li>
+    <li><strong>Error 7: Adjustment Exceeds Allowed Amount</strong>
+        <ul>
+            <li><em>Route:</em> Hold auto-posting</li>
+            <li><em>Action:</em> Supervisor or finance approval required</li>
+        </ul>
+    </li>
+    <li><strong>Error 8: Patient Responsibility Changed</strong>
+        <ul>
+            <li><em>Route:</em> Update patient responsibility only after posting validation</li>
+            <li><em>Action:</em> Hold patient billing until balance validation is complete</li>
+        </ul>
+    </li>
+    <li><strong>Error 9: ERA Contains Reversal / Takeback</strong>
+        <ul>
+            <li><em>Route:</em> Reverse previous payment posting</li>
+            <li><em>Action:</em> Update claim ledger and patient balance</li>
+        </ul>
+    </li>
+    <li><strong>Error 10: Auto-Posting Rule Failed</strong>
+        <ul>
+            <li><em>Route:</em> Hold claim for manual review</li>
+            <li><em>Action:</em> Payment posting team corrects or posts manually</li>
+        </ul>
+    </li>
+    <li><strong>Error 11: Missing EFT / Bank Deposit Match</strong>
+        <ul>
+            <li><em>Route:</em> Keep reconciliation pending</li>
+            <li><em>Action:</em> Finance follows up with bank or payer</li>
+        </ul>
+    </li>
+    <li><strong>Error 12: Raw ERA Parsing Failed</strong>
+        <ul>
+            <li><em>Route:</em> Move file to parser exception queue</li>
+            <li><em>Action:</em> Technical/support team reviews raw EDI segment</li>
+        </ul>
+    </li>
+    <li><strong>Error 13: PLB / Provider-Level Adjustment Found</strong>
+        <ul>
+            <li><em>Route:</em> Send to finance review if not auto-classified</li>
+            <li><em>Action:</em> Post or reconcile adjustment according to policy</li>
+        </ul>
+    </li>
+    <li><strong>Error 14: Contract / Allowed Amount Variance</strong>
+        <ul>
+            <li><em>Route:</em> Create underpayment/overpayment review</li>
+            <li><em>Action:</em> Compare payer allowed amount against contract/fee schedule</li>
+        </ul>
+    </li>
+    <li><strong>Error 15: Secondary Billing Required</strong>
+        <ul>
+            <li><em>Route:</em> Hold patient billing</li>
+            <li><em>Action:</em> Route remaining balance to secondary billing before statement release</li>
+        </ul>
+    </li>
+</ul>
+
+<hr>
+
+<h2>11. Dashboard & Status Flow</h2>
+
+<pre><code>
++----------------------+
+| ERA Received         |
++----------+-----------+
+           |
+           v
++----------------------+
+| File Validation      |
++----------+-----------+
+     |                 |
+     v                 v
++-------------+   +----------------------+
+| Invalid /   |   | Parsed Successfully  |
+| Duplicate   |   +----------+-----------+
++------+------+              |
+       |                     v
+       |          +----------------------+
+       |          | Claim Matching       |
+       |          +----------+-----------+
+       |                     |
+       |        +------------+-------------+----------------+
+       |        |            |             |                |
+       v        v            v             v                v
++----------+ +----------+ +------------+ +----------------+ +--------------+
+| Exception| | Matched  | | Denial     | | Unmatched      | | Reversal /   |
+| Review   | +----+-----+ | Extracted  | | Payment        | | Takeback     |
++----------+      |       +-----+------+ +--------+-------+ +------+-------+
+                  |             |                 |                |
+                  v             v                 v                v
+             +----------+ +-------------+ +----------------+ +-------------+
+             | Auto     | | Denial      | | Manual Match   | | Reverse     |
+             | Posted   | | Worklist    | | Required       | | Posting     |
+             +----+-----+ +-------------+ +----------------+ +-------------+
+                  |
+                  v
+             +----------------------+
+             | Contract / PLB Review|
+             +----------+-----------+
+                        |
+                        v
+             +----------------------+
+             | EFT Reconciliation  |
+             +----------+-----------+
+                        |
+                        v
+             +----------------------+
+             | Reconciled / Closed |
+             +----------------------+
+</code></pre>
+
+<p><strong>Other possible statuses:</strong> Parser Failed, Pending Auto-Post, Posted with Exceptions, Pending EFT Match, Underpayment Review, Overpayment Review, Unapplied Cash, PLB Adjustment Review, Contract Variance Review, Secondary Billing Required, Patient Billing Hold.</p>
+
+<hr>
+
+<h2>12. Follow-up & Notification Flow</h2>
+
+<pre><code>
++----------------------------+
+| ERA File Received          |
++-------------+--------------+
+              |
+              v
++----------------------------+
+| If Import Failed, Notify   |
+| Payment Posting Team       |
++-------------+--------------+
+              |
+              v
++----------------------------+
+| If Claims Unmatched,       |
+| Create Manual Match Task   |
++-------------+--------------+
+              |
+              v
++----------------------------+
+| If Denials Found, Notify   |
+| Denial / AR Team           |
++-------------+--------------+
+              |
+              v
++----------------------------+
+| If Payment/PLB Mismatch,   |
+| Notify Finance Team        |
++-------------+--------------+
+              |
+              v
++----------------------------+
+| If Auto-Post Completed,    |
+| Update Claim and Ledger    |
++-------------+--------------+
+              |
+              v
++----------------------------+
+| If Secondary or Patient    |
+| Billing Hold Needed, Route |
+| to Correct Worklist        |
++----------------------------+
+</code></pre>
+
+<ul>
+    <li>If ERA is not reconciled with EFT/bank deposit within SLA, escalate to Finance Manager.</li>
+    <li>If denial codes are present, create denial worklist item with CARC/RARC reason and priority.</li>
+    <li>If auto-posting creates exception, keep claim out of patient billing until manual review is complete.</li>
+    <li>If payer sends reversal/takeback, reverse previous posting and recalculate claim and patient balances.</li>
+    <li>If unmatched payment remains unresolved, create unapplied cash follow-up task.</li>
+    <li>If ERA creates secondary billing requirement or changes patient responsibility, hold patient billing until secondary billing and balance validation are complete.</li>
+    <li>If PLB/provider-level adjustment is found, notify Finance for reconciliation and posting policy review.</li>
+    <li>If contract variance is found, create underpayment/overpayment review task.</li>
+</ul>
+
+<hr>
+
+<h2>Summary</h2>
+<ul>
+    <li><strong>Module:</strong> ERA Processing</li>
+    <li><strong>Complexity:</strong> High</li>
+    <li><strong>Dependencies:</strong> Claim Submission, Claim Status, Payment Posting, Denial Management, Secondary Billing, Patient Billing, Clearinghouse/Payer 835 feeds, EFT/bank reconciliation</li>
+    <li><strong>Critical:</strong> Yes - required for accurate payment posting, denial extraction, reconciliation, PLB adjustment handling, and final patient responsibility calculation.</li>
+</ul>
+
+</body>
+</html>

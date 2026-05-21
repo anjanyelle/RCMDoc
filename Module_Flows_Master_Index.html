@@ -10,333 +10,512 @@
 <h1>Healthcare RCM Application - Complete Module Flows &amp; Diagrams</h1>
 <h2>Master Index</h2>
 
-<p><strong>Version:</strong> 1.0</p>
-<p><strong>For:</strong> Development Team, Technical Lead, UI/UX Team, QA Team, Business Team</p>
+<div class="meta">
+    <p><strong>Version:</strong> 1.0</p>
+    <p><strong>For:</strong> Development Team, Technical Lead, UI/UX Team, QA Team, Business Team</p>
+</div>
 
 <hr>
 
 <h2>📋 Overview</h2>
 
-<p>This documentation provides <strong>complete flow diagrams, workflows, use cases, and action plans</strong> for all 30 modules in the Healthcare RCM Application.</p>
+<p>This documentation provides <strong>complete flow diagrams, workflows, use cases, and action plans</strong> for all 37 modules in the Healthcare RCM Application.</p>
 
 <p>Each module documentation includes:</p>
-<li>✅ Module Overview</li>
-<li>✅ Actors Involved</li>
-<li>✅ Step-by-Step Workflow</li>
-<li>✅ Action Plan (Frontend, Backend, Database, APIs)</li>
-<li>✅ Use Case Diagram</li>
-<li>✅ Activity Flow Diagram</li>
-<li>✅ Sequence Diagram</li>
-<li>✅ API Flow</li>
-<li>✅ Database Flow</li>
-<li>✅ Error Scenarios</li>
-<li>✅ Dashboard &amp; Status Flow</li>
+<ul>
+    <li>✅ Module Overview</li>
+    <li>✅ Actors Involved</li>
+    <li>✅ Step-by-Step Workflow</li>
+    <li>✅ Action Plan (Frontend, Backend, Database, APIs)</li>
+    <li>✅ Use Case Diagram</li>
+    <li>✅ Activity Flow Diagram</li>
+    <li>✅ Sequence Diagram</li>
+    <li>✅ API Flow</li>
+    <li>✅ Database Flow</li>
+    <li>✅ Error Scenarios</li>
+    <li>✅ Dashboard &amp; Status Flow</li>
+</ul>
 
 <hr>
 
 <h2>📚 Module Categories</h2>
 
-<h3>Category 1: Authentication &amp; Patient Management (Modules 1-6)</h3>
-<p><strong>Documents:</strong> <code>Flows_Module_01_User_Login.md</code> through <code>Flows_Module_05_Patient_Checkin.md</code>, and <code>Flows_Module_12_Prior_Authorization.md</code></p>
-
-<li><strong>User Login &amp; Authentication</strong></li>
-<li><strong>Patient Registration</strong></li>
-<li><strong>Insurance Verification</strong></li>
-<li><strong>Appointment Scheduling</strong></li>
-<li><strong>Patient Check-in</strong></li>
-<li><strong>Prior Authorization</strong></li>
-
-<hr>
-
-<h3>Category 2: Clinical &amp; Documentation (Modules 6a-9)</h3>
-<p><strong>Documents:</strong> <code>Flows_Module_13_Order_Management.md</code> (Order Management) and <code>Flows_Module_07_10_Remaining.md</code> (Grouped)</p>
-
-<p>6a. <strong>Doctor Consultation</strong></p>
-<li><strong>Clinical Documentation</strong></li>
-<li><strong>Order Management</strong></li>
-<li><strong>Referral Management</strong></li>
+<h3>Category PRE-RCM / FOUNDATIONAL FLOW (4 Modules)</h3>
+<p><strong>Documents:</strong> <a href="Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.html">Flows_Module_PROVIDER CREDENTIALING &amp; MANAGEMENT.html</a></p>
+<ol>
+    <li>Pre-RCM Module 1: Provider Management</li>
+    <li>Pre-RCM Module 2: Credentialing Management</li>
+    <li>Pre-RCM Module 3: Provider Enrollment</li>
+    <li>Pre-RCM Module 4: Contract Management</li>
+</ol>
 
 <hr>
 
-<h3>Category 3: Coding &amp; Billing (Modules 10-14)</h3>
-<p><strong>Documents:</strong> <code>Flows_Module_06_Medical_Coding.md</code> and <code>Flows_Module_07_10_Remaining.md</code></p>
-
-<li><strong>Medical Coding</strong></li>
-<li><strong>Coding Review</strong></li>
-<li><strong>Charge Capture</strong></li>
-<li><strong>Claim Creation</strong></li>
-<li><strong>Claim Scrubbing</strong></li>
-
-<hr>
-
-<h3>Category 4: Claims &amp; Submission (Modules 15-17)</h3>
-<p><strong>Document:</strong> <code>Flows_Module_07_10_Remaining.md</code></p>
-
-<li><strong>Claim Submission</strong></li>
-<li><strong>Claim Tracking</strong></li>
-<li><strong>Insurance Adjudication</strong></li>
+<h3>Category 1: Patient Access Management (5 Modules)</h3>
+<p><strong>Documents:</strong> 
+    <a href="Flows_Module_04_Appointment_Scheduling.html">Flows_Module_04_Appointment_Scheduling.html</a>, 
+    <a href="Flows_Module_02_Patient_Registration.html">Flows_Module_02_Patient_Registration.html</a>, 
+    <a href="Flows_Module_03_Insurance_Verification.html">Flows_Module_03_Insurance_Verification.html</a>, 
+    <a href="Flows_Module_12_Prior_Authorization.html">Flows_Module_12_Prior_Authorization.html</a>, 
+    <a href="Flows_Module_05_Patient_Checkin.html">Flows_Module_05_Patient_Checkin.html</a>
+</p>
+<ol>
+    <li>Module 1: Appointment Scheduling</li>
+    <li>Module 2: Patient Registration</li>
+    <li>Module 3: Insurance Eligibility Verification</li>
+    <li>Module 4: Prior Authorization / Referral Management</li>
+    <li>Module 5: Patient Check-In</li>
+</ol>
 
 <hr>
 
-<h3>Category 5: Denial &amp; Payment (Modules 18-22)</h3>
-<p><strong>Documents:</strong> <code>Flows_Module_Payment_Posting.md</code> (Payment Posting), <code>Flows_Module_20_Secondary_Billing.md</code> (Secondary Billing), <code>Flows_Module_11_Denial &amp; Appeals Management.md</code> (Denial &amp; Appeals), and <code>Flows_Module_07_10_Remaining.md</code> (Remaining)</p>
-
-<li><strong>Payment Posting</strong></li>
-<li><strong>ERA/835 Reconciliation</strong></li>
-<li><strong>Secondary Billing</strong></li>
-<li><strong>Denial Management</strong></li>
-<li><strong>Appeals Workflow</strong></li>
-
-<hr>
-
-<h3>Category 6: Patient Billing &amp; AR (Modules 23-25)</h3>
-<p><strong>Document:</strong> <code>Flows_Module_07_10_Remaining.md</code></p>
-
-<li><strong>Patient Billing</strong></li>
-<li><strong>Refund Management</strong></li>
-<li><strong>AR Management</strong></li>
+<h3>Category 2: Clinical &amp; Mid-Cycle Management (3 Modules)</h3>
+<p><strong>Documents:</strong> 
+    <a href="Flows_Module_14_Encounter.html">Flows_Module_14_Encounter.html</a>, 
+    <a href="Flows_Module_13_Order_Management.html">Flows_Module_13_Order_Management.html</a>, 
+    <a href="Flows_Module_06_Medical_Coding.html">Flows_Module_06_Medical_Coding.html</a>, 
+    <a href="Flows_Module_07_10_Remaining.html#module-8-charge-entry-charge-capture">Flows_Module_07_10_Remaining.html#module-8-charge-entry-charge-capture</a>
+</p>
+<ol>
+    <li>Module 6: Clinical Documentation / EMR</li>
+    <li>Module 6 (Support): Order Management</li>
+    <li>Module 7: Medical Coding</li>
+    <li>Module 8: Charge Entry / Charge Capture</li>
+</ol>
 
 <hr>
 
-<h3>Category 7: Reporting &amp; Advanced (Modules 26-30)</h3>
-<p><strong>Document:</strong> <code>Flows_Module_07_10_Remaining.md</code></p>
+<h3>Category 3: Claims Management (5 Modules)</h3>
+<p><strong>Documents:</strong> 
+    <a href="Flows_Module_07_10_Remaining.html#module-9-claim-scrubbing-ai-powered">Flows_Module_07_10_Remaining.html#module-9-claim-scrubbing-ai-powered</a>, 
+    <a href="Flows_Module_07_10_Remaining.html#module-10-claim-submission">Flows_Module_07_10_Remaining.html#module-10-claim-submission</a>, 
+    <a href="Flows_Module_07_10_Remaining.html#module-8-claim-creation">Flows_Module_07_10_Remaining.html#module-8-claim-creation</a>, 
+    <a href="Flows_Module_Insurance Adjudication Tracking.html">Flows_Module_Insurance Adjudication Tracking.html</a>
+</p>
+<ol>
+    <li>Module 9: Claim Scrubbing</li>
+    <li>Module 10: Claim Submission</li>
+    <li>Module 10 (Support): Claim Creation</li>
+    <li>Module 11: Clearinghouse Validation *(Coming Soon)*</li>
+    <li>Module 12: Claim Status Tracking *(Coming Soon)*</li>
+    <li>Module 13: Insurance Adjudication Tracking</li>
+</ol>
 
-<li><strong>Reporting &amp; Analytics</strong></li>
-<li><strong>Audit &amp; Compliance</strong></li>
-<li><strong>Patient Portal</strong></li>
-<li><strong>Notifications &amp; Messaging</strong></li>
-<li><strong>AI-Based Automation</strong></li>
+<hr>
+
+<h3>Category 4: Payment &amp; Revenue Management (7 Modules)</h3>
+<p><strong>Documents:</strong> 
+    <a href="Flows_Module_14_ERA_Processing.html">Flows_Module_14_ERA_Processing.html</a>, 
+    <a href="Flows_Module_Payment_Posting.html">Flows_Module_Payment_Posting.html</a>, 
+    <a href="Flows_Module_11_Denial &amp; Appeals Management.html">Flows_Module_11_Denial &amp; Appeals Management.html</a>, 
+    <a href="Flows_Module_20_Secondary_Billing.html">Flows_Module_20_Secondary_Billing.html</a>, 
+    <a href="Flows_Module_18_Patient_Billing.html">Flows_Module_18_Patient_Billing.html</a>, 
+    <a href="Flows_Module_Accounts Receivable (AR) Follow-Up.html">Flows_Module_Accounts Receivable (AR) Follow-Up.html</a>, 
+    <a href="Flows_Module_Collections.html">Flows_Module_Collections.html</a>
+</p>
+<ol>
+    <li>Module 14: ERA Processing</li>
+    <li>Module 15: Payment Posting</li>
+    <li>Module 16: Denial Management</li>
+    <li>Module 17: Secondary Insurance Billing</li>
+    <li>Module 18: Patient Billing</li>
+    <li>Module 19: Accounts Receivable (AR) Follow-Up</li>
+    <li>Module 20: Collections / Refund / Write-Off Management</li>
+</ol>
+
+<hr>
+
+<h3>Category 5: Reporting, Compliance &amp; Governance (2 Modules)</h3>
+<p><strong>Documents:</strong> 
+    <a href="Flows_Module_Reporting_Analytics.html">Flows_Module_Reporting_Analytics.html</a>, 
+    <a href="Flows_Module_Compliance &amp; Audit.html">Flows_Module_Compliance &amp; Audit.html</a>
+</p>
+<ol>
+    <li>Module 21: Reporting &amp; Analytics</li>
+    <li>Module 22: Compliance &amp; Audit</li>
+</ol>
+
+<hr>
+
+<h3>Category 6: Administration &amp; Platform Services (11 Modules)</h3>
+<p><strong>Documents:</strong> 
+    <a href="Flows_Module_01_User_Login.html">Flows_Module_01_User_Login.html</a>
+</p>
+<ol>
+    <li>Module 23: User Login &amp; Authentication</li>
+    <li>Modules 24-33: Platform Core Modules *(Coming Soon)*</li>
+</ol>
+
+<hr>
+
+<h3>Category 7: Advanced Enterprise Features (4 Modules)</h3>
+<p><strong>Documents:</strong> None *(Coming Soon)*</p>
+<ol>
+    <li>Modules 34-37: Enterprise Integrations &amp; Monitor *(Coming Soon)*</li>
+</ol>
 
 <hr>
 
 <h2>🎯 How to Use This Documentation</h2>
 
 <h3>For Development Team:</h3>
-<li>Read <strong>Step-by-Step Workflow</strong> to understand user journey</li>
-<li>Review <strong>Action Plan</strong> for frontend/backend implementation</li>
-<li>Check <strong>Sequence Diagram</strong> for API call flow</li>
-<li>Review <strong>Database Flow</strong> for table updates</li>
+<ul>
+    <li>Read <strong>Step-by-Step Workflow</strong> to understand user journey</li>
+    <li>Review <strong>Action Plan</strong> for frontend/backend implementation</li>
+    <li>Check <strong>Sequence Diagram</strong> for API call flow</li>
+    <li>Review <strong>Database Flow</strong> for table updates</li>
+</ul>
 
 <h3>For Technical Lead:</h3>
-<li>Review <strong>Architecture</strong> and <strong>API Flow</strong></li>
-<li>Validate <strong>Error Scenarios</strong> and handling</li>
-<li>Check <strong>Third-party API integrations</strong></li>
-<li>Review <strong>Security validations</strong></li>
+<ul>
+    <li>Review <strong>Architecture</strong> and <strong>API Flow</strong></li>
+    <li>Validate <strong>Error Scenarios</strong> and handling</li>
+    <li>Check <strong>Third-party API integrations</strong></li>
+    <li>Review <strong>Security validations</strong></li>
+</ul>
 
 <h3>For UI/UX Team:</h3>
-<li>Study <strong>Activity Flow Diagram</strong> for screen flow</li>
-<li>Review <strong>Actors Involved</strong> for user roles</li>
-<li>Check <strong>Dashboard &amp; Status Flow</strong> for UI states</li>
-<li>Review <strong>Error Scenarios</strong> for error messages</li>
+<ul>
+    <li>Study <strong>Activity Flow Diagram</strong> for screen flow</li>
+    <li>Review <strong>Actors Involved</strong> for user roles</li>
+    <li>Check <strong>Dashboard &amp; Status Flow</strong> for UI states</li>
+    <li>Review <strong>Error Scenarios</strong> for error messages</li>
+</ul>
 
 <h3>For QA Team:</h3>
-<li>Use <strong>Step-by-Step Workflow</strong> for test cases</li>
-<li>Review <strong>Error Scenarios</strong> for negative testing</li>
-<li>Check <strong>Validation Rules</strong> for test data</li>
-<li>Review <strong>Status Flow</strong> for state transitions</li>
+<ul>
+    <li>Use <strong>Step-by-Step Workflow</strong> for test cases</li>
+    <li>Review <strong>Error Scenarios</strong> for negative testing</li>
+    <li>Check <strong>Validation Rules</strong> for test data</li>
+    <li>Review <strong>Status Flow</strong> for state transitions</li>
+</ul>
 
 <h3>For Business Team:</h3>
-<li>Read <strong>Module Overview</strong> for business value</li>
-<li>Review <strong>Step-by-Step Workflow</strong> for process understanding</li>
-<li>Check <strong>Real-time Examples</strong> for clarity</li>
-<li>Review <strong>Dashboard &amp; Status Flow</strong> for reporting</li>
+<ul>
+    <li>Read <strong>Module Overview</strong> for business value</li>
+    <li>Review <strong>Step-by-Step Workflow</strong> for process understanding</li>
+    <li>Check <strong>Real-time Examples</strong> for clarity</li>
+    <li>Review <strong>Dashboard &amp; Status Flow</strong> for reporting</li>
+</ul>
 
 <hr>
 
 <h2>🔗 Quick Navigation</h2>
 
-<tr>
-<td>Module #</td>
-<td>Module Name</td>
-<td>Category</td>
-<td>Document</td>
-</tr>
-<tr>
-<td>1</td>
-<td>User Login &amp; Authentication</td>
-<td>Auth &amp; Patient</td>
-<td><code>Flows_Module_01_User_Login.md</code></td>
-</tr>
-<tr>
-<td>2</td>
-<td>Patient Registration</td>
-<td>Auth &amp; Patient</td>
-<td><code>Flows_Module_02_Patient_Registration.md</code></td>
-</tr>
-<tr>
-<td>3</td>
-<td>Insurance Verification</td>
-<td>Auth &amp; Patient</td>
-<td><code>Flows_Module_03_Insurance_Verification.md</code></td>
-</tr>
-<tr>
-<td>4</td>
-<td>Appointment Scheduling</td>
-<td>Auth &amp; Patient</td>
-<td><code>Flows_Module_04_Appointment_Scheduling.md</code></td>
-</tr>
-<tr>
-<td>5</td>
-<td>Patient Check-in</td>
-<td>Auth &amp; Patient</td>
-<td><code>Flows_Module_05_Patient_Checkin.md</code></td>
-</tr>
-<tr>
-<td>6</td>
-<td>Prior Authorization</td>
-<td>Auth &amp; Patient</td>
-<td><code>Flows_Module_12_Prior_Authorization.md</code></td>
-</tr>
-<tr>
-<td>6a</td>
-<td>Doctor Consultation</td>
-<td>Clinical</td>
-<td><code>Flows_Module_07_10_Remaining.md</code></td>
-</tr>
-<tr>
-<td>7</td>
-<td>Clinical Documentation</td>
-<td>Clinical</td>
-<td><code>Flows_Module_07_10_Remaining.md</code></td>
-</tr>
-<tr>
-<td>8</td>
-<td>Order Management</td>
-<td>Clinical</td>
-<td><code>Flows_Module_13_Order_Management.md</code></td>
-</tr>
-<tr>
-<td>9</td>
-<td>Referral Management</td>
-<td>Clinical</td>
-<td><code>Flows_Module_07_10_Remaining.md</code></td>
-</tr>
-<tr>
-<td>10</td>
-<td>Medical Coding</td>
-<td>Coding &amp; Billing</td>
-<td><code>Flows_Module_06_Medical_Coding.md</code></td>
-</tr>
-<tr>
-<td>11</td>
-<td>Coding Review</td>
-<td>Coding &amp; Billing</td>
-<td><code>Flows_Module_07_10_Remaining.md</code></td>
-</tr>
-<tr>
-<td>12</td>
-<td>Charge Capture</td>
-<td>Coding &amp; Billing</td>
-<td><code>Flows_Module_07_10_Remaining.md</code></td>
-</tr>
-<tr>
-<td>13</td>
-<td>Claim Creation</td>
-<td>Coding &amp; Billing</td>
-<td><code>Flows_Module_07_10_Remaining.md</code></td>
-</tr>
-<tr>
-<td>14</td>
-<td>Claim Scrubbing</td>
-<td>Coding &amp; Billing</td>
-<td><code>Flows_Module_07_10_Remaining.md</code></td>
-</tr>
-<tr>
-<td>15</td>
-<td>Claim Submission</td>
-<td>Claims</td>
-<td><code>Flows_Module_07_10_Remaining.md</code></td>
-</tr>
-<tr>
-<td>16</td>
-<td>Claim Tracking</td>
-<td>Claims</td>
-<td><code>Flows_Module_07_10_Remaining.md</code></td>
-</tr>
-<tr>
-<td>17</td>
-<td>Insurance Adjudication</td>
-<td>Claims</td>
-<td><code>Flows_Module_07_10_Remaining.md</code></td>
-</tr>
-<tr>
-<td>18</td>
-<td>Payment Posting</td>
-<td>Denial &amp; Payment</td>
-<td><code>Flows_Module_Payment_Posting.md</code></td>
-</tr>
-<tr>
-<td>19</td>
-<td>ERA/835 Reconciliation</td>
-<td>Denial &amp; Payment</td>
-<td><code>Flows_Module_07_10_Remaining.md</code></td>
-</tr>
-<tr>
-<td>20</td>
-<td>Secondary Billing</td>
-<td>Denial &amp; Payment</td>
-<td><code>Flows_Module_20_Secondary_Billing.md</code></td>
-</tr>
-<tr>
-<td>21</td>
-<td>Denial Management</td>
-<td>Denial &amp; Payment</td>
-<td><code>Flows_Module_11_Denial &amp; Appeals Management.md</code></td>
-</tr>
-<tr>
-<td>22</td>
-<td>Appeals Workflow</td>
-<td>Denial &amp; Payment</td>
-<td><code>Flows_Module_11_Denial &amp; Appeals Management.md</code></td>
-</tr>
-<tr>
-<td>23</td>
-<td>Patient Billing</td>
-<td>Patient &amp; AR</td>
-<td><code>Flows_Module_07_10_Remaining.md</code></td>
-</tr>
-<tr>
-<td>24</td>
-<td>Refund Management</td>
-<td>Patient &amp; AR</td>
-<td><code>Flows_Module_07_10_Remaining.md</code></td>
-</tr>
-<tr>
-<td>25</td>
-<td>AR Management</td>
-<td>Patient &amp; AR</td>
-<td><code>Flows_Module_07_10_Remaining.md</code></td>
-</tr>
-<tr>
-<td>26</td>
-<td>Reporting &amp; Analytics</td>
-<td>Advanced</td>
-<td><code>Flows_Module_07_10_Remaining.md</code></td>
-</tr>
-<tr>
-<td>27</td>
-<td>Audit &amp; Compliance</td>
-<td>Advanced</td>
-<td><code>Flows_Module_07_10_Remaining.md</code></td>
-</tr>
-<tr>
-<td>28</td>
-<td>Patient Portal</td>
-<td>Advanced</td>
-<td><code>Flows_Module_07_10_Remaining.md</code></td>
-</tr>
-<tr>
-<td>29</td>
-<td>Notifications &amp; Messaging</td>
-<td>Advanced</td>
-<td><code>Flows_Module_07_10_Remaining.md</code></td>
-</tr>
-<tr>
-<td>30</td>
-<td>AI-Based Automation</td>
-<td>Advanced</td>
-<td><code>Flows_Module_07_10_Remaining.md</code></td>
-</tr>
+<table>
+    <thead>
+        <tr>
+            <th>Module #</th>
+            <th>Module Name</th>
+            <th>Category</th>
+            <th>Document Link</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Pre-RCM 1</td>
+            <td>Provider Management</td>
+            <td>Pre-RCM</td>
+            <td><a href="Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.html">Flows_Module_PROVIDER CREDENTIALING &amp; MANAGEMENT.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>Pre-RCM 2</td>
+            <td>Credentialing Management</td>
+            <td>Pre-RCM</td>
+            <td><a href="Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.html">Flows_Module_PROVIDER CREDENTIALING &amp; MANAGEMENT.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>Pre-RCM 3</td>
+            <td>Provider Enrollment</td>
+            <td>Pre-RCM</td>
+            <td><a href="Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.html">Flows_Module_PROVIDER CREDENTIALING &amp; MANAGEMENT.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>Pre-RCM 4</td>
+            <td>Contract Management</td>
+            <td>Pre-RCM</td>
+            <td><a href="Flows_Module_PROVIDER CREDENTIALING & MANAGEMENT.html">Flows_Module_PROVIDER CREDENTIALING &amp; MANAGEMENT.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Appointment Scheduling</td>
+            <td>Category 1</td>
+            <td><a href="Flows_Module_04_Appointment_Scheduling.html">Flows_Module_04_Appointment_Scheduling.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Patient Registration</td>
+            <td>Category 1</td>
+            <td><a href="Flows_Module_02_Patient_Registration.html">Flows_Module_02_Patient_Registration.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Insurance Eligibility Verification</td>
+            <td>Category 1</td>
+            <td><a href="Flows_Module_03_Insurance_Verification.html">Flows_Module_03_Insurance_Verification.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Prior Authorization / Referral Management</td>
+            <td>Category 1</td>
+            <td><a href="Flows_Module_12_Prior_Authorization.html">Flows_Module_12_Prior_Authorization.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>Patient Check-In</td>
+            <td>Category 1</td>
+            <td><a href="Flows_Module_05_Patient_Checkin.html">Flows_Module_05_Patient_Checkin.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>Clinical Documentation / EMR</td>
+            <td>Category 2</td>
+            <td><a href="Flows_Module_14_Encounter.html">Flows_Module_14_Encounter.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>6 (Support)</td>
+            <td>Order Management</td>
+            <td>Category 2</td>
+            <td><a href="Flows_Module_13_Order_Management.html">Flows_Module_13_Order_Management.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>Medical Coding</td>
+            <td>Category 2</td>
+            <td><a href="Flows_Module_06_Medical_Coding.html">Flows_Module_06_Medical_Coding.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td>Charge Entry / Charge Capture</td>
+            <td>Category 2</td>
+            <td><a href="Flows_Module_07_10_Remaining.html#module-8-charge-entry-charge-capture">Flows_Module_07_10_Remaining.html#module-8-charge-entry-charge-capture</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>9</td>
+            <td>Claim Scrubbing</td>
+            <td>Category 3</td>
+            <td><a href="Flows_Module_07_10_Remaining.html#module-9-claim-scrubbing-ai-powered">Flows_Module_07_10_Remaining.html#module-9-claim-scrubbing-ai-powered</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>10</td>
+            <td>Claim Submission</td>
+            <td>Category 3</td>
+            <td><a href="Flows_Module_07_10_Remaining.html#module-10-claim-submission">Flows_Module_07_10_Remaining.html#module-10-claim-submission</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>10 (Support)</td>
+            <td>Claim Creation</td>
+            <td>Category 3</td>
+            <td><a href="Flows_Module_07_10_Remaining.html#module-8-claim-creation">Flows_Module_07_10_Remaining.html#module-8-claim-creation</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>11</td>
+            <td>Clearinghouse Validation</td>
+            <td>Category 3</td>
+            <td>*Coming Soon*</td>
+            <td>🔒 Disabled</td>
+        </tr>
+        <tr>
+            <td>12</td>
+            <td>Claim Status Tracking</td>
+            <td>Category 3</td>
+            <td>*Coming Soon*</td>
+            <td>🔒 Disabled</td>
+        </tr>
+        <tr>
+            <td>13</td>
+            <td>Insurance Adjudication Tracking</td>
+            <td>Category 3</td>
+            <td><a href="Flows_Module_Insurance Adjudication Tracking.html">Flows_Module_Insurance Adjudication Tracking.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>14</td>
+            <td>ERA Processing</td>
+            <td>Category 4</td>
+            <td><a href="Flows_Module_14_ERA_Processing.html">Flows_Module_14_ERA_Processing.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>15</td>
+            <td>Payment Posting</td>
+            <td>Category 4</td>
+            <td><a href="Flows_Module_Payment_Posting.html">Flows_Module_Payment_Posting.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>16</td>
+            <td>Denial Management</td>
+            <td>Category 4</td>
+            <td><a href="Flows_Module_11_Denial &amp; Appeals Management.html">Flows_Module_11_Denial &amp; Appeals Management.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>17</td>
+            <td>Secondary Insurance Billing</td>
+            <td>Category 4</td>
+            <td><a href="Flows_Module_20_Secondary_Billing.html">Flows_Module_20_Secondary_Billing.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>18</td>
+            <td>Patient Billing</td>
+            <td>Category 4</td>
+            <td><a href="Flows_Module_18_Patient_Billing.html">Flows_Module_18_Patient_Billing.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>19</td>
+            <td>Accounts Receivable (AR) Follow-Up</td>
+            <td>Category 4</td>
+            <td><a href="Flows_Module_Accounts Receivable (AR) Follow-Up.html">Flows_Module_Accounts Receivable (AR) Follow-Up.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>20</td>
+            <td>Collections / Refund / Write-Off Management</td>
+            <td>Category 4</td>
+            <td><a href="Flows_Module_Collections.html">Flows_Module_Collections.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>21</td>
+            <td>Reporting &amp; Analytics</td>
+            <td>Category 5</td>
+            <td><a href="Flows_Module_Reporting_Analytics.html">Flows_Module_Reporting_Analytics.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>22</td>
+            <td>Compliance &amp; Audit</td>
+            <td>Category 5</td>
+            <td><a href="Flows_Module_Compliance &amp; Audit.html">Flows_Module_Compliance &amp; Audit.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>23</td>
+            <td>User Login &amp; Authentication</td>
+            <td>Category 6</td>
+            <td><a href="Flows_Module_01_User_Login.html">Flows_Module_01_User_Login.html</a></td>
+            <td>✅ Active</td>
+        </tr>
+        <tr>
+            <td>24</td>
+            <td>User Management</td>
+            <td>Category 6</td>
+            <td>*Coming Soon*</td>
+            <td>🔒 Disabled</td>
+        </tr>
+        <tr>
+            <td>25</td>
+            <td>Notification System</td>
+            <td>Category 6</td>
+            <td>*Coming Soon*</td>
+            <td>🔒 Disabled</td>
+        </tr>
+        <tr>
+            <td>26</td>
+            <td>Document Management</td>
+            <td>Category 6</td>
+            <td>*Coming Soon*</td>
+            <td>🔒 Disabled</td>
+        </tr>
+        <tr>
+            <td>27</td>
+            <td>Third-Party Integrations</td>
+            <td>Category 6</td>
+            <td>*Coming Soon*</td>
+            <td>🔒 Disabled</td>
+        </tr>
+        <tr>
+            <td>28</td>
+            <td>Patient Portal</td>
+            <td>Category 6</td>
+            <td>*Coming Soon*</td>
+            <td>🔒 Disabled</td>
+        </tr>
+        <tr>
+            <td>29</td>
+            <td>Revenue Cycle Dashboard</td>
+            <td>Category 6</td>
+            <td>*Coming Soon*</td>
+            <td>🔒 Disabled</td>
+        </tr>
+        <tr>
+            <td>30</td>
+            <td>Automated Workflows</td>
+            <td>Category 6</td>
+            <td>*Coming Soon*</td>
+            <td>🔒 Disabled</td>
+        </tr>
+        <tr>
+            <td>31</td>
+            <td>Data Import/Export</td>
+            <td>Category 6</td>
+            <td>*Coming Soon*</td>
+            <td>🔒 Disabled</td>
+        </tr>
+        <tr>
+            <td>32</td>
+            <td>System Configuration</td>
+            <td>Category 6</td>
+            <td>*Coming Soon*</td>
+            <td>🔒 Disabled</td>
+        </tr>
+        <tr>
+            <td>33</td>
+            <td>Backup &amp; Recovery</td>
+            <td>Category 6</td>
+            <td>*Coming Soon*</td>
+            <td>🔒 Disabled</td>
+        </tr>
+        <tr>
+            <td>34</td>
+            <td>Eligibility Batch Processing</td>
+            <td>Category 7</td>
+            <td>*Coming Soon*</td>
+            <td>🔒 Disabled</td>
+        </tr>
+        <tr>
+            <td>35</td>
+            <td>ERA Automation</td>
+            <td>Category 7</td>
+            <td>*Coming Soon*</td>
+            <td>🔒 Disabled</td>
+        </tr>
+        <tr>
+            <td>36</td>
+            <td>API Management</td>
+            <td>Category 7</td>
+            <td>*Coming Soon*</td>
+            <td>🔒 Disabled</td>
+        </tr>
+        <tr>
+            <td>37</td>
+            <td>Security &amp; Compliance Monitoring</td>
+            <td>Category 7</td>
+            <td>*Coming Soon*</td>
+            <td>🔒 Disabled</td>
+        </tr>
+    </tbody>
+</table>
 
 <hr>
 
@@ -355,141 +534,163 @@ Retry Logic (if applicable) → Escalate (if critical) → Notify Admin
 </code></pre>
 
 <h3>Standard Status Flow:</h3>
-<pre><code class="language-Draft → Pending → In Progress → Review → Approved/Rejected →">
-Completed/Failed → Archived
+<pre><code>
+Draft → Pending → In Progress → Review → Approved/Rejected → Completed/Failed → Archived
 </code></pre>
 
 <p><strong>RCM Specific Status Distinctions:</strong></p>
-<li><strong>Rejection vs Denial:</strong></li>
-<li><strong>Rejection:</strong> Technical error *before* payer acceptance (handle in Billing).</li>
-<li><strong>Denial:</strong> Coverage/Medical necessity issue *after* adjudication (handle in AR/Denials).</li>
-<li><strong>Prior Authorization Status:</strong> Pending → Approved → Denied.</li>
+<ul>
+    <li><strong>Rejection vs Denial:</strong></li>
+    <li><strong>Rejection:</strong> Technical error *before* payer acceptance (handle in Billing).</li>
+    <li><strong>Denial:</strong> Coverage/Medical necessity issue *after* adjudication (handle in AR/Denials).</li>
+    <li><strong>Prior Authorization Status:</strong> Pending → Approved → Denied.</li>
+</ul>
 
 <hr>
 
 <h2>🔐 Security &amp; Compliance</h2>
 
 <p>All modules include:</p>
-<li>✅ <strong>HIPAA Compliance</strong> - PHI encryption and audit logging</li>
-<li>✅ <strong>Role-Based Access Control (RBAC)</strong> - Permission checks</li>
-<li>✅ <strong>Data Encryption</strong> - At rest and in transit</li>
-<li>✅ <strong>Audit Trails</strong> - All actions logged</li>
-<li>✅ <strong>Session Management</strong> - Timeout and security</li>
-<li>✅ <strong>Input Validation</strong> - SQL injection prevention</li>
-<li>✅ <strong>API Security</strong> - JWT tokens, rate limiting</li>
+<ul>
+    <li>✅ <strong>HIPAA Compliance</strong> - PHI encryption and audit logging</li>
+    <li>✅ <strong>Role-Based Access Control (RBAC)</strong> - Permission checks</li>
+    <li>✅ <strong>Data Encryption</strong> - At rest and in transit</li>
+    <li>✅ <strong>Audit Trails</strong> - All actions logged</li>
+    <li>✅ <strong>Session Management</strong> - Timeout and security</li>
+    <li>✅ <strong>Input Validation</strong> - SQL injection prevention</li>
+    <li>✅ <strong>API Security</strong> - JWT tokens, rate limiting</li>
+</ul>
 
 <hr>
 
 <h2>🚀 Third-Party Integrations</h2>
 
 <h3>APIs Used Across Modules:</h3>
-<li><strong>Waystar API</strong> - Claims submission, eligibility</li>
-<li><strong>Availity API</strong> - Insurance verification</li>
-<li><strong>OpenAI GPT-4</strong> - Medical coding, denial prediction</li>
-<li><strong>Stripe API</strong> - Patient payments</li>
-<li><strong>Twilio API</strong> - SMS notifications</li>
-<li><strong>AWS Textract</strong> - OCR for documents</li>
-<li><strong>FHIR APIs</strong> - EHR integration</li>
-<li><strong>HL7 Interface</strong> - Lab/imaging results</li>
+<ul>
+    <li><strong>Waystar API</strong> - Claims submission, eligibility</li>
+    <li><strong>Availity API</strong> - Insurance verification</li>
+    <li><strong>OpenAI GPT-4</strong> - Medical coding, denial prediction</li>
+    <li><strong>Stripe API</strong> - Patient payments</li>
+    <li><strong>Twilio API</strong> - SMS notifications</li>
+    <li><strong>AWS Textract</strong> - OCR for documents</li>
+    <li><strong>FHIR APIs</strong> - EHR integration</li>
+    <li><strong>HL7 Interface</strong> - Lab/imaging results</li>
+</ul>
 
 <h3>EDI Transactions:</h3>
-<li><strong>270/271</strong> - Eligibility inquiry/response</li>
-<li><strong>276/277</strong> - Claim status inquiry/response</li>
-<li><strong>278</strong> - Prior authorization</li>
-<li><strong>835</strong> - Payment/remittance advice</li>
-<li><strong>837</strong> - Claim submission</li>
+<ul>
+    <li><strong>270/271</strong> - Eligibility inquiry/response</li>
+    <li><strong>276/277</strong> - Claim status inquiry/response</li>
+    <li><strong>278</strong> - Prior authorization</li>
+    <li><strong>835</strong> - Payment/remittance advice</li>
+    <li><strong>837</strong> - Claim submission</li>
+</ul>
 
 <hr>
 
 <h2>📈 Key Metrics Tracked</h2>
 
 <p>Each module tracks:</p>
-<li><strong>Processing Time</strong> - Average time to complete</li>
-<li><strong>Success Rate</strong> - % of successful transactions</li>
-<li><strong>Error Rate</strong> - % of failed transactions</li>
-<li><strong>User Satisfaction</strong> - Feedback scores</li>
-<li><strong>Cost per Transaction</strong> - API costs</li>
-<li><strong>Revenue Impact</strong> - Financial metrics</li>
+<ul>
+    <li><strong>Processing Time</strong> - Average time to complete</li>
+    <li><strong>Success Rate</strong> - % of successful transactions</li>
+    <li><strong>Error Rate</strong> - % of failed transactions</li>
+    <li><strong>User Satisfaction</strong> - Feedback scores</li>
+    <li><strong>Cost per Transaction</strong> - API costs</li>
+    <li><strong>Revenue Impact</strong> - Financial metrics</li>
+</ul>
 
 <hr>
 
 <h2>🎨 Diagram Legend</h2>
 
 <h3>Use Case Diagrams:</h3>
-<li><strong>Actor</strong> - Stick figure (User, System, External API)</li>
-<li><strong>Use Case</strong> - Oval (Action/Function)</li>
-<li><strong>Association</strong> - Line (Actor to Use Case)</li>
-<li><strong>Include</strong> - Dashed arrow (Required sub-function)</li>
-<li><strong>Extend</strong> - Dashed arrow (Optional sub-function)</li>
+<ul>
+    <li><strong>Actor</strong> - Stick figure (User, System, External API)</li>
+    <li><strong>Use Case</strong> - Oval (Action/Function)</li>
+    <li><strong>Association</strong> - Line (Actor to Use Case)</li>
+    <li><strong>Include</strong> - Dashed arrow (Required sub-function)</li>
+    <li><strong>Extend</strong> - Dashed arrow (Optional sub-function)</li>
+</ul>
 
 <h3>Activity Flow Diagrams:</h3>
-<li><strong>Start</strong> - Filled circle</li>
-<li><strong>End</strong> - Circle with border</li>
-<li><strong>Action</strong> - Rounded rectangle</li>
-<li><strong>Decision</strong> - Diamond</li>
-<li><strong>Fork/Join</strong> - Thick bar</li>
-<li><strong>Swimlane</strong> - Vertical section (Actor)</li>
+<ul>
+    <li><strong>Start</strong> - Filled circle</li>
+    <li><strong>End</strong> - Circle with border</li>
+    <li><strong>Action</strong> - Rounded rectangle</li>
+    <li><strong>Decision</strong> - Diamond</li>
+    <li><strong>Fork/Join</strong> - Thick bar</li>
+    <li><strong>Swimlane</strong> - Vertical section (Actor)</li>
+</ul>
 
 <h3>Sequence Diagrams:</h3>
-<li><strong>Actor</strong> - Stick figure</li>
-<li><strong>Object</strong> - Rectangle</li>
-<li><strong>Lifeline</strong> - Dashed vertical line</li>
-<li><strong>Message</strong> - Arrow</li>
-<li><strong>Return</strong> - Dashed arrow</li>
-<li><strong>Activation</strong> - Thin rectangle on lifeline</li>
+<ul>
+    <li><strong>Actor</strong> - Stick figure</li>
+    <li><strong>Object</strong> - Rectangle</li>
+    <li><strong>Lifeline</strong> - Dashed vertical line</li>
+    <li><strong>Message</strong> - Arrow</li>
+    <li><strong>Return</strong> - Dashed arrow</li>
+    <li><strong>Activation</strong> - Thin rectangle on lifeline</li>
+</ul>
 
 <hr>
 
 <h2>📝 Document Status</h2>
 
-<tr>
-<td>Part</td>
-<td>Modules</td>
-<td>Status</td>
-<td>Pages</td>
-</tr>
-<tr>
-<td>Part 1</td>
-<td>1-5</td>
-<td>✅ Complete</td>
-<td>~150</td>
-</tr>
-<tr>
-<td>Part 2</td>
-<td>6-9</td>
-<td>✅ Complete</td>
-<td>~120</td>
-</tr>
-<tr>
-<td>Part 3</td>
-<td>10-14</td>
-<td>✅ Complete</td>
-<td>~150</td>
-</tr>
-<tr>
-<td>Part 4</td>
-<td>15-17</td>
-<td>✅ Complete</td>
-<td>~90</td>
-</tr>
-<tr>
-<td>Part 5</td>
-<td>18-22</td>
-<td>✅ Complete</td>
-<td>~150</td>
-</tr>
-<tr>
-<td>Part 6</td>
-<td>23-25</td>
-<td>✅ Complete</td>
-<td>~90</td>
-</tr>
-<tr>
-<td>Part 7</td>
-<td>26-30</td>
-<td>✅ Complete</td>
-<td>~150</td>
-</tr>
+<table>
+    <thead>
+        <tr>
+            <th>Part</th>
+            <th>Modules</th>
+            <th>Status</th>
+            <th>Pages</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Part 1</td>
+            <td>1-5</td>
+            <td>✅ Complete</td>
+            <td>~150</td>
+        </tr>
+        <tr>
+            <td>Part 2</td>
+            <td>6-9</td>
+            <td>✅ Complete</td>
+            <td>~120</td>
+        </tr>
+        <tr>
+            <td>Part 3</td>
+            <td>10-14</td>
+            <td>✅ Complete</td>
+            <td>~150</td>
+        </tr>
+        <tr>
+            <td>Part 4</td>
+            <td>15-17</td>
+            <td>✅ Complete</td>
+            <td>~90</td>
+        </tr>
+        <tr>
+            <td>Part 5</td>
+            <td>18-22</td>
+            <td>✅ Complete</td>
+            <td>~150</td>
+        </tr>
+        <tr>
+            <td>Part 6</td>
+            <td>23-25</td>
+            <td>✅ Complete</td>
+            <td>~90</td>
+        </tr>
+        <tr>
+            <td>Part 7</td>
+            <td>26-30</td>
+            <td>✅ Complete</td>
+            <td>~150</td>
+        </tr>
+    </tbody>
+</table>
 
 <p><strong>Total:</strong> ~900 pages of comprehensive documentation</p>
 
@@ -497,53 +698,77 @@ Completed/Failed → Archived
 
 <h2>🔄 Version History</h2>
 
-<tr>
-<td>Version</td>
-<td>Date</td>
-<td>Changes</td>
-</tr>
-<tr>
-<td>1.0</td>
-<td>May 18, 2026</td>
-<td>Initial release - All 30 modules</td>
-</tr>
+<table>
+    <thead>
+        <tr>
+            <th>Version</th>
+            <th>Date</th>
+            <th>Changes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1.0</td>
+            <td>May 18, 2026</td>
+            <td>Initial release - All 30 modules</td>
+        </tr>
+        <tr>
+            <td>1.1</td>
+            <td>May 21, 2026</td>
+            <td>Updated categories, added Module 14 ERA Processing Flow</td>
+        </tr>
+    </tbody>
+</table>
 
 <hr>
 
 <h2>📞 Support</h2>
 
 <p>For questions or clarifications:</p>
-<li><strong>Development Team:</strong> Review sequence diagrams and API flows</li>
-<li><strong>Technical Lead:</strong> Review architecture and integration points</li>
-<li><strong>Business Team:</strong> Review module overviews and workflows</li>
+<ul>
+    <li><strong>Development Team:</strong> Review sequence diagrams and API flows</li>
+    <li><strong>Technical Lead:</strong> Review architecture and integration points</li>
+    <li><strong>Business Team:</strong> Review module overviews and workflows</li>
+</ul>
 
 <hr>
 
 <p><strong>Next Steps:</strong></p>
-<li>Read the relevant Part document for your modules</li>
-<li>Review the specific module flows</li>
-<li>Implement based on action plans</li>
-<li>Test using error scenarios</li>
-<li>Deploy and monitor</li>
+<ul>
+    <li>Read the relevant Part document for your modules</li>
+    <li>Review the specific module flows</li>
+    <li>Implement based on action plans</li>
+    <li>Test using error scenarios</li>
+    <li>Deploy and monitor</li>
+</ul>
 
 <hr>
 
 <p><strong>Document Navigation:</strong></p>
-<li><strong>Master Index:</strong> <code>Module_Flows_Master_Index.md</code> (This document)</li>
-<li><strong>Module 1: User Login:</strong> <code>Flows_Module_01_User_Login.md</code></li>
-<li><strong>Module 2: Patient Registration:</strong> <code>Flows_Module_02_Patient_Registration.md</code></li>
-<li><strong>Module 3: Insurance Verification:</strong> <code>Flows_Module_03_Insurance_Verification.md</code></li>
-<li><strong>Module 4: Appointment Scheduling:</strong> <code>Flows_Module_04_Appointment_Scheduling.md</code></li>
-<li><strong>Module 5: Patient Check-in:</strong> <code>Flows_Module_05_Patient_Checkin.md</code></li>
-<li><strong>Module 6: Medical Coding:</strong> <code>Flows_Module_06_Medical_Coding.md</code></li>
-<li><strong>Module 12: Prior Authorization:</strong> <code>Flows_Module_12_Prior_Authorization.md</code></li>
-<li><strong>Module 13: Order Management:</strong> <code>Flows_Module_13_Order_Management.md</code></li>
-<li><strong>Module 14: Encounter Management:</strong> <code>Flows_Module_14_Encounter.md</code></li>
-<li><strong>Module 18: Payment Posting:</strong> <code>Flows_Module_Payment_Posting.md</code></li>
-<li><strong>Module 20: Secondary Billing:</strong> <code>Flows_Module_20_Secondary_Billing.md</code></li>
-<li><strong>Denial &amp; Appeals:</strong> <code>Flows_Module_11_Denial &amp; Appeals Management.md</code></li>
-<li><strong>Provider Credentialing:</strong> <code>Flows_Module_PROVIDER CREDENTIALING &amp; MANAGEMENT.md</code></li>
-<li><strong>Remaining Modules:</strong> <code>Flows_Module_07_10_Remaining.md</code></li>
+<ul>
+    <li><strong>Master Index:</strong> <a href="Module_Flows_Master_Index.html">Module_Flows_Master_Index.html</a> (This document)</li>
+    <li><strong>Module 1: User Login:</strong> <a href="Flows_Module_01_User_Login.html">Flows_Module_01_User_Login.html</a></li>
+    <li><strong>Module 2: Patient Registration:</strong> <a href="Flows_Module_02_Patient_Registration.html">Flows_Module_02_Patient_Registration.html</a></li>
+    <li><strong>Module 3: Insurance Verification:</strong> <a href="Flows_Module_03_Insurance_Verification.html">Flows_Module_03_Insurance_Verification.html</a></li>
+    <li><strong>Module 4: Appointment Scheduling:</strong> <a href="Flows_Module_04_Appointment_Scheduling.html">Flows_Module_04_Appointment_Scheduling.html</a></li>
+    <li><strong>Module 5: Patient Check-in:</strong> <a href="Flows_Module_05_Patient_Checkin.html">Flows_Module_05_Patient_Checkin.html</a></li>
+    <li><strong>Module 6: Medical Coding:</strong> <a href="Flows_Module_06_Medical_Coding.html">Flows_Module_06_Medical_Coding.html</a></li>
+    <li><strong>Module 12: Prior Authorization:</strong> <a href="Flows_Module_12_Prior_Authorization.html">Flows_Module_12_Prior_Authorization.html</a></li>
+    <li><strong>Module 13: Order Management:</strong> <a href="Flows_Module_13_Order_Management.html">Flows_Module_13_Order_Management.html</a></li>
+    <li><strong>Module 14: Encounter Management:</strong> <a href="Flows_Module_14_Encounter.html">Flows_Module_14_Encounter.html</a></li>
+    <li><strong>Module 14 (New): ERA Processing:</strong> <a href="Flows_Module_14_ERA_Processing.html">Flows_Module_14_ERA_Processing.html</a></li>
+    <li><strong>Module 15: Payment Posting:</strong> <a href="Flows_Module_Payment_Posting.html">Flows_Module_Payment_Posting.html</a></li>
+    <li><strong>Module 18: Patient Billing:</strong> <a href="Flows_Module_18_Patient_Billing.html">Flows_Module_18_Patient_Billing.html</a></li>
+    <li><strong>Module 20: Secondary Billing:</strong> <a href="Flows_Module_20_Secondary_Billing.html">Flows_Module_20_Secondary_Billing.html</a></li>
+    <li><strong>Denial &amp; Appeals:</strong> <a href="Flows_Module_11_Denial &amp; Appeals Management.html">Flows_Module_11_Denial &amp; Appeals Management.html</a></li>
+    <li><strong>Provider Credentialing:</strong> <a href="Flows_Module_PROVIDER CREDENTIALING &amp; MANAGEMENT.html">Flows_Module_PROVIDER CREDENTIALING &amp; MANAGEMENT.html</a></li>
+    <li><strong>AR Follow-up:</strong> <a href="Flows_Module_Accounts Receivable (AR) Follow-Up.html">Flows_Module_Accounts Receivable (AR) Follow-Up.html</a></li>
+    <li><strong>Collections:</strong> <a href="Flows_Module_Collections.html">Flows_Module_Collections.html</a></li>
+    <li><strong>Reporting &amp; Analytics:</strong> <a href="Flows_Module_Reporting_Analytics.html">Flows_Module_Reporting_Analytics.html</a></li>
+    <li><strong>Compliance &amp; Audit:</strong> <a href="Flows_Module_Compliance &amp; Audit.html">Flows_Module_Compliance &amp; Audit.html</a></li>
+    <li><strong>Remaining Modules:</strong> <a href="Flows_Module_07_10_Remaining.html">Flows_Module_07_10_Remaining.html</a></li>
+    <li><strong>Insurance Adjudication:</strong> <a href="Flows_Module_Insurance Adjudication Tracking.html">Flows_Module_Insurance Adjudication Tracking.html</a></li>
+</ul>
 
 </body>
 </html>
