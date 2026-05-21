@@ -29,20 +29,34 @@ Build a **bicycle first**, not a Ferrari. Launch in **4 months** instead of 2 ye
 
 ---
 
-## 📦 10 Core Modules
+---
 
-| # | Module | Purpose | Time to Build |
-|---|--------|---------|---------------|
-| 1 | **User Login & Security** | Role-based access control | 2 weeks |
-| 2 | **Patient Registration** | Capture patient & insurance info | 2 weeks |
-| 3 | **Insurance Verification** | Check coverage via Waystar/Availity | 2 weeks |
-| 4 | **Appointment Scheduling** | Calendar & scheduling | 2 weeks |
-| 5 | **Medical Coding** | ICD-10 & CPT code assignment | 2 weeks |
-| 6 | **Claim Creation** | Generate CMS-1500/UB-04 claims | 2 weeks |
-| 7 | **Claim Submission** | Submit via Waystar clearinghouse | 2 weeks |
-| 8 | **Denial Dashboard** | Track & manage denied claims | 2 weeks |
-| 9 | **Payment Posting** | Post insurance & patient payments | 2 weeks |
-| 10 | **Basic Reports** | Financial & operational reports | 2 weeks |
+## 📦 22 Core Modules
+
+| # | Module | Purpose | Estimated Time to Build |
+|---|--------|---------|--------------------------|
+| 1 | **Appointment Scheduling** | Schedule patient appointments and provider calendars | 2 weeks |
+| 2 | **Patient Registration** | Capture patient demographics and insurance details | 2 weeks |
+| 3 | **Insurance Verification** | Verify patient insurance eligibility and benefits | 2 weeks |
+| 4 | **Prior Authorization / Referral Management** | Obtain payer approvals and manage referrals | 2 weeks |
+| 5 | **Patient Check-In** | Confirm arrival, collect copays, and update queue status | 2 weeks |
+| 6 | **Clinical Documentation / EMR** | Store clinical notes, diagnoses, prescriptions, and treatment plans | 3 weeks |
+| 7 | **Medical Coding** | Assign ICD-10, CPT, and HCPCS billing codes | 2 weeks |
+| 8 | **Charge Entry / Charge Capture** | Record billable services, procedures, and provider charges | 2 weeks |
+| 9 | **Claim Scrubbing** | Validate claims for coding and billing errors before submission | 2 weeks |
+| 10 | **Claim Submission** | Submit claims electronically through clearinghouses | 2 weeks |
+| 11 | **Clearinghouse Validation** | Validate claims against payer and EDI rules | 2 weeks |
+| 12 | **Claim Status Tracking** | Monitor payer claim status using EDI 276/277 transactions | 2 weeks |
+| 13 | **Insurance Adjudication Tracking** | Track approvals, denials, underpayments, and payer decisions | 2 weeks |
+| 14 | **ERA Processing** | Process EDI 835 remittance files and reconcile payments | 2 weeks |
+| 15 | **Payment Posting** | Post insurance and patient payments into billing accounts | 2 weeks |
+| 16 | **Denial Management** | Manage denied claims, appeals, and resubmissions | 2 weeks |
+| 17 | **Secondary Insurance Billing** | Handle COB and secondary/tertiary claim billing | 2 weeks |
+| 18 | **Patient Billing** | Generate patient statements and collect balances | 2 weeks |
+| 19 | **Accounts Receivable (AR) Follow-Up** | Track unpaid balances and manage collection workflows | 2 weeks |
+| 20 | **Collections / Refund / Write-Off Management** | Process collections, refunds, and financial write-offs | 2 weeks |
+| 21 | **Reporting & Analytics** | Provide KPI dashboards, AR analytics, and financial reports | 2 weeks |
+| 22 | **Compliance & Audit** | Maintain HIPAA compliance, audit logs, and security monitoring | 2 weeks |
 
 ---
 
@@ -50,50 +64,58 @@ Build a **bicycle first**, not a Ferrari. Launch in **4 months** instead of 2 ye
 
 **Patient: Sarah Johnson, 41, has cough and fever**
 
-1. **Registration** (3 min)
-   - Front desk enters patient info
-   - Insurance: Blue Cross Blue Shield
+1. **Patient Registration** (3 min)
+   - Front desk enters patient information
+   - Insurance card scanned using OCR
+   - Patient ID generated automatically
 
-2. **Insurance Verification** (30 sec)
-   - System checks via **Waystar API**
+2. **Insurance Verification** (30 seconds)
+   - System checks via **Waystar / Availity API**
    - Result: Active, $25 copay, $700 deductible remaining
 
-3. **Appointment** (1 min)
-   - Scheduled for May 20, 10:00 AM with Dr. Smith
+3. **Appointment Scheduling** (1 minute)
+   - Appointment booked for May 20, 10:00 AM with Dr. Smith
+   - SMS & email confirmation sent automatically
 
-4. **Check-in** (2 min)
+4. **Patient Check-in** (2 minutes)
+   - Patient confirms details & signs consent forms
    - Collect $25 copay via **Stripe**
 
-5. **Doctor Visit** (20 min)
-   - Diagnosis: Acute bronchitis
+5. **Doctor Consultation** (20 minutes)
+   - Diagnosis: Acute Bronchitis
    - Treatment: Antibiotics
+   - Clinical notes saved in EMR
 
-6. **Medical Coding** (3 min with AI)
+6. **Medical Coding with AI** (3 minutes)
    - **AI suggests codes** via **OpenAI API**
-   - ICD-10: J20.9 (Acute bronchitis)
-   - CPT: 99203 (Office visit)
-   - Charge: $150
+   - ICD-10: J20.9 (Acute Bronchitis)
+   - CPT: 99213 (Office Visit)
 
-7. **Claim Creation** (1 min)
-   - System auto-generates claim
-   - **Waystar scrubs** for errors
-   - Status: Ready to submit
+7. **Claim Scrubbing** (1 minute)
+   - Claim validated automatically
+   - Checks codes, insurance, modifiers, demographics
+   - Status: ✅ Ready to Submit
 
-8. **Claim Submission** (30 sec)
-   - Submit via **Waystar API**
-   - Acknowledgment received immediately
+8. **Claim Submission** (2 minutes)
+   - Claim submitted via **Waystar API**
+   - EDI 837 acknowledgment received instantly
 
-9. **Claim Adjudication** (5 days)
-   - Insurance processes claim
-   - Approves payment
+9. **Claim Status Tracking** (Automatic)
+   - System checks payer status using EDI 276/277
+   - Day 5: In Review
+   - Day 7: Approved
 
-10. **Payment Posting** (1 min)
-    - ERA received via **Waystar API**
-    - Insurance pays $95
-    - Patient balance: $0 (copay already collected)
+10. **Payment Posting** (Day 10)
+   - Insurance payment auto-posted from ERA (EDI 835)
+   - Remaining patient balance calculated automatically
 
-**Total Time: Service to Payment = 5 days** ⚡  
-(Industry average: 30-45 days)
+11. **Patient Billing** (Day 11)
+   - Patient statement generated automatically
+   - Payment link emailed to Sarah
+   - Patient pays remaining balance online
+
+**Total Time: Service to Final Payment = 11 days** ⚡  
+*(Traditional industry average: 60–90 days)*
 
 ---
 
