@@ -260,7 +260,7 @@ Validation Includes:
 ## Sanction Check Flow
 
 ```text
-Run OIG Check
+Run OIG Check Office of Inspector General (OIG)
        ↓
 Run SAM Check
        ↓
