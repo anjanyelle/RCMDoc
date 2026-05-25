@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Dive LLM and RAG Implementation</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .highlight {
+            background-color: #fff5f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        nav {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        nav a {
+            display: inline-block;
+            margin-right: 15px;
+            margin-bottom: 10px;
+        }
+        .back-link {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+        }
+        .step-box {
+            background: #f0f9ff;
+            border-left: 4px solid #0ea5e9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .cost-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .tip-box {
+            background: #dcfce7;
+            border-left: 4px solid #22c55e;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html">← Documentation Home</a> |
+        <a href="Healthcare_AI_Guide_README.html">AI Guide Index</a> |
+        <a href="Deep_Dive_LLM_and_RAG_Implementation.html">Part 1: LLM</a> |
+        <a href="Deep_Dive_RAG_Implementation_Part2.html">Part 2: RAG</a> |
+        <a href="Deep_Dive_Comparison_and_Decision_Guide.html">Part 3: Comparison</a>
+    </nav>
+    
+    <div class="content">
+        <h1>Deep Dive: LLM & RAG Implementation for Healthcare AI</h1>
+<h2>Complete Step-by-Step Guide</h2>
+
+<strong>Version:</strong> 1.0  
+<strong>Date:</strong> May 2026  
+<strong>Focus:</strong> Approach 3 (LLM-Based) & Approach 4 (RAG)
+
+<hr>
+
+<h2>Table of Contents</h2>
+
+<p>1. <a href="#approach3">Approach 3: LLM-Based System - Deep Dive</a></p>
+<p>2. <a href="#approach4">Approach 4: RAG System - Deep Dive</a></p>
+<p>3. <a href="#comparison">Comparison & When to Use Each</a></p>
+<p>4. <a href="#migration">Migration Path: LLM → RAG</a></p>
+
+<hr>
+
+<h1>APPROACH 3: LLM-Based AI System {#approach3}</h1>
+
+<h2>🎯 What Is It?</h2>
+
+<p>An LLM-Based system sends medical notes directly to a Large Language Model (like GPT-4) and gets back medical codes. Think of it as having an AI medical coder that reads notes and assigns codes instantly.</p>
+
+<hr>
+
+<h2>🏗️ Complete Architecture</h2>
+
+<pre><code>┌─────────────────────────────────────────────────────────────────┐
+<p>│                     FRONTEND (Next.js)                          │</p>
+<p>│  - Document upload interface                                    │</p>
+<p>│  - Progress tracking                                            │</p>
+<p>│  - Results display                                              │</p>
+<p>└─────────────────────────────────────────────────────────────────┘</p>
+<p>                            ↓ HTTPS</p>
+<p>┌─────────────────────────────────────────────────────────────────┐</p>
+<p>│                     API GATEWAY / LOAD BALANCER                 │</p>
+<p>└─────────────────────────────────────────────────────────────────┘</p>
+<p>                            ↓</p>
+<p>┌─────────────────────────────────────────────────────────────────┐</p>
+<p>│                     BACKEND (FastAPI/Node.js)                   │</p>
+<p>│                                                                 │</p>
+<p>│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐        │</p>
+<p>│  │   Upload     │  │   Process    │  │   Validate   │        │</p>
+<p>│  │   Handler    │→ │   Queue      │→ │   Results    │        │</p>
+<p>│  └──────────────┘  └──────────────┘  └──────────────┘        │</p>
+<p>└─────────────────────────────────────────────────────────────────┘</p>
+<p>         ↓                    ↓                    ↓</p>
+<p>    ┌────────┐         ┌──────────┐         ┌──────────┐</p>
+<p>    │   S3   │         │  Redis   │         │PostgreSQL│</p>
+<p>    │Storage │         │  Queue   │         │ Database │</p>
+<p>    └────────┘         └──────────┘         └──────────┘</p>
+<p>                            ↓</p>
+<p>┌─────────────────────────────────────────────────────────────────┐</p>
+<p>│                     PROCESSING PIPELINE                         │</p>
+<p>│                                                                 │</p>
+<p>│  Step 1: OCR Extraction                                         │</p>
+<p>│  ┌──────────────────────────────────────────────────┐          │</p>
+<p>│  │  AWS Textract API                                │          │</p>
+<p>│  │  - Reads PDF/Image                               │          │</p>
+<p>│  │  - Extracts text (including handwriting)         │          │</p>
+<p>│  │  - Returns structured text                       │          │</p>
+<p>│  └──────────────────────────────────────────────────┘          │</p>
+<p>│                            ↓                                    │</p>
+<p>│  Step 2: Text Preprocessing                                     │</p>
+<p>│  ┌──────────────────────────────────────────────────┐          │</p>
+<p>│  │  - Remove noise (headers, footers)               │          │</p>
+<p>│  │  - Standardize medical abbreviations             │          │</p>
+<p>│  │  - Extract key sections (HPI, Assessment, Plan)  │          │</p>
+<p>│  └──────────────────────────────────────────────────┘          │</p>
+<p>│                            ↓                                    │</p>
+<p>│  Step 3: LLM Processing                                         │</p>
+<p>│  ┌──────────────────────────────────────────────────┐          │</p>
+<p>│  │  OpenAI GPT-4 / Claude 3 / Azure OpenAI         │          │</p>
+<p>│  │  - Send medical note + prompt                    │          │</p>
+<p>│  │  - Get ICD-10 and CPT codes                      │          │</p>
+<p>│  │  - Confidence scores                             │          │</p>
+<p>│  │  - Justifications                                │          │</p>
+<p>│  └──────────────────────────────────────────────────┘          │</p>
+<p>│                            ↓                                    │</p>
+<p>│  Step 4: Validation                                             │</p>
+<p>│  ┌──────────────────────────────────────────────────┐          │</p>
+<p>│  │  - Verify codes exist in ICD/CPT database        │          │</p>
+<p>│  │  - Check code compatibility                      │          │</p>
+<p>│  │  - Flag low-confidence codes                     │          │</p>
+<p>│  └──────────────────────────────────────────────────┘          │</p>
+<p>│                            ↓                                    │</p>
+<p>│  Step 5: Billing Calculation                                    │</p>
+<p>│  ┌──────────────────────────────────────────────────┐          │</p>
+<p>│  │  - Get CPT code prices                           │          │</p>
+<p>│  │  - Apply insurance rates                         │          │</p>
+<p>│  │  - Calculate patient responsibility              │          │</p>
+<p>│  └──────────────────────────────────────────────────┘          │</p>
+<p>└─────────────────────────────────────────────────────────────────┘</p>
+<p>                            ↓</p>
+<p>┌─────────────────────────────────────────────────────────────────┐</p>
+<p>│                     RESULTS & STORAGE                           │</p>
+<p>│  - Save to PostgreSQL                                           │</p>
+<p>│  - Generate invoice PDF                                         │</p>
+<p>│  - Send notifications                                           │</p>
+<p>└─────────────────────────────────────────────────────────────────┘</p>
+</code></pre>
+
+<hr>
+
+<h2>📋 Step-by-Step Implementation</h2>
+
+<h3><strong>STEP 1: Project Setup</strong></h3>
+
+<h4>1.1 Create Project Structure</h4>
+
+<pre><code>mkdir healthcare-ai-llm
+<p>cd healthcare-ai-llm</p>
+
+<h1>Create directory structure</h1>
+<p>mkdir -p backend/app/{api,services,models,utils}</p>
+<p>mkdir -p frontend/{components,pages,styles}</p>
+<p>mkdir -p database/migrations</p>
+<p>mkdir -p config</p>
+</code></pre>
+
+<h4>1.2 Backend Setup (Python FastAPI)</h4>
+
+<pre><code><h1>Create virtual environment</h1>
+<p>python3 -m venv venv</p>
+<p>source venv/bin/activate</p>
+
+<h1>Install dependencies</h1>
+<p>pip install fastapi uvicorn sqlalchemy psycopg2-binary</p>
+<p>pip install openai boto3 redis celery</p>
+<p>pip install python-multipart pydantic python-jose</p>
+</code></pre>
+
+<strong>requirements.txt:</strong>
+<pre><code>fastapi==0.104.1
+<p>uvicorn==0.24.0</p>
+<p>sqlalchemy==2.0.23</p>
+<p>psycopg2-binary==2.9.9</p>
+<p>openai==1.3.5</p>
+<p>anthropic==0.7.1</p>
+<p>boto3==1.29.7</p>
+<p>redis==5.0.1</p>
+<p>celery==5.3.4</p>
+<p>python-multipart==0.0.6</p>
+<p>pydantic==2.5.0</p>
+<p>python-jose[cryptography]==3.3.0</p>
+<p>python-dotenv==1.0.0</p>
+</code></pre>
+
+<h4>1.3 Frontend Setup (Next.js)</h4>
+
+<pre><code>npx create-next-app@latest frontend
+<p>cd frontend</p>
+<p>npm install axios react-dropzone recharts</p>
+</code></pre>
+
+<hr>
+
+<h3><strong>STEP 2: Database Setup</strong></h3>
+
+<h4>2.1 PostgreSQL Schema</h4>
+
+<pre><code>-- Create database
+<p>CREATE DATABASE healthcare_ai;</p>
+
+<p>-- Patients table</p>
+<p>CREATE TABLE patients (</p>
+<p>    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),</p>
+<p>    name VARCHAR(255) NOT NULL,</p>
+<p>    dob DATE,</p>
+<p>    insurance_id VARCHAR(100),</p>
+<p>    insurance_provider VARCHAR(100),</p>
+<p>    created_at TIMESTAMP DEFAULT NOW(),</p>
+<p>    updated_at TIMESTAMP DEFAULT NOW()</p>
+<p>);</p>
+
+<p>-- Medical documents table</p>
+<p>CREATE TABLE medical_documents (</p>
+<p>    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),</p>
+<p>    patient_id UUID REFERENCES patients(id),</p>
+<p>    document_type VARCHAR(50), -- 'clinical_note', 'lab_report', etc.</p>
+<p>    s3_key VARCHAR(500),</p>
+<p>    original_filename VARCHAR(255),</p>
+<p>    status VARCHAR(50) DEFAULT 'uploaded', -- uploaded, processing, completed, failed</p>
+<p>    uploaded_at TIMESTAMP DEFAULT NOW()</p>
+<p>);</p>
+
+<p>-- Extracted text table</p>
+<p>CREATE TABLE extracted_text (</p>
+<p>    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),</p>
+<p>    document_id UUID REFERENCES medical_documents(id),</p>
+<p>    raw_text TEXT,</p>
+<p>    cleaned_text TEXT,</p>
+<p>    ocr_confidence FLOAT,</p>
+<p>    extracted_at TIMESTAMP DEFAULT NOW()</p>
+<p>);</p>
+
+<p>-- ICD codes table</p>
+<p>CREATE TABLE icd_codes (</p>
+<p>    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),</p>
+<p>    document_id UUID REFERENCES medical_documents(id),</p>
+<p>    code VARCHAR(10) NOT NULL,</p>
+<p>    description TEXT,</p>
+<p>    confidence FLOAT,</p>
+<p>    justification TEXT,</p>
+<p>    created_by VARCHAR(50) DEFAULT 'ai', -- 'ai' or 'human'</p>
+<p>    created_at TIMESTAMP DEFAULT NOW()</p>
+<p>);</p>
+
+<p>-- CPT codes table</p>
+<p>CREATE TABLE cpt_codes (</p>
+<p>    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),</p>
+<p>    document_id UUID REFERENCES medical_documents(id),</p>
+<p>    code VARCHAR(10) NOT NULL,</p>
+<p>    description TEXT,</p>
+<p>    units INTEGER DEFAULT 1,</p>
+<p>    confidence FLOAT,</p>
+<p>    justification TEXT,</p>
+<p>    created_by VARCHAR(50) DEFAULT 'ai',</p>
+<p>    created_at TIMESTAMP DEFAULT NOW()</p>
+<p>);</p>
+
+<p>-- Billing table</p>
+<p>CREATE TABLE billing (</p>
+<p>    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),</p>
+<p>    document_id UUID REFERENCES medical_documents(id),</p>
+<p>    patient_id UUID REFERENCES patients(id),</p>
+<p>    total_amount DECIMAL(10,2),</p>
+<p>    insurance_amount DECIMAL(10,2),</p>
+<p>    patient_amount DECIMAL(10,2),</p>
+<p>    status VARCHAR(50) DEFAULT 'pending', -- pending, sent, paid</p>
+<p>    created_at TIMESTAMP DEFAULT NOW()</p>
+<p>);</p>
+
+<p>-- ICD-10 reference table (for validation)</p>
+<p>CREATE TABLE icd10_reference (</p>
+<p>    code VARCHAR(10) PRIMARY KEY,</p>
+<p>    description TEXT,</p>
+<p>    category VARCHAR(100)</p>
+<p>);</p>
+
+<p>-- CPT reference table (for validation)</p>
+<p>CREATE TABLE cpt_reference (</p>
+<p>    code VARCHAR(10) PRIMARY KEY,</p>
+<p>    description TEXT,</p>
+<p>    base_price DECIMAL(10,2),</p>
+<p>    category VARCHAR(100)</p>
+<p>);</p>
+
+<p>-- Processing logs</p>
+<p>CREATE TABLE processing_logs (</p>
+<p>    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),</p>
+<p>    document_id UUID REFERENCES medical_documents(id),</p>
+<p>    step VARCHAR(50), -- 'ocr', 'llm', 'validation', 'billing'</p>
+<p>    status VARCHAR(20), -- 'started', 'completed', 'failed'</p>
+<p>    duration_seconds FLOAT,</p>
+<p>    error_message TEXT,</p>
+<p>    created_at TIMESTAMP DEFAULT NOW()</p>
+<p>);</p>
+
+<p>-- Create indexes</p>
+<p>CREATE INDEX idx_documents_patient ON medical_documents(patient_id);</p>
+<p>CREATE INDEX idx_documents_status ON medical_documents(status);</p>
+<p>CREATE INDEX idx_icd_document ON icd_codes(document_id);</p>
+<p>CREATE INDEX idx_cpt_document ON cpt_codes(document_id);</p>
+<p>CREATE INDEX idx_billing_patient ON billing(patient_id);</p>
+</code></pre>
+
+<hr>
+
+<h3><strong>STEP 3: Backend Implementation</strong></h3>
+
+<h4>3.1 Configuration (<code>config/settings.py</code>)</h4>
+
+<pre><code>from pydantic_settings import BaseSettings
+
+<p>class Settings(BaseSettings):</p>
+<p>    # Database</p>
+<p>    DATABASE_URL: str = "postgresql://user:password@localhost:5432/healthcare_ai"</p>
+    
+<p>    # AWS</p>
+<p>    AWS_ACCESS_KEY_ID: str</p>
+<p>    AWS_SECRET_ACCESS_KEY: str</p>
+<p>    AWS_REGION: str = "us-east-1"</p>
+<p>    S3_BUCKET: str = "medical-documents"</p>
+    
+<p>    # OpenAI</p>
+<p>    OPENAI_API_KEY: str</p>
+<p>    OPENAI_MODEL: str = "gpt-4-turbo-preview"</p>
+    
+<p>    # Redis</p>
+<p>    REDIS_URL: str = "redis://localhost:6379"</p>
+    
+<p>    # API</p>
+<p>    API_HOST: str = "0.0.0.0"</p>
+<p>    API_PORT: int = 8000</p>
+    
+<p>    class Config:</p>
+<p>        env_file = ".env"</p>
+
+<p>settings = Settings()</p>
+</code></pre>
+
+<h4>3.2 Database Models (<code>backend/app/models/database.py</code>)</h4>
+
+<pre><code>from sqlalchemy import Column, String, Float, Text, DateTime, ForeignKey, Integer, DECIMAL
+<p>from sqlalchemy.dialects.postgresql import UUID</p>
+<p>from sqlalchemy.ext.declarative import declarative_base</p>
+<p>from sqlalchemy.orm import relationship</p>
+<p>import uuid</p>
+<p>from datetime import datetime</p>
+
+<p>Base = declarative_base()</p>
+
+<p>class Patient(Base):</p>
+<p>    __tablename__ = "patients"</p>
+    
+<p>    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)</p>
+<p>    name = Column(String(255), nullable=False)</p>
+<p>    dob = Column(DateTime)</p>
+<p>    insurance_id = Column(String(100))</p>
+<p>    insurance_provider = Column(String(100))</p>
+<p>    created_at = Column(DateTime, default=datetime.utcnow)</p>
+<p>    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)</p>
+    
+<p>    documents = relationship("MedicalDocument", back_populates="patient")</p>
+
+<p>class MedicalDocument(Base):</p>
+<p>    __tablename__ = "medical_documents"</p>
+    
+<p>    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)</p>
+<p>    patient_id = Column(UUID(as_uuid=True), ForeignKey("patients.id"))</p>
+<p>    document_type = Column(String(50))</p>
+<p>    s3_key = Column(String(500))</p>
+<p>    original_filename = Column(String(255))</p>
+<p>    status = Column(String(50), default="uploaded")</p>
+<p>    uploaded_at = Column(DateTime, default=datetime.utcnow)</p>
+    
+<p>    patient = relationship("Patient", back_populates="documents")</p>
+<p>    extracted_text = relationship("ExtractedText", back_populates="document")</p>
+<p>    icd_codes = relationship("ICDCode", back_populates="document")</p>
+<p>    cpt_codes = relationship("CPTCode", back_populates="document")</p>
+
+<p>class ExtractedText(Base):</p>
+<p>    __tablename__ = "extracted_text"</p>
+    
+<p>    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)</p>
+<p>    document_id = Column(UUID(as_uuid=True), ForeignKey("medical_documents.id"))</p>
+<p>    raw_text = Column(Text)</p>
+<p>    cleaned_text = Column(Text)</p>
+<p>    ocr_confidence = Column(Float)</p>
+<p>    extracted_at = Column(DateTime, default=datetime.utcnow)</p>
+    
+<p>    document = relationship("MedicalDocument", back_populates="extracted_text")</p>
+
+<p>class ICDCode(Base):</p>
+<p>    __tablename__ = "icd_codes"</p>
+    
+<p>    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)</p>
+<p>    document_id = Column(UUID(as_uuid=True), ForeignKey("medical_documents.id"))</p>
+<p>    code = Column(String(10), nullable=False)</p>
+<p>    description = Column(Text)</p>
+<p>    confidence = Column(Float)</p>
+<p>    justification = Column(Text)</p>
+<p>    created_by = Column(String(50), default="ai")</p>
+<p>    created_at = Column(DateTime, default=datetime.utcnow)</p>
+    
+<p>    document = relationship("MedicalDocument", back_populates="icd_codes")</p>
+
+<p>class CPTCode(Base):</p>
+<p>    __tablename__ = "cpt_codes"</p>
+    
+<p>    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)</p>
+<p>    document_id = Column(UUID(as_uuid=True), ForeignKey("medical_documents.id"))</p>
+<p>    code = Column(String(10), nullable=False)</p>
+<p>    description = Column(Text)</p>
+<p>    units = Column(Integer, default=1)</p>
+<p>    confidence = Column(Float)</p>
+<p>    justification = Column(Text)</p>
+<p>    created_by = Column(String(50), default="ai")</p>
+<p>    created_at = Column(DateTime, default=datetime.utcnow)</p>
+    
+<p>    document = relationship("MedicalDocument", back_populates="cpt_codes")</p>
+</code></pre>
+
+<h4>3.3 OCR Service (<code>backend/app/services/ocr_service.py</code>)</h4>
+
+<pre><code>import boto3
+<p>import time</p>
+<p>from typing import Dict</p>
+<p>from config.settings import settings</p>
+
+<p>class OCRService:</p>
+<p>    def __init__(self):</p>
+<p>        self.textract = boto3.client(</p>
+<p>            'textract',</p>
+<p>            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,</p>
+<p>            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,</p>
+<p>            region_name=settings.AWS_REGION</p>
+<p>        )</p>
+    
+<p>    async def extract_text_from_document(self, s3_key: str) -> Dict:</p>
+<p>        """</p>
+<p>        Extract text from document using AWS Textract</p>
+<p>        """</p>
+<p>        try:</p>
+<p>            # Start document text detection</p>
+<p>            response = self.textract.start_document_text_detection(</p>
+<p>                DocumentLocation={</p>
+<p>                    'S3Object': {</p>
+<p>                        'Bucket': settings.S3_BUCKET,</p>
+<p>                        'Name': s3_key</p>
+<p>                    }</p>
+<p>                }</p>
+<p>            )</p>
+            
+<p>            job_id = response['JobId']</p>
+            
+<p>            # Wait for job to complete</p>
+<p>            while True:</p>
+<p>                result = self.textract.get_document_text_detection(JobId=job_id)</p>
+<p>                status = result['JobStatus']</p>
+                
+<p>                if status == 'SUCCEEDED':</p>
+<p>                    break</p>
+<p>                elif status == 'FAILED':</p>
+<p>                    raise Exception("Textract job failed")</p>
+                
+<p>                time.sleep(2)  # Wait 2 seconds before checking again</p>
+            
+<p>            # Extract text and confidence</p>
+<p>            text_blocks = []</p>
+<p>            total_confidence = 0</p>
+<p>            count = 0</p>
+            
+<p>            for block in result['Blocks']:</p>
+<p>                if block['BlockType'] == 'LINE':</p>
+<p>                    text_blocks.append(block['Text'])</p>
+<p>                    if 'Confidence' in block:</p>
+<p>                        total_confidence += block['Confidence']</p>
+<p>                        count += 1</p>
+            
+<p>            raw_text = '\n'.join(text_blocks)</p>
+<p>            avg_confidence = total_confidence / count if count > 0 else 0</p>
+            
+<p>            return {</p>
+<p>                'raw_text': raw_text,</p>
+<p>                'confidence': avg_confidence / 100,  # Convert to 0-1 scale</p>
+<p>                'success': True</p>
+<p>            }</p>
+            
+<p>        except Exception as e:</p>
+<p>            return {</p>
+<p>                'raw_text': '',</p>
+<p>                'confidence': 0,</p>
+<p>                'success': False,</p>
+<p>                'error': str(e)</p>
+<p>            }</p>
+    
+<p>    def clean_text(self, raw_text: str) -> str:</p>
+<p>        """</p>
+<p>        Clean and preprocess extracted text</p>
+<p>        """</p>
+<p>        # Remove extra whitespace</p>
+<p>        text = ' '.join(raw_text.split())</p>
+        
+<p>        # Standardize common medical abbreviations</p>
+<p>        abbreviations = {</p>
+<p>            'pt': 'patient',</p>
+<p>            'hx': 'history',</p>
+<p>            'dx': 'diagnosis',</p>
+<p>            'tx': 'treatment',</p>
+<p>            'rx': 'prescription',</p>
+<p>            'sx': 'symptoms',</p>
+<p>            'c/o': 'complains of',</p>
+<p>            'w/': 'with',</p>
+<p>            'w/o': 'without',</p>
+<p>        }</p>
+        
+<p>        for abbr, full in abbreviations.items():</p>
+<p>            text = text.replace(f' {abbr} ', f' {full} ')</p>
+        
+<p>        return text</p>
+</code></pre>
+
+<h4>3.4 LLM Service (<code>backend/app/services/llm_service.py</code>)</h4>
+
+<pre><code>from openai import AsyncOpenAI
+<p>from typing import Dict, List</p>
+<p>import json</p>
+<p>from config.settings import settings</p>
+
+<p>class LLMService:</p>
+<p>    def __init__(self):</p>
+<p>        self.client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)</p>
+    
+<p>    async def get_medical_codes(self, medical_note: str) -> Dict:</p>
+<p>        """</p>
+<p>        Send medical note to GPT-4 and get ICD/CPT codes</p>
+<p>        """</p>
+        
+<p>        prompt = self._build_prompt(medical_note)</p>
+        
+<p>        try:</p>
+<p>            response = await self.client.chat.completions.create(</p>
+<p>                model=settings.OPENAI_MODEL,</p>
+<p>                messages=[</p>
+<p>                    {</p>
+<p>                        "role": "system",</p>
+<p>                        "content": """You are a certified medical coder with 10 years of experience. </p>
+<p>                        Your job is to analyze medical notes and assign accurate ICD-10 and CPT codes.</p>
+<p>                        Always provide confidence scores and justifications for your codes."""</p>
+<p>                    },</p>
+<p>                    {</p>
+<p>                        "role": "user",</p>
+<p>                        "content": prompt</p>
+<p>                    }</p>
+<p>                ],</p>
+<p>                temperature=0.1,  # Low temperature for consistency</p>
+<p>                response_format={"type": "json_object"}</p>
+<p>            )</p>
+            
+<p>            # Parse response</p>
+<p>            result = json.loads(response.choices[0].message.content)</p>
+            
+<p>            return {</p>
+<p>                'success': True,</p>
+<p>                'icd_codes': result.get('icd_codes', []),</p>
+<p>                'cpt_codes': result.get('cpt_codes', []),</p>
+<p>                'tokens_used': response.usage.total_tokens,</p>
+<p>                'cost': self._calculate_cost(response.usage)</p>
+<p>            }</p>
+            
+<p>        except Exception as e:</p>
+<p>            return {</p>
+<p>                'success': False,</p>
+<p>                'error': str(e),</p>
+<p>                'icd_codes': [],</p>
+<p>                'cpt_codes': []</p>
+<p>            }</p>
+    
+<p>    def _build_prompt(self, medical_note: str) -> str:</p>
+<p>        """</p>
+<p>        Build the prompt for GPT-4</p>
+<p>        """</p>
+<p>        return f"""</p>
+<p>Analyze this medical note and provide ICD-10 diagnosis codes and CPT procedure codes.</p>
+
+<p>MEDICAL NOTE:</p>
+<p>{medical_note}</p>
+
+<p>INSTRUCTIONS:</p>
+<p>1. Identify all diagnoses and assign appropriate ICD-10 codes</p>
+<p>2. Identify all procedures/services and assign appropriate CPT codes</p>
+<p>3. Provide confidence score (0-1) for each code</p>
+<p>4. Provide brief justification for each code</p>
+<p>5. Only use valid, current codes</p>
+
+<p>Respond in this JSON format:</p>
+<p>{{</p>
+<p>    "icd_codes": [</p>
+<p>        {{</p>
+<p>            "code": "E11.9",</p>
+<p>            "description": "Type 2 diabetes mellitus without complications",</p>
+<p>            "confidence": 0.95,</p>
+<p>            "justification": "Patient has documented history of Type 2 diabetes"</p>
+<p>        }}</p>
+<p>    ],</p>
+<p>    "cpt_codes": [</p>
+<p>        {{</p>
+<p>            "code": "99213",</p>
+<p>            "description": "Office visit, established patient, level 3",</p>
+<p>            "confidence": 0.92,</p>
+<p>            "justification": "Moderate complexity visit with detailed history"</p>
+<p>        }}</p>
+<p>    ]</p>
+<p>}}</p>
+<p>"""</p>
+    
+<p>    def _calculate_cost(self, usage) -> float:</p>
+<p>        """</p>
+<p>        Calculate API cost</p>
+<p>        GPT-4 Turbo: $0.01/1K input tokens, $0.03/1K output tokens</p>
+<p>        """</p>
+<p>        input_cost = (usage.prompt_tokens / 1000) * 0.01</p>
+<p>        output_cost = (usage.completion_tokens / 1000) * 0.03</p>
+<p>        return input_cost + output_cost</p>
+</code></pre>
+
+<h4>3.5 Validation Service (<code>backend/app/services/validation_service.py</code>)</h4>
+
+<pre><code>from sqlalchemy.orm import Session
+<p>from models.database import ICD10Reference, CPTReference</p>
+<p>from typing import Dict, List</p>
+
+<p>class ValidationService:</p>
+<p>    def __init__(self, db: Session):</p>
+<p>        self.db = db</p>
+    
+<p>    def validate_icd_codes(self, codes: List[Dict]) -> List[Dict]:</p>
+<p>        """</p>
+<p>        Validate ICD-10 codes against reference database</p>
+<p>        """</p>
+<p>        validated_codes = []</p>
+        
+<p>        for code_data in codes:</p>
+<p>            code = code_data['code']</p>
+            
+<p>            # Check if code exists in reference database</p>
+<p>            ref_code = self.db.query(ICD10Reference).filter(</p>
+<p>                ICD10Reference.code == code</p>
+<p>            ).first()</p>
+            
+<p>            if ref_code:</p>
+<p>                validated_codes.append({</p>
+<p>                    **code_data,</p>
+<p>                    'valid': True,</p>
+<p>                    'reference_description': ref_code.description</p>
+<p>                })</p>
+<p>            else:</p>
+<p>                validated_codes.append({</p>
+<p>                    **code_data,</p>
+<p>                    'valid': False,</p>
+<p>                    'error': f'Code {code} not found in ICD-10 database'</p>
+<p>                })</p>
+        
+<p>        return validated_codes</p>
+    
+<p>    def validate_cpt_codes(self, codes: List[Dict]) -> List[Dict]:</p>
+<p>        """</p>
+<p>        Validate CPT codes against reference database</p>
+<p>        """</p>
+<p>        validated_codes = []</p>
+        
+<p>        for code_data in codes:</p>
+<p>            code = code_data['code']</p>
+            
+<p>            # Check if code exists in reference database</p>
+<p>            ref_code = self.db.query(CPTReference).filter(</p>
+<p>                CPTReference.code == code</p>
+<p>            ).first()</p>
+            
+<p>            if ref_code:</p>
+<p>                validated_codes.append({</p>
+<p>                    **code_data,</p>
+<p>                    'valid': True,</p>
+<p>                    'reference_description': ref_code.description,</p>
+<p>                    'base_price': float(ref_code.base_price)</p>
+<p>                })</p>
+<p>            else:</p>
+<p>                validated_codes.append({</p>
+<p>                    **code_data,</p>
+<p>                    'valid': False,</p>
+<p>                    'error': f'Code {code} not found in CPT database'</p>
+<p>                })</p>
+        
+<p>        return validated_codes</p>
+    
+<p>    def check_code_compatibility(self, icd_codes: List[str], cpt_codes: List[str]) -> Dict:</p>
+<p>        """</p>
+<p>        Check if ICD and CPT codes are compatible</p>
+<p>        """</p>
+<p>        # Basic compatibility check</p>
+<p>        # In production, implement medical necessity rules</p>
+        
+<p>        warnings = []</p>
+        
+<p>        # Example: Check if procedure codes match diagnosis</p>
+<p>        if 'Z00.00' in icd_codes and '99213' in cpt_codes:</p>
+<p>            warnings.append("Routine exam (Z00.00) typically uses preventive visit codes (99381-99397)")</p>
+        
+<p>        return {</p>
+<p>            'compatible': len(warnings) == 0,</p>
+<p>            'warnings': warnings</p>
+<p>        }</p>
+</code></pre>
+
+<h4>3.6 Main API (<code>backend/app/main.py</code>)</h4>
+
+<pre><code>from fastapi import FastAPI, UploadFile, File, BackgroundTasks, Depends
+<p>from fastapi.middleware.cors import CORSMiddleware</p>
+<p>from sqlalchemy.orm import Session</p>
+<p>import boto3</p>
+<p>from uuid import uuid4</p>
+
+<p>from services.ocr_service import OCRService</p>
+<p>from services.llm_service import LLMService</p>
+<p>from services.validation_service import ValidationService</p>
+<p>from models.database import Base, MedicalDocument, ExtractedText, ICDCode, CPTCode</p>
+<p>from config.settings import settings</p>
+
+<p>app = FastAPI(title="Healthcare AI - LLM System")</p>
+
+<h1>CORS</h1>
+<p>app.add_middleware(</p>
+<p>    CORSMiddleware,</p>
+<p>    allow_origins=["*"],</p>
+<p>    allow_credentials=True,</p>
+<p>    allow_methods=["*"],</p>
+<p>    allow_headers=["*"],</p>
+<p>)</p>
+
+<h1>Initialize services</h1>
+<p>ocr_service = OCRService()</p>
+<p>llm_service = LLMService()</p>
+<p>s3_client = boto3.client('s3')</p>
+
+<p>@app.post("/api/upload-document")</p>
+<p>async def upload_document(</p>
+<p>    file: UploadFile = File(...),</p>
+<p>    patient_id: str = None,</p>
+<p>    background_tasks: BackgroundTasks = None</p>
+<p>):</p>
+<p>    """</p>
+<p>    Upload medical document and start processing</p>
+<p>    """</p>
+<p>    # Generate unique S3 key</p>
+<p>    s3_key = f"documents/{uuid4()}/{file.filename}"</p>
+    
+<p>    # Upload to S3</p>
+<p>    s3_client.upload_fileobj(</p>
+<p>        file.file,</p>
+<p>        settings.S3_BUCKET,</p>
+<p>        s3_key</p>
+<p>    )</p>
+    
+<p>    # Create database record</p>
+<p>    document = MedicalDocument(</p>
+<p>        patient_id=patient_id,</p>
+<p>        s3_key=s3_key,</p>
+<p>        original_filename=file.filename,</p>
+<p>        status="uploaded"</p>
+<p>    )</p>
+<p>    # Save to database (simplified - add proper DB session management)</p>
+    
+<p>    # Queue background processing</p>
+<p>    background_tasks.add_task(process_document, str(document.id), s3_key)</p>
+    
+<p>    return {</p>
+<p>        "document_id": str(document.id),</p>
+<p>        "status": "processing",</p>
+<p>        "message": "Document uploaded successfully"</p>
+<p>    }</p>
+
+<p>async def process_document(document_id: str, s3_key: str):</p>
+<p>    """</p>
+<p>    Background task to process document</p>
+<p>    """</p>
+<p>    # Step 1: OCR Extraction</p>
+<p>    ocr_result = await ocr_service.extract_text_from_document(s3_key)</p>
+    
+<p>    if not ocr_result['success']:</p>
+<p>        # Update status to failed</p>
+<p>        return</p>
+    
+<p>    # Clean text</p>
+<p>    cleaned_text = ocr_service.clean_text(ocr_result['raw_text'])</p>
+    
+<p>    # Save extracted text</p>
+<p>    # (Add database save logic)</p>
+    
+<p>    # Step 2: LLM Processing</p>
+<p>    llm_result = await llm_service.get_medical_codes(cleaned_text)</p>
+    
+<p>    if not llm_result['success']:</p>
+<p>        # Update status to failed</p>
+<p>        return</p>
+    
+<p>    # Step 3: Validation</p>
+<p>    # (Add validation logic)</p>
+    
+<p>    # Step 4: Save results</p>
+<p>    # (Add database save logic for ICD/CPT codes)</p>
+    
+<p>    # Step 5: Calculate billing</p>
+<p>    # (Add billing calculation logic)</p>
+    
+<p>    # Update document status to completed</p>
+<p>    pass</p>
+
+<p>@app.get("/api/document/{document_id}/status")</p>
+<p>async def get_document_status(document_id: str):</p>
+<p>    """</p>
+<p>    Get processing status of a document</p>
+<p>    """</p>
+<p>    # Query database for document status</p>
+<p>    # Return status, codes, billing info</p>
+<p>    pass</p>
+
+<p>@app.get("/api/document/{document_id}/results")</p>
+<p>async def get_document_results(document_id: str):</p>
+<p>    """</p>
+<p>    Get complete results for a processed document</p>
+<p>    """</p>
+<p>    # Query database for all results</p>
+<p>    # Return ICD codes, CPT codes, billing, etc.</p>
+<p>    pass</p>
+
+<p>if __name__ == "__main__":</p>
+<p>    import uvicorn</p>
+<p>    uvicorn.run(app, host=settings.API_HOST, port=settings.API_PORT)</p>
+</code></pre>
+
+<hr>
+
+<h3><strong>STEP 4: Frontend Implementation</strong></h3>
+
+<h4>4.1 Document Upload Component (<code>frontend/components/DocumentUpload.tsx</code>)</h4>
+
+<pre><code>import { useCallback, useState } from 'react';
+<p>import { useDropzone } from 'react-dropzone';</p>
+<p>import axios from 'axios';</p>
+
+<p>export default function DocumentUpload() {</p>
+<p>  const [uploading, setUploading] = useState(false);</p>
+<p>  const [documentId, setDocumentId] = useState<string | null>(null);</p>
+<p>  const [status, setStatus] = useState<string>('');</p>
+
+<p>  const onDrop = useCallback(async (acceptedFiles: File[]) => {</p>
+<p>    const file = acceptedFiles[0];</p>
+<p>    if (!file) return;</p>
+
+<p>    setUploading(true);</p>
+    
+<p>    const formData = new FormData();</p>
+<p>    formData.append('file', file);</p>
+<p>    formData.append('patient_id', 'patient-123'); // Replace with actual patient ID</p>
+
+<p>    try {</p>
+<p>      const response = await axios.post(</p>
+<p>        'http://localhost:8000/api/upload-document',</p>
+<p>        formData,</p>
+<p>        {</p>
+<p>          headers: { 'Content-Type': 'multipart/form-data' }</p>
+<p>        }</p>
+<p>      );</p>
+
+<p>      setDocumentId(response.data.document_id);</p>
+<p>      setStatus('processing');</p>
+      
+<p>      // Start polling for status</p>
+<p>      pollStatus(response.data.document_id);</p>
+      
+<p>    } catch (error) {</p>
+<p>      console.error('Upload failed:', error);</p>
+<p>      setStatus('failed');</p>
+<p>    } finally {</p>
+<p>      setUploading(false);</p>
+<p>    }</p>
+<p>  }, []);</p>
+
+<p>  const pollStatus = async (docId: string) => {</p>
+<p>    const interval = setInterval(async () => {</p>
+<p>      try {</p>
+<p>        const response = await axios.get(</p>
+<p>          <code>http://localhost:8000/api/document/${docId}/status</code></p>
+<p>        );</p>
+        
+<p>        setStatus(response.data.status);</p>
+        
+<p>        if (response.data.status === 'completed' || response.data.status === 'failed') {</p>
+<p>          clearInterval(interval);</p>
+<p>        }</p>
+<p>      } catch (error) {</p>
+<p>        console.error('Status check failed:', error);</p>
+<p>        clearInterval(interval);</p>
+<p>      }</p>
+<p>    }, 2000); // Poll every 2 seconds</p>
+<p>  };</p>
+
+<p>  const { getRootProps, getInputProps, isDragActive } = useDropzone({</p>
+<p>    onDrop,</p>
+<p>    accept: {</p>
+<p>      'application/pdf': ['.pdf'],</p>
+<p>      'image/*': ['.png', '.jpg', '.jpeg']</p>
+<p>    },</p>
+<p>    maxFiles: 1</p>
+<p>  });</p>
+
+<p>  return (</p>
+<p>    <div className="upload-container"></p>
+<p>      <div {...getRootProps()} className="dropzone"></p>
+<p>        <input {...getInputProps()} /></p>
+<p>        {isDragActive ? (</p>
+<p>          <p>Drop the medical document here...</p></p>
+<p>        ) : (</p>
+<p>          <p>Drag & drop a medical document, or click to select</p></p>
+<p>        )}</p>
+<p>      </div></p>
+
+<p>      {uploading && <p>Uploading...</p>}</p>
+      
+<p>      {status && (</p>
+<p>        <div className="status"></p>
+<p>          <h3>Status: {status}</h3></p>
+<p>          {documentId && <p>Document ID: {documentId}</p>}</p>
+<p>        </div></p>
+<p>      )}</p>
+
+<p>      {status === 'completed' && documentId && (</p>
+<p>        <ResultsDisplay documentId={documentId} /></p>
+<p>      )}</p>
+<p>    </div></p>
+<p>  );</p>
+<p>}</p>
+</code></pre>
+
+<hr>
+
+<h2>💰 Cost Breakdown (LLM Approach)</h2>
+
+<h3>Per Document Cost:</h3>
+
+<pre><code>OCR (AWS Textract): $0.0015 per page (avg 3 pages) = $0.0045
+<p>LLM (GPT-4 Turbo): </p>
+<p>  - Input: 2,000 tokens × $0.01/1K = $0.02</p>
+<p>  - Output: 500 tokens × $0.03/1K = $0.015</p>
+<p>  - Total: $0.035</p>
+<p>Database: $0.0001</p>
+<p>Storage (S3): $0.0001</p>
+<p>Total per document: ~$0.04</p>
+</code></pre>
+
+<h3>Monthly Cost (1,000 docs/day):</h3>
+
+<pre><code>Documents: 30,000/month × $0.04 = $1,200
+<p>Infrastructure:</p>
+<p>  - EC2/ECS: $300</p>
+<p>  - RDS PostgreSQL: $200</p>
+<p>  - S3 Storage: $50</p>
+<p>  - Redis: $50</p>
+<p>Total: ~$1,800/month</p>
+</code></pre>
+
+<hr>
+
+<strong>Continue to Part 2 for RAG Implementation...</strong>
+
+    </div>
+    
+    <div class="back-link">
+        <p><a href="Healthcare_AI_Guide_README.html">← Back to AI Guide Index</a> | <a href="index.html">Documentation Home</a></p>
+    </div>
+</body>
+</html>
